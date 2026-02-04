@@ -6,6 +6,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+  
+<div class="card prize">
+<h3>🏆 Prize Pool</h3>
+<h1>₹6,000</h1>
+<p>Top % fat loss wins!</p>
+</div>
 
 <div class="video-bg">
 <iframe src="https://www.youtube.com/embed/eAlNvWgTDZQ?autoplay=1&mute=1&loop=1&playlist=eAlNvWgTDZQ&controls=0"></iframe>
@@ -66,20 +72,19 @@
 </div>
 
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+  const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
 const user=localStorage.getItem("user");
 welcome.innerText="Welcome, "+user;
 
-let groupChart,userChart,expectedGoalWeight=null;
+let groupChart,userChart;
 
-/* DATE SAFE PARSE */
+/* ---------------- DATE PARSER ---------------- */
 function parseDate(str){
-if(!str) return null;
-const parts=str.split("-");
-return new Date(parts[0],parts[1]-1,parts[2]);
+const p=str.split("-");
+return new Date(p[0],p[1]-1,p[2]);
 }
 
-/* GROUP */
+/* ---------------- GROUP DATA + LEADERBOARD ---------------- */
 async function loadGroupData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
 const data=await res.json();
@@ -89,14 +94,15 @@ const rows=data.slice(1);
 let users={},datesSet=new Set();
 
 rows.forEach(r=>{
-let d=parseDate(new Date(r[1]).toISOString().split('T')[0]);
-let key=d.toISOString().split('T')[0];
-datesSet.add(key);
+let d=new Date(r[1]).toISOString().split('T')[0];
+datesSet.add(d);
 if(!users[r[0]]) users[r[0]]=[];
-users[r[0]].push({date:key,weight:parseFloat(r[2])});
+users[r[0]].push({date:d,weight:parseFloat(r[2])});
 });
 
 const dates=[...datesSet].sort();
+
+/* Chart */
 let datasets=Object.keys(users).map(name=>({
 label:name,
 data:dates.map(d=>users[name].find(x=>x.date===d)?.weight||null),
@@ -104,25 +110,38 @@ tension:0.4
 }));
 
 if(groupChart) groupChart.destroy();
-groupChart=new Chart(document.getElementById("groupChart").getContext("2d"),{
+groupChart=new Chart(document.getElementById("groupChart"),{
 type:"line",
 data:{labels:dates,datasets}
 });
 
-/* TABLE */
-let html="<tr><th>Name</th>"+dates.map(d=>`<th>${d}</th>`).join("")+"</tr>";
+/* Leaderboard table */
+let leaderboard=[];
 Object.keys(users).forEach(name=>{
-html+="<tr><td>"+name+"</td>";
-dates.forEach(d=>{
-let rec=users[name].find(x=>x.date===d);
-html+="<td>"+(rec?rec.weight:"-")+"</td>";
+let rec=users[name].sort((a,b)=>new Date(a.date)-new Date(b.date));
+if(rec.length<2) return;
+let prev=rec[rec.length-2].weight;
+let curr=rec[rec.length-1].weight;
+let percent=((prev-curr)/prev*100).toFixed(2);
+leaderboard.push({name,prev,curr,percent});
 });
-html+="</tr>";
+
+leaderboard.sort((a,b)=>b.percent-a.percent);
+
+let html="<tr><th>Rank</th><th>Name</th><th>Prev</th><th>Current</th><th>% Change</th></tr>";
+leaderboard.forEach((r,i)=>{
+html+=`<tr>
+<td>${i+1}</td>
+<td>${r.name}</td>
+<td>${r.prev}</td>
+<td>${r.curr}</td>
+<td style="color:${r.percent>0?'#00ff88':'#ff4d4d'}">${r.percent}%</td>
+</tr>`;
 });
 matrixTable.innerHTML=html;
 }
 
-/* USER */
+/* ---------------- USER TREND ---------------- */
 async function loadUserData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const rows=await res.json();
@@ -132,53 +151,46 @@ const dates=rows.map(r=>new Date(r[1]).toLocaleDateString());
 const weights=rows.map(r=>parseFloat(r[2]));
 
 if(userChart) userChart.destroy();
-userChart=new Chart(document.getElementById("userChart").getContext("2d"),{
+userChart=new Chart(document.getElementById("userChart"),{
 type:"line",
 data:{labels:dates,datasets:[{label:"Your Weight",data:weights,tension:0.4}]}
 });
 }
 
-/* ADD */
+/* ---------------- GOAL LOGIC ---------------- */
+async function loadGoal(){
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
+const g=await res.json();
+if(!g.startWeight||!g.endDate) return;
+
+const end=parseDate(g.endDate);
+const today=new Date();
+const daysRemaining=Math.ceil((end-today)/(1000*60*60*24));
+
+const res2=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
+const rows=await res2.json();
+if(rows.length===0) return;
+
+const current=parseFloat(rows[rows.length-1][2]);
+const target=parseFloat(g.targetWeight);
+
+const avgDaily=((current-target)/daysRemaining).toFixed(2);
+
+totalLoss.innerText=daysRemaining;
+totalDays.innerText=avgDaily+" kg/day";
+}
+
+/* ---------------- ADD WEIGHT ---------------- */
 async function addWeight(){
 await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
 weight.value="";
 refreshAll();
 }
 
-/* GOAL */
-async function saveGoal(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({
-action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value
-})});
-loadGoal();
-}
-
-async function loadGoal(){
-const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
-const g=await res.json();
-if(!g.startWeight) return;
-
-const sw=parseFloat(g.startWeight);
-const tw=parseFloat(g.targetWeight);
-const sd=parseDate(g.startDate);
-const ed=parseDate(g.endDate);
-
-const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
-const dailyRequired=(sw-tw)/totalDays;
-const daysPassed=Math.ceil((new Date()-sd)/(1000*60*60*24));
-expectedGoalWeight=(sw-(dailyRequired*daysPassed));
-
-totalLoss.innerText=(sw-tw).toFixed(1);
-totalDays.innerText=totalDays;
-dailyLoss.innerText=dailyRequired.toFixed(2);
-expectedToday.innerText=expectedGoalWeight.toFixed(1);
-goalStatus.innerText="Tracking...";
-}
-
 function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
-
 refreshAll();
 setInterval(refreshAll,30000);
+
 </script>
 </body>
 </html>
