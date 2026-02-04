@@ -1,41 +1,14 @@
+/* ---------- BODY & BACKGROUND ---------- */
 body {
-  background: rgba(0,0,0,0.7); /* dark overlay */
+  background: rgba(0,0,0,0.75);
   color: white;
   font-family: sans-serif;
   margin: 0;
-}
-.header{display:flex;justify-content:space-between;padding:15px 25px;background:#1c1c1c}
-button{background:#ff2e63;border:none;color:white;padding:10px 15px;border-radius:8px}
-.card{background:#1c1c1c;padding:20px;margin:15px;border-radius:14px;text-align:center}
-.grid{display:flex;flex-wrap:wrap;justify-content:center}
-.center{margin-top:120px;text-align:center}
-.centerMsg{text-align:center;margin:20px;font-size:18px}
-.hidden{display:none}
-.stats{display:flex;justify-content:center;flex-wrap:wrap}
-.stats .card{width:180px;margin:10px}
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-  color: white;
+  position: relative;
+  z-index: 1;
 }
 
-th, td {
-  padding: 10px;
-  text-align: center;
-}
-
-th {
-  background: #ff2e63;
-}
-
-tr:nth-child(even) {
-  background: #1f1f1f;
-}
-
-tr:nth-child(odd) {
-  background: #151515;
-}
+/* ---------- VIDEO BACKGROUND ---------- */
 .video-bg {
   position: fixed;
   top: 0;
@@ -50,6 +23,95 @@ tr:nth-child(odd) {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  opacity: 0.15; /* makes it subtle */
+  opacity: 0.15;
 }
 
+/* ---------- HEADER ---------- */
+.header {
+  display:flex;
+  justify-content:space-between;
+  padding:15px 25px;
+  background:#1c1c1c;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+/* ---------- BUTTONS ---------- */
+button {
+  background:#ff2e63;
+  border:none;
+  color:white;
+  padding:10px 15px;
+  border-radius:8px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover {
+  transform:scale(1.05);
+}
+
+/* ---------- CARDS ---------- */
+.card {
+  background:#1c1c1c;
+  padding:20px;
+  margin:15px;
+  border-radius:14px;
+  text-align:center;
+  box-shadow:0 0 12px rgba(0,0,0,0.4);
+}
+
+/* ---------- LAYOUT ---------- */
+.grid {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.center {
+  margin-top:120px;
+  text-align:center;
+}
+
+.centerMsg {
+  text-align:center;
+  margin:20px;
+  font-size:18px;
+}
+
+.hidden { display:none; }
+
+/* ---------- GOAL FORM ---------- */
+#goalForm input {
+  display:block;
+  margin:8px auto;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  width:220px;
+}
+
+#goalStats p {
+  margin:6px 0;
+  font-size:15px;
+}
+
+/* ---------- TABLE (LEADERBOARD) ---------- */
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th, td {
+  padding:10px;
+  text-align:center;
+}
+
+th {
+  background:#ff2e63;
+}
+
+tr:nth-child(even){ background:#222; }
+tr:nth-child(odd){ background:#181818; }
