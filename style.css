@@ -1,39 +1,8 @@
-body {
-  background:#0f0f0f;
-  color:white;
-  font-family:Arial, sans-serif;
-  margin:0;
-}
-
-.container{
-  text-align:center;
-  padding:30px;
-}
-
-.card{
-  background:#1c1c1c;
-  padding:25px;
-  border-radius:16px;
-  width:320px;
-  margin:20px auto;
-  box-shadow:0 0 15px rgba(255,46,99,0.3);
-}
-
-input{
-  padding:12px;
-  border-radius:8px;
-  border:none;
-  width:200px;
-}
-
-button{
-  background:#ff2e63;
-  color:white;
-  border:none;
-  padding:12px 20px;
-  border-radius:10px;
-  font-weight:bold;
-  margin-top:10px;
-}
-canvas{max-width:320px;margin:auto;}
-
+body{background:#0f0f0f;color:white;font-family:sans-serif;margin:0}
+.header{display:flex;justify-content:space-between;padding:15px 25px;background:#1c1c1c}
+button{background:#ff2e63;border:none;color:white;padding:10px 15px;border-radius:8px}
+.card{background:#1c1c1c;padding:20px;margin:15px;border-radius:14px;text-align:center}
+.grid{display:flex;flex-wrap:wrap;justify-content:center}
+.center{margin-top:120px;text-align:center}
+.centerMsg{text-align:center;margin:20px;font-size:18px}
+.hidden{display:none}
