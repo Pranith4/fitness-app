@@ -49,6 +49,26 @@
     <tbody id="leaderboard"></tbody>
   </table>
 </div>
+<div class="card">
+  <h3>🎯 Your Goal Plan</h3>
+
+  <div id="goalForm">
+    <input id="startWeight" placeholder="Start Weight (kg)">
+    <input id="targetWeight" placeholder="Target Weight (kg)">
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+    <button onclick="saveGoal()">Save Goal</button>
+  </div>
+
+  <div id="goalStats" class="hidden">
+    <p>Total to Lose: <b id="totalLoss"></b> kg</p>
+    <p>Total Days: <b id="totalDays"></b></p>
+    <p>Required Daily Loss: <b id="dailyLoss"></b> kg/day</p>
+    <p>Expected Weight Today: <b id="expectedToday"></b> kg</p>
+    <p>Status: <b id="goalStatus"></b></p>
+    <button onclick="resetGoal()" style="background:#444;margin-top:10px;">Reset Goal</button>
+  </div>
+</div>
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
@@ -83,6 +103,14 @@ const rows = data;   // ✅ NO slice(1)
 
 const dates = rows.map(r=>new Date(r[1]));
 const weights = rows.map(r=>parseFloat(r[2]));
+if(expectedToday.innerText){
+  const current = weights[weights.length-1];
+
+  if(current <= parseFloat(expectedToday.innerText))
+    goalStatus.innerText = "On Track ✅";
+  else
+    goalStatus.innerText = "Behind ⚠️";
+}
 let labels = dates.map(d=>d.toLocaleDateString());
 
 if(dailyChartInstance) dailyChartInstance.destroy();
@@ -153,9 +181,64 @@ msg.innerText=d.success?`✅ Submitted at ${new Date(d.timestamp).toLocaleString
 weight.value="";
 loadData();
 }
+async function saveGoal(){
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({
+      action:"saveGoal",
+      username:user,
+      startWeight:startWeight.value,
+      targetWeight:targetWeight.value,
+      startDate:startDate.value,
+      endDate:endDate.value
+    })
+  });
+  loadGoal();
+}
+
+async function loadGoal(){
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"getGoal",username:user})
+  });
+  const g = await res.json();
+
+  if(!g.startWeight) return;
+
+  startWeight.value=g.startWeight;
+  targetWeight.value=g.targetWeight;
+  startDate.value=g.startDate;
+  endDate.value=g.endDate;
+
+  calculateGoalStats();
+}
+function calculateGoalStats(){
+const sw=parseFloat(startWeight.value);
+const tw=parseFloat(targetWeight.value);
+const sd=new Date(startDate.value);
+const ed=new Date(endDate.value);
+const today=new Date();
+
+const totalLoss=(sw-tw).toFixed(1);
+const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
+const dailyLoss=(totalLoss/totalDays).toFixed(2);
+
+const daysPassed=Math.ceil((today-sd)/(1000*60*60*24));
+const expected=(sw-(dailyLoss*daysPassed)).toFixed(1);
+
+totalLoss.innerText=totalLoss;
+totalDays.innerText=totalDays;
+dailyLoss.innerText=dailyLoss;
+expectedToday.innerText=expected;
+
+goalStats.classList.remove("hidden");
+goalForm.classList.add("hidden");
+}
 
 loadData();
+loadGoal();
 setInterval(loadData,30000);
+
 </script>
 
 </body>
