@@ -8,19 +8,16 @@
 
 <div class="header">
   <h2 id="welcome"></h2>
-  <button onclick="toggleForm()">+ Add Weight</button>
+  <div>
+    <button onclick="refreshData()">🔄 Refresh</button>
+    <button onclick="toggleForm()">+ Add Weight</button>
+  </div>
 </div>
 
 <div id="formCard" class="card hidden">
   <input id="weight" placeholder="Enter weight">
   <button onclick="addWeight()">Submit</button>
   <p id="msg"></p>
-</div>
-
-<div class="stats">
-  <div class="card"><h3>🔥 Streak</h3><p id="streak">0 days</p></div>
-  <div class="card"><h3>🎯 Goal Progress</h3><p id="goalProgress">--</p></div>
-  <div class="card"><h3>📉 Trend</h3><p id="trend">--</p></div>
 </div>
 
 <div id="noData" class="centerMsg hidden">No data yet. Add weight 📈</div>
@@ -32,19 +29,18 @@
 
 <div class="card">
   <h3>🏆 Leaderboard</h3>
-  <table id="leaderboardTable">
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Name</th>
-      <th>Start (kg)</th>
-      <th>Current (kg)</th>
-      <th>% Change</th>
-    </tr>
-  </thead>
-  <tbody id="leaderboard"></tbody>
-</table>
-
+  <table>
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Name</th>
+        <th>Start</th>
+        <th>Current</th>
+        <th>% Change</th>
+      </tr>
+    </thead>
+    <tbody id="leaderboard"></tbody>
+  </table>
 </div>
 
 <script>
@@ -53,32 +49,35 @@ const user=localStorage.getItem("user");
 if(!user) window.location="index.html";
 welcome.innerText="Welcome, "+user;
 
+let dailyChartInstance;
+let monthlyChartInstance;
+
 function toggleForm(){ formCard.classList.toggle("hidden"); }
+
+function refreshData(){
+  msg.innerText="Refreshing...";
+  loadData();
+}
 
 async function loadData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const data=await res.json();
 
-if(data.length<=1){noData.classList.remove("hidden");return;}
+if(data.length<=1){
+  noData.classList.remove("hidden");
+  return;
+}
+noData.classList.add("hidden");
 
 const rows=data.slice(1);
-const weights=rows.map(r=>parseFloat(r[2]));
 const dates=rows.map(r=>new Date(r[1]));
+const weights=rows.map(r=>parseFloat(r[2]));
 
-let streakCount=1;
-for(let i=dates.length-1;i>0;i--){
-if((dates[i]-dates[i-1])/(1000*60*60*24)<=1.5) streakCount++;
-else break;
-}
-streak.innerText=streakCount+" days";
+let labels=dates.map(d=>d.toLocaleDateString());
 
-let diff=weights[weights.length-1]-weights[0];
-trend.innerText=diff<0?"⬇ Losing":"⬆ Gaining";
-
-goalProgress.innerText="Set goal in sheet";
-
-const labels=dates.map(d=>d.toLocaleDateString());
-new Chart(dailyChart,{type:"line",data:{labels:labels,datasets:[{label:"Weight",data:weights}]}});
+if(dailyChartInstance) dailyChartInstance.destroy();
+dailyChartInstance=new Chart(dailyChart,{type:"line",
+data:{labels:labels,datasets:[{label:"Weight",data:weights,tension:0.3}]} });
 
 let monthData={};
 rows.forEach(r=>{
@@ -86,61 +85,51 @@ let m=new Date(r[1]).toLocaleString('default',{month:'short'});
 if(!monthData[m]) monthData[m]=[];
 monthData[m].push(parseFloat(r[2]));
 });
-new Chart(monthlyChart,{type:"bar",data:{labels:Object.keys(monthData),datasets:[{label:"Avg",data:Object.values(monthData).map(a=>a.reduce((x,y)=>x+y)/a.length)}]}});
+
+if(monthlyChartInstance) monthlyChartInstance.destroy();
+monthlyChartInstance=new Chart(monthlyChart,{type:"bar",
+data:{labels:Object.keys(monthData),
+datasets:[{label:"Avg",data:Object.values(monthData).map(a=>a.reduce((x,y)=>x+y)/a.length)}]}});
 
 loadLeaderboard();
 }
 
 async function loadLeaderboard(){
-  const res = await fetch(API_URL,{
-    method:"POST",
-    body:JSON.stringify({action:"getAllWeights"})
-  });
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
+const data=await res.json();
+const rows=data.slice(1);
 
-  const data = await res.json();
-  const rows = data.slice(1);
+let users={};
+rows.forEach(r=>{
+const name=r[0];
+const weight=parseFloat(r[2]);
+const date=new Date(r[1]);
+if(!users[name]) users[name]=[];
+users[name].push({date,weight});
+});
 
-  let users = {};
+let results=[];
+Object.keys(users).forEach(name=>{
+const rec=users[name].sort((a,b)=>a.date-b.date);
+const initial=rec[0].weight;
+const latest=rec[rec.length-1].weight;
+const percent=((initial-latest)/initial*100).toFixed(2);
+results.push({name,initial,latest,percent});
+});
 
-  rows.forEach(r=>{
-    const name = r[0];
-    const weight = parseFloat(r[2]);
-    const date = new Date(r[1]);
-
-    if(!users[name]) users[name] = [];
-    users[name].push({date, weight});
-  });
-
-  let results = [];
-
-  Object.keys(users).forEach(name=>{
-    const records = users[name].sort((a,b)=>a.date-b.date);
-    const initial = records[0].weight;
-    const latest = records[records.length-1].weight;
-    const percent = ((initial - latest) / initial * 100).toFixed(2);
-
-    results.push({name, initial, latest, percent});
-  });
-
-  results.sort((a,b)=>b.percent - a.percent);
-
-  leaderboard.innerHTML = "";
-
-  results.forEach((r,index)=>{
-    const color = r.percent > 0 ? "#00ff88" : "#ff4d4d";
-    leaderboard.innerHTML += `
-      <tr>
-        <td>${index+1}</td>
-        <td>${r.name}</td>
-        <td>${r.initial}</td>
-        <td>${r.latest}</td>
-        <td style="color:${color}; font-weight:bold;">${r.percent}%</td>
-      </tr>
-    `;
-  });
+results.sort((a,b)=>b.percent-a.percent);
+leaderboard.innerHTML="";
+results.forEach((r,i)=>{
+const color=r.percent>0?"#00ff88":"#ff4d4d";
+leaderboard.innerHTML+=`<tr>
+<td>${i+1}</td>
+<td>${r.name}</td>
+<td>${r.initial}</td>
+<td>${r.latest}</td>
+<td style="color:${color};font-weight:bold;">${r.percent}%</td>
+</tr>`;
+});
 }
-
-
 
 async function addWeight(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
@@ -151,6 +140,8 @@ loadData();
 }
 
 loadData();
+setInterval(loadData,30000);
 </script>
+
 </body>
 </html>
