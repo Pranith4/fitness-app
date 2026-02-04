@@ -19,3 +19,6 @@ input{background:#2a2a2a;color:white;padding:10px;margin:6px;border:none;border-
 .grid{flex-direction:column}
 .header{flex-direction:column;text-align:center}
 }
+
+.smallChart{max-width:700px;margin:auto}
+#goalStats{margin-top:10px}
