@@ -18,7 +18,6 @@
 
 <div class="layout">
 
-<!-- LEFT SIDE -->
 <div class="leftPanel">
 
 <div class="card smallChart">
@@ -45,9 +44,7 @@
 
 </div>
 
-<!-- RIGHT SIDE -->
 <div class="rightPanel">
-
 <div class="card">
 <h3>🎯 Goal Planner</h3>
 <input id="startWeight" placeholder="Start Weight">
@@ -63,10 +60,9 @@
 <p>Expected Today: <b id="expectedToday"></b></p>
 <p>Status: <b id="goalStatus"></b></p>
 </div>
-
+</div>
 </div>
 
-</div>
 </div>
 
 <script>
@@ -76,15 +72,25 @@ welcome.innerText="Welcome, "+user;
 
 let groupChart,userChart,expectedGoalWeight=null;
 
+/* DATE SAFE PARSE */
+function parseDate(str){
+if(!str) return null;
+const parts=str.split("-");
+return new Date(parts[0],parts[1]-1,parts[2]);
+}
+
+/* GROUP */
 async function loadGroupData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
 const data=await res.json();
 if(data.length<=1) return;
-const rows=data.slice(1);
 
+const rows=data.slice(1);
 let users={},datesSet=new Set();
+
 rows.forEach(r=>{
-let key=new Date(r[1]).toISOString().split('T')[0];
+let d=parseDate(new Date(r[1]).toISOString().split('T')[0]);
+let key=d.toISOString().split('T')[0];
 datesSet.add(key);
 if(!users[r[0]]) users[r[0]]=[];
 users[r[0]].push({date:key,weight:parseFloat(r[2])});
@@ -98,8 +104,12 @@ tension:0.4
 }));
 
 if(groupChart) groupChart.destroy();
-groupChart=new Chart(groupChart,{type:"line",data:{labels:dates,datasets}});
+groupChart=new Chart(document.getElementById("groupChart").getContext("2d"),{
+type:"line",
+data:{labels:dates,datasets}
+});
 
+/* TABLE */
 let html="<tr><th>Name</th>"+dates.map(d=>`<th>${d}</th>`).join("")+"</tr>";
 Object.keys(users).forEach(name=>{
 html+="<tr><td>"+name+"</td>";
@@ -112,25 +122,34 @@ html+="</tr>";
 matrixTable.innerHTML=html;
 }
 
+/* USER */
 async function loadUserData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const rows=await res.json();
 if(rows.length===0) return;
+
 const dates=rows.map(r=>new Date(r[1]).toLocaleDateString());
 const weights=rows.map(r=>parseFloat(r[2]));
 
 if(userChart) userChart.destroy();
-userChart=new Chart(userChart,{type:"line",data:{labels:dates,datasets:[{label:"Your Weight",data:weights,tension:0.4}]}});
+userChart=new Chart(document.getElementById("userChart").getContext("2d"),{
+type:"line",
+data:{labels:dates,datasets:[{label:"Your Weight",data:weights,tension:0.4}]}
+});
 }
 
+/* ADD */
 async function addWeight(){
 await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
 weight.value="";
 refreshAll();
 }
 
+/* GOAL */
 async function saveGoal(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value})});
+await fetch(API_URL,{method:"POST",body:JSON.stringify({
+action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value
+})});
 loadGoal();
 }
 
@@ -141,8 +160,9 @@ if(!g.startWeight) return;
 
 const sw=parseFloat(g.startWeight);
 const tw=parseFloat(g.targetWeight);
-const sd=new Date(g.startDate);
-const ed=new Date(g.endDate);
+const sd=parseDate(g.startDate);
+const ed=parseDate(g.endDate);
+
 const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
 const dailyRequired=(sw-tw)/totalDays;
 const daysPassed=Math.ceil((new Date()-sd)/(1000*60*60*24));
