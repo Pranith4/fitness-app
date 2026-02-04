@@ -32,7 +32,19 @@
 
 <div class="card">
   <h3>🏆 Leaderboard</h3>
-  <ul id="leaderboard"></ul>
+  <table id="leaderboardTable">
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Name</th>
+      <th>Start (kg)</th>
+      <th>Current (kg)</th>
+      <th>% Change</th>
+    </tr>
+  </thead>
+  <tbody id="leaderboard"></tbody>
+</table>
+
 </div>
 
 <script>
@@ -103,10 +115,8 @@ async function loadLeaderboard(){
 
   Object.keys(users).forEach(name=>{
     const records = users[name].sort((a,b)=>a.date-b.date);
-
     const initial = records[0].weight;
     const latest = records[records.length-1].weight;
-
     const percent = ((initial - latest) / initial * 100).toFixed(2);
 
     results.push({name, initial, latest, percent});
@@ -114,19 +124,22 @@ async function loadLeaderboard(){
 
   results.sort((a,b)=>b.percent - a.percent);
 
-  leaderboard.innerHTML = `
-    <li><b>Name | Start | Now | % Change</b></li>
-  `;
+  leaderboard.innerHTML = "";
 
-  results.forEach(r=>{
-    const color = r.percent > 0 ? "lime" : "red";
+  results.forEach((r,index)=>{
+    const color = r.percent > 0 ? "#00ff88" : "#ff4d4d";
     leaderboard.innerHTML += `
-      <li style="color:${color}">
-        ${r.name} | ${r.initial}kg → ${r.latest}kg | ${r.percent}%
-      </li>
+      <tr>
+        <td>${index+1}</td>
+        <td>${r.name}</td>
+        <td>${r.initial}</td>
+        <td>${r.latest}</td>
+        <td style="color:${color}; font-weight:bold;">${r.percent}%</td>
+      </tr>
     `;
   });
 }
+
 
 
 async function addWeight(){
