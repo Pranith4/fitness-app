@@ -1,15 +1,44 @@
-<link rel="stylesheet" href="style.css">
-<div class="card">
-<h2>Enter Today's Weight</h2>
-<input id="weight" placeholder="Weight (kg)">
-<button onclick="addWeight()">Submit</button>
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+  <h1>Fitness Dashboard</h1>
+  <p id="welcome"></p>
+
+  <div class="card">
+    <h2>Enter Today's Weight</h2>
+    <input id="weight" placeholder="Weight (kg)">
+    <button onclick="addWeight()">Submit</button>
+  </div>
+
+  <div class="card">
+    <h2>Progress</h2>
+    <p>Stay consistent 💪</p>
+    <p id="lastWeight">Last weight: --</p>
+  </div>
 </div>
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
-const user=localStorage.getItem("user");
+const user = localStorage.getItem("user");
+
+if(!user){ window.location="index.html"; }
+
+document.getElementById("welcome").innerText = "Welcome, " + user;
+
 async function addWeight(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
-alert("Saved!");
+  await fetch(API_URL,{
+    method:"POST",
+    body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})
+  });
+  document.getElementById("lastWeight").innerText="Last weight: "+weight.value+" kg";
+  weight.value="";
 }
 </script>
+
+</body>
+</html>
