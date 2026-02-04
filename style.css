@@ -35,3 +35,5 @@ button{
   font-weight:bold;
   margin-top:10px;
 }
+canvas{max-width:320px;margin:auto;}
+
