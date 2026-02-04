@@ -1,4 +1,37 @@
-body { background:#0f0f0f; color:white; font-family:Arial; text-align:center; margin-top:80px; }
-.card { background:#1c1c1c; padding:30px; border-radius:16px; width:300px; margin:auto; }
-input { margin:10px auto; padding:12px; border-radius:8px; border:none; width:220px; }
-button { background:#ff2e63; color:white; border:none; padding:12px 20px; border-radius:10px; font-weight:bold; }
+body {
+  background:#0f0f0f;
+  color:white;
+  font-family:Arial, sans-serif;
+  margin:0;
+}
+
+.container{
+  text-align:center;
+  padding:30px;
+}
+
+.card{
+  background:#1c1c1c;
+  padding:25px;
+  border-radius:16px;
+  width:320px;
+  margin:20px auto;
+  box-shadow:0 0 15px rgba(255,46,99,0.3);
+}
+
+input{
+  padding:12px;
+  border-radius:8px;
+  border:none;
+  width:200px;
+}
+
+button{
+  background:#ff2e63;
+  color:white;
+  border:none;
+  padding:12px 20px;
+  border-radius:10px;
+  font-weight:bold;
+  margin-top:10px;
+}
