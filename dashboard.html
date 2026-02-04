@@ -33,6 +33,15 @@
 <!-- 👤 PERSONAL -->
 <div id="personalSection" class="hidden">
   <div class="grid">
+
+    <!-- ADD WEIGHT -->
+    <div class="card">
+      <h3>Add Today's Weight</h3>
+      <input id="weight" placeholder="Enter weight">
+      <button onclick="addWeight()">Submit</button>
+      <p id="msg"></p>
+    </div>
+
     <div class="card">
       <h3>Your Trend</h3>
       <canvas id="userChartCanvas"></canvas>
@@ -41,6 +50,7 @@
       <table id="userTable"></table>
     </div>
 
+    <!-- GOAL -->
     <div class="card">
       <h3>🎯 Goal Planner</h3>
       <div id="goalForm">
@@ -60,33 +70,46 @@
         <button onclick="resetGoal()">Reset</button>
       </div>
     </div>
+
   </div>
 </div>
 
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
 const user=localStorage.getItem("user");
+if(!user) window.location="index.html";
 welcome.innerText="Welcome, "+user;
 
 let groupChart,userChart,expectedGoalWeight=null;
 
+/* TAB SWITCH */
 function showTab(tab){
   overviewSection.classList.toggle("hidden",tab!=='overview');
   personalSection.classList.toggle("hidden",tab!=='personal');
   overviewTab.classList.toggle("activeTab",tab==='overview');
   personalTab.classList.toggle("activeTab",tab==='personal');
+  if(tab==='personal'){ loadUserData(); loadGoal(); }
 }
 
-function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
+/* ADD WEIGHT */
+async function addWeight(){
+  const res=await fetch(API_URL,{method:"POST",
+    body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})
+  });
+  const d=await res.json();
+  msg.innerText=d.success?"Saved!":"Already submitted today";
+  weight.value="";
+  refreshAll();
+}
 
+/* GROUP DATA */
 async function loadGroupData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
 const data=await res.json();
 if(data.length<=1) return;
-
 const rows=data.slice(1);
-let users={},datesSet=new Set();
 
+let users={},datesSet=new Set();
 rows.forEach(r=>{
 let date=new Date(r[1]).toLocaleDateString();
 datesSet.add(date);
@@ -95,33 +118,17 @@ users[r[0]].push({date,weight:parseFloat(r[2])});
 });
 
 const dates=[...datesSet].sort((a,b)=>new Date(a)-new Date(b));
-
-let datasets=Object.keys(users).map(name=>{
-return {
+let datasets=Object.keys(users).map(name=>({
 label:name,
-data:dates.map(d=>{
-let rec=users[name].find(x=>x.date===d);
-return rec?rec.weight:null;
-}),
+data:dates.map(d=>{let rec=users[name].find(x=>x.date===d);return rec?rec.weight:null;}),
 tension:0.3
-};
-});
+}));
 
 if(groupChart)groupChart.destroy();
 groupChart=new Chart(groupChartCanvas,{type:"line",data:{labels:dates,datasets}});
-
-let html="<tr><th>Name</th>"+dates.map(d=>`<th>${d}</th>`).join("")+"</tr>";
-Object.keys(users).forEach(name=>{
-html+="<tr><td>"+name+"</td>";
-dates.forEach(d=>{
-let rec=users[name].find(x=>x.date===d);
-html+="<td>"+(rec?rec.weight:"-")+"</td>";
-});
-html+="</tr>";
-});
-matrixTable.innerHTML=html;
 }
 
+/* USER DATA */
 async function loadUserData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const rows=await res.json();
@@ -143,8 +150,11 @@ goalStatus.innerText=current<=expectedGoalWeight?"On Track ✅":"Behind ⚠️";
 }
 }
 
+/* GOAL */
 async function saveGoal(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value})});
+await fetch(API_URL,{method:"POST",body:JSON.stringify({
+action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value
+})});
 loadGoal();
 }
 
@@ -152,11 +162,7 @@ async function loadGoal(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
 const g=await res.json();
 
-if(!g.startWeight){
-goalForm.classList.remove("hidden");
-goalStats.classList.add("hidden");
-return;
-}
+if(!g.startWeight){goalForm.classList.remove("hidden");goalStats.classList.add("hidden");return;}
 
 goalForm.classList.add("hidden");
 goalStats.classList.remove("hidden");
@@ -166,7 +172,7 @@ const tw=parseFloat(g.targetWeight);
 const sd=new Date(g.startDate);
 const ed=new Date(g.endDate);
 const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
-const dailyLoss=((sw-tw)/totalDays);
+const dailyLoss=(sw-tw)/totalDays;
 const today=new Date();
 const daysPassed=Math.ceil((today-sd)/(1000*60*60*24));
 expectedGoalWeight=(sw-(dailyLoss*daysPassed));
@@ -184,9 +190,11 @@ goalStats.classList.add("hidden");
 expectedGoalWeight=null;
 }
 
+function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
+
+/* INIT */
 refreshAll();
 setInterval(refreshAll,30000);
 </script>
-
 </body>
 </html>
