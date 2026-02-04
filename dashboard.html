@@ -30,6 +30,12 @@
 <h3>🏆 Group Progress</h3>
 <canvas id="groupChart"></canvas>
 </div>
+  
+<div class="card">
+  <h3>📈 Your Trend</h3>
+  <canvas id="userChart"></canvas>
+  <p id="streakDisplay" style="margin-top:10px;color:#ff2e63;font-weight:bold"></p>
+</div>
 
 <div class="card">
 <h3>📊 Weight Matrix</h3>
@@ -78,13 +84,13 @@ welcome.innerText="Welcome, "+user;
 
 let groupChart,userChart;
 
-/* ---------------- DATE PARSER ---------------- */
+/* ----------- DATE PARSER ----------- */
 function parseDate(str){
 const p=str.split("-");
 return new Date(p[0],p[1]-1,p[2]);
 }
 
-/* ---------------- GROUP DATA + LEADERBOARD ---------------- */
+/* ----------- GROUP + MATRIX ----------- */
 async function loadGroupData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
 const data=await res.json();
@@ -102,7 +108,7 @@ users[r[0]].push({date:d,weight:parseFloat(r[2])});
 
 const dates=[...datesSet].sort();
 
-/* Chart */
+/* GROUP CHART */
 let datasets=Object.keys(users).map(name=>({
 label:name,
 data:dates.map(d=>users[name].find(x=>x.date===d)?.weight||null),
@@ -115,33 +121,27 @@ type:"line",
 data:{labels:dates,datasets}
 });
 
-/* Leaderboard table */
-let leaderboard=[];
+/* MATRIX TABLE */
+let html="<tr><th>Name</th>"+dates.map(d=>`<th>${d}</th>`).join("")+"<th>% Change</th></tr>";
+
 Object.keys(users).forEach(name=>{
 let rec=users[name].sort((a,b)=>new Date(a.date)-new Date(b.date));
-if(rec.length<2) return;
-let prev=rec[rec.length-2].weight;
-let curr=rec[rec.length-1].weight;
-let percent=((prev-curr)/prev*100).toFixed(2);
-leaderboard.push({name,prev,curr,percent});
+let initial=rec[0].weight;
+let latest=rec[rec.length-1].weight;
+let percent=((initial-latest)/initial*100).toFixed(2);
+
+html+="<tr><td>"+name+"</td>";
+dates.forEach(d=>{
+let r=rec.find(x=>x.date===d);
+html+="<td>"+(r?r.weight:"-")+"</td>";
+});
+html+=`<td style="color:${percent>0?'#00ff88':'#ff4d4d'}">${percent}%</td></tr>`;
 });
 
-leaderboard.sort((a,b)=>b.percent-a.percent);
-
-let html="<tr><th>Rank</th><th>Name</th><th>Prev</th><th>Current</th><th>% Change</th></tr>";
-leaderboard.forEach((r,i)=>{
-html+=`<tr>
-<td>${i+1}</td>
-<td>${r.name}</td>
-<td>${r.prev}</td>
-<td>${r.curr}</td>
-<td style="color:${r.percent>0?'#00ff88':'#ff4d4d'}">${r.percent}%</td>
-</tr>`;
-});
 matrixTable.innerHTML=html;
 }
 
-/* ---------------- USER TREND ---------------- */
+/* ----------- USER DATA + STREAK ----------- */
 async function loadUserData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const rows=await res.json();
@@ -155,9 +155,20 @@ userChart=new Chart(document.getElementById("userChart"),{
 type:"line",
 data:{labels:dates,datasets:[{label:"Your Weight",data:weights,tension:0.4}]}
 });
+
+/* STREAK */
+let streak=1;
+for(let i=rows.length-1;i>0;i--){
+let d1=new Date(rows[i][1]);
+let d2=new Date(rows[i-1][1]);
+let diff=(d1-d2)/(1000*60*60*24);
+if(diff<=1) streak++;
+else break;
+}
+streakDisplay.innerText="🔥 Current Streak: "+streak+" Days";
 }
 
-/* ---------------- GOAL LOGIC ---------------- */
+/* ----------- GOAL ----------- */
 async function loadGoal(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
 const g=await res.json();
@@ -173,14 +184,13 @@ if(rows.length===0) return;
 
 const current=parseFloat(rows[rows.length-1][2]);
 const target=parseFloat(g.targetWeight);
-
 const avgDaily=((current-target)/daysRemaining).toFixed(2);
 
-totalLoss.innerText=daysRemaining;
-totalDays.innerText=avgDaily+" kg/day";
+totalLoss.innerText=daysRemaining+" days left";
+totalDays.innerText=avgDaily+" kg/day needed";
 }
 
-/* ---------------- ADD WEIGHT ---------------- */
+/* ----------- ADD ----------- */
 async function addWeight(){
 await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
 weight.value="";
@@ -190,6 +200,7 @@ refreshAll();
 function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
 refreshAll();
 setInterval(refreshAll,30000);
+
 
 </script>
 </body>
