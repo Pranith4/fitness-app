@@ -6,6 +6,8 @@ body{background:#000;color:white;font-family:sans-serif;margin:0}
 .layout{display:flex;flex-wrap:wrap;padding:10px}
 .leftPanel{flex:2}
 .rightPanel{flex:1}
+.prize{text-align:center;background:#ff2e63;color:white}
+.prize h1{font-size:36px;margin:10px 0}
 
 .card{background:#1c1c1c;margin:15px;padding:20px;border-radius:14px;box-shadow:0 0 15px #000}
 .smallChart{max-width:700px}
