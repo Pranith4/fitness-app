@@ -43,11 +43,6 @@
 </div>
 
 <div class="card">
-<h3>📈 Your Trend</h3>
-<canvas id="userChart"></canvas>
-</div>
-
-<div class="card">
 <h3>➕ Add Today's Weight</h3>
 <input id="weight" placeholder="Enter weight">
 <button onclick="addWeight()">Submit</button>
@@ -74,7 +69,12 @@
 </div>
 </div>
 </div>
-
+/* ----------- ADD ----------- */
+async function addWeight(){
+await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
+weight.value="";
+refreshAll();
+}
 </div>
 
 <script>
@@ -215,13 +215,6 @@ const avgDaily=((current-target)/daysRemaining).toFixed(2);
 
 totalLoss.innerText=daysRemaining+" days left";
 totalDays.innerText=avgDaily+" kg/day needed";
-}
-
-/* ----------- ADD ----------- */
-async function addWeight(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
-weight.value="";
-refreshAll();
 }
 
 function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
