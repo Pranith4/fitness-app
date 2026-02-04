@@ -119,42 +119,61 @@ refreshAll();
 }
 
 /* ---------------- GOAL ---------------- */
-async function saveGoal(){
-await fetch(API_URL,{method:"POST",body:JSON.stringify({
-action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value
-})});
-loadGoal();
+async function loadGoal(){
+const res=await fetch(API_URL,{
+  method:"POST",
+  body:JSON.stringify({action:"getGoal",username:user})
+});
+const g=await res.json();
+
+if(!g.startWeight || !g.startDate || !g.endDate) return;
+
+startWeight.value=g.startWeight;
+targetWeight.value=g.targetWeight;
+startDate.value=g.startDate.split("T")[0];
+endDate.value=g.endDate.split("T")[0];
+
+calculateGoalStats();
 }
 
-async function loadGoal(){
-const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
-const g=await res.json();
-if(!g.startWeight) return;
+function calculateGoalStats(){
+const sw=parseFloat(startWeight.value);
+const tw=parseFloat(targetWeight.value);
+const sd=new Date(startDate.value);
+const ed=new Date(endDate.value);
 
-const sw=parseFloat(g.startWeight);
-const tw=parseFloat(g.targetWeight);
-const sd=new Date(g.startDate);
-const ed=new Date(g.endDate);
-if(isNaN(sd)||isNaN(ed)) return;  // FIX
+if(isNaN(sw)||isNaN(tw)||isNaN(sd)||isNaN(ed)) return;
 
+const totalLoss=(sw-tw);
 const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
-const dailyLoss=(sw-tw)/totalDays;
+
+if(totalDays<=0) return;
+
+const dailyRequired=totalLoss/totalDays;
+
 const today=new Date();
 const daysPassed=Math.max(0,Math.ceil((today-sd)/(1000*60*60*24)));
-expectedGoalWeight=(sw-(dailyLoss*daysPassed));
+expectedGoalWeight=(sw-(dailyRequired*daysPassed));
 
-totalLoss.innerText=(sw-tw).toFixed(1);
+totalLoss.innerText=totalLoss.toFixed(1);
 totalDays.innerText=totalDays;
-dailyLoss.innerText=dailyLoss.toFixed(2);
+dailyLoss.innerText=dailyRequired.toFixed(2);
 expectedToday.innerText=expectedGoalWeight.toFixed(1);
-
-/* Compare with latest */
-const res2=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
-const rows=await res2.json();
-if(rows.length){
-const current=parseFloat(rows[rows.length-1][2]);
-goalStatus.innerText=current<=expectedGoalWeight?"On Track ✅":"Behind ⚠️";
 }
+
+async function saveGoal(){
+await fetch(API_URL,{
+  method:"POST",
+  body:JSON.stringify({
+    action:"saveGoal",
+    username:user,
+    startWeight:startWeight.value,
+    targetWeight:targetWeight.value,
+    startDate:startDate.value,
+    endDate:endDate.value
+  })
+});
+loadGoal();  // 🔥 forces recalculation
 }
 
 function refreshAll(){ loadGroupData(); loadGoal(); }
