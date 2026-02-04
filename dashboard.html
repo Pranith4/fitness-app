@@ -17,7 +17,13 @@
   <p id="msg"></p>
 </div>
 
-<div id="noData" class="centerMsg hidden">No data yet. Add weight to see graphs 📈</div>
+<div class="stats">
+  <div class="card"><h3>🔥 Streak</h3><p id="streak">0 days</p></div>
+  <div class="card"><h3>🎯 Goal Progress</h3><p id="goalProgress">--</p></div>
+  <div class="card"><h3>📉 Trend</h3><p id="trend">--</p></div>
+</div>
+
+<div id="noData" class="centerMsg hidden">No data yet. Add weight 📈</div>
 
 <div class="grid">
   <div class="card"><h3>Daily Progress</h3><canvas id="dailyChart"></canvas></div>
@@ -25,7 +31,7 @@
 </div>
 
 <div class="card">
-  <h3>Leaderboard (Latest Weight)</h3>
+  <h3>🏆 Leaderboard</h3>
   <ul id="leaderboard"></ul>
 </div>
 
@@ -41,18 +47,26 @@ async function loadData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
 const data=await res.json();
 
-if(data.length<=1){
-noData.classList.remove("hidden");
-return;
-}
+if(data.length<=1){noData.classList.remove("hidden");return;}
 
-noData.classList.add("hidden");
 const rows=data.slice(1);
-
-const dates=rows.map(r=>new Date(r[1]).toLocaleDateString());
 const weights=rows.map(r=>parseFloat(r[2]));
+const dates=rows.map(r=>new Date(r[1]));
 
-new Chart(dailyChart,{type:"line",data:{labels:dates,datasets:[{label:"Weight",data:weights,tension:0.3}]}});
+let streakCount=1;
+for(let i=dates.length-1;i>0;i--){
+if((dates[i]-dates[i-1])/(1000*60*60*24)<=1.5) streakCount++;
+else break;
+}
+streak.innerText=streakCount+" days";
+
+let diff=weights[weights.length-1]-weights[0];
+trend.innerText=diff<0?"⬇ Losing":"⬆ Gaining";
+
+goalProgress.innerText="Set goal in sheet";
+
+const labels=dates.map(d=>d.toLocaleDateString());
+new Chart(dailyChart,{type:"line",data:{labels:labels,datasets:[{label:"Weight",data:weights}]}});
 
 let monthData={};
 rows.forEach(r=>{
@@ -60,9 +74,7 @@ let m=new Date(r[1]).toLocaleString('default',{month:'short'});
 if(!monthData[m]) monthData[m]=[];
 monthData[m].push(parseFloat(r[2]));
 });
-let months=Object.keys(monthData);
-let avg=months.map(m=>monthData[m].reduce((a,b)=>a+b)/monthData[m].length);
-new Chart(monthlyChart,{type:"bar",data:{labels:months,datasets:[{label:"Avg Weight",data:avg}]}});
+new Chart(monthlyChart,{type:"bar",data:{labels:Object.keys(monthData),datasets:[{label:"Avg",data:Object.values(monthData).map(a=>a.reduce((x,y)=>x+y)/a.length)}]}});
 
 loadLeaderboard();
 }
@@ -73,9 +85,7 @@ const data=await res.json();
 let latest={};
 data.slice(1).forEach(r=>latest[r[0]]=r[2]);
 leaderboard.innerHTML="";
-Object.entries(latest).sort((a,b)=>a[1]-b[1]).forEach(e=>{
-leaderboard.innerHTML+=`<li>${e[0]} — ${e[1]} kg</li>`;
-});
+Object.entries(latest).sort((a,b)=>a[1]-b[1]).forEach(e=>leaderboard.innerHTML+=`<li>${e[0]} — ${e[1]} kg</li>`);
 }
 
 async function addWeight(){
