@@ -1,24 +1,23 @@
 body{background:#000;color:white;font-family:sans-serif;margin:0}
-.video-bg iframe{position:fixed;width:100%;height:100%;opacity:0.15;z-index:-1}
+.video-bg iframe{position:fixed;width:100%;height:100%;opacity:0.12;z-index:-1}
 
 .header{display:flex;justify-content:space-between;padding:15px;background:#111}
-.tabs{text-align:center;margin:10px}
-.tabs button{margin:0 10px;padding:10px 20px;border-radius:20px;background:#222}
-.activeTab{background:#ff2e63!important}
 
-.grid{display:flex;flex-wrap:wrap;justify-content:center}
-.card{background:#1c1c1c;margin:15px;padding:20px;border-radius:14px;flex:1;min-width:300px}
+.layout{display:flex;flex-wrap:wrap;padding:10px}
+.leftPanel{flex:2}
+.rightPanel{flex:1}
+
+.card{background:#1c1c1c;margin:15px;padding:20px;border-radius:14px;box-shadow:0 0 15px #000}
+.smallChart{max-width:700px}
+
+input{background:#2a2a2a;color:white;padding:10px;margin:6px;border:none;border-radius:8px;width:100%}
+button{background:#ff2e63;border:none;color:white;padding:10px;border-radius:8px;cursor:pointer}
+button:hover{transform:scale(1.05)}
 
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px;text-align:center}
 th{background:#ff2e63}
 
-input{background:#2a2a2a;color:white;padding:10px;margin:6px;border:none;border-radius:8px}
-
 @media(max-width:768px){
-.grid{flex-direction:column}
-.header{flex-direction:column;text-align:center}
+.layout{flex-direction:column}
 }
-
-.smallChart{max-width:700px;margin:auto}
-#goalStats{margin-top:10px}
