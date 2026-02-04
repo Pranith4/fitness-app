@@ -8,50 +8,65 @@
 <body>
 
 <div class="video-bg">
-  <iframe src="https://www.youtube.com/embed/eAlNvWgTDZQ?autoplay=1&mute=1&loop=1&playlist=eAlNvWgTDZQ&controls=0" allow="autoplay"></iframe>
+<iframe src="https://www.youtube.com/embed/eAlNvWgTDZQ?autoplay=1&mute=1&loop=1&playlist=eAlNvWgTDZQ&controls=0"></iframe>
 </div>
 
 <div class="header">
-  <h2 id="welcome"></h2>
-  <button onclick="refreshAll()">🔄 Refresh</button>
+<h2 id="welcome"></h2>
+<button onclick="refreshAll()">🔄 Refresh</button>
 </div>
+
+<div class="layout">
+
+<!-- LEFT SIDE -->
+<div class="leftPanel">
 
 <div class="card smallChart">
-  <h3>Group Weight Trend</h3>
-  <canvas id="groupChart"></canvas>
+<h3>🏆 Group Progress</h3>
+<canvas id="groupChart"></canvas>
 </div>
 
 <div class="card">
-  <h3>Weights by Date</h3>
-  <table id="matrixTable"></table>
-</div>
-
-<div class="grid">
-
-<div class="card">
-  <h3>Add Today's Weight</h3>
-  <input id="weight" placeholder="Enter weight">
-  <button onclick="addWeight()">Submit</button>
-  <p id="msg"></p>
+<h3>📊 Weight Matrix</h3>
+<table id="matrixTable"></table>
 </div>
 
 <div class="card">
-  <h3>🎯 Goal Planner</h3>
-  <input id="startWeight" placeholder="Start Weight">
-  <input id="targetWeight" placeholder="Target Weight">
-  <input type="date" id="startDate">
-  <input type="date" id="endDate">
-  <button onclick="saveGoal()">Save Goal</button>
-
-  <div id="goalStats">
-    <p>Total Loss: <b id="totalLoss"></b></p>
-    <p>Total Days: <b id="totalDays"></b></p>
-    <p>Daily Required: <b id="dailyLoss"></b></p>
-    <p>Expected Today: <b id="expectedToday"></b></p>
-    <p>Status: <b id="goalStatus"></b></p>
-  </div>
+<h3>📈 Your Trend</h3>
+<canvas id="userChart"></canvas>
 </div>
 
+<div class="card">
+<h3>➕ Add Today's Weight</h3>
+<input id="weight" placeholder="Enter weight">
+<button onclick="addWeight()">Submit</button>
+<p id="msg"></p>
+</div>
+
+</div>
+
+<!-- RIGHT SIDE -->
+<div class="rightPanel">
+
+<div class="card">
+<h3>🎯 Goal Planner</h3>
+<input id="startWeight" placeholder="Start Weight">
+<input id="targetWeight" placeholder="Target Weight">
+<input type="date" id="startDate">
+<input type="date" id="endDate">
+<button onclick="saveGoal()">Save Goal</button>
+
+<div class="goalStats">
+<p>Total Loss: <b id="totalLoss"></b></p>
+<p>Total Days: <b id="totalDays"></b></p>
+<p>Daily Required: <b id="dailyLoss"></b></p>
+<p>Expected Today: <b id="expectedToday"></b></p>
+<p>Status: <b id="goalStatus"></b></p>
+</div>
+
+</div>
+
+</div>
 </div>
 
 <script>
@@ -59,10 +74,8 @@ const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H
 const user=localStorage.getItem("user");
 welcome.innerText="Welcome, "+user;
 
-let chartInstance;
-let expectedGoalWeight=null;
+let groupChart,userChart,expectedGoalWeight=null;
 
-/* ---------------- GROUP DATA ---------------- */
 async function loadGroupData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
 const data=await res.json();
@@ -70,35 +83,23 @@ if(data.length<=1) return;
 const rows=data.slice(1);
 
 let users={},datesSet=new Set();
-
 rows.forEach(r=>{
-let d=new Date(r[1]);
-let key=d.toISOString().split('T')[0]; // FIXED
+let key=new Date(r[1]).toISOString().split('T')[0];
 datesSet.add(key);
 if(!users[r[0]]) users[r[0]]=[];
 users[r[0]].push({date:key,weight:parseFloat(r[2])});
 });
 
 const dates=[...datesSet].sort();
-
 let datasets=Object.keys(users).map(name=>({
 label:name,
-data:dates.map(d=>{
-let rec=users[name].find(x=>x.date===d);
-return rec?rec.weight:null;
-}),
-tension:0.4,
-pointRadius:3
+data:dates.map(d=>users[name].find(x=>x.date===d)?.weight||null),
+tension:0.4
 }));
 
-if(chartInstance) chartInstance.destroy();
-chartInstance=new Chart(document.getElementById("groupChart"),{
-type:"line",
-data:{labels:dates,datasets},
-options:{interaction:{mode:'nearest'},plugins:{legend:{labels:{color:'white'}}}}
-});
+if(groupChart) groupChart.destroy();
+groupChart=new Chart(groupChart,{type:"line",data:{labels:dates,datasets}});
 
-/* TABLE */
 let html="<tr><th>Name</th>"+dates.map(d=>`<th>${d}</th>`).join("")+"</tr>";
 Object.keys(users).forEach(name=>{
 html+="<tr><td>"+name+"</td>";
@@ -111,75 +112,53 @@ html+="</tr>";
 matrixTable.innerHTML=html;
 }
 
-/* ---------------- ADD WEIGHT ---------------- */
+async function loadUserData(){
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
+const rows=await res.json();
+if(rows.length===0) return;
+const dates=rows.map(r=>new Date(r[1]).toLocaleDateString());
+const weights=rows.map(r=>parseFloat(r[2]));
+
+if(userChart) userChart.destroy();
+userChart=new Chart(userChart,{type:"line",data:{labels:dates,datasets:[{label:"Your Weight",data:weights,tension:0.4}]}});
+}
+
 async function addWeight(){
 await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
 weight.value="";
 refreshAll();
 }
 
-/* ---------------- GOAL ---------------- */
-async function loadGoal(){
-const res=await fetch(API_URL,{
-  method:"POST",
-  body:JSON.stringify({action:"getGoal",username:user})
-});
-const g=await res.json();
-
-if(!g.startWeight || !g.startDate || !g.endDate) return;
-
-startWeight.value=g.startWeight;
-targetWeight.value=g.targetWeight;
-startDate.value=g.startDate.split("T")[0];
-endDate.value=g.endDate.split("T")[0];
-
-calculateGoalStats();
+async function saveGoal(){
+await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"saveGoal",username:user,startWeight:startWeight.value,targetWeight:targetWeight.value,startDate:startDate.value,endDate:endDate.value})});
+loadGoal();
 }
 
-function calculateGoalStats(){
-const sw=parseFloat(startWeight.value);
-const tw=parseFloat(targetWeight.value);
-const sd=new Date(startDate.value);
-const ed=new Date(endDate.value);
+async function loadGoal(){
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
+const g=await res.json();
+if(!g.startWeight) return;
 
-if(isNaN(sw)||isNaN(tw)||isNaN(sd)||isNaN(ed)) return;
-
-const totalLoss=(sw-tw);
+const sw=parseFloat(g.startWeight);
+const tw=parseFloat(g.targetWeight);
+const sd=new Date(g.startDate);
+const ed=new Date(g.endDate);
 const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
-
-if(totalDays<=0) return;
-
-const dailyRequired=totalLoss/totalDays;
-
-const today=new Date();
-const daysPassed=Math.max(0,Math.ceil((today-sd)/(1000*60*60*24)));
+const dailyRequired=(sw-tw)/totalDays;
+const daysPassed=Math.ceil((new Date()-sd)/(1000*60*60*24));
 expectedGoalWeight=(sw-(dailyRequired*daysPassed));
 
-totalLoss.innerText=totalLoss.toFixed(1);
+totalLoss.innerText=(sw-tw).toFixed(1);
 totalDays.innerText=totalDays;
 dailyLoss.innerText=dailyRequired.toFixed(2);
 expectedToday.innerText=expectedGoalWeight.toFixed(1);
+goalStatus.innerText="Tracking...";
 }
 
-async function saveGoal(){
-await fetch(API_URL,{
-  method:"POST",
-  body:JSON.stringify({
-    action:"saveGoal",
-    username:user,
-    startWeight:startWeight.value,
-    targetWeight:targetWeight.value,
-    startDate:startDate.value,
-    endDate:endDate.value
-  })
-});
-loadGoal();  // 🔥 forces recalculation
-}
-
-function refreshAll(){ loadGroupData(); loadGoal(); }
+function refreshAll(){ loadGroupData(); loadUserData(); loadGoal(); }
 
 refreshAll();
 setInterval(refreshAll,30000);
 </script>
-
+</body>
 </html>
