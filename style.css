@@ -8,4 +8,27 @@ button{background:#ff2e63;border:none;color:white;padding:10px 15px;border-radiu
 .hidden{display:none}
 .stats{display:flex;justify-content:center;flex-wrap:wrap}
 .stats .card{width:180px;margin:10px}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  text-align: center;
+}
+
+th {
+  background: #ff2e63;
+}
+
+tr:nth-child(even) {
+  background: #1f1f1f;
+}
+
+tr:nth-child(odd) {
+  background: #151515;
+}
 
