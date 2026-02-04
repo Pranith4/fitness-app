@@ -1,35 +1,21 @@
-body{
-  background:rgba(0,0,0,0.8);
-  color:white;
-  font-family:sans-serif;
-  margin:0;
-}
+body{background:#000;color:white;font-family:sans-serif;margin:0}
+.video-bg iframe{position:fixed;width:100%;height:100%;opacity:0.15;z-index:-1}
 
-.video-bg{position:fixed;width:100%;height:100%;z-index:-1}
-.video-bg iframe{width:100vw;height:100vh;opacity:0.15}
-
-.header{display:flex;justify-content:space-between;padding:15px;background:#1c1c1c}
-.tabs{display:flex;justify-content:center;margin:10px}
-.tabs button{margin:0 10px;padding:10px 20px;border-radius:20px;background:#333}
+.header{display:flex;justify-content:space-between;padding:15px;background:#111}
+.tabs{text-align:center;margin:10px}
+.tabs button{margin:0 10px;padding:10px 20px;border-radius:20px;background:#222}
 .activeTab{background:#ff2e63!important}
 
 .grid{display:flex;flex-wrap:wrap;justify-content:center}
-.card{background:#1c1c1c;padding:20px;margin:15px;border-radius:14px;text-align:center;box-shadow:0 0 10px #000}
+.card{background:#1c1c1c;margin:15px;padding:20px;border-radius:14px;flex:1;min-width:300px}
 
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px;text-align:center}
 th{background:#ff2e63}
-tr:nth-child(even){background:#222}
-tr:nth-child(odd){background:#181818}
 
 input{background:#2a2a2a;color:white;padding:10px;margin:6px;border:none;border-radius:8px}
 
-button{background:#ff2e63;border:none;color:white;padding:10px 15px;border-radius:8px;cursor:pointer}
-button:hover{transform:scale(1.05)}
-
-.hidden{display:none}
-
 @media(max-width:768px){
-  .grid{flex-direction:column}
-  .header{flex-direction:column;text-align:center}
+.grid{flex-direction:column}
+.header{flex-direction:column;text-align:center}
 }
