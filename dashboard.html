@@ -1,128 +1,62 @@
-<!DOCTYPE html>
-<html>
-<head>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-
-<div class="video-bg">
-  <iframe 
-    src="https://www.youtube.com/embed/eAlNvWgTDZQ?autoplay=1&mute=1&loop=1&playlist=eAlNvWgTDZQ&controls=0"
-    frameborder="0"
-    allow="autoplay">
-  </iframe>
-</div>
-
-<div class="header">
-  <h2 id="welcome"></h2>
-  <div>
-    <button onclick="refreshData()">🔄 Refresh</button>
-    <button onclick="toggleForm()">+ Add Weight</button>
-  </div>
-</div>
-
-<div id="formCard" class="card hidden">
-  <input id="weight" placeholder="Enter weight">
-  <button onclick="addWeight()">Submit</button>
-  <p id="msg"></p>
-</div>
-
-<div id="noData" class="centerMsg hidden">No data yet. Add weight 📈</div>
-
-<div class="grid">
-  <div class="card"><h3>Daily Progress</h3><canvas id="dailyChart"></canvas></div>
-  <div class="card"><h3>Monthly Avg</h3><canvas id="monthlyChart"></canvas></div>
-</div>
-
-<div class="card">
-  <h3>🏆 Leaderboard</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Rank</th><th>Name</th><th>Start</th><th>Current</th><th>% Change</th>
-      </tr>
-    </thead>
-    <tbody id="leaderboard"></tbody>
-  </table>
-</div>
-
-<!-- 🎯 GOAL PLANNER -->
-<div class="card">
-  <h3>🎯 Your Goal Plan</h3>
-
-  <div id="goalForm">
-    <input id="startWeight" placeholder="Start Weight (kg)">
-    <input id="targetWeight" placeholder="Target Weight (kg)">
-    <input type="date" id="startDate">
-    <input type="date" id="endDate">
-    <button onclick="saveGoal()">Save Goal</button>
-  </div>
-
-  <div id="goalStats" class="hidden">
-    <p>Total to Lose: <b id="totalLoss"></b> kg</p>
-    <p>Total Days: <b id="totalDays"></b></p>
-    <p>Required Daily Loss: <b id="dailyLoss"></b> kg/day</p>
-    <p>Expected Weight Today: <b id="expectedToday"></b> kg</p>
-    <p>Status: <b id="goalStatus"></b></p>
-    <button onclick="resetGoal()" style="background:#444;margin-top:10px;">Reset Goal</button>
-  </div>
-</div>
-
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+const API_URL="YOUR_SCRIPT_URL";
 const user=localStorage.getItem("user");
 if(!user) window.location="index.html";
 welcome.innerText="Welcome, "+user;
 
-let dailyChartInstance, monthlyChartInstance;
+let dailyChartInstance, monthlyChartInstance, goalChartInstance;
 let expectedGoalWeight=null;
 
 function toggleForm(){ formCard.classList.toggle("hidden"); }
-
-function refreshData(){ msg.innerText="Refreshing..."; loadData(); }
+function refreshData(){ loadData(); }
 
 async function loadData(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getWeights",username:user})});
-const data=await res.json();
+const rows=await res.json();
 
-if(data.length===0){ noData.classList.remove("hidden"); return; }
+if(rows.length===0){noData.classList.remove("hidden");return;}
 noData.classList.add("hidden");
 
-const rows=data;
 const dates=rows.map(r=>new Date(r[1]));
 const weights=rows.map(r=>parseFloat(r[2]));
 let labels=dates.map(d=>d.toLocaleDateString());
 
 if(expectedGoalWeight!==null){
-  const current=weights[weights.length-1];
-  goalStatus.innerText = current<=expectedGoalWeight ? "On Track ✅" : "Behind ⚠️";
+const current=weights[weights.length-1];
+goalStatus.innerText=current<=expectedGoalWeight?"On Track ✅":"Behind ⚠️";
 }
 
 if(dailyChartInstance) dailyChartInstance.destroy();
 dailyChartInstance=new Chart(dailyChart,{type:"line",data:{labels:labels,datasets:[{label:"Weight",data:weights,tension:0.3}]}});
 
-let monthData={};
-rows.forEach(r=>{
-let m=new Date(r[1]).toLocaleString('default',{month:'short'});
-if(!monthData[m]) monthData[m]=[];
-monthData[m].push(parseFloat(r[2]));
-});
-
-if(monthlyChartInstance) monthlyChartInstance.destroy();
-monthlyChartInstance=new Chart(monthlyChart,{type:"bar",data:{labels:Object.keys(monthData),datasets:[{label:"Avg",data:Object.values(monthData).map(a=>a.reduce((x,y)=>x+y)/a.length)}]}});
-
 loadLeaderboard();
 }
 
-async function loadLeaderboard(){ /* unchanged */ }
+async function loadLeaderboard(){
+const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getAllWeights"})});
+const data=await res.json();
+const rows=data.slice(1);
+let users={};
 
-async function addWeight(){
-const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"addWeight",username:user,weight:weight.value})});
-const d=await res.json();
-msg.innerText=d.success?`✅ Submitted at ${new Date(d.timestamp).toLocaleString()}`:`⚠ ${d.message}`;
-weight.value="";
-loadData();
+rows.forEach(r=>{
+if(!users[r[0]]) users[r[0]]=[];
+users[r[0]].push({date:new Date(r[1]),weight:parseFloat(r[2])});
+});
+
+let results=[];
+Object.keys(users).forEach(name=>{
+const rec=users[name].sort((a,b)=>a.date-b.date);
+results.push({
+name,
+initial:rec[0].weight,
+latest:rec[rec.length-1].weight,
+percent:((rec[0].weight-rec[rec.length-1].weight)/rec[0].weight*100).toFixed(2)
+});
+});
+
+results.sort((a,b)=>b.percent-a.percent);
+leaderboard.innerHTML="";
+results.forEach((r,i)=>leaderboard.innerHTML+=`<tr><td>${i+1}</td><td>${r.name}</td><td>${r.initial}</td><td>${r.latest}</td><td>${r.percent}%</td></tr>`);
 }
 
 async function saveGoal(){
@@ -133,8 +67,14 @@ loadGoal();
 async function loadGoal(){
 const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({action:"getGoal",username:user})});
 const g=await res.json();
-if(!g.startWeight) return;
-startWeight.value=g.startWeight; targetWeight.value=g.targetWeight; startDate.value=g.startDate; endDate.value=g.endDate;
+
+if(!g.startWeight){goalForm.classList.remove("hidden");goalStats.classList.add("hidden");return;}
+
+startWeight.value=g.startWeight;
+targetWeight.value=g.targetWeight;
+startDate.value=g.startDate;
+endDate.value=g.endDate;
+goalForm.classList.add("hidden");
 calculateGoalStats();
 }
 
@@ -145,31 +85,22 @@ const sd=new Date(startDate.value);
 const ed=new Date(endDate.value);
 const today=new Date();
 
-const totalLoss=(sw-tw).toFixed(1);
 const totalDays=Math.ceil((ed-sd)/(1000*60*60*24));
-const dailyLoss=(totalLoss/totalDays).toFixed(2);
+const dailyLoss=((sw-tw)/totalDays);
 const daysPassed=Math.ceil((today-sd)/(1000*60*60*24));
 expectedGoalWeight=(sw-(dailyLoss*daysPassed));
 
-totalLoss.innerText=totalLoss;
+totalLoss.innerText=(sw-tw).toFixed(1);
 totalDays.innerText=totalDays;
-dailyLoss.innerText=dailyLoss;
+dailyLoss.innerText=dailyLoss.toFixed(2);
 expectedToday.innerText=expectedGoalWeight.toFixed(1);
 
 goalStats.classList.remove("hidden");
-goalForm.classList.add("hidden");
 }
 
-function resetGoal(){
-goalForm.classList.remove("hidden");
-goalStats.classList.add("hidden");
-expectedGoalWeight=null;
-}
+function resetGoal(){goalForm.classList.remove("hidden");goalStats.classList.add("hidden");expectedGoalWeight=null;}
 
 loadData();
 loadGoal();
 setInterval(loadData,30000);
 </script>
-
-</body>
-</html>
