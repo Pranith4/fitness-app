@@ -24,6 +24,7 @@ body {
   overflow-x: hidden;
 }
 
+/* --- PC Layout (Desktop Default) --- */
 .layout {
   display: grid;
   grid-template-columns: 1fr 350px;
@@ -32,11 +33,7 @@ body {
   margin: auto;
 }
 
-@media (max-width: 1024px) { 
-  .layout { grid-template-columns: 1fr; } 
-}
-
-/* --- Optimized Shining Card Logic --- */
+/* --- Optimized Card Logic --- */
 .card {
   background: var(--card-glass);
   backdrop-filter: blur(20px);
@@ -48,12 +45,11 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  /* GPU Acceleration for smooth caching updates */
   will-change: transform, opacity;
-  transform: translateZ(0);
+  transform: translateZ(0); /* Hardware Acceleration */
 }
 
-/* Hover Light Reflection Animation */
+/* Shining Reflection Effect */
 .card::before {
   content: "";
   position: absolute;
@@ -80,7 +76,7 @@ body {
   margin: 10px 0;
 }
 
-/* --- Motivation Card & Continuous Shine --- */
+/* --- Motivation Card Animation --- */
 .motivation-card {
   border: 1px solid var(--gold);
   background: linear-gradient(135deg, #1a1000 0%, #05070a 100%);
@@ -109,17 +105,16 @@ body {
   border-radius: 15px; 
   text-align: center; 
   border: 1px solid rgba(255,255,255,0.05);
-  transition: 0.3s;
 }
-.stat-box:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); }
 .stat-box span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 .stat-box h2 { color: var(--primary); margin-top: 5px; font-size: 1.5rem; }
 
-/* --- Table Optimization (Sticky Headers) --- */
+/* --- Table Styling (Sticky Header) --- */
 .table-container {
   overflow-x: auto;
   max-height: 500px;
   overflow-y: auto;
+  border-radius: 10px;
 }
 
 table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; font-size: 0.9rem; }
@@ -127,16 +122,16 @@ table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 1
 thead th { 
   position: sticky; 
   top: 0; 
-  background: #111827; /* Dark solid color to prevent overlap bleed */
+  background: #0f172a; /* Solid dark background for sticky headers */
   color: var(--primary); 
   font-size: 0.75rem; 
   padding: 15px; 
   text-transform: uppercase; 
   z-index: 10;
-  border-bottom: 1px solid var(--primary);
+  border-bottom: 2px solid var(--primary);
 }
 
-td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); background: transparent; }
+td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 tr:hover td { background: rgba(255,255,255,0.03); }
 
 /* --- Inputs & Buttons --- */
@@ -148,7 +143,6 @@ input {
   border-radius: 12px; 
   width: 100%; 
   margin: 10px 0;
-  transition: 0.3s;
 }
 input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
 
@@ -161,41 +155,57 @@ button {
   border-radius: 12px; 
   cursor: pointer; 
   width: 100%; 
-  transition: all 0.3s ease; 
   text-transform: uppercase;
-  letter-spacing: 1px;
+  transition: 0.3s;
 }
 button:hover { box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); }
-button:active { transform: scale(0.98); }
 
 /* --- UPI ID Pulse Glow --- */
 .upi-id { 
   color: var(--gold); 
-  font-family: 'Courier New', monospace; 
+  font-family: monospace; 
   background: rgba(255, 140, 0, 0.1); 
   padding: 8px 12px; 
   border-radius: 8px; 
   font-weight: bold; 
   display: inline-block;
-  margin: 5px 0;
   animation: pulse-glow 2.5s infinite;
 }
 
 @keyframes pulse-glow {
   0% { box-shadow: 0 0 0px rgba(255, 140, 0, 0); }
-  50% { box-shadow: 0 0 15px rgba(255, 140, 0, 0.2); }
+  50% { box-shadow: 0 0 12px rgba(255, 140, 0, 0.2); }
   100% { box-shadow: 0 0 0px rgba(255, 140, 0, 0); }
 }
 
-/* --- Custom Scrollbar --- */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
-/* --- Mobile Fixes --- */
+/* --- MOBILE LAYOUT OVERRIDE --- */
 @media (max-width: 768px) {
-  .card { backdrop-filter: blur(10px); padding: 15px; }
-  .prize-hero h1 { font-size: 2.5rem; }
-  .stat-grid { grid-template-columns: 1fr; }
+  body { padding: 10px; }
+
+  .layout {
+    grid-template-columns: 1fr; /* Stack Sidebar and Main */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Make Main Panel appear first */
+  .main-panel { order: 1; }
+  
+  /* Sidebar items re-ordering for Mobile */
+  .side-panel { order: 2; display: flex; flex-direction: column; }
+  
+  /* Move Log Weight (3rd card) to the top of the side-panel section */
+  .side-panel .card:nth-child(3) { 
+    order: -1; 
+    border: 1px solid var(--primary); 
+    background: rgba(0, 210, 255, 0.05);
+  }
+
+  .stat-grid { grid-template-columns: 1fr 1fr; } /* 2 stats per row on mobile */
+  
+  .prize-hero h1 { font-size: 2.2rem; }
+
+  /* Allow the competitor table to scroll horizontally without breaking layout */
+  table { min-width: 650px; } 
+  .card { padding: 15px; }
 }
