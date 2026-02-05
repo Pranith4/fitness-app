@@ -47,7 +47,7 @@
             <p style="font-size:0.8rem; margin: 10px 0; opacity:0.8">Keep the fire burning!</p>
             <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; margin-bottom:12px">
                 <span style="font-size:0.65rem; display:block; margin-bottom:5px">Pay INR 100 for Motivation:</span>
-                <span class="upi-id">8431257887@ybl</span>
+                <span class="upi-id" id="upiValue">8431257887@ybl</span>
             </div>
             <button onclick="copyUPI()" style="background:var(--gold); color:white">Copy UPI ID</button>
         </div>
@@ -66,6 +66,7 @@
         
         <div class="card">
             <h3>🎯 Goal Settings</h3>
+            <input type="number" id="startW" placeholder="Start Weight (Initial)">
             <input type="number" id="targetW" placeholder="Target Weight">
             <input type="date" id="endD">
             <button onclick="saveGoal()" style="background:rgba(255,255,255,0.1); color:white">Update Goal</button>
@@ -74,17 +75,26 @@
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; // REPLACE THIS
+const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
 const user = localStorage.getItem("user") || "Guest";
 document.getElementById("welcomeText").innerText = user;
 
 let groupChart;
 
+// --- INITIALIZATION ---
 async function refreshAll() {
-    await loadGoal();
-    await loadData();
+    // 1. Instant UI: Load from Cache
+    const cachedGoal = localStorage.getItem(`goal_${user}`);
+    const cachedLogs = localStorage.getItem(`logs_${user}`);
+
+    if (cachedGoal) renderGoalData(JSON.parse(cachedGoal));
+    if (cachedLogs) processAndRender(JSON.parse(cachedLogs));
+
+    // 2. Background Sync: Update from Cloud
+    await Promise.all([loadGoal(), loadData()]);
 }
 
+// --- API ACTIONS ---
 async function addWeight() {
     const w = document.getElementById("weightInput").value;
     if(!w) return;
@@ -96,20 +106,58 @@ async function addWeight() {
     if(result.success) refreshAll();
 }
 
+async function saveGoal() {
+    const data = {
+        action: "saveGoal",
+        username: user,
+        startWeight: document.getElementById("startW").value,
+        targetWeight: document.getElementById("targetW").value,
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: document.getElementById("endD").value
+    };
+    const res = await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
+    const result = await res.json();
+    if(result.success) { 
+        alert("Goal Updated! 🔥"); 
+        refreshAll(); 
+    }
+}
+
 async function loadGoal() {
-    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
-    const g = await res.json();
-    if(!g.endDate) return;
-    document.getElementById("targetW").value = g.targetWeight;
-    document.getElementById("endD").value = g.endDate ? g.endDate.split('T')[0] : "";
-    const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
-    document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
+    try {
+        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
+        const g = await res.json();
+        if(g.targetWeight) {
+            localStorage.setItem(`goal_${user}`, JSON.stringify(g));
+            renderGoalData(g);
+        }
+    } catch(e) { console.error("Goal fetch failed", e); }
 }
 
 async function loadData() {
-    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-    const data = await res.json();
-    if(data.length <= 1) return;
+    try {
+        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+        const data = await res.json();
+        if(data && data.length > 1) {
+            localStorage.setItem(`logs_${user}`, JSON.stringify(data));
+            processAndRender(data);
+        }
+    } catch(e) { console.error("Data fetch failed", e); }
+}
+
+// --- RENDERING LOGIC ---
+function renderGoalData(g) {
+    document.getElementById("targetW").value = g.targetWeight || "";
+    document.getElementById("startW").value = g.startWeight || "";
+    document.getElementById("endD").value = g.endDate ? g.endDate.split('T')[0] : "";
+    
+    if(g.endDate) {
+        const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
+        document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
+    }
+}
+
+function processAndRender(data) {
     const rows = data.slice(1);
     let usersMap = {}, datesSet = new Set();
 
@@ -129,8 +177,11 @@ async function loadData() {
 function renderChart(usersMap, dates) {
     const colors = ['#00d2ff', '#ff2e63', '#00ff88', '#ae7aff'];
     const datasets = Object.keys(usersMap).map((u, i) => ({
-        label: u, data: dates.map(d => usersMap[u].find(x => x.date === d)?.weight || null),
-        borderColor: colors[i % colors.length], tension: 0.3, spanGaps: true
+        label: u, 
+        data: dates.map(d => usersMap[u].find(x => x.date === d)?.weight || null),
+        borderColor: colors[i % colors.length], 
+        tension: 0.3, 
+        spanGaps: true
     }));
     if(groupChart) groupChart.destroy();
     groupChart = new Chart(document.getElementById("groupChart"), {
@@ -140,12 +191,12 @@ function renderChart(usersMap, dates) {
 }
 
 function renderCompetitorTable(usersMap, dates) {
-    let html = `<tr><th>Athlete</th>`;
+    let html = `<thead><tr><th>Athlete</th>`;
     dates.forEach(d => html += `<th>${d}</th>`);
-    html += `<th>% Loss</th></tr>`;
+    html += `<th>% Loss</th></tr></thead><tbody>`;
     
     let leaderboard = Object.keys(usersMap).map(u => {
-        let entries = usersMap[u];
+        let entries = usersMap[u].sort((a,b) => a.rawDate - b.rawDate);
         let start = entries[0].weight;
         let latest = entries[entries.length-1].weight;
         let pct = (((start - latest) / start) * 100).toFixed(2);
@@ -162,40 +213,49 @@ function renderCompetitorTable(usersMap, dates) {
             let entry = item.entries.find(x => x.date === d);
             if(entry) {
                 let delta = "";
-                let prev = item.entries.filter(x => dates.indexOf(x.date) < idxD).pop();
+                let prev = item.entries.filter(x => x.rawDate < entry.rawDate).slice(-1)[0];
                 if(prev) {
                     let diff = (((entry.weight - prev.weight)/prev.weight)*100).toFixed(1);
-                    delta = `<br><span style="font-size:0.7rem; color:${diff<=0?'#00ff88':'#ff4d4d'}">${diff}%</span>`;
+                    delta = `<br><span style="font-size:0.7rem; color:${diff<=0?'#00ff88':'#ff4d4d'}">${diff > 0 ? '+' : ''}${diff}%</span>`;
                 }
                 html += `<td>${entry.weight}${delta}</td>`;
             } else html += `<td>-</td>`;
         });
         html += `<td style="font-weight:bold; background:rgba(0,210,255,0.1)">${item.pct}%</td></tr>`;
     });
+    html += `</tbody>`;
     document.getElementById("competitorTable").innerHTML = html;
 }
 
 function renderPersonalHistory(history) {
     let sorted = [...history].sort((a,b) => b.rawDate - a.rawDate);
-    let html = `<tr><th style="text-align:left">Date</th><th>Weight</th><th>Trend</th></tr>`;
+    let html = `<thead><tr><th style="text-align:left">Date</th><th>Weight</th><th>Trend</th></tr></thead><tbody>`;
     sorted.forEach((entry, i) => {
         let trend = "➖";
         if(i < sorted.length-1) trend = entry.weight < sorted[i+1].weight ? "📉" : "📈";
         html += `<tr><td style="text-align:left">${entry.date}</td><td>${entry.weight}</td><td>${trend}</td></tr>`;
     });
+    html += `</tbody>`;
     document.getElementById("historyTable").innerHTML = html;
 }
 
 function copyUPI() {
-    const el = document.createElement('textarea');
-    el.value = "8431257887@ybl";
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    alert("UPI ID Copied! 🔥");
+    const upiText = document.getElementById("upiValue").innerText;
+    navigator.clipboard.writeText(upiText).then(() => {
+        alert("UPI ID Copied! Let's go! 🔥");
+    }).catch(err => {
+        // Fallback for older browsers
+        const el = document.createElement('textarea');
+        el.value = upiText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert("UPI ID Copied! 🔥");
+    });
 }
 
+// Initial Run
 refreshAll();
 </script>
 </body>
