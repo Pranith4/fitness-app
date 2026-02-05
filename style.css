@@ -21,7 +21,6 @@ body {
   color: var(--text-main);
   padding: 20px;
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 /* --- PC Layout (Desktop Default) --- */
@@ -45,23 +44,22 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  will-change: transform, opacity;
-  transform: translateZ(0); /* Hardware Acceleration */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-/* Shining Reflection Effect */
-.card::before {
+.card:hover::before {
   content: "";
   position: absolute;
   top: 0; left: -100%;
   width: 50%; height: 100%;
   background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
   transform: skewX(-25deg);
-  transition: 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: 0.7s;
+  left: 125%;
 }
-.card:hover::before { left: 125%; }
 
-/* --- Special Prize Card --- */
+/* --- Prize & Stats --- */
 .prize-hero {
   border: 2px solid var(--primary);
   box-shadow: var(--neon-glow);
@@ -69,143 +67,103 @@ body {
 }
 .prize-hero h1 {
   font-size: 3.5rem;
-  font-weight: 800;
   background: linear-gradient(to bottom, #fff, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin: 10px 0;
 }
 
-/* --- Motivation Card Animation --- */
-.motivation-card {
-  border: 1px solid var(--gold);
-  background: linear-gradient(135deg, #1a1000 0%, #05070a 100%);
-}
-
-.shine::after {
-  content: "";
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.08), transparent);
-  transform: rotate(-45deg);
-  animation: sweep 4s infinite linear;
-}
-
-@keyframes sweep {
-  0% { transform: translateX(-100%) rotate(-45deg); }
-  100% { transform: translateX(100%) rotate(-45deg); }
-}
-
-/* --- Stats Grid --- */
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
 .stat-box { 
-  background: rgba(255,255,255,0.03); 
-  padding: 20px 10px; 
+  background: rgba(255,255,255,0.05); 
+  padding: 15px; 
   border-radius: 15px; 
   text-align: center; 
-  border: 1px solid rgba(255,255,255,0.05);
-}
-.stat-box span { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-.stat-box h2 { color: var(--primary); margin-top: 5px; font-size: 1.5rem; }
-
-/* --- Table Styling (Sticky Header) --- */
-.table-container {
-  overflow-x: auto;
-  max-height: 500px;
-  overflow-y: auto;
-  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.1);
 }
 
-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; font-size: 0.9rem; }
-
+/* --- Tables --- */
+.table-container { overflow-x: auto; border-radius: 10px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
 thead th { 
-  position: sticky; 
-  top: 0; 
-  background: #0f172a; /* Solid dark background for sticky headers */
-  color: var(--primary); 
-  font-size: 0.75rem; 
-  padding: 15px; 
-  text-transform: uppercase; 
-  z-index: 10;
+  position: sticky; top: 0; background: #0f172a; 
+  color: var(--primary); padding: 15px; z-index: 10;
   border-bottom: 2px solid var(--primary);
 }
-
-td { padding: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-tr:hover td { background: rgba(255,255,255,0.03); }
+td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
 /* --- Inputs & Buttons --- */
-input { 
-  background: rgba(0,0,0,0.4); 
-  border: 1px solid rgba(255,255,255,0.1); 
-  color: white; 
-  padding: 14px; 
-  border-radius: 12px; 
-  width: 100%; 
-  margin: 10px 0;
-}
-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 10px rgba(0, 210, 255, 0.2); }
+input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; }
+button { background: var(--primary); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; text-transform: uppercase; }
 
-button { 
-  background: var(--primary); 
-  color: #05070a; 
-  font-weight: 800; 
-  border: none; 
-  padding: 14px; 
-  border-radius: 12px; 
-  cursor: pointer; 
-  width: 100%; 
-  text-transform: uppercase;
-  transition: 0.3s;
-}
-button:hover { box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); }
-
-/* --- UPI ID Pulse Glow --- */
-.upi-id { 
-  color: var(--gold); 
-  font-family: monospace; 
-  background: rgba(255, 140, 0, 0.1); 
-  padding: 8px 12px; 
-  border-radius: 8px; 
-  font-weight: bold; 
-  display: inline-block;
-  animation: pulse-glow 2.5s infinite;
-}
-
-@keyframes pulse-glow {
-  0% { box-shadow: 0 0 0px rgba(255, 140, 0, 0); }
-  50% { box-shadow: 0 0 12px rgba(255, 140, 0, 0.2); }
-  100% { box-shadow: 0 0 0px rgba(255, 140, 0, 0); }
-}
-
-/* --- MOBILE LAYOUT OVERRIDE --- */
+/* --- MOBILE OPTIMIZATION (CLEAN LAYOUT) --- */
 @media (max-width: 768px) {
-  body { padding: 10px; }
+  body { padding: 0; } /* Remove body padding to use full width */
 
   .layout {
-    grid-template-columns: 1fr; /* Stack Sidebar and Main */
     display: flex;
     flex-direction: column;
+    padding: 15px;
+    padding-top: 100px; /* Space for sticky stats */
   }
 
-  /* Make Main Panel appear first */
-  .main-panel { order: 1; }
-  
-  /* Sidebar items re-ordering for Mobile */
-  .side-panel { order: 2; display: flex; flex-direction: column; }
-  
-  /* Move Log Weight (3rd card) to the top of the side-panel section */
-  .side-panel .card:nth-child(3) { 
-    order: -1; 
-    border: 1px solid var(--primary); 
-    background: rgba(0, 210, 255, 0.05);
+  /* 1. STICKY SCORECARDS (Keeps Rank/Loss visible while scrolling) */
+  .stat-grid {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    margin: 0;
+    padding: 10px 15px;
+    background: rgba(5, 7, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--primary);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
 
-  .stat-grid { grid-template-columns: 1fr 1fr; } /* 2 stats per row on mobile */
-  
-  .prize-hero h1 { font-size: 2.2rem; }
+  .stat-box {
+    padding: 8px 5px;
+    background: transparent;
+    border: none;
+  }
 
-  /* Allow the competitor table to scroll horizontally without breaking layout */
-  table { min-width: 650px; } 
-  .card { padding: 15px; }
+  .stat-box span { font-size: 0.6rem; display: block; }
+  .stat-box h2 { font-size: 1.1rem; color: var(--primary); }
+
+  /* 2. PRIZE POOL RE-STYLING */
+  .prize-hero {
+    margin-top: 10px;
+    padding: 15px;
+  }
+  .prize-hero h1 { font-size: 2rem; }
+
+  /* 3. CLUSTERING FIX: Use Side Panel for High Priority */
+  .side-panel {
+    order: -1; /* Moves sidebar contents above the main chart on mobile */
+  }
+
+  /* Highlight the Weight Input Card */
+  .side-panel .card:nth-child(3) {
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+  }
+
+  /* 4. TABLE SQUISHING FIX */
+  .table-container {
+    margin: 0 -5px;
+    overflow-x: auto;
+  }
+  
+  table { min-width: 600px; font-size: 0.8rem; }
+  td, th { padding: 10px 5px; }
+
+  .card { padding: 15px; border-radius: 15px; }
 }
+
+/* --- UPI & Shine Animation --- */
+.upi-id { color: var(--gold); background: rgba(255, 140, 0, 0.1); padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+.shine::after {
+  content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.08), transparent);
+  transform: rotate(-45deg); animation: sweep 4s infinite linear;
+}
+@keyframes sweep { 0% { transform: translateX(-100%) rotate(-45deg); } 100% { transform: translateX(100%) rotate(-45deg); } }
