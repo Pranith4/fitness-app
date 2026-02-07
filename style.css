@@ -1,10 +1,14 @@
+/* --- 1. CORE VARIABLES & RESET --- */
 :root {
   --primary: #00d2ff;
+  --secondary: #3a7bd5;
+  --accent: #ff2e63;
+  --gold: #ff8c00;
   --bg-black: #05070a;
   --card-glass: rgba(15, 23, 42, 0.8);
+  --neon-glow: 0 0 15px rgba(0, 210, 255, 0.3);
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
-  --accent: #ff2e63;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,29 +20,36 @@ body {
     radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
     radial-gradient(at 100% 100%, rgba(255, 46, 99, 0.1) 0px, transparent 50%);
   color: var(--text-main);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: 20px;
+  min-height: 100vh;
 }
 
-.login-container { width: 100%; max-width: 400px; }
+/* --- 2. PC LAYOUT (DESKTOP) --- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 350px; /* PC Sidebar on Right */
+  gap: 25px;
+  max-width: 1400px;
+  margin: auto;
+  align-items: start; /* Fix: Prevents sidebar cards from stretching */
+}
 
-/* --- Card & Shine Animation --- */
+/* --- 3. CARD & ANIMATION LOGIC --- */
 .card {
   background: var(--card-glass);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 24px;
-  padding: 40px 30px;
-  text-align: center;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  will-change: transform;
 }
 
+/* Moving Light Reflection */
 .shine::after {
   content: "";
   position: absolute;
@@ -46,7 +57,7 @@ body {
   width: 200%; height: 200%;
   background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.05), transparent);
   transform: rotate(-45deg);
-  animation: sweep 5s infinite linear;
+  animation: sweep 6s infinite linear;
 }
 
 @keyframes sweep {
@@ -54,70 +65,92 @@ body {
   100% { transform: translateX(100%) rotate(-45deg); }
 }
 
-/* --- Typography --- */
-.login-header h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  letter-spacing: 3px;
+/* --- 4. HEADER & STATS --- */
+.prize-hero {
+  border: 2px solid var(--primary);
+  box-shadow: var(--neon-glow);
+  text-align: center;
+}
+
+.prize-hero h1 {
+  font-size: 3.5rem;
   background: linear-gradient(to bottom, #fff, var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin: 10px 0;
 }
 
-.login-header p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-box { 
+  background: rgba(255,255,255,0.05); 
+  padding: 15px; 
+  border-radius: 15px; 
+  text-align: center; 
+  border: 1px solid rgba(255,255,255,0.05); 
+}
 
-/* --- Inputs & Interactive --- */
-input {
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  padding: 16px;
-  border-radius: 14px;
+/* --- 5. TABLE STYLING --- */
+.table-container {
+  overflow-x: auto;
+  border-radius: 12px;
   width: 100%;
-  margin-bottom: 20px;
-  font-size: 1rem;
-  transition: 0.3s;
 }
 
-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(0, 210, 255, 0.05);
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+
+thead th { 
+  position: sticky; top: 0; background: #0f172a; 
+  color: var(--primary); font-size: 0.75rem; padding: 15px; 
+  text-transform: uppercase; z-index: 10;
+  border-bottom: 2px solid var(--primary);
 }
 
-button {
-  background: var(--primary);
-  color: #05070a;
-  font-weight: 800;
-  border: none;
-  padding: 18px;
-  border-radius: 14px;
-  cursor: pointer;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.3s;
-  min-height: 58px;
+td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* --- 6. INPUTS & LOGIN STYLES --- */
+input { 
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); 
+  color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; 
 }
 
-button:hover {
-  box-shadow: 0 0 25px rgba(0, 210, 255, 0.4);
-  transform: translateY(-2px);
+button { 
+  background: var(--primary); color: #000; font-weight: 800; border: none; 
+  padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.3s; 
 }
 
-/* --- Loader Spinner --- */
+button:hover { box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); }
+
+/* Loader for Login Animation */
 #loader {
-  width: 24px;
-  height: 24px;
-  border: 3px solid rgba(0, 0, 0, 0.2);
-  border-radius: 50%;
-  border-top-color: #000;
-  animation: spin 0.8s linear infinite;
+  width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.2);
+  border-radius: 50%; border-top-color: #000; animation: spin 0.8s infinite;
 }
-
 @keyframes spin { to { transform: rotate(360deg); } }
-
 .hidden { display: none !important; }
-.error-text { color: var(--accent); margin-top: 15px; font-size: 0.85rem; }
+
+/* --- 7. MOBILE RESPONSIVE FIX (THE ALIGNMENT FIX) --- */
+@media (max-width: 1024px) {
+  body { padding: 10px; }
+
+  .layout {
+    display: flex;
+    flex-direction: column; /* Stacks side panel below main panel */
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  /* Moves Sidebar (User Settings/Log) to the Top on Mobile */
+  .side-panel {
+    order: -1; 
+  }
+
+  .stat-grid { grid-template-columns: 1fr 1fr; } /* 2 stats per row on mobile */
+
+  .prize-hero h1 { font-size: 2.5rem; }
+
+  /* Prevents Table Squeezing */
+  table { min-width: 600px; }
+
+  /* Fix for Chart Congestion */
+  .chart-container { height: 300px; width: 100%; }
+}
