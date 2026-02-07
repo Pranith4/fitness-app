@@ -1,4 +1,3 @@
-/* --- 1. CORE VARIABLES & RESET --- */
 :root {
   --primary: #00d2ff;
   --secondary: #3a7bd5;
@@ -6,7 +5,6 @@
   --gold: #ff8c00;
   --bg-black: #05070a;
   --card-glass: rgba(15, 23, 42, 0.8);
-  --neon-glow: 0 0 15px rgba(0, 210, 255, 0.3);
   --text-main: #f1f5f9;
   --text-muted: #94a3b8;
 }
@@ -16,25 +14,23 @@
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-black);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(255, 46, 99, 0.1) 0px, transparent 50%);
+  background-image: radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
+                    radial-gradient(at 100% 100%, rgba(255, 46, 99, 0.1) 0px, transparent 50%);
   color: var(--text-main);
   padding: 20px;
   min-height: 100vh;
 }
 
-/* --- 2. PC LAYOUT (DESKTOP) --- */
+/* --- Layout Engine --- */
 .layout {
   display: grid;
-  grid-template-columns: 1fr 350px; /* PC Sidebar on Right */
+  grid-template-columns: 1fr 350px; /* PC Sidebar */
   gap: 25px;
   max-width: 1400px;
   margin: auto;
-  align-items: start; /* Fix: Prevents sidebar cards from stretching */
+  align-items: start;
 }
 
-/* --- 3. CARD & ANIMATION LOGIC --- */
 .card {
   background: var(--card-glass);
   backdrop-filter: blur(20px);
@@ -46,149 +42,81 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  will-change: transform;
 }
 
-/* Moving Light Reflection */
-.shine::after {
-  content: "";
-  position: absolute;
-  top: -50%; left: -50%;
-  width: 200%; height: 200%;
-  background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.05), transparent);
-  transform: rotate(-45deg);
-  animation: sweep 6s infinite linear;
+/* --- Logout Button --- */
+.logout-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
 }
 
-@keyframes sweep {
-  0% { transform: translateX(-100%) rotate(-45deg); }
-  100% { transform: translateX(100%) rotate(-45deg); }
+.logout-btn {
+  background: rgba(255, 46, 99, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 8px 15px;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
 }
 
-/* --- 4. HEADER & STATS --- */
-.prize-hero {
-  border: 2px solid var(--primary);
-  box-shadow: var(--neon-glow);
-  text-align: center;
+.logout-btn:hover {
+  background: var(--accent);
+  color: white;
 }
 
-.prize-hero h1 {
-  font-size: 3.5rem;
-  background: linear-gradient(to bottom, #fff, var(--primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 10px 0;
+/* --- Stats & Prize --- */
+.prize-hero { border: 2px solid var(--primary); text-align: center; }
+.prize-hero h1 { 
+    font-size: 3rem; 
+    background: linear-gradient(to bottom, #fff, var(--primary)); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
 }
 
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
 .stat-box { 
-  background: rgba(255,255,255,0.05); 
-  padding: 15px; 
-  border-radius: 15px; 
-  text-align: center; 
-  border: 1px solid rgba(255,255,255,0.05); 
+    background: rgba(255,255,255,0.05); 
+    padding: 15px; 
+    border-radius: 15px; 
+    text-align: center; 
+    border: 1px solid rgba(255,255,255,0.05); 
 }
 
-/* --- 5. TABLE STYLING --- */
-.table-container {
-  overflow-x: auto;
-  border-radius: 12px;
-  width: 100%;
-}
-
-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-
+/* --- Table & Chart Containers --- */
+.chart-container { height: 350px; position: relative; width: 100%; }
+.table-container { overflow-x: auto; border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 thead th { 
-  position: sticky; top: 0; background: #0f172a; 
-  color: var(--primary); font-size: 0.75rem; padding: 15px; 
-  text-transform: uppercase; z-index: 10;
-  border-bottom: 2px solid var(--primary);
+    background: #0f172a; color: var(--primary); padding: 12px; 
+    text-align: center; border-bottom: 2px solid var(--primary); 
+    position: sticky; top: 0;
 }
-
 td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-/* --- 6. INPUTS & LOGIN STYLES --- */
+/* --- Inputs --- */
 input { 
-  background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); 
-  color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; 
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); 
+    color: white; padding: 12px; border-radius: 10px; width: 100%; margin: 8px 0; 
 }
-
 button { 
-  background: var(--primary); color: #000; font-weight: 800; border: none; 
-  padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; transition: 0.3s; 
+    background: var(--primary); color: #000; font-weight: 800; border: none; 
+    padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; 
 }
+.upi-id { color: var(--gold); font-weight: bold; }
 
-button:hover { box-shadow: 0 0 20px var(--primary); transform: translateY(-2px); }
-
-/* Loader for Login Animation */
-#loader {
-  width: 20px; height: 20px; border: 3px solid rgba(0,0,0,0.2);
-  border-radius: 50%; border-top-color: #000; animation: spin 0.8s infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.hidden { display: none !important; }
-
-/* --- 7. MOBILE RESPONSIVE FIX (THE ALIGNMENT FIX) --- */
+/* --- Mobile Fixes --- */
 @media (max-width: 1024px) {
-  body { padding: 10px; }
-
-  .layout {
-    display: flex;
-    flex-direction: column; /* Stacks side panel below main panel */
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  /* Moves Sidebar (User Settings/Log) to the Top on Mobile */
-  .side-panel {
-    order: -1; 
-  }
-
-  .stat-grid { grid-template-columns: 1fr 1fr; } /* 2 stats per row on mobile */
-
-  .prize-hero h1 { font-size: 2.5rem; }
-
-  /* Prevents Table Squeezing */
+  .layout { display: flex; flex-direction: column; } /* Alignment fix */
+  .side-panel { order: -1; } /* Log first on mobile */
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .prize-hero h1 { font-size: 2rem; }
   table { min-width: 600px; }
-
-  /* Fix for Chart Congestion */
-  .chart-container { height: 300px; width: 100%; }
-}
-.logout-wrapper {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-}
-
-.logout-btn {
-    background: rgba(255, 46, 99, 0.1); /* Subtle accent red/pink */
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    padding: 8px 15px;
-    border-radius: 10px;
-    width: auto; /* Overrides the 100% width of standard buttons */
-    font-size: 0.75rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.logout-btn:hover {
-    background: var(--accent);
-    color: white;
-    box-shadow: 0 0 15px rgba(255, 46, 99, 0.4);
-    transform: translateY(-2px);
-}
-
-/* Positioning for Mobile - Sticky top right */
-@media (max-width: 768px) {
-    .logout-wrapper {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        z-index: 101; /* Above the sticky stats bar if you have one */
-    }
+  .chart-container { height: 280px; }
 }
