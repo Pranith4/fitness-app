@@ -2,196 +2,261 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard | Local Boys Fitness</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Shine Fitness Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-    <div class="layout">
-        <div class="main-panel">
-            <header class="dashboard-header">
-                <div class="brand">
-                    <span class="logo">💪</span>
-                    <h1>LOCAL BOYS <small>FITNESS TRACKER</small></h1>
-                </div>
-                <button class="logout-btn" onclick="logout()">
-                    <span>LOGOUT</span><i>➜</i>
-                </button>
-            </header>
-
-            <div class="card prize-hero shine">
-                <span>🏆 CURRENT PRIZE POOL</span>
-                <h1>₹6,000</h1>
-                <p>Top % fat loss takes the pot!</p>
-            </div>
-
-            <div class="stat-grid">
-                <div class="stat-box"><span>DAYS LEFT</span><h2 id="daysLeft">--</h2></div>
-                <div class="stat-box"><span>YOUR LOSS</span><h2 id="userLoss">0%</h2></div>
-                <div class="stat-box"><span>RANK</span><h2 id="userRank">--</h2></div>
-            </div>
-
-            <div class="card">
-                <h3>📈 Group Performance Trend</h3>
-                <div class="chart-container">
-                    <canvas id="groupChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>⚔️ Competitor Leaderboard</h3>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Athlete</th>
-                                <th>Start</th>
-                                <th>Current</th>
-                                <th>% Loss</th>
-                            </tr>
-                        </thead>
-                        <tbody id="leaderboardBody">
-                            <tr><td colspan="4">Loading arena data...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<div class="layout">
+    <div class="main-panel">
+        <div class="card prize-hero">
+            <h3>🏆 CHALLENGE PRIZE POOL</h3>
+            <h1>₹6,000</h1>
+            <p>Top % fat loss wins the jackpot!</p>
         </div>
 
-        <div class="side-panel">
-            <div class="card welcome-card shine">
-                <h3 id="welcomeUser">Welcome, Athlete!</h3>
-                <p>Consistency is the secret. Every gram counts.</p>
-            </div>
+        <div class="stat-grid">
+            <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
+            <div class="stat-box"><span>Your Total Loss</span><h2 id="totalLoss">--</h2></div>
+            <div class="stat-box"><span>Rank</span><h2 id="rank">--</h2></div>
+        </div>
 
-            <div class="card highlight-card">
-                <h3>⚖️ Update Your Weight</h3>
-                <div class="input-row">
-                    <input type="number" step="0.1" id="weightInput" placeholder="Enter kg">
-                    <button id="submitBtn" onclick="submitWeight()">SAVE</button>
-                </div>
-            </div>
+        <div class="card">
+            <h3 style="color:var(--primary)">📈 Group Performance</h3>
+            <canvas id="groupChart" height="120"></canvas>
+        </div>
 
-            <div class="card">
-                <h3>📜 Your Recent Logs</h3>
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Date</th><th>Weight</th></tr></thead>
-                        <tbody id="historyBody"></tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <h3 style="color:var(--primary)">⚔️ Competitor Daily Table</h3>
+            <div style="overflow-x: auto;">
+                <table id="competitorTable"></table>
             </div>
         </div>
     </div>
 
-    <script>
-        // PASTE YOUR GOOGLE SCRIPT URL HERE
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
-        const currentUser = localStorage.getItem("user");
+    <div class="side-panel">
+        <div class="card">
+            <h2 id="welcomeText">Athlete</h2>
+            <button onclick="refreshAll()" style="background:transparent; border:1px solid var(--primary); color:var(--primary); margin-top:10px">🔄 Sync Data</button>
+        </div>
 
-        if (!currentUser) window.location.href = "index.html";
-        document.getElementById("welcomeUser").innerText = `Welcome, ${currentUser}!`;
+        <div class="card motivation-card shine">
+            <h3 style="color:var(--gold)">Stay Motivated 🔥</h3>
+            <p style="font-size:0.8rem; margin: 10px 0; opacity:0.8">Keep the fire burning!</p>
+            <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; margin-bottom:12px">
+                <span style="font-size:0.65rem; display:block; margin-bottom:5px">Pay INR 100 for Motivation:</span>
+                <span class="upi-id" id="upiValue">8431257887@ybl</span>
+            </div>
+            <button onclick="copyUPI()" style="background:var(--gold); color:white">Copy UPI ID</button>
+        </div>
 
-        function logout() {
-            localStorage.removeItem("user");
-            window.location.href = "index.html";
+        <div class="card">
+            <h3>⚖️ Log Weight</h3>
+            <input type="number" step="0.1" id="weightInput" placeholder="Current weight in kg">
+            <button onclick="addWeight()">Submit Entry</button>
+            <p id="msg" style="margin-top:10px; font-size:0.8rem; text-align:center"></p>
+        </div>
+
+        <div class="card">
+            <h3>📜 Personal History</h3>
+            <table id="historyTable" style="font-size:0.85rem"></table>
+        </div>
+        
+        <div class="card">
+            <h3>🎯 Goal Settings</h3>
+            <input type="number" id="startW" placeholder="Start Weight (Initial)">
+            <input type="number" id="targetW" placeholder="Target Weight">
+            <input type="date" id="endD">
+            <button onclick="saveGoal()" style="background:rgba(255,255,255,0.1); color:white">Update Goal</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
+const user = localStorage.getItem("user") || "Guest";
+document.getElementById("welcomeText").innerText = user;
+
+let groupChart;
+
+// --- INITIALIZATION ---
+async function refreshAll() {
+    // 1. Instant UI: Load from Cache
+    const cachedGoal = localStorage.getItem(`goal_${user}`);
+    const cachedLogs = localStorage.getItem(`logs_${user}`);
+
+    if (cachedGoal) renderGoalData(JSON.parse(cachedGoal));
+    if (cachedLogs) processAndRender(JSON.parse(cachedLogs));
+
+    // 2. Background Sync: Update from Cloud
+    await Promise.all([loadGoal(), loadData()]);
+}
+
+// --- API ACTIONS ---
+async function addWeight() {
+    const w = document.getElementById("weightInput").value;
+    if(!w) return;
+    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"addWeight", username:user, weight:w})});
+    const result = await res.json();
+    const msg = document.getElementById("msg");
+    msg.innerText = result.success ? "✅ Success!" : "❌ " + result.message;
+    msg.style.color = result.success ? "#00ff88" : "#ff4d4d";
+    if(result.success) refreshAll();
+}
+
+async function saveGoal() {
+    const data = {
+        action: "saveGoal",
+        username: user,
+        startWeight: document.getElementById("startW").value,
+        targetWeight: document.getElementById("targetW").value,
+        startDate: new Date().toISOString().split('T')[0],
+        endDate: document.getElementById("endD").value
+    };
+    const res = await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
+    const result = await res.json();
+    if(result.success) { 
+        alert("Goal Updated! 🔥"); 
+        refreshAll(); 
+    }
+}
+
+async function loadGoal() {
+    try {
+        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
+        const g = await res.json();
+        if(g.targetWeight) {
+            localStorage.setItem(`goal_${user}`, JSON.stringify(g));
+            renderGoalData(g);
         }
+    } catch(e) { console.error("Goal fetch failed", e); }
+}
 
-        async function fetchData() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                processData(data);
-            } catch (e) { console.error("Fetch error", e); }
+async function loadData() {
+    try {
+        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+        const data = await res.json();
+        if(data && data.length > 1) {
+            localStorage.setItem(`logs_${user}`, JSON.stringify(data));
+            processAndRender(data);
         }
+    } catch(e) { console.error("Data fetch failed", e); }
+}
 
-        function processData(rawData) {
-            // Logic: Group by User, find Start vs Latest
-            const users = {};
-            rawData.forEach(row => {
-                if (!users[row.Athlete]) users[row.Athlete] = [];
-                users[row.Athlete].push(row);
-            });
+// --- RENDERING LOGIC ---
+function renderGoalData(g) {
+    document.getElementById("targetW").value = g.targetWeight || "";
+    document.getElementById("startW").value = g.startWeight || "";
+    document.getElementById("endD").value = g.endDate ? g.endDate.split('T')[0] : "";
+    
+    if(g.endDate) {
+        const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
+        document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
+    }
+}
 
-            let leaderboard = [];
-            for (const name in users) {
-                const logs = users[name].sort((a,b) => new Date(a.Date) - new Date(b.Date));
-                const start = logs[0].Weight;
-                const current = logs[logs.length - 1].Weight;
-                const loss = (((start - current) / start) * 100).toFixed(2);
-                leaderboard.push({ name, start, current, loss, logs });
-            }
+function processAndRender(data) {
+    const rows = data.slice(1);
+    let usersMap = {}, datesSet = new Set();
 
-            leaderboard.sort((a, b) => b.loss - a.loss);
-            updateUI(leaderboard);
+    rows.forEach(r => {
+        let d = new Date(r[1]).toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
+        datesSet.add(d);
+        if(!usersMap[r[0]]) usersMap[r[0]] = [];
+        usersMap[r[0]].push({date:d, weight:parseFloat(r[2]), rawDate: new Date(r[1])});
+    });
+
+    const dates = [...datesSet];
+    renderChart(usersMap, dates);
+    renderCompetitorTable(usersMap, dates);
+    renderPersonalHistory(usersMap[user] || []);
+}
+
+function renderChart(usersMap, dates) {
+    const colors = ['#00d2ff', '#ff2e63', '#00ff88', '#ae7aff'];
+    const datasets = Object.keys(usersMap).map((u, i) => ({
+        label: u, 
+        data: dates.map(d => usersMap[u].find(x => x.date === d)?.weight || null),
+        borderColor: colors[i % colors.length], 
+        tension: 0.3, 
+        spanGaps: true
+    }));
+    if(groupChart) groupChart.destroy();
+    groupChart = new Chart(document.getElementById("groupChart"), {
+        type:'line', data:{labels:dates, datasets},
+        options:{ responsive:true, plugins:{legend:{labels:{color:'#fff'}}}, scales:{y:{ticks:{color:'#94a3b8'}, grid:{color:'rgba(255,255,255,0.05)'}}, x:{ticks:{color:'#94a3b8'}}}}
+    });
+}
+
+function renderCompetitorTable(usersMap, dates) {
+    let html = `<thead><tr><th>Athlete</th>`;
+    dates.forEach(d => html += `<th>${d}</th>`);
+    html += `<th>% Loss</th></tr></thead><tbody>`;
+    
+    let leaderboard = Object.keys(usersMap).map(u => {
+        let entries = usersMap[u].sort((a,b) => a.rawDate - b.rawDate);
+        let start = entries[0].weight;
+        let latest = entries[entries.length-1].weight;
+        let pct = (((start - latest) / start) * 100).toFixed(2);
+        return { name: u, entries, pct };
+    }).sort((a,b) => b.pct - a.pct);
+
+    leaderboard.forEach((item, idx) => {
+        if(item.name === user) {
+            document.getElementById("totalLoss").innerText = item.pct + "%";
+            document.getElementById("rank").innerText = "#" + (idx + 1);
         }
-
-        function updateUI(leaderboard) {
-            const body = document.getElementById("leaderboardBody");
-            body.innerHTML = "";
-            
-            leaderboard.forEach((player, index) => {
-                const isMe = player.name === currentUser;
-                if(isMe) {
-                    document.getElementById("userLoss").innerText = player.loss + "%";
-                    document.getElementById("userRank").innerText = "#" + (index + 1);
-                    updatePersonalHistory(player.logs);
+        html += `<tr><td style="color:var(--primary); text-align:left">${item.name}</td>`;
+        dates.forEach((d, idxD) => {
+            let entry = item.entries.find(x => x.date === d);
+            if(entry) {
+                let delta = "";
+                let prev = item.entries.filter(x => x.rawDate < entry.rawDate).slice(-1)[0];
+                if(prev) {
+                    let diff = (((entry.weight - prev.weight)/prev.weight)*100).toFixed(1);
+                    delta = `<br><span style="font-size:0.7rem; color:${diff<=0?'#00ff88':'#ff4d4d'}">${diff > 0 ? '+' : ''}${diff}%</span>`;
                 }
-                body.innerHTML += `
-                    <tr style="${isMe ? 'color:var(--primary); font-weight:bold;' : ''}">
-                        <td>${player.name}</td>
-                        <td>${player.start}</td>
-                        <td>${player.current}</td>
-                        <td>${player.loss}%</td>
-                    </tr>`;
-            });
-            renderChart(leaderboard);
-        }
+                html += `<td>${entry.weight}${delta}</td>`;
+            } else html += `<td>-</td>`;
+        });
+        html += `<td style="font-weight:bold; background:rgba(0,210,255,0.1)">${item.pct}%</td></tr>`;
+    });
+    html += `</tbody>`;
+    document.getElementById("competitorTable").innerHTML = html;
+}
 
-        function updatePersonalHistory(logs) {
-            const histBody = document.getElementById("historyBody");
-            histBody.innerHTML = logs.reverse().slice(0,5).map(l => 
-                `<tr><td>${new Date(l.Date).toLocaleDateString()}</td><td>${l.Weight}kg</td></tr>`
-            ).join('');
-        }
+function renderPersonalHistory(history) {
+    let sorted = [...history].sort((a,b) => b.rawDate - a.rawDate);
+    let html = `<thead><tr><th style="text-align:left">Date</th><th>Weight</th><th>Trend</th></tr></thead><tbody>`;
+    sorted.forEach((entry, i) => {
+        let trend = "➖";
+        if(i < sorted.length-1) trend = entry.weight < sorted[i+1].weight ? "📉" : "📈";
+        html += `<tr><td style="text-align:left">${entry.date}</td><td>${entry.weight}</td><td>${trend}</td></tr>`;
+    });
+    html += `</tbody>`;
+    document.getElementById("historyTable").innerHTML = html;
+}
 
-        async function submitWeight() {
-            const weight = document.getElementById("weightInput").value;
-            if(!weight) return;
-            const btn = document.getElementById("submitBtn");
-            btn.innerText = "...";
-            
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify({ Athlete: currentUser, Weight: weight, Date: new Date() })
-            });
-            
-            alert("Logged! Refreshing...");
-            location.reload();
-        }
+function copyUPI() {
+    const upiText = document.getElementById("upiValue").innerText;
+    navigator.clipboard.writeText(upiText).then(() => {
+        alert("UPI ID Copied! Let's go! 🔥");
+    }).catch(err => {
+        // Fallback for older browsers
+        const el = document.createElement('textarea');
+        el.value = upiText;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert("UPI ID Copied! 🔥");
+    });
+}
 
-        function renderChart(leaderboard) {
-            const ctx = document.getElementById('groupChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: leaderboard[0].logs.map(l => new Date(l.Date).toLocaleDateString()),
-                    datasets: leaderboard.map((p, i) => ({
-                        label: p.name,
-                        data: p.logs.map(l => l.Weight),
-                        borderColor: i === 0 ? '#00d2ff' : '#3a7bd5',
-                        tension: 0.3
-                    }))
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-        }
-
-        window.onload = fetchData;
-    </script>
+// Initial Run
+refreshAll();
+</script>
 </body>
 </html>
