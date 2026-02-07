@@ -1,31 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Login</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login | Dark Shine Fitness</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-<div class="card center">
-  <h2>Fitness Tracker</h2>
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <p id="error"></p>
-</div>
+<body class="login-body">
 
-<script>
-const API_URL="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+    <div class="login-container">
+        <div class="card login-card shine">
+            <div class="login-header">
+                <div class="logo-icon">⚔️</div>
+                <h1>DARK SHINE</h1>
+                <p>Weight Loss Challenge 2026</p>
+            </div>
 
-async function login(){
-  const res=await fetch(API_URL,{method:"POST",body:JSON.stringify({
-    action:"login",username:username.value,password:password.value
-  })});
-  const d=await res.json();
-  if(d.success){
-    localStorage.setItem("user",username.value);
-    window.location="dashboard.html";
-  } else error.innerText="Invalid login";
-}
-</script>
+            <div class="login-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Athlete Name" autocomplete="off">
+                </div>
+                
+                <button id="loginBtn" onclick="handleLogin()">
+                    <span id="btnText">START TRAINING</span>
+                    <div id="loader" class="hidden"></div>
+                </button>
+            </div>
+
+            <p id="errorMsg" class="error-text hidden">Please enter your name to begin.</p>
+        </div>
+    </div>
+
+    <script>
+        // Redirect if already logged in
+        if(localStorage.getItem("user")) {
+            window.location.href = "dashboard.html";
+        }
+
+        function handleLogin() {
+            const user = document.getElementById("username").value.trim();
+            const errorMsg = document.getElementById("errorMsg");
+            const btn = document.getElementById("loginBtn");
+            const text = document.getElementById("btnText");
+            const loader = document.getElementById("loader");
+
+            if(!user) {
+                errorMsg.classList.remove("hidden");
+                return;
+            }
+
+            // Trigger Animation
+            errorMsg.classList.add("hidden");
+            btn.disabled = true;
+            text.classList.add("hidden");
+            loader.classList.remove("hidden");
+
+            // Save user
+            localStorage.setItem("user", user);
+            
+            // Dramatic delay for the animation effect
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
