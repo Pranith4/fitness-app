@@ -36,6 +36,22 @@
         </div>
     </div>
 
+ <div class="logout-wrapper">
+    <button class="logout-btn" onclick="logout()">
+        <span>LOGOUT</span>
+        <i class="icon">➜</i>
+    </button>
+</div>
+
+<script>
+function logout() {
+    // This clears the athlete name we stored earlier
+    localStorage.removeItem("user"); 
+    // Sends the user back to the login screen with the animation
+    window.location.href = "index.html"; 
+}
+</script>
+    
     <div class="side-panel">
         <div class="card">
             <h2 id="welcomeText">Athlete</h2>
