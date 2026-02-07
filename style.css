@@ -1,57 +1,169 @@
 :root {
   --primary: #00d2ff;
+  --secondary: #3a7bd5;
   --accent: #ff2e63;
-  --bg-dark: #05070a;
-  --card-bg: rgba(15, 23, 42, 0.8);
+  --gold: #ff8c00;
+  --bg-black: #05070a;
+  --card-glass: rgba(15, 23, 42, 0.8);
+  --neon-glow: 0 0 15px rgba(0, 210, 255, 0.3);
   --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--bg-dark);
+  background-color: var(--bg-black);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(255, 46, 99, 0.1) 0px, transparent 50%);
   color: var(--text-main);
-  padding: 15px;
+  padding: 20px;
   min-height: 100vh;
 }
 
-.layout { display: flex; flex-direction: column; gap: 15px; max-width: 1400px; margin: auto; }
-
-@media (min-width: 1024px) {
-  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 25px; align-items: start; }
-  .side-panel { position: sticky; top: 20px; }
+/* --- PC Layout (Desktop Default) --- */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 25px;
+  max-width: 1400px;
+  margin: auto;
 }
 
-.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.brand h1 { font-size: 1.4rem; }
-.brand small { display: block; font-size: 0.65rem; color: var(--primary); letter-spacing: 2px; }
-
-.logout-btn { 
-    background: rgba(255, 46, 99, 0.1); border: 1px solid var(--accent); color: var(--accent);
-    padding: 8px 12px; border-radius: 8px; font-weight: 800; cursor: pointer;
+/* --- Optimized Card Logic --- */
+.card {
+  background: var(--card-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  will-change: transform;
+  transform: translateZ(0);
 }
 
-.card { 
-    background: var(--card-bg); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 18px; padding: 20px; margin-bottom: 15px; position: relative; overflow: hidden;
+.card:hover::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+  transform: skewX(-25deg);
+  transition: 0.7s;
+  left: 125%;
 }
 
-.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 15px; }
-.stat-box { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 14px; text-align: center; }
-.stat-box h2 { color: var(--primary); font-size: 1.2rem; }
+/* --- Prize & Stats --- */
+.prize-hero {
+  border: 2px solid var(--primary);
+  box-shadow: var(--neon-glow);
+  text-align: center;
+}
+.prize-hero h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(to bottom, #fff, var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-.prize-hero { border: 1.5px solid var(--primary); text-align: center; }
-.prize-hero h1 { font-size: 3rem; background: linear-gradient(#fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
+.stat-box { 
+  background: rgba(255,255,255,0.05); 
+  padding: 15px; 
+  border-radius: 15px; 
+  text-align: center; 
+  border: 1px solid rgba(255,255,255,0.1);
+}
 
-.table-container { overflow-x: auto; width: 100%; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.85rem; }
-th { color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px; }
-td { padding: 10px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
+/* --- Tables --- */
+.table-container { overflow-x: auto; border-radius: 10px; }
+table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
+thead th { 
+  position: sticky; top: 0; background: #0f172a; 
+  color: var(--primary); padding: 15px; z-index: 10;
+  border-bottom: 2px solid var(--primary);
+}
+td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-.chart-container { height: 300px; }
+/* --- Inputs & Buttons --- */
+input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; }
+button { background: var(--primary); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; text-transform: uppercase; }
 
-input { background: #000; border: 1px solid #333; color: #fff; padding: 12px; border-radius: 10px; width: 100%; margin: 10px 0; }
-button { background: var(--primary); color: #000; font-weight: 800; border: none; padding: 12px; border-radius: 10px; width: 100%; cursor: pointer; }
+/* --- MOBILE OPTIMIZATION (CLEAN LAYOUT) --- */
+@media (max-width: 768px) {
+  body { padding: 0; } /* Remove body padding to use full width */
 
-@media (max-width: 1023px) { .side-panel { order: -1; } }
+  .layout {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    padding-top: 100px; /* Space for sticky stats */
+  }
+
+  /* 1. STICKY SCORECARDS (Keeps Rank/Loss visible while scrolling) */
+  .stat-grid {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    margin: 0;
+    padding: 10px 15px;
+    background: rgba(5, 7, 10, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--primary);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .stat-box {
+    padding: 8px 5px;
+    background: transparent;
+    border: none;
+  }
+
+  .stat-box span { font-size: 0.6rem; display: block; }
+  .stat-box h2 { font-size: 1.1rem; color: var(--primary); }
+
+  /* 2. PRIZE POOL RE-STYLING */
+  .prize-hero {
+    margin-top: 10px;
+    padding: 15px;
+  }
+  .prize-hero h1 { font-size: 2rem; }
+
+  /* 3. CLUSTERING FIX: Use Side Panel for High Priority */
+  .side-panel {
+    order: -1; /* Moves sidebar contents above the main chart on mobile */
+  }
+
+  /* Highlight the Weight Input Card */
+  .side-panel .card:nth-child(3) {
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+  }
+
+  /* 4. TABLE SQUISHING FIX */
+  .table-container {
+    margin: 0 -5px;
+    overflow-x: auto;
+  }
+  
+  table { min-width: 600px; font-size: 0.8rem; }
+  td, th { padding: 10px 5px; }
+
+  .card { padding: 15px; border-radius: 15px; }
+}
+
+/* --- UPI & Shine Animation --- */
+.upi-id { color: var(--gold); background: rgba(255, 140, 0, 0.1); padding: 5px 10px; border-radius: 5px; font-weight: bold; }
+.shine::after {
+  content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.08), transparent);
+  transform: rotate(-45deg); animation: sweep 4s infinite linear;
+}
+@keyframes sweep { 0% { transform: translateX(-100%) rotate(-45deg); } 100% { transform: translateX(100%) rotate(-45deg); } }
