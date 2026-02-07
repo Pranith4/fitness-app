@@ -3,67 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login | Dark Shine Fitness</title>
+    <title>Dashboard | Local Boys Fitness</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="login-body">
+<body>
 
-    <div class="login-container">
-        <div class="card login-card shine">
-            <div class="login-header">
-                <div class="logo-icon">⚔️</div>
-                <h1>DARK SHINE</h1>
-                <p>Weight Loss Challenge 2026</p>
-            </div>
-
-            <div class="login-form">
-                <div class="input-group">
-                    <input type="text" id="username" placeholder="Athlete Name" autocomplete="off">
+    <div class="layout">
+        <div class="main-panel">
+            <header class="dashboard-header">
+                <div class="brand">
+                    <span class="logo">💪</span>
+                    <h1>LOCAL BOYS <small>FITNESS TRACKER</small></h1>
                 </div>
-                
-                <button id="loginBtn" onclick="handleLogin()">
-                    <span id="btnText">START TRAINING</span>
-                    <div id="loader" class="hidden"></div>
+                <button class="logout-btn" onclick="logout()">
+                    <span>LOGOUT</span><i>➜</i>
                 </button>
+            </header>
+
+            <div class="card prize-hero shine">
+                <span>🏆 CURRENT PRIZE POOL</span>
+                <h1>₹6,000</h1>
+                <p>Top % fat loss takes the pot!</p>
             </div>
 
-            <p id="errorMsg" class="error-text hidden">Please enter your name to begin.</p>
+            <div class="stat-grid">
+                <div class="stat-box"><span>DAYS LEFT</span><h2 id="daysLeft">--</h2></div>
+                <div class="stat-box"><span>YOUR LOSS</span><h2 id="userLoss">0%</h2></div>
+                <div class="stat-box"><span>RANK</span><h2 id="userRank">--</h2></div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Group Performance Trend</h3>
+                <div class="chart-container">
+                    <canvas id="groupChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚔️ Competitor Leaderboard</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Athlete</th>
+                                <th>Start</th>
+                                <th>Current</th>
+                                <th>% Loss</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboardBody">
+                            <tr><td colspan="4">Loading arena data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="side-panel">
+            <div class="card welcome-card shine">
+                <h3 id="welcomeUser">Welcome, Athlete!</h3>
+                <p>Consistency is the secret. Every gram counts.</p>
+            </div>
+
+            <div class="card highlight-card">
+                <h3>⚖️ Update Your Weight</h3>
+                <div class="input-row">
+                    <input type="number" step="0.1" id="weightInput" placeholder="Enter kg">
+                    <button id="submitBtn" onclick="submitWeight()">SAVE</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📜 Your Recent Logs</h3>
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Date</th><th>Weight</th></tr></thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Redirect if already logged in
-        if(localStorage.getItem("user")) {
-            window.location.href = "dashboard.html";
+        // PASTE YOUR GOOGLE SCRIPT URL HERE
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
+        const currentUser = localStorage.getItem("user");
+
+        if (!currentUser) window.location.href = "index.html";
+        document.getElementById("welcomeUser").innerText = `Welcome, ${currentUser}!`;
+
+        function logout() {
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
         }
 
-        function handleLogin() {
-            const user = document.getElementById("username").value.trim();
-            const errorMsg = document.getElementById("errorMsg");
-            const btn = document.getElementById("loginBtn");
-            const text = document.getElementById("btnText");
-            const loader = document.getElementById("loader");
+        async function fetchData() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                processData(data);
+            } catch (e) { console.error("Fetch error", e); }
+        }
 
-            if(!user) {
-                errorMsg.classList.remove("hidden");
-                return;
+        function processData(rawData) {
+            // Logic: Group by User, find Start vs Latest
+            const users = {};
+            rawData.forEach(row => {
+                if (!users[row.Athlete]) users[row.Athlete] = [];
+                users[row.Athlete].push(row);
+            });
+
+            let leaderboard = [];
+            for (const name in users) {
+                const logs = users[name].sort((a,b) => new Date(a.Date) - new Date(b.Date));
+                const start = logs[0].Weight;
+                const current = logs[logs.length - 1].Weight;
+                const loss = (((start - current) / start) * 100).toFixed(2);
+                leaderboard.push({ name, start, current, loss, logs });
             }
 
-            // Trigger Animation
-            errorMsg.classList.add("hidden");
-            btn.disabled = true;
-            text.classList.add("hidden");
-            loader.classList.remove("hidden");
-
-            // Save user
-            localStorage.setItem("user", user);
-            
-            // Dramatic delay for the animation effect
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 1500);
+            leaderboard.sort((a, b) => b.loss - a.loss);
+            updateUI(leaderboard);
         }
+
+        function updateUI(leaderboard) {
+            const body = document.getElementById("leaderboardBody");
+            body.innerHTML = "";
+            
+            leaderboard.forEach((player, index) => {
+                const isMe = player.name === currentUser;
+                if(isMe) {
+                    document.getElementById("userLoss").innerText = player.loss + "%";
+                    document.getElementById("userRank").innerText = "#" + (index + 1);
+                    updatePersonalHistory(player.logs);
+                }
+                body.innerHTML += `
+                    <tr style="${isMe ? 'color:var(--primary); font-weight:bold;' : ''}">
+                        <td>${player.name}</td>
+                        <td>${player.start}</td>
+                        <td>${player.current}</td>
+                        <td>${player.loss}%</td>
+                    </tr>`;
+            });
+            renderChart(leaderboard);
+        }
+
+        function updatePersonalHistory(logs) {
+            const histBody = document.getElementById("historyBody");
+            histBody.innerHTML = logs.reverse().slice(0,5).map(l => 
+                `<tr><td>${new Date(l.Date).toLocaleDateString()}</td><td>${l.Weight}kg</td></tr>`
+            ).join('');
+        }
+
+        async function submitWeight() {
+            const weight = document.getElementById("weightInput").value;
+            if(!weight) return;
+            const btn = document.getElementById("submitBtn");
+            btn.innerText = "...";
+            
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({ Athlete: currentUser, Weight: weight, Date: new Date() })
+            });
+            
+            alert("Logged! Refreshing...");
+            location.reload();
+        }
+
+        function renderChart(leaderboard) {
+            const ctx = document.getElementById('groupChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: leaderboard[0].logs.map(l => new Date(l.Date).toLocaleDateString()),
+                    datasets: leaderboard.map((p, i) => ({
+                        label: p.name,
+                        data: p.logs.map(l => l.Weight),
+                        borderColor: i === 0 ? '#00d2ff' : '#3a7bd5',
+                        tension: 0.3
+                    }))
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        window.onload = fetchData;
     </script>
 </body>
 </html>
