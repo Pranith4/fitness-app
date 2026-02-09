@@ -167,35 +167,60 @@
     }
 
     async function coachResponse() {
-        const input = document.getElementById("userQuery");
-        const body = document.getElementById("chat-body");
-        const query = input.value.trim();
-        if(!query) return;
+    const input = document.getElementById("userQuery");
+    const body = document.getElementById("chat-body");
+    const query = input.value.trim();
+    if(!query) return;
 
-        body.innerHTML += `<div class="user-msg">${query}</div>`;
-        input.value = "";
-        body.scrollTop = body.scrollHeight;
-        updateStatus("loading");
+    // 1. Display user message
+    body.innerHTML += `<div class="user-msg">${query}</div>`;
+    input.value = "";
+    body.scrollTop = body.scrollHeight;
+    updateStatus("loading");
 
-        const loadId = "load-" + Date.now();
-        body.innerHTML += `<div class="bot-msg" id="${loadId}">...</div>`;
+    const loadId = "load-" + Date.now();
+    body.innerHTML += `<div class="bot-msg" id="${loadId}">Coach is thinking...</div>`;
 
-        try {
-            const res = await fetch("https://api-inference.huggingface.co/models/google/flan-t5-large", {
-                headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
-                method: "POST",
-                body: JSON.stringify({ inputs: `Context: You are a professional fitness coach for a weight loss challenge. Answer only fitness, diet, or dashboard rule questions. Reject non-fitness queries. User: ${query}` }),
-            });
-            const data = await res.json();
-            let reply = (data[0] && data[0].generated_text) ? data[0].generated_text : "I can help you with diet and fitness goals!";
-            document.getElementById(loadId).innerText = reply;
-            updateStatus("online");
-        } catch (e) {
-            updateStatus("offline");
-            document.getElementById(loadId).innerText = "Unable to connect. Please try again.";
+    try {
+        const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+            headers: { 
+                "Authorization": `Bearer ${HF_TOKEN}`, 
+                "Content-Type": "application/json" 
+            },
+            method: "POST",
+            body: JSON.stringify({
+                // This "inputs" format is exactly what this model expects
+                inputs: `[INST] You are the Dark Shine Fitness Coach. Answer ONLY about fitness, diet, or weight loss. Be concise. Question: ${query} [/INST]`,
+            }),
+        });
+
+        const data = await res.json();
+
+        // Check if Hugging Face is still loading the model
+        if (data.error && data.error.includes("currently loading")) {
+            document.getElementById(loadId).innerText = "The gym is opening up... (Model is loading). Please try again in 20 seconds!";
+            return;
         }
-        body.scrollTop = body.scrollHeight;
+
+        // Parse the response
+        let reply = "";
+        if (Array.isArray(data) && data[0].generated_text) {
+            // This cleans the text so it doesn't repeat your question
+            reply = data[0].generated_text.split("[/INST]").pop().trim();
+        } else {
+            reply = "I'm ready! Ask me about your diet or fitness routines.";
+        }
+
+        document.getElementById(loadId).innerText = reply;
+        updateStatus("online");
+
+    } catch (e) {
+        console.error("API Error:", e);
+        updateStatus("offline");
+        document.getElementById(loadId).innerText = "Connection error. Please check your HF token!";
     }
+    body.scrollTop = body.scrollHeight;
+}
 
     // --- DASHBOARD DATA ---
     async function init() {
