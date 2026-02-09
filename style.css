@@ -1,4 +1,4 @@
-/* --- ROOT VARIABLES --- */
+/* --- ROOT THEME --- */
 :root {
     --bg: #0f172a;
     --card-bg: #1e293b;
@@ -8,10 +8,9 @@
     --text-muted: #94a3b8;
     --danger: #ff4d4d;
     --success: #00ff88;
-    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* --- RESET & BASE --- */
+/* --- RESET & LAYOUT --- */
 * { 
     box-sizing: border-box; 
     margin: 0; 
@@ -19,233 +18,178 @@
     -webkit-tap-highlight-color: transparent; 
 }
 
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-main);
-    padding: 20px;
-    line-height: 1.5;
-    display: flex;
-    justify-content: center;
+body { 
+    background: var(--bg); 
+    color: var(--text); 
+    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; 
+    padding: 15px; 
+    display: flex; 
+    justify-content: center; 
 }
 
-/* --- LAYOUT --- */
-.layout {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 20px;
-    width: 100%;
-    max-width: 1400px;
+.layout { 
+    display: grid; 
+    grid-template-columns: 1fr 350px; 
+    gap: 20px; 
+    width: 100%; 
+    max-width: 1400px; 
 }
 
-.card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+/* --- CARD STYLING --- */
+.card { 
+    background: var(--card-bg); 
+    padding: 20px; 
+    border-radius: 16px; 
+    margin-bottom: 20px; 
+    border: 1px solid rgba(255,255,255,0.05); 
+    box-shadow: 0 10px 15px rgba(0,0,0,0.2); 
 }
 
-/* --- HERO & PODIUM --- */
-.prize-hero {
-    text-align: center;
-    border: 2px solid var(--primary);
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+/* --- PRIZE HERO & PODIUM --- */
+.prize-hero { 
+    text-align: center; 
+    border: 2px solid var(--primary); 
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
 }
 
 .prize-hero h1 { 
-    font-size: clamp(2rem, 5vw, 3rem); 
+    font-size: clamp(2rem, 5vw, 2.5rem); 
     color: var(--primary); 
-    margin: 10px 0;
-    text-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    margin: 10px 0; 
+    text-shadow: 0 0 10px rgba(0,210,255,0.3); 
 }
 
-.podium-container {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: 10px;
-    height: 130px;
-    margin-top: 15px;
+.podium-container { 
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: center; 
+    gap: 12px; 
+    height: 120px; 
+    margin-top: 15px; 
 }
 
-.podium-step {
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px 12px 6px 6px;
-    text-align: center;
-    width: 85px;
-    padding: 10px 5px;
+.podium-step { 
+    background: rgba(0,0,0,0.3); 
+    border-radius: 12px 12px 4px 4px; 
+    text-align: center; 
+    width: 85px; 
+    padding: 10px; 
+    border: 1px solid rgba(255,255,255,0.1); 
 }
 
-.first { height: 100%; border-color: var(--gold); position: relative; }
+.first { height: 100%; border-color: var(--gold); }
 .second { height: 75%; }
-.third { height: 60%; }
+.third { height: 55%; }
 
-.podium-step div { font-weight: bold; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.podium-step span { font-size: 0.6rem; color: var(--text-muted); display: block; margin-top: 4px; }
-
-/* --- STAT BOXES --- */
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
+/* --- STATS GRID --- */
+.stat-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 12px; 
+    margin-bottom: 20px; 
 }
 
-.stat-box {
-    background: var(--card-bg);
-    padding: 15px 5px;
-    border-radius: 16px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+.stat-box { 
+    background: var(--card-bg); 
+    padding: 15px 5px; 
+    border-radius: 12px; 
+    text-align: center; 
+    border: 1px solid rgba(255,255,255,0.1); 
 }
 
-.stat-box span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
+.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
 .stat-box h2 { font-size: 1.2rem; color: var(--primary); margin-top: 5px; }
 
 /* --- TABLES & SCROLLING --- */
-.table-container {
-    overflow-x: auto;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.2);
-    -webkit-overflow-scrolling: touch;
+.table-container { 
+    overflow-x: auto; 
+    border-radius: 12px; 
+    background: rgba(0,0,0,0.2); 
+    -webkit-overflow-scrolling: touch; 
 }
 
-.matrix-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
+.matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.matrix-table th, .matrix-table td { padding: 15px 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.sticky-col { 
+    position: sticky; 
+    left: 0; 
+    background: #1e293b !important; 
+    font-weight: bold; 
+    color: var(--primary); 
+    z-index: 10; 
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
 }
 
-.matrix-table th {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 12px;
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
+/* --- CHAT SYSTEM & STATUS --- */
+#chat-icon { 
+    position: fixed; bottom: 20px; right: 20px; 
+    width: 60px; height: 60px; background: var(--primary); 
+    border-radius: 50%; display: flex; align-items: center; 
+    justify-content: center; font-size: 30px; cursor: pointer; 
+    z-index: 9998; box-shadow: 0 4px 15px rgba(0,210,255,0.4); 
+    transition: transform 0.2s;
 }
 
-.matrix-table td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+#chat-icon:active { transform: scale(0.9); }
+
+#chat-window { 
+    position: fixed; bottom: 90px; right: 20px; 
+    width: 350px; height: 500px; background: var(--card-bg); 
+    border: 1px solid var(--primary); border-radius: 20px; 
+    display: flex; flex-direction: column; z-index: 9999; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: 0.3s ease; 
 }
 
-.sticky-col {
-    position: sticky;
-    left: 0;
-    background: #1e293b !important;
-    font-weight: bold;
-    color: var(--primary);
-    z-index: 10;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+.chat-hidden { transform: translateY(20px); opacity: 0; pointer-events: none; }
+
+.chat-header { 
+    background: var(--primary); color: #000; padding: 15px; 
+    font-weight: bold; display: flex; justify-content: space-between; 
+    align-items: center; border-radius: 19px 19px 0 0; 
 }
 
-/* --- AI COACH CHAT WINDOW --- */
-#chat-icon {
-    position: fixed; bottom: 25px; right: 25px;
-    width: 60px; height: 60px; background: var(--primary);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 30px; cursor: pointer; z-index: 2000;
-    box-shadow: 0 4px 20px rgba(0, 210, 255, 0.5);
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.status-container { 
+    display: flex; align-items: center; gap: 6px; 
+    font-size: 0.6rem; background: rgba(0,0,0,0.15); 
+    padding: 3px 8px; border-radius: 20px; 
 }
 
-#chat-icon:hover { transform: scale(1.1); }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; }
+.status-online { background: #00ff00; box-shadow: 0 0 5px #00ff00; animation: pulse 1.5s infinite; }
+.status-loading { background: #ffaa00; }
+.status-offline { background: #ff4d4d; }
 
-#chat-window {
-    position: fixed; bottom: 100px; right: 25px;
-    width: 350px; height: 500px; background: var(--card-bg);
-    border: 1px solid var(--primary); border-radius: 20px;
-    display: flex; flex-direction: column; z-index: 2000;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    transition: 0.3s ease;
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+#chat-body { 
+    padding: 15px; overflow-y: auto; flex-grow: 1; 
+    display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; 
 }
 
-.chat-hidden { transform: translateY(30px) scale(0.9); opacity: 0; pointer-events: none; }
+.bot-msg { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 85%; }
+.user-msg { background: var(--primary); color: #000; padding: 12px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; font-weight: 500; }
 
-.chat-header {
-    background: var(--primary); color: #000;
-    padding: 15px; font-weight: 800; border-radius: 19px 19px 0 0;
-    display: flex; justify-content: space-between; align-items: center;
-}
-
-#chat-body {
-    padding: 15px; overflow-y: auto; flex-grow: 1;
-    display: flex; flex-direction: column; gap: 12px;
-}
-
-.bot-msg { 
-    background: rgba(255, 255, 255, 0.1); padding: 10px 14px; 
-    border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 85%; font-size: 0.85rem;
-}
-
-.user-msg { 
-    background: var(--primary); color: #000; padding: 10px 14px; 
-    border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; font-size: 0.85rem; font-weight: 500;
-}
-
-.chat-input-area {
-    display: flex; padding: 12px; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+.chat-input-area { display: flex; padding: 15px; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
 
 /* --- INPUTS & BUTTONS --- */
-input, button { 
-    width: 100%; padding: 14px; border-radius: 12px; 
-    border: none; font-family: inherit; transition: 0.2s;
-}
+input, button { padding: 12px; border-radius: 12px; border: none; outline: none; transition: 0.2s; }
+input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); width: 100%; }
+input:focus { border-color: var(--primary); }
 
-input { background: rgba(0, 0, 0, 0.3); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 12px; }
-input:focus { border-color: var(--primary); outline: none; background: rgba(0, 0, 0, 0.4); }
+button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; width: auto; min-width: 60px; }
+button:active { transform: scale(0.95); }
 
-button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-button:active { transform: scale(0.96); }
-
-.gold-btn { background: var(--gold); }
-.outline-btn { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
-
-/* --- MOBILE RESPONSIVE (iPhones & Android) --- */
+/* --- MOBILE RESPONSIVE --- */
 @media (max-width: 850px) {
-    body { padding: 12px; }
-
-    .layout {
-        grid-template-columns: 1fr; /* Stack panels */
-        gap: 15px;
-    }
-
-    .main-panel { order: 1; }
+    .layout { grid-template-columns: 1fr; gap: 15px; }
     .side-panel { order: 2; }
-
-    .card { padding: 15px; border-radius: 16px; }
-
-    .stat-box h2 { font-size: 1.1rem; }
-    .prize-hero h1 { font-size: 2.2rem; }
-
-    .podium-container { height: 110px; }
-    .podium-step { width: 75px; }
-
-    .table-container {
-        margin: 0 -12px; /* Stretch table to phone edges */
-        border-radius: 0;
-    }
-
-    .matrix-table th, .matrix-table td {
-        padding: 10px 8px;
-        font-size: 0.75rem;
-    }
-
-    #chat-window {
-        width: calc(100% - 30px);
-        height: 65vh;
-        right: 15px;
-        bottom: 95px;
-    }
-
-    /* Larger tap zones for mobile input */
-    input, button {
-        padding: 16px;
-        font-size: 1rem;
-    }
+    .main-panel { order: 1; }
+    
+    #chat-window { width: calc(100% - 30px); height: 70vh; right: 15px; bottom: 85px; }
+    .stat-grid { gap: 8px; }
+    .stat-box h2 { font-size: 1rem; }
+    
+    .table-container { margin: 0 -15px; border-radius: 0; }
+    .matrix-table th, .matrix-table td { padding: 12px 8px; }
 }
