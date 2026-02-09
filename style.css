@@ -1,169 +1,151 @@
 :root {
-  --primary: #00d2ff;
-  --secondary: #3a7bd5;
-  --accent: #ff2e63;
-  --gold: #ff8c00;
-  --bg-black: #05070a;
-  --card-glass: rgba(15, 23, 42, 0.8);
-  --neon-glow: 0 0 15px rgba(0, 210, 255, 0.3);
-  --text-main: #f1f5f9;
-  --text-muted: #94a3b8;
+    --bg: #0f172a;
+    --card-bg: #1e293b;
+    --primary: #00d2ff;
+    --gold: #fbbf24;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --success: #00ff88;
+    --danger: #ff4d4d;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--bg-black);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(58, 123, 213, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(255, 46, 99, 0.1) 0px, transparent 50%);
-  color: var(--text-main);
-  padding: 20px;
-  min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    padding: 15px;
 }
 
-/* --- PC Layout (Desktop Default) --- */
 .layout {
-  display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 25px;
-  max-width: 1400px;
-  margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-/* --- Optimized Card Logic --- */
 .card {
-  background: var(--card-glass);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 25px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-  will-change: transform;
-  transform: translateZ(0);
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
 }
 
-.card:hover::before {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
-  transform: skewX(-25deg);
-  transition: 0.7s;
-  left: 125%;
-}
-
-/* --- Prize & Stats --- */
 .prize-hero {
-  border: 2px solid var(--primary);
-  box-shadow: var(--neon-glow);
-  text-align: center;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    text-align: center;
+    border: 2px solid var(--primary);
 }
-.prize-hero h1 {
-  font-size: 3.5rem;
-  background: linear-gradient(to bottom, #fff, var(--primary));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+.prize-hero h1 { font-size: 3rem; color: var(--primary); margin: 5px 0; }
 
-.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 25px; }
-.stat-box { 
-  background: rgba(255,255,255,0.05); 
-  padding: 15px; 
-  border-radius: 15px; 
-  text-align: center; 
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* --- Tables --- */
-.table-container { overflow-x: auto; border-radius: 10px; }
-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
-thead th { 
-  position: sticky; top: 0; background: #0f172a; 
-  color: var(--primary); padding: 15px; z-index: 10;
-  border-bottom: 2px solid var(--primary);
-}
-td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-/* --- Inputs & Buttons --- */
-input { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 14px; border-radius: 12px; width: 100%; margin: 8px 0; }
-button { background: var(--primary); color: #000; font-weight: 800; border: none; padding: 14px; border-radius: 12px; cursor: pointer; width: 100%; text-transform: uppercase; }
-
-/* --- MOBILE OPTIMIZATION (CLEAN LAYOUT) --- */
-@media (max-width: 768px) {
-  body { padding: 0; } /* Remove body padding to use full width */
-
-  .layout {
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    padding-top: 100px; /* Space for sticky stats */
-  }
-
-  /* 1. STICKY SCORECARDS (Keeps Rank/Loss visible while scrolling) */
-  .stat-grid {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 100;
-    margin: 0;
-    padding: 10px 15px;
-    background: rgba(5, 7, 10, 0.95);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--primary);
+.stat-grid {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-
-  .stat-box {
-    padding: 8px 5px;
-    background: transparent;
-    border: none;
-  }
-
-  .stat-box span { font-size: 0.6rem; display: block; }
-  .stat-box h2 { font-size: 1.1rem; color: var(--primary); }
-
-  /* 2. PRIZE POOL RE-STYLING */
-  .prize-hero {
-    margin-top: 10px;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+.stat-box {
+    background: var(--card-bg);
     padding: 15px;
-  }
-  .prize-hero h1 { font-size: 2rem; }
+    border-radius: 12px;
+    text-align: center;
+}
+.stat-box span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
 
-  /* 3. CLUSTERING FIX: Use Side Panel for High Priority */
-  .side-panel {
-    order: -1; /* Moves sidebar contents above the main chart on mobile */
-  }
-
-  /* Highlight the Weight Input Card */
-  .side-panel .card:nth-child(3) {
-    border: 1px solid var(--primary);
-    box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
-  }
-
-  /* 4. TABLE SQUISHING FIX */
-  .table-container {
-    margin: 0 -5px;
+/* TABLE SCROLLING SYSTEM */
+.table-container {
     overflow-x: auto;
-  }
-  
-  table { min-width: 600px; font-size: 0.8rem; }
-  td, th { padding: 10px 5px; }
-
-  .card { padding: 15px; border-radius: 15px; }
+    border-radius: 8px;
+    background: rgba(0,0,0,0.2);
+    position: relative; /* Context for sticky */
 }
 
-/* --- UPI & Shine Animation --- */
-.upi-id { color: var(--gold); background: rgba(255, 140, 0, 0.1); padding: 5px 10px; border-radius: 5px; font-weight: bold; }
-.shine::after {
-  content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-  background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.08), transparent);
-  transform: rotate(-45deg); animation: sweep 4s infinite linear;
+.matrix-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.85rem;
 }
-@keyframes sweep { 0% { transform: translateX(-100%) rotate(-45deg); } 100% { transform: translateX(100%) rotate(-45deg); } }
+
+.matrix-table th, .matrix-table td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    white-space: nowrap;
+}
+
+/* STICKY COLUMN LOGIC */
+.sticky-col {
+    position: sticky !important;
+    left: 0;
+    z-index: 10;
+    background-color: #1e293b !important; /* Must match card background */
+    text-align: left !important;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.3); /* Visual shadow to separate name */
+}
+
+th.sticky-col {
+    z-index: 11; /* Header needs to be above body sticky cells */
+    background-color: #2a374a !important; 
+}
+
+.sticky-right {
+    position: sticky !important;
+    right: 0;
+    z-index: 9;
+    background-color: #1e293b !important;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.3);
+}
+
+.name-cell { color: var(--primary); font-weight: bold; }
+.total-cell { color: var(--gold); font-weight: bold; }
+.diff { font-size: 0.7rem; margin-top: 2px; }
+.empty { opacity: 0.2; }
+.highlight-row { background: rgba(0, 210, 255, 0.1); }
+
+/* SIDEBAR & UI ELEMENTS */
+.user-profile { display: flex; align-items: center; gap: 15px; }
+.avatar { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #000;}
+
+.sync-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 5px;}
+
+.upi-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin: 10px 0; font-size: 0.8rem; }
+.upi-id { display: block; font-weight: bold; color: var(--gold); }
+
+input {
+    width: 100%;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gold-btn { background: var(--gold); }
+.outline-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; }
+
+.goal-form label { font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 2px; }
+
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .prize-hero h1 { font-size: 2.2rem; }
+}
+
+.success-text { color: var(--success); font-size: 0.8rem; text-align: center; margin-top: 5px; }
+.error-text { color: var(--danger); font-size: 0.8rem; text-align: center; margin-top: 5px; }
