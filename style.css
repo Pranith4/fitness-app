@@ -16,7 +16,6 @@ body {
     color: var(--text);
     font-family: 'Segoe UI', Roboto, sans-serif;
     padding: 15px;
-    line-height: 1.4;
 }
 
 .layout {
@@ -35,67 +34,41 @@ body {
     border: 1px solid rgba(255,255,255,0.05);
 }
 
-.podium-section {
-    margin-top: 25px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+/* Motivation Card Shine Effect */
+.motivation-card {
+    background: linear-gradient(135deg, #1e293b 0%, #2d3e50 100%);
+    border: 1px solid var(--gold);
+    text-align: center;
 }
 
-.podium-title {
+.upi-box {
+    background: rgba(0,0,0,0.3);
+    padding: 10px;
+    border-radius: 8px;
+    margin: 10px 0;
+    font-family: monospace;
     color: var(--gold);
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    margin-bottom: 15px;
-    text-transform: uppercase;
 }
 
-.podium-subtitle {
-    font-size: 0.7rem;
-    color: var(--text-muted);
-    margin-top: 10px;
-    font-style: italic;
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-.crown {
-    font-size: 1.2rem;
-    margin-bottom: -5px;
-    display: block;
+.stat-box {
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Optional: Make the champion glow */
-.podium-step.first {
-    background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent);
-    border-top: 2px solid var(--gold);
-}
+.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
-/* PODIUM STYLING */
-.podium-container {
-    display: flex; align-items: flex-end; justify-content: center; 
-    gap: 10px; margin: 20px 0; height: 130px;
-}
-.podium-step {
-    background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 12px 12px 4px 4px; text-align: center; width: 90px; padding: 10px;
-    transition: transform 0.3s;
-}
-.podium-step:hover { transform: translateY(-5px); }
-.first { height: 100%; border-color: var(--gold); box-shadow: 0 0 15px rgba(251, 191, 36, 0.2); }
-.second { height: 80%; }
-.third { height: 65%; }
-.podium-step div { font-weight: bold; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.podium-step span { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); display: block; margin-top: 5px; }
-
-/* STREAK DOTS */
-.streak-dots { display: flex; justify-content: space-between; margin-top: 12px; }
-.dot { 
-    width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--text-muted);
-    display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer;
-    transition: 0.2s;
-}
-.dot.active { background: var(--success); border-color: var(--success); color: #000; font-weight: bold; }
-
-/* TABLES */
-.table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); position: relative; }
+/* Sticky Table Columns */
+.table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); }
 .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
 .matrix-table th, .matrix-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
 
@@ -105,28 +78,23 @@ body {
     box-shadow: 4px 0 10px rgba(0,0,0,0.3);
 }
 
-.sticky-right {
-    position: sticky !important; right: 0; z-index: 9;
-    background: #1e293b !important; box-shadow: -4px 0 10px rgba(0,0,0,0.3);
-}
-
 .name-cell { color: var(--primary); font-weight: bold; }
 .diff { font-size: 0.7rem; font-weight: bold; margin-top: 3px; }
 
-/* INPUTS & BUTTONS */
+/* Buttons & Inputs */
 input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; }
 input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-button:hover { filter: brightness(1.1); }
+button { font-weight: bold; cursor: pointer; transition: 0.2s; background: var(--primary); color: #000; }
 .gold-btn { background: var(--gold); }
 .outline-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
 
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-.error-text { color: var(--danger); animation: shake 0.3s; font-size: 0.85rem; text-align: center; }
-.success-text { color: var(--success); font-size: 0.85rem; text-align: center; }
+/* Podium */
+.podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 120px; margin-top: 15px; }
+.podium-step { background: rgba(0,0,0,0.2); width: 80px; padding: 10px; border-radius: 8px 8px 0 0; text-align: center; }
+.first { height: 100%; border-top: 3px solid var(--gold); }
+.second { height: 75%; }
+.third { height: 55%; }
+.podium-title { color: var(--gold); font-size: 0.8rem; }
+.crown { font-size: 1.2rem; }
 
 @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
