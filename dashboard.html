@@ -16,7 +16,7 @@
             --success: #00ff88;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
         body {
             background: var(--bg);
@@ -40,96 +40,64 @@
             border-radius: 16px;
             margin-bottom: 20px;
             border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
         }
 
-        /* Stats Dashboard */
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
+        /* Stats & Prize Pool */
+        .prize-hero { text-align: center; border: 2px solid var(--primary); background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        .prize-hero h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: var(--card-bg); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-box span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-box h2 { font-size: 1.2rem; color: var(--primary); }
 
-        .stat-box {
-            background: var(--card-bg);
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-box h2 { font-size: 1.5rem; color: var(--primary); margin-top: 5px; }
-
-        /* Podium Section */
-        .prize-hero {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            text-align: center;
-            border: 2px solid var(--primary);
-        }
-
-        .prize-hero h1 { font-size: 3rem; color: var(--primary); margin: 10px 0; }
-
-        .podium-section { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
-        .podium-title { color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; }
-
-        .podium-container {
-            display: flex; align-items: flex-end; justify-content: center; 
-            gap: 10px; height: 130px; margin-bottom: 10px;
-        }
-
-        .podium-step {
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px 12px 4px 4px; text-align: center; width: 90px; padding: 10px;
-        }
-
-        .first { height: 100%; border-color: var(--gold); background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent); }
-        .second { height: 80%; }
-        .third { height: 65%; }
-
-        .podium-step div { font-weight: bold; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .podium-step span { font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 5px; }
-        .crown { font-size: 1.2rem; margin-bottom: -5px; }
-
-        /* Motivation Card */
-        .motivation-card { border: 1px solid var(--gold); text-align: center; }
-        .upi-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin: 12px 0; border: 1px dashed var(--gold); }
-        .upi-id { font-family: monospace; font-weight: bold; color: var(--gold); font-size: 1rem; }
+        /* Podium */
+        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 120px; margin: 15px 0; }
+        .podium-step { background: rgba(0,0,0,0.3); border-radius: 8px 8px 4px 4px; text-align: center; width: 80px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
+        .first { height: 100%; border-color: var(--gold); }
+        .second { height: 75%; }
+        .third { height: 55%; }
 
         /* Tables */
-        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); margin-top: 10px; }
-        .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
-        .matrix-table th, .matrix-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); }
+        .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .matrix-table th, .matrix-table td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sticky-col { position: sticky; left: 0; background: #1e293b !important; font-weight: bold; color: var(--primary); z-index: 5; }
 
-        .sticky-col {
-            position: sticky !important; left: 0; z-index: 10;
-            background: #1e293b !important; text-align: left !important;
-            box-shadow: 4px 0 10px rgba(0,0,0,0.3); font-weight: bold; color: var(--primary);
+        /* AI Chat Window */
+        #chat-icon {
+            position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
+            background: var(--primary); border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 30px;
+            cursor: pointer; z-index: 1000; box-shadow: 0 4px 15px rgba(0,210,255,0.4);
         }
 
-        .sticky-right {
-            position: sticky !important; right: 0; z-index: 9;
-            background: #1e293b !important; box-shadow: -4px 0 10px rgba(0,0,0,0.3);
-            color: var(--gold); font-weight: bold;
+        #chat-window {
+            position: fixed; bottom: 90px; right: 20px; width: 350px; height: 450px;
+            background: var(--card-bg); border: 1px solid var(--primary); border-radius: 16px;
+            display: flex; flex-direction: column; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: 0.3s ease; transform: translateY(0); opacity: 1;
         }
 
-        .diff { font-size: 0.7rem; font-weight: bold; margin-top: 3px; }
+        .chat-hidden { transform: translateY(20px) !important; opacity: 0 !important; pointer-events: none; }
+        .chat-header { background: var(--primary); color: #000; padding: 12px; font-weight: bold; display: flex; justify-content: space-between; border-radius: 15px 15px 0 0; }
+        #chat-body { padding: 15px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
+        .bot-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 85%; }
+        .user-msg { background: var(--primary); color: #000; padding: 8px 12px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 85%; }
+        .chat-input-area { display: flex; padding: 10px; gap: 5px; border-top: 1px solid rgba(255,255,255,0.1); }
 
         /* Inputs & Buttons */
-        input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; }
-        input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { filter: brightness(1.2); }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; }
+        input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
         .gold-btn { background: var(--gold); }
         .outline-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
 
-        #msg { text-align: center; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
-        .error-text { color: var(--danger); }
-        .success-text { color: var(--success); }
-
-        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .layout { grid-template-columns: 1fr; }
+            #chat-window { width: calc(100% - 40px); bottom: 85px; }
+        }
     </style>
 </head>
 <body>
@@ -139,250 +107,183 @@
         <div class="card prize-hero">
             <h3>🏆 CHALLENGE PRIZE POOL</h3>
             <h1>₹6,000</h1>
-            
             <div class="podium-section">
-                <h4 class="podium-title">⚡ CURRENT WEEK STANDINGS</h4>
                 <div class="podium-container">
-                    <div class="podium-step second"><div id="rank2">--</div><span>2nd Place</span></div>
-                    <div class="podium-step first"><div class="crown">👑</div><div id="rank1">--</div><span>Champion</span></div>
-                    <div class="podium-step third"><div id="rank3">--</div><span>3rd Place</span></div>
+                    <div class="podium-step second"><div id="rank2">--</div><span>2nd</span></div>
+                    <div class="podium-step first">👑<div id="rank1">--</div><span>Champ</span></div>
+                    <div class="podium-step third"><div id="rank3">--</div><span>3rd</span></div>
                 </div>
             </div>
         </div>
 
         <div class="stat-grid">
-            <div class="stat-box"><span>Your Rank</span><h2 id="userRank">--</h2></div>
-            <div class="stat-box"><span>Your Total Loss</span><h2 id="userTotalPct">--</h2></div>
+            <div class="stat-box"><span>Rank</span><h2 id="userRank">--</h2></div>
+            <div class="stat-box"><span>Total Loss</span><h2 id="userTotalPct">--</h2></div>
             <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
         </div>
 
         <div class="card">
-            <h3 style="color:var(--primary); margin-bottom:15px">⚔️ Weekly Weight Matrix (Overall)</h3>
-            <div class="table-container">
-                <table id="competitorTable" class="matrix-table"></table>
-            </div>
+            <h3>⚔️ Weight Matrix</h3>
+            <div class="table-container"><table id="competitorTable" class="matrix-table"></table></div>
         </div>
 
         <div class="card">
-            <h3 style="color:var(--gold); margin-bottom:15px">🔥 ವಿಟ್ಟಲ್ ತೂಕ ದಂಡ ಯೋಜನೆ</h3>
-            <div class="table-container">
-                <table id="skipTable" class="matrix-table"></table>
-            </div>
+            <h3>🔥 ವಿಟ್ಟಲ್ ತೂಕ ದಂಡ ಯೋಜನೆ</h3>
+            <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
         </div>
     </div>
 
     <div class="side-panel">
         <div class="card">
             <h2 id="welcomeText">Athlete</h2>
-            <div id="countdown" style="font-size: 0.8rem; font-weight: bold; color: var(--gold); margin-top: 5px;">--:--:--</div>
+            <p id="countdown" style="color:var(--gold); font-size:0.8rem;">--:--:--</p>
         </div>
 
-        <div class="card motivation-card">
-            <h3 style="color:var(--gold)">Pay ₹100 for Motivation 🔥</h3>
-            <div class="upi-box">
-                <span class="upi-id" id="upiValue">8431257887@ybl</span>
-            </div>
-            <button onclick="copyUPI()" class="gold-btn">Copy UPI ID</button>
+        <div class="card" style="border:1px solid var(--gold)">
+            <h3 style="color:var(--gold)">Motivation 🔥</h3>
+            <p style="font-size:0.7rem; margin-bottom:10px;">Pay ₹100 to fuel the prize pool!</p>
+            <button onclick="copyUPI()" class="gold-btn">Copy UPI: 8431257887@ybl</button>
         </div>
 
         <div class="card">
             <h3>⚖️ Log Weight</h3>
-            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Allowed on <b>Mondays</b> only.</p>
-            <input type="number" step="0.1" id="weightInput" placeholder="Enter weight in kg">
+            <input type="number" step="0.1" id="weightInput" placeholder="Weight in kg">
             <button onclick="addWeight()" id="submitBtn">Submit Monday Entry</button>
-            <p id="msg"></p>
+            <p id="msg" style="font-size:0.7rem; margin-top:5px;"></p>
         </div>
 
-<div class="card coach-card">
-    <div class="coach-header">
-        <span class="coach-icon">🤖</span>
-        <h3>Ask AI Coach</h3>
-    </div>
-    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">
-        Get tips on diet plans, fat loss strategies, or help understanding your rank.
-    </p>
-    <a href="https://gemini.google.com/" target="_blank" style="text-decoration: none;">
-        <button class="coach-btn">Start Coaching Chat</button>
-    </a>
-</div>
-        
         <div class="card">
             <h3>🎯 Goal Settings</h3>
             <input type="number" id="startW" placeholder="Start Weight">
             <input type="number" id="targetW" placeholder="Target Weight">
             <input type="date" id="endD">
-            <button onclick="saveGoal()" class="outline-btn">Update Goal</button>
+            <button onclick="saveGoal()" class="outline-btn">Update</button>
         </div>
     </div>
 </div>
 
+<div id="chat-icon" onclick="toggleChat()">🤖</div>
+<div id="chat-window" class="chat-hidden">
+    <div class="chat-header"><span>Coach AI</span><span onclick="toggleChat()" style="cursor:pointer">✖</span></div>
+    <div id="chat-body"><div class="bot-msg">Welcome! I am your Fitness Coach. Ask me about diet plans or your dashboard rank.</div></div>
+    <div class="chat-input-area">
+        <input type="text" id="userQuery" placeholder="Ask Coach..." style="margin:0">
+        <button onclick="coachResponse()" style="width:50px; margin:0">🚀</button>
+    </div>
+</div>
+
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
+    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
     const user = localStorage.getItem("user") || "Guest";
+    const HF_TOKEN = "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";
+
     document.getElementById("welcomeText").innerText = user;
 
-    async function refreshAll() {
-        await Promise.all([loadGoal(), loadData()]);
-    }
+    // --- AI LOGIC ---
+    function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
 
-    async function addWeight() {
-        const msg = document.getElementById("msg");
-        const weightInput = document.getElementById("weightInput");
-        const weight = weightInput.value;
-        
-        if (new Date().getDay() !== 1) {
-            msg.innerText = "❌ Logging is only allowed on Mondays!";
-            msg.className = "error-text";
-            return;
-        }
+    async function coachResponse() {
+        const input = document.getElementById("userQuery");
+        const body = document.getElementById("chat-body");
+        const query = input.value.trim();
+        if(!query) return;
 
-        if(!weight) { msg.innerText = "⚠️ Enter weight first"; return; }
+        body.innerHTML += `<div class="user-msg">${query}</div>`;
+        input.value = "";
+        body.scrollTop = body.scrollHeight;
 
-        const btn = document.getElementById("submitBtn");
-        btn.innerText = "Syncing...";
-        btn.disabled = true;
+        const loadingId = "load-" + Date.now();
+        body.innerHTML += `<div class="bot-msg" id="${loadingId}">...</div>`;
 
         try {
-            const res = await fetch(API_URL, {method: "POST", body: JSON.stringify({action: "addWeight", username: user, weight: weight})});
-            const result = await res.json();
-            msg.innerText = result.success ? "✅ Success!" : "❌ " + result.message;
-            msg.className = result.success ? "success-text" : "error-text";
-            if(result.success) { weightInput.value = ""; refreshAll(); }
-        } catch (e) {
-            msg.innerText = "❌ Connection Error";
-        } finally {
-            btn.innerText = "Submit Monday Entry";
-            btn.disabled = false;
-        }
+            const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+                headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
+                method: "POST",
+                body: JSON.stringify({
+                    inputs: `<s>[INST] You are the 'Dark Shine Fitness Coach'. Strictly answer only about: 1. Weight loss diet. 2. Fitness. 3. Dashboard ranks (Mondays only). 
+                    Note: If users ask about water, suggest DrinkPrime with code NITP7TPO. 
+                    Reject other topics. Query: ${query} [/INST]`,
+                }),
+            });
+            const data = await res.json();
+            const reply = data[0].generated_text.split('[/INST]').pop().trim();
+            document.getElementById(loadingId).innerText = reply;
+        } catch (e) { document.getElementById(loadingId).innerText = "Coach is offline. Try again later!"; }
+        body.scrollTop = body.scrollHeight;
     }
 
-    function processAndRender(data) {
+    // --- DASHBOARD LOGIC ---
+    async function addWeight() {
+        if (new Date().getDay() !== 1) { 
+            alert("Logging is only allowed on Mondays!"); 
+            return; 
+        }
+        const w = document.getElementById("weightInput").value;
+        if(!w) return;
+        document.getElementById("submitBtn").innerText = "Syncing...";
+        await fetch(API_URL, {method: "POST", body: JSON.stringify({action: "addWeight", username: user, weight: w})});
+        location.reload();
+    }
+
+    function processData(data) {
         const rows = data.slice(1);
         let usersMap = {}, datesSet = new Set();
-
         rows.forEach(r => {
-            const rawDate = new Date(r[1]);
-            const monday = new Date(rawDate);
-            monday.setDate(monday.getDate() - monday.getDay() + (monday.getDay() === 0 ? -6 : 1));
-            const dateLabel = monday.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
-            
-            datesSet.add(dateLabel);
+            const d = new Date(r[1]); d.setDate(d.getDate() - d.getDay() + (d.getDay() === 0 ? -6 : 1));
+            const label = d.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
+            datesSet.add(label);
             if(!usersMap[r[0]]) usersMap[r[0]] = {};
-            if(!usersMap[r[0]][dateLabel] || rawDate > usersMap[r[0]][dateLabel].rawDate) {
-                usersMap[r[0]][dateLabel] = { weight: parseFloat(r[2]), rawDate: rawDate };
-            }
+            usersMap[r[0]][label] = parseFloat(r[2]);
         });
-
-        const sortedDates = [...datesSet].sort((a, b) => new Date(a) - new Date(b));
-        renderTables(usersMap, sortedDates);
+        renderTables(usersMap, [...datesSet].sort((a,b)=>new Date(a)-new Date(b)));
     }
 
     function renderTables(usersMap, dates) {
-        let matrixHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
-        let skipHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
-        dates.forEach(d => { matrixHtml += `<th>${d}</th>`; skipHtml += `<th>${d}</th>`; });
-        matrixHtml += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
-        skipHtml += `</tr></thead><tbody>`;
+        let h1 = `<thead><tr><th class="sticky-col">Athlete</th>`, h2 = h1;
+        dates.forEach(d => { h1 += `<th>${d}</th>`; h2 += `<th>${d}</th>`; });
+        h1 += `<th>Total %</th></tr></thead><tbody>`; h2 += `</tr></thead><tbody>`;
 
-        let leaderboard = Object.keys(usersMap).map(u => {
-            const entries = dates.map(d => usersMap[u][d] ? usersMap[u][d].weight : null).filter(v => v !== null);
-            const totalPct = (((entries[0] - entries[entries.length-1]) / entries[0]) * 100).toFixed(2);
-            let currentWeekPct = -999; 
-            if (entries.length >= 2) {
-                const latest = entries[entries.length - 1];
-                const prev = entries[entries.length - 2];
-                currentWeekPct = ((prev - latest) / prev) * 100;
-            }
-            return { name: u, totalPct: parseFloat(totalPct), currentWeekPct: currentWeekPct };
+        let lb = Object.keys(usersMap).map(u => {
+            const vals = dates.map(d => usersMap[u][d]).filter(v => v);
+            const total = (((vals[0] - vals[vals.length-1])/vals[0])*100).toFixed(2);
+            let week = vals.length > 1 ? (((vals[vals.length-2]-vals[vals.length-1])/vals[vals.length-2])*100) : -999;
+            return { name: u, total: parseFloat(total), week };
         });
 
-        // Update Podium
-        const weeklyWinners = [...leaderboard].sort((a,b) => b.currentWeekPct - a.currentWeekPct);
-        document.getElementById("rank1").innerText = weeklyWinners[0]?.currentWeekPct > -999 ? weeklyWinners[0].name : "--";
-        document.getElementById("rank2").innerText = weeklyWinners[1]?.currentWeekPct > -999 ? weeklyWinners[1].name : "--";
-        document.getElementById("rank3").innerText = weeklyWinners[2]?.currentWeekPct > -999 ? weeklyWinners[2].name : "--";
+        const sorted = lb.sort((a,b) => b.total - a.total);
+        const wkSorted = [...lb].sort((a,b) => b.week - a.week);
+        
+        document.getElementById("rank1").innerText = wkSorted[0]?.week > -999 ? wkSorted[0].name : "--";
+        document.getElementById("rank2").innerText = wkSorted[1]?.week > -999 ? wkSorted[1].name : "--";
+        document.getElementById("rank3").innerText = wkSorted[2]?.week > -999 ? wkSorted[2].name : "--";
 
-        // Update Stats
-        const overallRank = [...leaderboard].sort((a,b) => b.totalPct - a.totalPct);
-        const myIdx = overallRank.findIndex(i => i.name === user);
-        document.getElementById("userRank").innerText = myIdx >= 0 ? `#${myIdx + 1}` : "--";
-        document.getElementById("userTotalPct").innerText = myIdx >= 0 ? `${overallRank[myIdx].totalPct}%` : "--";
-
-        overallRank.forEach(item => {
-            matrixHtml += `<tr><td class="sticky-col">${item.name}</td>`;
-            skipHtml += `<tr><td class="sticky-col">${item.name}</td>`;
-
+        sorted.forEach(item => {
+            h1 += `<tr><td class="sticky-col">${item.name}</td>`;
+            h2 += `<tr><td class="sticky-col">${item.name}</td>`;
             dates.forEach((d, i) => {
-                const wData = usersMap[item.name][d];
-                const w = wData ? wData.weight : '-';
-                matrixHtml += `<td>${w}</td>`;
-                
+                const v = usersMap[item.name][d] || '-';
+                h1 += `<td>${v}</td>`;
                 let delta = "";
-                if(wData && i > 0) {
-                    const prevW = usersMap[item.name][dates[i-1]]?.weight;
-                    if(prevW) {
-                        const dVal = (((wData.weight - prevW)/prevW)*100).toFixed(1);
-                        delta = `<div class="diff" style="color:${dVal <= 0 ? '#00ff88' : '#ff4d4d'}">${dVal}%</div>`;
-                    }
+                if(i > 0 && usersMap[item.name][dates[i-1]] && usersMap[item.name][d]) {
+                    const diff = (((usersMap[item.name][dates[i-1]] - v)/usersMap[item.name][dates[i-1]])*100).toFixed(1);
+                    delta = `<div style="font-size:0.6rem; color:var(--success)">${diff}%</div>`;
                 }
-                skipHtml += `<td>${w}${delta}</td>`;
+                h2 += `<td>${v}${delta}</td>`;
             });
-            matrixHtml += `<td class="sticky-right">${item.totalPct}%</td></tr>`;
-            skipHtml += `</tr>`;
+            h1 += `<td>${item.total}%</td></tr>`; h2 += `</tr>`;
         });
-
-        document.getElementById("competitorTable").innerHTML = matrixHtml;
-        document.getElementById("skipTable").innerHTML = skipHtml;
+        document.getElementById("competitorTable").innerHTML = h1;
+        document.getElementById("skipTable").innerHTML = h2;
     }
 
-    function updateCountdown() {
-        const now = new Date();
-        const nextMon = new Date();
-        nextMon.setDate(now.getDate() + (1 + 7 - now.getDay()) % 7 || 7);
-        nextMon.setHours(0,0,0,0);
-        const diff = nextMon - now;
-        const d = Math.floor(diff / (1000*60*60*24));
-        const h = Math.floor((diff / (1000*60*60)) % 24);
-        const m = Math.floor((diff / 1000 / 60) % 60);
-        document.getElementById("countdown").innerText = `Next Monday in: ${d}d ${h}h ${m}m`;
-    }
+    function copyUPI() { navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI Copied!")); }
 
-    async function loadGoal() {
-        try {
-            const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
-            const g = await res.json();
-            if(g.targetWeight) {
-                document.getElementById("startW").value = g.startWeight;
-                document.getElementById("targetW").value = g.targetWeight;
-                document.getElementById("endD").value = g.endDate?.split('T')[0];
-                const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
-                document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
-            }
-        } catch(e) {}
+    async function init() {
+        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+        const data = await res.json();
+        if(data.length > 1) processData(data);
     }
-
-    async function loadData() {
-        try {
-            const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-            const data = await res.json();
-            if(data && data.length > 1) processAndRender(data);
-        } catch(e) {}
-    }
-
-    async function saveGoal() {
-        const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
-        await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
-        alert("Goal Updated!");
-        refreshAll();
-    }
-
-    function copyUPI() {
-        navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI ID Copied!"));
-    }
-
-    setInterval(updateCountdown, 60000);
-    updateCountdown();
-    refreshAll();
+    init();
 </script>
 </body>
 </html>
