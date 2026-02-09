@@ -4,7 +4,133 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Shine Fitness Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #00d2ff;
+            --gold: #fbbf24;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ff4d4d;
+            --success: #00ff88;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 15px;
+            line-height: 1.4;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+
+        /* Stats Dashboard */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+        .stat-box h2 { font-size: 1.5rem; color: var(--primary); margin-top: 5px; }
+
+        /* Podium Section */
+        .prize-hero {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+
+        .prize-hero h1 { font-size: 3rem; color: var(--primary); margin: 10px 0; }
+
+        .podium-section { margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .podium-title { color: var(--gold); font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; }
+
+        .podium-container {
+            display: flex; align-items: flex-end; justify-content: center; 
+            gap: 10px; height: 130px; margin-bottom: 10px;
+        }
+
+        .podium-step {
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px 12px 4px 4px; text-align: center; width: 90px; padding: 10px;
+        }
+
+        .first { height: 100%; border-color: var(--gold); background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent); }
+        .second { height: 80%; }
+        .third { height: 65%; }
+
+        .podium-step div { font-weight: bold; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .podium-step span { font-size: 0.65rem; color: var(--text-muted); display: block; margin-top: 5px; }
+        .crown { font-size: 1.2rem; margin-bottom: -5px; }
+
+        /* Motivation Card */
+        .motivation-card { border: 1px solid var(--gold); text-align: center; }
+        .upi-box { background: rgba(0,0,0,0.4); padding: 12px; border-radius: 8px; margin: 12px 0; border: 1px dashed var(--gold); }
+        .upi-id { font-family: monospace; font-weight: bold; color: var(--gold); font-size: 1rem; }
+
+        /* Tables */
+        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); margin-top: 10px; }
+        .matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
+        .matrix-table th, .matrix-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .sticky-col {
+            position: sticky !important; left: 0; z-index: 10;
+            background: #1e293b !important; text-align: left !important;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.3); font-weight: bold; color: var(--primary);
+        }
+
+        .sticky-right {
+            position: sticky !important; right: 0; z-index: 9;
+            background: #1e293b !important; box-shadow: -4px 0 10px rgba(0,0,0,0.3);
+            color: var(--gold); font-weight: bold;
+        }
+
+        .diff { font-size: 0.7rem; font-weight: bold; margin-top: 3px; }
+
+        /* Inputs & Buttons */
+        input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; outline: none; }
+        input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { filter: brightness(1.2); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .gold-btn { background: var(--gold); }
+        .outline-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+        #msg { text-align: center; font-size: 0.85rem; font-weight: bold; margin-top: 5px; }
+        .error-text { color: var(--danger); }
+        .success-text { color: var(--success); }
+
+        @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
 
@@ -17,22 +143,17 @@
             <div class="podium-section">
                 <h4 class="podium-title">⚡ CURRENT WEEK STANDINGS</h4>
                 <div class="podium-container">
-                    <div class="podium-step second">
-                        <div id="rank2">--</div>
-                        <span>2nd Place</span>
-                    </div>
-                    <div class="podium-step first">
-                        <div class="crown">👑</div>
-                        <div id="rank1">--</div>
-                        <span>Champion</span>
-                    </div>
-                    <div class="podium-step third">
-                        <div id="rank3">--</div>
-                        <span>3rd Place</span>
-                    </div>
+                    <div class="podium-step second"><div id="rank2">--</div><span>2nd Place</span></div>
+                    <div class="podium-step first"><div class="crown">👑</div><div id="rank1">--</div><span>Champion</span></div>
+                    <div class="podium-step third"><div id="rank3">--</div><span>3rd Place</span></div>
                 </div>
-                <p class="podium-subtitle">Ranked by % weight loss since last Monday</p>
             </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-box"><span>Your Rank</span><h2 id="userRank">--</h2></div>
+            <div class="stat-box"><span>Your Total Loss</span><h2 id="userTotalPct">--</h2></div>
+            <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
         </div>
 
         <div class="card">
@@ -40,7 +161,6 @@
             <div class="table-container">
                 <table id="competitorTable" class="matrix-table"></table>
             </div>
-            <p class="table-note">* Total % is calculated from your very first entry to your latest.</p>
         </div>
 
         <div class="card">
@@ -48,241 +168,208 @@
             <div class="table-container">
                 <table id="skipTable" class="matrix-table"></table>
             </div>
-            <p class="table-note">* Deltas show % change compared strictly to the previous week.</p>
         </div>
     </div>
 
     <div class="side-panel">
-        <div class="card user-profile">
-            <div class="avatar">⚡</div>
-            <div>
-                <h2 id="welcomeText">Athlete</h2>
-                <div id="countdown" style="font-size: 0.8rem; font-weight: bold; color: var(--gold); margin-top: 5px;">--:--:--</div>
+        <div class="card">
+            <h2 id="welcomeText">Athlete</h2>
+            <div id="countdown" style="font-size: 0.8rem; font-weight: bold; color: var(--gold); margin-top: 5px;">--:--:--</div>
+        </div>
+
+        <div class="card motivation-card">
+            <h3 style="color:var(--gold)">Pay ₹100 for Motivation 🔥</h3>
+            <div class="upi-box">
+                <span class="upi-id" id="upiValue">8431257887@ybl</span>
             </div>
+            <button onclick="copyUPI()" class="gold-btn">Copy UPI ID</button>
         </div>
 
         <div class="card">
             <h3>⚖️ Log Weight</h3>
-            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Submission allowed on <b>Mondays</b> only.</p>
-            <input type="number" step="0.1" id="weightInput" placeholder="Current weight in kg">
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Allowed on <b>Mondays</b> only.</p>
+            <input type="number" step="0.1" id="weightInput" placeholder="Enter weight in kg">
             <button onclick="addWeight()" id="submitBtn">Submit Monday Entry</button>
             <p id="msg"></p>
         </div>
 
         <div class="card">
-            <h3>🔥 Discipline Streak</h3>
-            <div class="streak-dots">
-                <span class="dot" onclick="toggleDot(this)">M</span>
-                <span class="dot" onclick="toggleDot(this)">T</span>
-                <span class="dot" onclick="toggleDot(this)">W</span>
-                <span class="dot" onclick="toggleDot(this)">T</span>
-                <span class="dot" onclick="toggleDot(this)">F</span>
-                <span class="dot" onclick="toggleDot(this)">S</span>
-                <span class="dot" onclick="toggleDot(this)">S</span>
-            </div>
-            <p style="font-size: 0.65rem; margin-top: 10px; color: var(--text-muted);">Self-track your consistency between weigh-ins.</p>
-        </div>
-
-        <div class="card">
             <h3>🎯 Goal Settings</h3>
-            <div class="goal-form">
-                <label>Start Weight (kg)</label>
-                <input type="number" id="startW">
-                <label>Target Weight (kg)</label>
-                <input type="number" id="targetW">
-                <label>End Date</label>
-                <input type="date" id="endD">
-                <button onclick="saveGoal()" class="outline-btn">Update Goal</button>
-            </div>
-        </div>
-
-        <div class="card motivation-card">
-            <h3 style="color:var(--gold)">Motivation 🔥</h3>
-            <div class="upi-box">
-                <span class="upi-id">8431257887@ybl</span>
-            </div>
-            <button onclick="copyUPI()" style="background:var(--gold); color:#000; font-size: 0.8rem; padding: 8px;">Copy UPI ID</button>
+            <input type="number" id="startW" placeholder="Start Weight">
+            <input type="number" id="targetW" placeholder="Target Weight">
+            <input type="date" id="endD">
+            <button onclick="saveGoal()" class="outline-btn">Update Goal</button>
         </div>
     </div>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
-const user = localStorage.getItem("user") || "Guest";
-document.getElementById("welcomeText").innerText = user;
+    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec"; 
+    const user = localStorage.getItem("user") || "Guest";
+    document.getElementById("welcomeText").innerText = user;
 
-// --- INITIALIZATION ---
-async function refreshAll() {
-    await Promise.all([loadGoal(), loadData()]);
-}
-
-// --- MONDAY LOGGING LOGIC ---
-async function addWeight() {
-    const msg = document.getElementById("msg");
-    const weightInput = document.getElementById("weightInput");
-    const weight = weightInput.value;
-    
-    // Day Check: 1 = Monday
-    const today = new Date();
-    if (today.getDay() !== 1) {
-        msg.innerText = "❌ Logging is only allowed on Mondays!";
-        msg.className = "error-text";
-        return;
+    async function refreshAll() {
+        await Promise.all([loadGoal(), loadData()]);
     }
 
-    if(!weight) { msg.innerText = "⚠️ Please enter weight"; return; }
-
-    const btn = document.getElementById("submitBtn");
-    btn.innerText = "Syncing...";
-    btn.disabled = true;
-
-    try {
-        const res = await fetch(API_URL, {
-            method: "POST", 
-            body: JSON.stringify({action: "addWeight", username: user, weight: weight})
-        });
-        const result = await res.json();
-        msg.innerText = result.success ? "✅ Weight Logged Successfully!" : "❌ " + result.message;
-        msg.className = result.success ? "success-text" : "error-text";
-        if(result.success) {
-            weightInput.value = "";
-            refreshAll();
+    async function addWeight() {
+        const msg = document.getElementById("msg");
+        const weightInput = document.getElementById("weightInput");
+        const weight = weightInput.value;
+        
+        if (new Date().getDay() !== 1) {
+            msg.innerText = "❌ Logging is only allowed on Mondays!";
+            msg.className = "error-text";
+            return;
         }
-    } catch (e) {
-        msg.innerText = "❌ Connection Error";
-    } finally {
-        btn.innerText = "Submit Monday Entry";
-        btn.disabled = false;
+
+        if(!weight) { msg.innerText = "⚠️ Enter weight first"; return; }
+
+        const btn = document.getElementById("submitBtn");
+        btn.innerText = "Syncing...";
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(API_URL, {method: "POST", body: JSON.stringify({action: "addWeight", username: user, weight: weight})});
+            const result = await res.json();
+            msg.innerText = result.success ? "✅ Success!" : "❌ " + result.message;
+            msg.className = result.success ? "success-text" : "error-text";
+            if(result.success) { weightInput.value = ""; refreshAll(); }
+        } catch (e) {
+            msg.innerText = "❌ Connection Error";
+        } finally {
+            btn.innerText = "Submit Monday Entry";
+            btn.disabled = false;
+        }
     }
-}
 
-// --- DATA RENDERING ---
-function processAndRender(data) {
-    const rows = data.slice(1);
-    let usersMap = {}, datesSet = new Set();
+    function processAndRender(data) {
+        const rows = data.slice(1);
+        let usersMap = {}, datesSet = new Set();
 
-    rows.forEach(r => {
-        const rawDate = new Date(r[1]);
-        const monday = new Date(rawDate);
-        // Normalize any weekday to the Monday of that week
-        monday.setDate(monday.getDate() - monday.getDay() + (monday.getDay() === 0 ? -6 : 1));
-        const dateLabel = monday.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
-        
-        datesSet.add(dateLabel);
-        if(!usersMap[r[0]]) usersMap[r[0]] = {};
-        if(!usersMap[r[0]][dateLabel] || rawDate > usersMap[r[0]][dateLabel].rawDate) {
-            usersMap[r[0]][dateLabel] = { weight: parseFloat(r[2]), rawDate: rawDate };
-        }
-    });
-
-    const sortedDates = [...datesSet].sort((a, b) => new Date(a) - new Date(b));
-    renderTablesAndPodium(usersMap, sortedDates);
-}
-
-function renderTablesAndPodium(usersMap, dates) {
-    let matrixHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
-    let skipHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
-    dates.forEach(d => { matrixHtml += `<th>${d}</th>`; skipHtml += `<th>${d}</th>`; });
-    matrixHtml += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
-    skipHtml += `</tr></thead><tbody>`;
-
-    let leaderboard = Object.keys(usersMap).map(u => {
-        const entries = dates.map(d => usersMap[u][d] ? usersMap[u][d].weight : null).filter(v => v !== null);
-        const totalPct = (((entries[0] - entries[entries.length-1]) / entries[0]) * 100).toFixed(2);
-        
-        let currentWeekPct = -999; 
-        if (entries.length >= 2) {
-            const latest = entries[entries.length - 1];
-            const previous = entries[entries.length - 2];
-            currentWeekPct = ((previous - latest) / previous) * 100;
-        }
-        return { name: u, totalPct, currentWeekPct };
-    });
-
-    // Update Podium (Weekly Standings)
-    const podiumRank = [...leaderboard].sort((a,b) => b.currentWeekPct - a.currentWeekPct);
-    document.getElementById("rank1").innerText = (podiumRank[0] && podiumRank[0].currentWeekPct > -999) ? podiumRank[0].name : "--";
-    document.getElementById("rank2").innerText = (podiumRank[1] && podiumRank[1].currentWeekPct > -999) ? podiumRank[1].name : "--";
-    document.getElementById("rank3").innerText = (podiumRank[2] && podiumRank[2].currentWeekPct > -999) ? podiumRank[2].name : "--";
-
-    // Build Table Rows
-    leaderboard.sort((a,b) => b.totalPct - a.totalPct).forEach(item => {
-        matrixHtml += `<tr><td class="sticky-col name-cell">${item.name}</td>`;
-        skipHtml += `<tr><td class="sticky-col name-cell">${item.name}</td>`;
-
-        dates.forEach((d, i) => {
-            const weightData = usersMap[item.name][d];
-            const currentWeight = weightData ? weightData.weight : '-';
-            matrixHtml += `<td>${currentWeight}</td>`;
+        rows.forEach(r => {
+            const rawDate = new Date(r[1]);
+            const monday = new Date(rawDate);
+            monday.setDate(monday.getDate() - monday.getDay() + (monday.getDay() === 0 ? -6 : 1));
+            const dateLabel = monday.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
             
-            let deltaHtml = "";
-            if(weightData && i > 0) {
-                const prevWeight = usersMap[item.name][dates[i-1]]?.weight;
-                if(prevWeight) {
-                    const diff = (((weightData.weight - prevWeight)/prevWeight)*100).toFixed(1);
-                    deltaHtml = `<div class="diff" style="color:${diff <= 0 ? '#00ff88' : '#ff4d4d'}">${diff}%</div>`;
-                }
+            datesSet.add(dateLabel);
+            if(!usersMap[r[0]]) usersMap[r[0]] = {};
+            if(!usersMap[r[0]][dateLabel] || rawDate > usersMap[r[0]][dateLabel].rawDate) {
+                usersMap[r[0]][dateLabel] = { weight: parseFloat(r[2]), rawDate: rawDate };
             }
-            skipHtml += `<td>${currentWeight}${deltaHtml}</td>`;
         });
 
-        matrixHtml += `<td class="sticky-right total-cell" style="color:var(--gold)">${item.totalPct}%</td></tr>`;
-        skipHtml += `</tr>`;
-    });
+        const sortedDates = [...datesSet].sort((a, b) => new Date(a) - new Date(b));
+        renderTables(usersMap, sortedDates);
+    }
 
-    document.getElementById("competitorTable").innerHTML = matrixHtml;
-    document.getElementById("skipTable").innerHTML = skipHtml;
-}
+    function renderTables(usersMap, dates) {
+        let matrixHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
+        let skipHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
+        dates.forEach(d => { matrixHtml += `<th>${d}</th>`; skipHtml += `<th>${d}</th>`; });
+        matrixHtml += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
+        skipHtml += `</tr></thead><tbody>`;
 
-// --- UTILS & API ---
-function toggleDot(el) { el.classList.toggle('active'); }
+        let leaderboard = Object.keys(usersMap).map(u => {
+            const entries = dates.map(d => usersMap[u][d] ? usersMap[u][d].weight : null).filter(v => v !== null);
+            const totalPct = (((entries[0] - entries[entries.length-1]) / entries[0]) * 100).toFixed(2);
+            let currentWeekPct = -999; 
+            if (entries.length >= 2) {
+                const latest = entries[entries.length - 1];
+                const prev = entries[entries.length - 2];
+                currentWeekPct = ((prev - latest) / prev) * 100;
+            }
+            return { name: u, totalPct: parseFloat(totalPct), currentWeekPct: currentWeekPct };
+        });
 
-function updateCountdown() {
-    const now = new Date();
-    const nextMonday = new Date();
-    nextMonday.setDate(now.getDate() + (1 + 7 - now.getDay()) % 7 || 7);
-    nextMonday.setHours(0, 0, 0, 0);
-    const diff = nextMonday - now;
-    const d = Math.floor(diff / (1000*60*60*24));
-    const h = Math.floor((diff / (1000*60*60)) % 24);
-    const m = Math.floor((diff / 1000 / 60) % 60);
-    document.getElementById("countdown").innerText = `Next Entry in: ${d}d ${h}h ${m}m`;
-}
+        // Update Podium
+        const weeklyWinners = [...leaderboard].sort((a,b) => b.currentWeekPct - a.currentWeekPct);
+        document.getElementById("rank1").innerText = weeklyWinners[0]?.currentWeekPct > -999 ? weeklyWinners[0].name : "--";
+        document.getElementById("rank2").innerText = weeklyWinners[1]?.currentWeekPct > -999 ? weeklyWinners[1].name : "--";
+        document.getElementById("rank3").innerText = weeklyWinners[2]?.currentWeekPct > -999 ? weeklyWinners[2].name : "--";
 
-async function loadGoal() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
-        const g = await res.json();
-        if(g.targetWeight) {
-            document.getElementById("startW").value = g.startWeight;
-            document.getElementById("targetW").value = g.targetWeight;
-            document.getElementById("endD").value = g.endDate?.split('T')[0];
-        }
-    } catch(e) {}
-}
+        // Update Stats
+        const overallRank = [...leaderboard].sort((a,b) => b.totalPct - a.totalPct);
+        const myIdx = overallRank.findIndex(i => i.name === user);
+        document.getElementById("userRank").innerText = myIdx >= 0 ? `#${myIdx + 1}` : "--";
+        document.getElementById("userTotalPct").innerText = myIdx >= 0 ? `${overallRank[myIdx].totalPct}%` : "--";
 
-async function loadData() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-        const data = await res.json();
-        if(data && data.length > 1) processAndRender(data);
-    } catch(e) {}
-}
+        overallRank.forEach(item => {
+            matrixHtml += `<tr><td class="sticky-col">${item.name}</td>`;
+            skipHtml += `<tr><td class="sticky-col">${item.name}</td>`;
 
-async function saveGoal() {
-    const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
-    await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
-    alert("Goal Updated!");
+            dates.forEach((d, i) => {
+                const wData = usersMap[item.name][d];
+                const w = wData ? wData.weight : '-';
+                matrixHtml += `<td>${w}</td>`;
+                
+                let delta = "";
+                if(wData && i > 0) {
+                    const prevW = usersMap[item.name][dates[i-1]]?.weight;
+                    if(prevW) {
+                        const dVal = (((wData.weight - prevW)/prevW)*100).toFixed(1);
+                        delta = `<div class="diff" style="color:${dVal <= 0 ? '#00ff88' : '#ff4d4d'}">${dVal}%</div>`;
+                    }
+                }
+                skipHtml += `<td>${w}${delta}</td>`;
+            });
+            matrixHtml += `<td class="sticky-right">${item.totalPct}%</td></tr>`;
+            skipHtml += `</tr>`;
+        });
+
+        document.getElementById("competitorTable").innerHTML = matrixHtml;
+        document.getElementById("skipTable").innerHTML = skipHtml;
+    }
+
+    function updateCountdown() {
+        const now = new Date();
+        const nextMon = new Date();
+        nextMon.setDate(now.getDate() + (1 + 7 - now.getDay()) % 7 || 7);
+        nextMon.setHours(0,0,0,0);
+        const diff = nextMon - now;
+        const d = Math.floor(diff / (1000*60*60*24));
+        const h = Math.floor((diff / (1000*60*60)) % 24);
+        const m = Math.floor((diff / 1000 / 60) % 60);
+        document.getElementById("countdown").innerText = `Next Monday in: ${d}d ${h}h ${m}m`;
+    }
+
+    async function loadGoal() {
+        try {
+            const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
+            const g = await res.json();
+            if(g.targetWeight) {
+                document.getElementById("startW").value = g.startWeight;
+                document.getElementById("targetW").value = g.targetWeight;
+                document.getElementById("endD").value = g.endDate?.split('T')[0];
+                const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
+                document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
+            }
+        } catch(e) {}
+    }
+
+    async function loadData() {
+        try {
+            const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+            const data = await res.json();
+            if(data && data.length > 1) processAndRender(data);
+        } catch(e) {}
+    }
+
+    async function saveGoal() {
+        const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
+        await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
+        alert("Goal Updated!");
+        refreshAll();
+    }
+
+    function copyUPI() {
+        navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI ID Copied!"));
+    }
+
+    setInterval(updateCountdown, 60000);
+    updateCountdown();
     refreshAll();
-}
-
-function copyUPI() {
-    navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI ID Copied!"));
-}
-
-setInterval(updateCountdown, 60000);
-updateCountdown();
-refreshAll();
 </script>
 </body>
 </html>
