@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Shine Fitness Dashboard</title>
+    <title>Dark Shine Interactive Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,15 +11,13 @@
 <div class="layout">
     <div class="main-panel">
         <div class="card prize-hero">
-            <h3>🏆 CHALLENGE PRIZE POOL</h3>
+            <h3>🏆 CURRENT PRIZE POOL</h3>
             <h1>₹6,000</h1>
-            <p>Overall % fat loss wins the jackpot!</p>
-        </div>
-
-        <div class="stat-grid">
-            <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
-            <div class="stat-box"><span>Your Total Loss</span><h2 id="totalLoss">--</h2></div>
-            <div class="stat-box"><span>Rank</span><h2 id="rank">--</h2></div>
+            <div class="podium-container">
+                <div class="podium-step second"><div id="rank2">--</div><span>2nd Place</span></div>
+                <div class="podium-step first"><div id="rank1">--</div><span>Champion</span></div>
+                <div class="podium-step third"><div id="rank3">--</div><span>3rd Place</span></div>
+            </div>
         </div>
 
         <div class="card">
@@ -30,7 +28,7 @@
         </div>
 
         <div class="card">
-            <h3 style="color:var(--gold); margin-bottom:15px">🔥 Skip 500 Challenge (Week-on-Week)</h3>
+            <h3 style="color:var(--gold); margin-bottom:15px">🔥 Skip 500 Challenge (Weekly Delta)</h3>
             <div class="table-container">
                 <table id="skipTable" class="matrix-table"></table>
             </div>
@@ -38,28 +36,32 @@
     </div>
 
     <div class="side-panel">
-        <div class="card user-profile">
-            <div class="avatar">⚡</div>
-            <div>
-                <h2 id="welcomeText">Athlete</h2>
-                <button onclick="refreshAll()" class="outline-btn" style="padding:4px 8px; font-size:0.7rem; margin-top:5px">🔄 Sync Data</button>
-            </div>
-        </div>
-
-        <div class="card motivation-card">
-            <h3 style="color:var(--gold)">Motivation 🔥</h3>
-            <div class="upi-box">
-                <span>Contribute to Pool:</span>
-                <span class="upi-id" id="upiValue">8431257887@ybl</span>
-            </div>
-            <button onclick="copyUPI()" style="background:var(--gold)">Copy UPI ID</button>
+        <div class="card">
+            <h2 id="welcomeText">Athlete</h2>
+            <div id="countdown" style="font-size: 1.2rem; font-weight: bold; color: var(--gold); margin-top: 10px;">--:--:--</div>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">UNTIL NEXT MONDAY</span>
         </div>
 
         <div class="card">
-            <h3>⚖️ Log Weight (Mondays Only)</h3>
+            <h3>⚖️ Log Weight</h3>
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Window: Every Monday only</p>
             <input type="number" step="0.1" id="weightInput" placeholder="Enter kg">
-            <button onclick="addWeight()">Submit Entry</button>
+            <button onclick="addWeight()">Submit Monday Entry</button>
             <p id="msg"></p>
+        </div>
+
+        <div class="card">
+            <h3>🔥 Discipline Streak</h3>
+            <div class="streak-dots">
+                <span class="dot" onclick="toggleDot(this)">M</span>
+                <span class="dot" onclick="toggleDot(this)">T</span>
+                <span class="dot" onclick="toggleDot(this)">W</span>
+                <span class="dot" onclick="toggleDot(this)">T</span>
+                <span class="dot" onclick="toggleDot(this)">F</span>
+                <span class="dot" onclick="toggleDot(this)">S</span>
+                <span class="dot" onclick="toggleDot(this)">S</span>
+            </div>
+            <p style="font-size: 0.65rem; margin-top: 10px; color: var(--text-muted);">Tap days to track your diet consistency.</p>
         </div>
 
         <div class="card">
@@ -77,11 +79,8 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG
 const user = localStorage.getItem("user") || "Guest";
 document.getElementById("welcomeText").innerText = user;
 
+// --- CORE FUNCTIONS ---
 async function refreshAll() {
-    const cachedGoal = localStorage.getItem(`goal_${user}`);
-    const cachedLogs = localStorage.getItem(`logs_${user}`);
-    if (cachedGoal) renderGoalData(JSON.parse(cachedGoal));
-    if (cachedLogs) processAndRender(JSON.parse(cachedLogs));
     await Promise.all([loadGoal(), loadData()]);
 }
 
@@ -89,7 +88,6 @@ async function addWeight() {
     const msg = document.getElementById("msg");
     const weight = document.getElementById("weightInput").value;
     
-    // MONDAY CHECK: 1 = Monday
     if (new Date().getDay() !== 1) {
         msg.innerText = "❌ Logging is only allowed on Mondays!";
         msg.className = "error-text";
@@ -100,43 +98,12 @@ async function addWeight() {
 
     const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"addWeight", username:user, weight:weight})});
     const result = await res.json();
-    msg.innerText = result.success ? "✅ Logged successfully!" : "❌ " + result.message;
+    msg.innerText = result.success ? "✅ Logged!" : "❌ " + result.message;
     msg.className = result.success ? "success-text" : "error-text";
     if(result.success) { document.getElementById("weightInput").value = ""; refreshAll(); }
 }
 
-async function saveGoal() {
-    const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
-    const res = await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
-    if((await res.json()).success) { alert("Goal Updated!"); refreshAll(); }
-}
-
-async function loadGoal() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
-        const g = await res.json();
-        if(g.targetWeight) { localStorage.setItem(`goal_${user}`, JSON.stringify(g)); renderGoalData(g); }
-    } catch(e) {}
-}
-
-async function loadData() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-        const data = await res.json();
-        if(data && data.length > 1) { localStorage.setItem(`logs_${user}`, JSON.stringify(data)); processAndRender(data); }
-    } catch(e) {}
-}
-
-function renderGoalData(g) {
-    document.getElementById("targetW").value = g.targetWeight || "";
-    document.getElementById("startW").value = g.startWeight || "";
-    document.getElementById("endD").value = g.endDate ? g.endDate.split('T')[0] : "";
-    if(g.endDate) {
-        const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
-        document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
-    }
-}
-
+// --- DATA PROCESSING ---
 function processAndRender(data) {
     const rows = data.slice(1);
     let usersMap = {}, datesSet = new Set();
@@ -155,44 +122,56 @@ function processAndRender(data) {
     });
 
     const sortedDates = [...datesSet].sort((a, b) => new Date(a) - new Date(b));
-    renderTables(usersMap, sortedDates);
+    renderTablesAndPodium(usersMap, sortedDates);
 }
 
-function renderTables(usersMap, dates) {
+function renderTablesAndPodium(usersMap, dates) {
     let matrixHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
     let skipHtml = `<thead><tr><th class="sticky-col">Athlete</th>`;
     dates.forEach(d => { matrixHtml += `<th>${d}</th>`; skipHtml += `<th>${d}</th>`; });
     matrixHtml += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
     skipHtml += `</tr></thead><tbody>`;
 
-    Object.keys(usersMap).forEach(u => {
-        const userEntries = dates.map(d => usersMap[u][d] ? usersMap[u][d].weight : null).filter(v => v !== null);
-        const totalPct = (((userEntries[0] - userEntries[userEntries.length-1]) / userEntries[0]) * 100).toFixed(2);
+    let leaderboard = Object.keys(usersMap).map(u => {
+        const entries = dates.map(d => usersMap[u][d] ? usersMap[u][d].weight : null).filter(v => v !== null);
+        const totalPct = (((entries[0] - entries[entries.length-1]) / entries[0]) * 100).toFixed(2);
         
-        if(u === user) { 
-            document.getElementById("totalLoss").innerText = totalPct + "%";
-            document.getElementById("rank").innerText = "#Calculating..."; // Add logic if rank needed
+        // Calculate current week's performance for Podium
+        let currentWeekPct = 0;
+        if (entries.length > 1) {
+            const latest = entries[entries.length-1];
+            const prev = entries[entries.length-2];
+            currentWeekPct = ((prev - latest) / prev * 100);
         }
 
-        matrixHtml += `<tr><td class="sticky-col name-cell">${u}</td>`;
-        skipHtml += `<tr><td class="sticky-col name-cell">${u}</td>`;
+        return { name: u, totalPct, currentWeekPct, entries: entries };
+    });
+
+    // Update Podium based on currentWeekPct
+    const podiumRank = [...leaderboard].sort((a,b) => b.currentWeekPct - a.currentWeekPct);
+    document.getElementById("rank1").innerText = podiumRank[0]?.name || "--";
+    document.getElementById("rank2").innerText = podiumRank[1]?.name || "--";
+    document.getElementById("rank3").innerText = podiumRank[2]?.name || "--";
+
+    // Build Tables
+    leaderboard.sort((a,b) => b.totalPct - a.totalPct).forEach(item => {
+        matrixHtml += `<tr><td class="sticky-col name-cell">${item.name}</td>`;
+        skipHtml += `<tr><td class="sticky-col name-cell">${item.name}</td>`;
 
         dates.forEach((d, i) => {
-            const current = usersMap[u][d]?.weight || '-';
+            const current = usersMap[item.name][d]?.weight || '-';
             matrixHtml += `<td>${current}</td>`;
-            
             let delta = "";
-            if(usersMap[u][d] && i > 0) {
-                const prev = usersMap[u][dates[i-1]]?.weight;
+            if(usersMap[item.name][d] && i > 0) {
+                const prev = usersMap[item.name][dates[i-1]]?.weight;
                 if(prev) {
-                    const diff = (((usersMap[u][d].weight - prev)/prev)*100).toFixed(1);
+                    const diff = (((usersMap[item.name][d].weight - prev)/prev)*100).toFixed(1);
                     delta = `<div class="diff" style="color:${diff <= 0 ? '#00ff88' : '#ff4d4d'}">${diff}%</div>`;
                 }
             }
             skipHtml += `<td>${current}${delta}</td>`;
         });
-
-        matrixHtml += `<td class="sticky-right total-cell">${totalPct}%</td></tr>`;
+        matrixHtml += `<td class="sticky-right" style="color:var(--gold); font-weight:bold">${item.totalPct}%</td></tr>`;
         skipHtml += `</tr>`;
     });
 
@@ -200,10 +179,44 @@ function renderTables(usersMap, dates) {
     document.getElementById("skipTable").innerHTML = skipHtml;
 }
 
-function copyUPI() {
-    navigator.clipboard.writeText(document.getElementById("upiValue").innerText).then(() => alert("UPI ID Copied!"));
+// --- INTERACTIVE HELPERS ---
+function toggleDot(el) { el.classList.toggle('active'); }
+
+function updateCountdown() {
+    const now = new Date();
+    const nextMonday = new Date();
+    nextMonday.setDate(now.getDate() + (1 + 7 - now.getDay()) % 7 || 7);
+    nextMonday.setHours(0, 0, 0, 0);
+    const diff = nextMonday - now;
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / 1000 / 60) % 60);
+    document.getElementById("countdown").innerText = `${d}d ${h}h ${m}m`;
 }
 
+// ... rest of API logic (loadGoal, loadData, saveGoal) from previous versions ...
+async function loadGoal() {
+    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
+    const g = await res.json();
+    if(g.targetWeight) {
+        document.getElementById("startW").value = g.startWeight;
+        document.getElementById("targetW").value = g.targetWeight;
+        document.getElementById("endD").value = g.endDate?.split('T')[0];
+    }
+}
+async function loadData() {
+    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+    const data = await res.json();
+    if(data && data.length > 1) processAndRender(data);
+}
+async function saveGoal() {
+    const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
+    await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
+    alert("Goal Updated!");
+}
+
+setInterval(updateCountdown, 60000);
+updateCountdown();
 refreshAll();
 </script>
 </body>
