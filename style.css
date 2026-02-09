@@ -35,6 +35,39 @@ body {
     border: 1px solid rgba(255,255,255,0.05);
 }
 
+.podium-section {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.podium-title {
+    color: var(--gold);
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.podium-subtitle {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.crown {
+    font-size: 1.2rem;
+    margin-bottom: -5px;
+    display: block;
+}
+
+/* Optional: Make the champion glow */
+.podium-step.first {
+    background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent);
+    border-top: 2px solid var(--gold);
+}
+
 /* PODIUM STYLING */
 .podium-container {
     display: flex; align-items: flex-end; justify-content: center; 
