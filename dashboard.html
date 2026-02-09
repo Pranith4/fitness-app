@@ -3,278 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Shine Fitness Dashboard</title>
+    <title>Dark Shine Dashboard</title>
     <style>
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #00d2ff;
-            --gold: #fbbf24;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --danger: #ff4d4d;
-            --success: #00ff88;
+            --bg: #0f172a; --card-bg: #1e293b; --primary: #00d2ff;
+            --gold: #fbbf24; --text: #f8fafc; --text-muted: #94a3b8;
+            --danger: #ff4d4d; --success: #00ff88;
         }
-
-        /* --- BASE STYLES --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; padding: 15px; display: flex; justify-content: center; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding: 15px; }
+        .layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; max-width: 1200px; margin: auto; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
         
-        .layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; width: 100%; max-width: 1400px; }
+        /* Goal Card Styling */
+        .goal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+        .goal-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; text-align: center; }
+        .goal-box span { font-size: 0.65rem; color: var(--text-muted); display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .goal-box h4 { font-size: 1.1rem; color: #fff; }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-top: 5px; }
+        .on-track { background: rgba(0, 255, 136, 0.2); color: var(--success); }
+        .off-track { background: rgba(255, 77, 77, 0.2); color: var(--danger); }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 15px rgba(0,0,0,0.2); }
-
-        /* --- PRIZE & STATS --- */
         .prize-hero { text-align: center; border: 2px solid var(--primary); background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-        .prize-hero h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; text-shadow: 0 0 10px rgba(0,210,255,0.3); }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .stat-box { background: var(--card-bg); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-box span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
-        .stat-box h2 { font-size: 1.2rem; color: var(--primary); }
-
-        /* --- PODIUM --- */
-        .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 120px; margin-top: 15px; }
-        .podium-step { background: rgba(0,0,0,0.3); border-radius: 8px 8px 4px 4px; text-align: center; width: 80px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); }
-        .first { height: 100%; border-color: var(--gold); }
-        .second { height: 75%; }
-        .third { height: 55%; }
-        .podium-step div { font-weight: bold; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* --- TABLES --- */
-        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); }
-        .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        .matrix-table th, .matrix-table td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .sticky-col { position: sticky; left: 0; background: #1e293b !important; font-weight: bold; color: var(--primary); z-index: 5; }
-
-        /* --- CHAT SYSTEM & STATUS LIGHT --- */
-        #chat-icon { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 9998; box-shadow: 0 4px 15px rgba(0,210,255,0.4); }
+        .prize-hero h1 { font-size: 2.5rem; color: var(--primary); margin: 5px 0; }
         
-        #chat-window { position: fixed; bottom: 90px; right: 20px; width: 350px; height: 480px; background: var(--card-bg); border: 1px solid var(--primary); border-radius: 20px; display: flex; flex-direction: column; z-index: 9999; box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: 0.3s ease; }
-        .chat-hidden { transform: translateY(20px); opacity: 0; pointer-events: none; }
+        /* Chat UI */
+        #chat-window { position: fixed; bottom: 85px; right: 20px; width: 340px; height: 450px; background: var(--card-bg); border: 1px solid var(--primary); border-radius: 20px; display: flex; flex-direction: column; z-index: 1000; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .chat-hidden { display: none; }
+        .chat-header { background: var(--primary); color: #000; padding: 12px 15px; font-weight: bold; border-radius: 19px 19px 0 0; display: flex; justify-content: space-between; }
+        #chat-body { flex-grow: 1; padding: 15px; overflow-y: auto; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .bot-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 80%; }
+        .user-msg { background: var(--primary); color: #000; padding: 8px 12px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 80%; }
+        .chat-input { display: flex; padding: 12px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
+        input { background: #0f172a; color: #fff; border: 1px solid #334155; padding: 10px; border-radius: 8px; flex-grow: 1; outline: none; }
+        button { background: var(--primary); border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        #chat-trigger { position: fixed; bottom: 20px; right: 20px; background: var(--primary); width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 24px; box-shadow: 0 4px 15px rgba(0,210,255,0.4); }
 
-        .chat-header { background: var(--primary); color: #000; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; border-radius: 19px 19px 0 0; }
-        .status-container { display: flex; align-items: center; gap: 5px; font-size: 0.65rem; background: rgba(255,255,255,0.3); padding: 2px 8px; border-radius: 10px; }
-        .status-dot { width: 7px; height: 7px; border-radius: 50%; }
-        .status-online { background: #00ff00; box-shadow: 0 0 5px #00ff00; animation: pulse 1.5s infinite; }
-        .status-loading { background: #ffaa00; }
-        .status-offline { background: #ff4d4d; }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        #chat-body { padding: 15px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
-        .bot-msg { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 85%; }
-        .user-msg { background: var(--primary); color: #000; padding: 10px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 85%; }
-        
-        .chat-input-area { display: flex; padding: 12px; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
-        input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; outline: none; transition: 0.2s; }
-        input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-
-        @media (max-width: 850px) {
-            .layout { grid-template-columns: 1fr; }
-            #chat-window { width: calc(100% - 30px); right: 15px; }
-        }
+        @media (max-width: 850px) { .layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
 <div class="layout">
-    <div class="main-panel">
+    <div class="main-content">
         <div class="card prize-hero">
             <h3>🏆 CHALLENGE PRIZE POOL</h3>
             <h1>₹6,000</h1>
-            <div class="podium-container">
-                <div class="podium-step second"><div id="rank2">--</div><span>2nd</span></div>
-                <div class="podium-step first">👑<div id="rank1">--</div><span>Champ</span></div>
-                <div class="podium-step third"><div id="rank3">--</div><span>3rd</span></div>
+        </div>
+
+        <div class="card">
+            <h3 style="color:var(--gold)">🎯 Personal Goal Progress</h3>
+            <div class="goal-grid">
+                <div class="goal-box">
+                    <span>Days Remaining</span>
+                    <h4 id="stat-days">--</h4>
+                </div>
+                <div class="goal-box">
+                    <span>Next Mon Target</span>
+                    <h4 id="stat-next-week">--</h4>
+                </div>
+                <div class="goal-box">
+                    <span>Goal Status</span>
+                    <div id="stat-status" class="status-badge">Syncing...</div>
+                </div>
             </div>
         </div>
 
-        <div class="stat-grid">
-            <div class="stat-box"><span>Your Rank</span><h2 id="userRank">--</h2></div>
-            <div class="stat-box"><span>Loss %</span><h2 id="userTotalPct">--</h2></div>
-            <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
-        </div>
-
         <div class="card">
-            <h3>⚔️ Weight Matrix</h3>
-            <div class="table-container"><table id="competitorTable" class="matrix-table"></table></div>
-        </div>
-
-        <div class="card">
-            <h3>🔥 ವಿಟ್ಟಲ್ ತೂಕ ದಂಡ ಯೋಜನೆ</h3>
-            <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
+            <h3>Matrix Standings</h3>
+            <div id="table-container" style="font-size: 0.8rem; overflow-x: auto;">Fetching leaderboard...</div>
         </div>
     </div>
 
-    <div class="side-panel">
+    <div class="sidebar">
         <div class="card">
-            <h2 id="welcomeText">Athlete</h2>
-            <p id="countdown" style="color:var(--gold); font-size:0.8rem; margin-top:5px;">--:--:--</p>
+            <h2 id="userName">Athlete</h2>
+            <p style="color:var(--text-muted); font-size: 0.8rem;">Ready to crush your goals?</p>
         </div>
-
         <div class="card">
-            <h3>⚖️ Log Weight</h3>
-            <p style="font-size:0.65rem; color:var(--text-muted); margin-bottom:8px;">Only allowed on Mondays.</p>
-            <input type="number" step="0.1" id="weightInput" placeholder="Enter Weight (kg)">
-            <button onclick="addWeight()" id="submitBtn">Submit Monday Entry</button>
-        </div>
-        
-        <div class="card">
-            <h3 style="color:var(--gold)">Prize Contribution 🔥</h3>
-            <p style="font-size:0.7rem; margin-bottom:10px;">Contribution: ₹100</p>
-            <button onclick="copyUPI()" style="background:var(--gold)">8431257887@ybl</button>
+            <h3>⚖️ Log Monday Weight</h3>
+            <input type="number" step="0.1" id="weightInput" placeholder="Enter kg">
+            <button onclick="submitWeight()" style="width:100%; margin-top:10px">Update Sheets</button>
         </div>
     </div>
 </div>
 
-<div id="chat-icon" onclick="toggleChat()">🤖</div>
+<div id="chat-trigger" onclick="toggleChat()">🤖</div>
 <div id="chat-window" class="chat-hidden">
-    <div class="chat-header">
-        <div style="display:flex; align-items:center; gap:8px;">
-            <span>Coach AI</span>
-            <div class="status-container">
-                <div id="status-dot" class="status-dot status-online"></div>
-                <span id="status-text">ONLINE</span>
-            </div>
-        </div>
-        <span onclick="toggleChat()" style="cursor:pointer">&times;</span>
-    </div>
-    <div id="chat-body"><div class="bot-msg">Welcome! I am your Fitness Coach. I can help with diet tips, workout advice, or explaining the challenge rules.</div></div>
-    <div class="chat-input-area">
-        <input type="text" id="userQuery" placeholder="Ask Coach..." style="margin:0">
-        <button onclick="coachResponse()" style="width:50px; margin:0">🚀</button>
+    <div class="chat-header"><span>Coach AI</span><span onclick="toggleChat()" style="cursor:pointer">&times;</span></div>
+    <div id="chat-body"><div class="bot-msg">Welcome! I can help you with diet and workout tips. How's the journey?</div></div>
+    <div class="chat-input">
+        <input type="text" id="userQuery" placeholder="Ask a question...">
+        <button onclick="coachResponse()">🚀</button>
     </div>
 </div>
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
     const HF_TOKEN = "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";
-    const user = localStorage.getItem("user") || "Guest";
-    document.getElementById("welcomeText").innerText = user;
+    const CURRENT_USER = localStorage.getItem("username") || "Guest"; 
+    document.getElementById("userName").innerText = CURRENT_USER;
 
-    // --- CHAT LOGIC ---
-    function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
+    async function initDashboard() {
+        try {
+            // Fetching all data (Ensure your Apps Script returns an object with 'users' and 'entries')
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            // Find current user's goal data from "USERS" sheet
+            const userData = data.users.find(u => u.name === CURRENT_USER);
+            // Get latest weight from "ENTRIES" sheet
+            const userEntries = data.entries.filter(e => e.name === CURRENT_USER);
+            const currentWeight = userEntries.length > 0 ? userEntries[userEntries.length-1].weight : userData.startWeight;
 
-    function updateStatus(state) {
-        const dot = document.getElementById("status-dot");
-        const text = document.getElementById("status-text");
-        dot.className = "status-dot";
-        if(state === "online") { dot.classList.add("status-online"); text.innerText = "ONLINE"; }
-        else if(state === "loading") { dot.classList.add("status-loading"); text.innerText = "THINKING..."; }
-        else { dot.classList.add("status-offline"); text.innerText = "OFFLINE"; }
+            if (userData) {
+                calculateGoalStats(
+                    parseFloat(currentWeight), 
+                    parseFloat(userData.targetWeight), 
+                    userData.endDate, 
+                    userData.startWeight, 
+                    userData.startDate
+                );
+            }
+            // renderTable(data.entries); // Assuming you have a table renderer
+        } catch (e) {
+            console.error("Dashboard Sync Failed", e);
+        }
+    }
+
+    function calculateGoalStats(current, target, endStr, startWeight, startStr) {
+        const today = new Date();
+        const endDate = new Date(endStr);
+        const startDate = new Date(startStr);
+
+        // 1. Days Remaining
+        const diffDays = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+        document.getElementById("stat-days").innerText = diffDays > 0 ? diffDays : "Done";
+
+        // 2. Next Monday Target
+        // Logic: Calculate how much weight remains to be lost divided by weeks remaining
+        const weightRemaining = current - target;
+        const weeksRemaining = diffDays / 7;
+        const lossPerWeekNeeded = weightRemaining / weeksRemaining;
+        const nextTarget = (current - lossPerWeekNeeded).toFixed(1);
+        document.getElementById("stat-next-week").innerText = weeksRemaining > 0 ? `${nextTarget} kg` : "Goal Hit";
+
+        // 3. Status Logic (On Track vs Behind)
+        // 
+        const totalDuration = endDate - startDate;
+        const elapsed = today - startDate;
+        const progressPercent = elapsed / totalDuration;
+        const idealWeightAtThisPoint = startWeight - ((startWeight - target) * progressPercent);
+
+        const statusEl = document.getElementById("stat-status");
+        if (current <= idealWeightAtThisPoint + 0.5) { // 0.5kg buffer
+            statusEl.innerText = "ON TRACK";
+            statusEl.className = "status-badge on-track";
+        } else {
+            statusEl.innerText = "BEHIND PACE";
+            statusEl.className = "status-badge off-track";
+        }
     }
 
     async function coachResponse() {
-    const input = document.getElementById("userQuery");
-    const body = document.getElementById("chat-body");
-    const query = input.value.trim();
-    if(!query) return;
+        const queryInput = document.getElementById("userQuery");
+        const chatBody = document.getElementById("chat-body");
+        const query = queryInput.value.trim();
+        if(!query) return;
 
-    body.innerHTML += `<div class="user-msg">${query}</div>`;
-    input.value = "";
-    body.scrollTop = body.scrollHeight;
-    updateStatus("loading");
+        chatBody.innerHTML += `<div class="user-msg">${query}</div>`;
+        queryInput.value = "";
+        chatBody.scrollTop = chatBody.scrollHeight;
 
-    const loadId = "load-" + Date.now();
-    body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
-
-    try {
-        // Direct call to HF - Vercel handles HTTPS-to-HTTPS fine
-        const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
-            method: "POST",
-            headers: { 
-                "Authorization": `Bearer ${HF_TOKEN}`, 
-                "Content-Type": "application/json",
-                // Removing unnecessary headers that sometimes cause CORS pre-flight failure
-            },
-            body: JSON.stringify({
-                inputs: `[INST] You are the Dark Shine Fitness Coach. Answer briefly: ${query} [/INST]`,
-                parameters: { max_new_tokens: 150, wait_for_model: true } // Added wait_for_model
-            }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-            // This will tell us if it's 401 (Token), 429 (Rate Limit), or 503 (Loading)
-            throw new Error(data.error || `HTTP Error ${res.status}`);
-        }
-
-        let reply = data[0].generated_text.split("[/INST]").pop().trim();
-        document.getElementById(loadId).innerText = reply;
-        updateStatus("online");
-
-    } catch (e) {
-        console.error("AI Error:", e.message);
-        // If it still fails, the error message will appear in the chat for you to see
-        document.getElementById(loadId).innerText = "Error: " + e.message;
-        updateStatus("offline");
-    }
-    body.scrollTop = body.scrollHeight;
-}
-
-    // --- DASHBOARD DATA ---
-    async function init() {
         try {
-            const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-            const data = await res.json();
-            if(data.length > 1) renderTables(data);
-        } catch(e) { console.log("Init failed"); }
-    }
-
-    function renderTables(data) {
-        const rows = data.slice(1);
-        let usersMap = {}, datesSet = new Set();
-        rows.forEach(r => {
-            const d = new Date(r[1]); d.setDate(d.getDate() - d.getDay() + (d.getDay() === 0 ? -6 : 1));
-            const label = d.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
-            datesSet.add(label);
-            if(!usersMap[r[0]]) usersMap[r[0]] = {};
-            usersMap[r[0]][label] = parseFloat(r[2]);
-        });
-        const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
-        
-        let h1 = `<thead><tr><th class="sticky-col">Athlete</th>`, h2 = h1;
-        dates.forEach(d => { h1 += `<th>${d}</th>`; h2 += `<th>${d}</th>`; });
-        h1 += `<th>Total %</th></tr></thead><tbody>`; h2 += `</tr></thead><tbody>`;
-
-        let lb = Object.keys(usersMap).map(u => {
-            const vals = dates.map(d => usersMap[u][d]).filter(v => v);
-            const total = (((vals[0] - vals[vals.length-1])/vals[0])*100).toFixed(2);
-            let week = vals.length > 1 ? (((vals[vals.length-2]-vals[vals.length-1])/vals[vals.length-2])*100) : -999;
-            return { name: u, total: parseFloat(total), week };
-        });
-
-        const sorted = lb.sort((a,b) => b.total - a.total);
-        const wkSort = [...lb].sort((a,b) => b.week - a.week);
-        
-        document.getElementById("rank1").innerText = wkSort[0]?.name || "--";
-        document.getElementById("rank2").innerText = wkSort[1]?.name || "--";
-        document.getElementById("rank3").innerText = wkSort[2]?.name || "--";
-        
-        const myIdx = sorted.findIndex(i => i.name === user);
-        document.getElementById("userRank").innerText = myIdx >= 0 ? `#${myIdx + 1}` : "--";
-        document.getElementById("userTotalPct").innerText = myIdx >= 0 ? `${sorted[myIdx].total}%` : "--";
-
-        sorted.forEach(item => {
-            h1 += `<tr><td class="sticky-col">${item.name}</td>`;
-            h2 += `<tr><td class="sticky-col">${item.name}</td>`;
-            dates.forEach((d, i) => {
-                const v = usersMap[item.name][d] || '-';
-                h1 += `<td>${v}</td>`;
-                let delta = (i > 0 && usersMap[item.name][dates[i-1]] && usersMap[item.name][d]) ? `<div style="font-size:0.6rem; color:var(--success)">${(((usersMap[item.name][dates[i-1]]-v)/usersMap[item.name][dates[i-1]])*100).toFixed(1)}%</div>` : "";
-                h2 += `<td>${v}${delta}</td>`;
+            const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+                method: "POST",
+                headers: { "Authorization": `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ inputs: `[INST] You are the Dark Shine Fitness Coach. Answer this briefly: ${query} [/INST]` })
             });
-            h1 += `<td>${item.total}%</td></tr>`; h2 += `</tr>`;
-        });
-        document.getElementById("competitorTable").innerHTML = h1;
-        document.getElementById("skipTable").innerHTML = h2;
+            const data = await res.json();
+            const reply = data[0].generated_text.split("[/INST]").pop().trim();
+            chatBody.innerHTML += `<div class="bot-msg">${reply}</div>`;
+        } catch (e) {
+            chatBody.innerHTML += `<div class="bot-msg" style="color:var(--danger)">Offline.</div>`;
+        }
+        chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    function copyUPI() { navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI Copied!")); }
-    init();
+    function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
+    
+    // Start
+    initDashboard();
 </script>
 </body>
 </html>
