@@ -169,42 +169,50 @@
     }
 
     async function coachResponse() {
-        const input = document.getElementById("userQuery");
-        const body = document.getElementById("chat-body");
-        const query = input.value.trim();
-        if(!query) return;
+    const input = document.getElementById("userQuery");
+    const body = document.getElementById("chat-body");
+    const query = input.value.trim();
+    if(!query) return;
 
-        // 1. UI Update: User Message
-        body.innerHTML += `<div class="user-msg">${query}</div>`;
-        input.value = "";
-        body.scrollTop = body.scrollHeight;
-        updateStatus("loading");
+    // 1. Gather Context from your existing data logic
+    // We'll pull the stats directly from the UI elements you've already populated
+    const myRank = document.getElementById("userRank").innerText;
+    const myLoss = document.getElementById("userTotalPct").innerText;
+    const leader = document.getElementById("rank1").innerText;
 
-        const loadId = "load-" + Date.now();
-        body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
+    body.innerHTML += `<div class="user-msg">${query}</div>`;
+    input.value = "";
+    body.scrollTop = body.scrollHeight;
+    updateStatus("loading");
 
-        try {
-            /* Puter.js Chat: Uses GPT-5-Nano by default in 2026.
-               No API keys required. It just works.
-            */
-            const response = await puter.ai.chat(
-                `System: You are the Dark Shine Fitness Coach. Give a brief (max 2 sentences), high-energy, motivational fitness response. 
-                 User says: ${query}`
-            );
+    const loadId = "load-" + Date.now();
+    body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
 
-            // Extract content from Puter's response object
-            const reply = response.message.content;
+    try {
+        const response = await puter.ai.chat(
+            `System: You are the Dark Shine Fitness Coach. 
+             CONTEXT: 
+             - Current User: ${user}
+             - User's Rank: ${myRank}
+             - User's Total Weight Loss: ${myLoss}
+             - Current Leader: ${leader}
+             - Prize Pool: ₹6,000
+             
+             Rules: Be brief (max 2 sentences), high-energy, and use the CONTEXT provided to answer if the user asks about their progress or the leaderboard.` +
+            `User says: ${query}`
+        );
 
-            document.getElementById(loadId).innerText = reply;
-            updateStatus("online");
+        const reply = response.message.content;
+        document.getElementById(loadId).innerText = reply;
+        updateStatus("online");
 
-        } catch (e) {
-            console.error("AI Error:", e);
-            document.getElementById(loadId).innerText = "Coach is on a lap! Try again in a second.";
-            updateStatus("offline");
-        }
-        body.scrollTop = body.scrollHeight;
+    } catch (e) {
+        console.error("AI Error:", e);
+        document.getElementById(loadId).innerText = "Coach is on a lap! Try again.";
+        updateStatus("offline");
     }
+    body.scrollTop = body.scrollHeight;
+}
 
     // --- DASHBOARD DATA & TABLES ---
     async function init() {
