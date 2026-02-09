@@ -8,10 +8,10 @@
     --text-muted: #94a3b8;
     --danger: #ff4d4d;
     --success: #00ff88;
-    --font-main: 'Segoe UI', Roboto, sans-serif;
+    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* --- BASE STYLES --- */
+/* --- RESET & BASE --- */
 * { 
     box-sizing: border-box; 
     margin: 0; 
@@ -23,17 +23,19 @@ body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-main);
-    padding: 15px;
-    line-height: 1.4;
-    overflow-x: hidden;
+    padding: 20px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
 }
 
+/* --- LAYOUT --- */
 .layout {
     display: grid;
     grid-template-columns: 1fr 350px;
     gap: 20px;
+    width: 100%;
     max-width: 1400px;
-    margin: 0 auto;
 }
 
 .card {
@@ -45,18 +47,17 @@ body {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
 }
 
-/* --- PRIZE HERO & PODIUM --- */
+/* --- HERO & PODIUM --- */
 .prize-hero {
     text-align: center;
     border: 2px solid var(--primary);
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 }
 
-.prize-hero h3 { font-size: 0.8rem; letter-spacing: 2px; color: var(--text-muted); }
 .prize-hero h1 { 
-    font-size: 3rem; 
+    font-size: clamp(2rem, 5vw, 3rem); 
     color: var(--primary); 
-    margin: 10px 0; 
+    margin: 10px 0;
     text-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
 }
 
@@ -64,9 +65,9 @@ body {
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    gap: 12px;
-    height: 140px;
-    margin-top: 20px;
+    gap: 10px;
+    height: 130px;
+    margin-top: 15px;
 }
 
 .podium-step {
@@ -74,8 +75,8 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px 12px 6px 6px;
     text-align: center;
-    width: 90px;
-    padding: 12px 5px;
+    width: 85px;
+    padding: 10px 5px;
 }
 
 .first { height: 100%; border-color: var(--gold); position: relative; }
@@ -104,7 +105,7 @@ body {
 .stat-box span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
 .stat-box h2 { font-size: 1.2rem; color: var(--primary); margin-top: 5px; }
 
-/* --- TABLES --- */
+/* --- TABLES & SCROLLING --- */
 .table-container {
     overflow-x: auto;
     border-radius: 12px;
@@ -120,14 +121,14 @@ body {
 
 .matrix-table th {
     background: rgba(255, 255, 255, 0.03);
-    padding: 15px;
+    padding: 12px;
     font-size: 0.7rem;
     color: var(--text-muted);
     text-transform: uppercase;
 }
 
 .matrix-table td {
-    padding: 15px;
+    padding: 12px;
     text-align: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -139,17 +140,17 @@ body {
     font-weight: bold;
     color: var(--primary);
     z-index: 10;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
 }
 
-/* --- CHAT SYSTEM --- */
+/* --- AI COACH CHAT WINDOW --- */
 #chat-icon {
     position: fixed; bottom: 25px; right: 25px;
     width: 60px; height: 60px; background: var(--primary);
     border-radius: 50%; display: flex; align-items: center; justify-content: center;
     font-size: 30px; cursor: pointer; z-index: 2000;
     box-shadow: 0 4px 20px rgba(0, 210, 255, 0.5);
-    transition: transform 0.3s;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 #chat-icon:hover { transform: scale(1.1); }
@@ -160,7 +161,7 @@ body {
     border: 1px solid var(--primary); border-radius: 20px;
     display: flex; flex-direction: column; z-index: 2000;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: 0.3s ease;
 }
 
 .chat-hidden { transform: translateY(30px) scale(0.9); opacity: 0; pointer-events: none; }
@@ -187,7 +188,7 @@ body {
 }
 
 .chat-input-area {
-    display: flex; padding: 15px; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex; padding: 12px; gap: 8px; border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* --- INPUTS & BUTTONS --- */
@@ -197,30 +198,54 @@ input, button {
 }
 
 input { background: rgba(0, 0, 0, 0.3); color: #fff; border: 1px solid rgba(255, 255, 255, 0.1); margin-bottom: 12px; }
-input:focus { border-color: var(--primary); outline: none; }
+input:focus { border-color: var(--primary); outline: none; background: rgba(0, 0, 0, 0.4); }
 
 button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-button:active { transform: scale(0.98); }
+button:active { transform: scale(0.96); }
 
 .gold-btn { background: var(--gold); }
 .outline-btn { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
 
-/* --- MOBILE OPTIMIZATION --- */
+/* --- MOBILE RESPONSIVE (iPhones & Android) --- */
 @media (max-width: 850px) {
-    .layout { grid-template-columns: 1fr; gap: 15px; }
-    .side-panel { order: 2; }
+    body { padding: 12px; }
+
+    .layout {
+        grid-template-columns: 1fr; /* Stack panels */
+        gap: 15px;
+    }
+
     .main-panel { order: 1; }
-    
+    .side-panel { order: 2; }
+
+    .card { padding: 15px; border-radius: 16px; }
+
+    .stat-box h2 { font-size: 1.1rem; }
     .prize-hero h1 { font-size: 2.2rem; }
-    .podium-step { width: 80px; }
-    
+
+    .podium-container { height: 110px; }
+    .podium-step { width: 75px; }
+
+    .table-container {
+        margin: 0 -12px; /* Stretch table to phone edges */
+        border-radius: 0;
+    }
+
+    .matrix-table th, .matrix-table td {
+        padding: 10px 8px;
+        font-size: 0.75rem;
+    }
+
     #chat-window {
         width: calc(100% - 30px);
-        height: 70vh;
+        height: 65vh;
         right: 15px;
         bottom: 95px;
     }
-    
-    .card { padding: 15px; }
-    .table-container { margin: 0 -15px; border-radius: 0; }
+
+    /* Larger tap zones for mobile input */
+    input, button {
+        padding: 16px;
+        font-size: 1rem;
+    }
 }
