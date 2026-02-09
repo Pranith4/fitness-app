@@ -225,7 +225,37 @@ button:active { transform: translateY(0); }
 #msg { text-align: center; font-size: 0.9rem; font-weight: 600; min-height: 20px; }
 .error-text { color: var(--danger); }
 .success-text { color: var(--success); }
+.coach-card {
+    border: 1.5px solid var(--primary);
+    background: linear-gradient(145deg, #1e293b, #111b2b);
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+}
 
+.coach-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.coach-icon {
+    font-size: 1.5rem;
+    background: rgba(0, 210, 255, 0.1);
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.coach-btn {
+    background: transparent;
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    transition: 0.3s ease;
+}
+
+.coach-btn:hover {
+    background: var(--primary);
+    color: #000;
+}
 /* --- MOBILE RESPONSIVE (iPhones & Android) --- */
 @media (max-width: 850px) {
     body { padding: 12px; }
