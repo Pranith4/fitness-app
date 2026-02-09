@@ -12,22 +12,21 @@
             --danger: #ff4d4d; --success: #00ff88;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; }
         
         /* NEWS TICKER */
         #news-ticker { background: rgba(0, 210, 255, 0.1); color: var(--primary); padding: 8px; overflow: hidden; white-space: nowrap; border-bottom: 1px solid rgba(0,210,255,0.2); font-size: 0.85rem; font-weight: bold; }
-        #ticker-content { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
+        #ticker-content { display: inline-block; padding-left: 100%; animation: marquee 25s linear infinite; }
         @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
 
         .layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; width: 100%; max-width: 1400px; padding: 20px; margin: 0 auto; }
         .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 15px rgba(0,0,0,0.2); }
         
         .prize-hero { text-align: center; border: 2px solid var(--primary); background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
-        .prize-hero h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; text-shadow: 0 0 10px rgba(0,210,255,0.3); }
+        .prize-hero h1 { font-size: 2.5rem; color: var(--primary); margin: 10px 0; }
 
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .stat-box { background: var(--card-bg); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
-        .stat-box span { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
         .stat-box h2 { font-size: 1.2rem; color: var(--primary); }
 
         .podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 120px; margin-top: 15px; }
@@ -35,30 +34,29 @@
         .first { height: 100%; border-color: var(--gold); }
         .second { height: 75%; } .third { height: 55%; }
 
-        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); }
+        .table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); margin-top: 10px; }
         .matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
         .matrix-table th, .matrix-table td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .sticky-col { position: sticky; left: 0; background: #1e293b !important; font-weight: bold; color: var(--primary); z-index: 5; }
 
-        /* CHAT SYSTEM */
-        #chat-icon { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 9998; box-shadow: 0 4px 15px rgba(0,210,255,0.4); }
-        #chat-window { position: fixed; bottom: 90px; right: 20px; width: 350px; height: 480px; background: var(--card-bg); border: 1px solid var(--primary); border-radius: 20px; display: flex; flex-direction: column; z-index: 9999; transition: 0.3s ease; }
+        /* CHAT */
+        #chat-icon { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; cursor: pointer; z-index: 999; }
+        #chat-window { position: fixed; bottom: 90px; right: 20px; width: 350px; height: 480px; background: var(--card-bg); border: 1px solid var(--primary); border-radius: 20px; display: flex; flex-direction: column; z-index: 1000; transition: 0.3s; }
         .chat-hidden { transform: translateY(20px); opacity: 0; pointer-events: none; }
         #chat-body { padding: 15px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; }
-        .bot-msg { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px 12px 12px 0; align-self: flex-start; max-width: 85%; }
-        .user-msg { background: var(--primary); color: #000; padding: 10px; border-radius: 12px 12px 0 12px; align-self: flex-end; max-width: 85%; }
+        .bot-msg { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 12px 12px 12px 0; align-self: flex-start; }
+        .user-msg { background: var(--primary); color: #000; padding: 10px; border-radius: 12px 12px 0 12px; align-self: flex-end; }
+        
+        button { background: var(--primary); font-weight: bold; cursor: pointer; padding: 10px; border-radius: 8px; border: none; }
+        button:disabled { background: #444; color: #888; cursor: not-allowed; }
+        input { padding: 10px; border-radius: 8px; border: none; background: rgba(0,0,0,0.3); color: #fff; }
 
-        .challenge-item { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; background:rgba(255,255,255,0.05); padding:10px; border-radius:8px; }
-        input, button { padding: 10px; border-radius: 8px; border: none; outline: none; transition: 0.2s; }
-        button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
-        button:disabled { background: #444; color: #888; }
-
-        @media (max-width: 850px) { .layout { grid-template-columns: 1fr; } #chat-window { width: calc(100% - 30px); right: 15px; } }
+        @media (max-width: 850px) { .layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div id="news-ticker"><div id="ticker-content">Waiting for athlete updates... 🔥</div></div>
+<div id="news-ticker"><div id="ticker-content">Loading live athlete feed... 🔥</div></div>
 
 <div class="layout">
     <div class="main-panel">
@@ -82,39 +80,51 @@
             <h3>⚔️ Weight Matrix</h3>
             <div class="table-container"><table id="competitorTable" class="matrix-table"></table></div>
         </div>
+
+        <div class="card">
+            <h3>🔥 ವಿಟ್ಟಲ್ ತೂಕ ದಂಡ ಯೋಜನೆ (Weekly Delta)</h3>
+            <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
+        </div>
     </div>
 
     <div class="side-panel">
         <div class="card">
             <h2 id="welcomeText">Athlete</h2>
-            <p id="countdown" style="color:var(--gold); font-size:0.8rem;">Loading...</p>
+            <p id="countdown" style="color:var(--gold); font-size:0.8rem; margin-top:5px;">--:--:--</p>
         </div>
 
         <div class="card">
             <h3 style="color:var(--primary)">🎯 Daily Challenges</h3>
             <div id="challenge-list" style="margin-top:10px;">
-                <div class="challenge-item"><span>💧 3L Water</span><button onclick="completeChallenge(this, '3L Water')">Done</button></div>
-                <div class="challenge-item"><span>🏃 10k Steps</span><button onclick="completeChallenge(this, '10k Steps')">Done</button></div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                    <span style="font-size:0.8rem;">💧 3L Water</span>
+                    <button onclick="completeChallenge(this, '3L Water')" style="font-size:0.7rem;">Done</button>
+                </div>
+                <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px;">
+                    <span style="font-size:0.8rem;">🏃 10k Steps</span>
+                    <button onclick="completeChallenge(this, '10k Steps')" style="font-size:0.7rem;">Done</button>
+                </div>
             </div>
         </div>
 
         <div class="card">
             <h3>⚖️ Log Weight</h3>
-            <input type="number" step="0.1" id="weightInput" placeholder="kg" style="width:100%; margin-bottom:10px; background:rgba(0,0,0,0.3); color:#fff;">
-            <button onclick="addWeight()" style="width:100%">Submit Entry</button>
+            <p id="logStatus" style="font-size:0.65rem; color:var(--text-muted); margin-bottom:8px;">Checking permissions...</p>
+            <input type="number" step="0.1" id="weightInput" placeholder="Enter Weight (kg)" style="width:100%; margin-bottom:10px;">
+            <button onclick="addWeight()" id="submitBtn" style="width:100%">Submit Monday Entry</button>
         </div>
     </div>
 </div>
 
 <div id="chat-icon" onclick="toggleChat()">🤖</div>
 <div id="chat-window" class="chat-hidden">
-    <div style="background:var(--primary); color:#000; padding:15px; font-weight:bold; display:flex; justify-content:space-between; border-radius:19px 19px 0 0;">
-        <span>Coach TIN_AI</span><span onclick="toggleChat()" style="cursor:pointer">&times;</span>
+    <div style="background:var(--primary); color:#000; padding:15px; font-weight:bold; border-radius:20px 20px 0 0; display:flex; justify-content:space-between;">
+        <span>TIN_AI Coach</span><span onclick="toggleChat()" style="cursor:pointer">&times;</span>
     </div>
-    <div id="chat-body"><div class="bot-msg">Welcome! I'm watching your progress. Ask me for your stats or tips!</div></div>
-    <div style="display:flex; padding:12px; gap:8px; border-top:1px solid rgba(255,255,255,0.1);">
-        <input type="text" id="userQuery" placeholder="Ask Coach..." style="flex:1; background:rgba(0,0,0,0.3); color:#fff;">
-        <button onclick="coachResponse()" style="width:50px">🚀</button>
+    <div id="chat-body"><div class="bot-msg">Welcome Athlete! Ask me for your current standing.</div></div>
+    <div style="display:flex; padding:10px; gap:5px; border-top:1px solid rgba(255,255,255,0.1);">
+        <input type="text" id="userQuery" style="flex:1;" placeholder="Ask coach...">
+        <button onclick="coachResponse()">🚀</button>
     </div>
 </div>
 
@@ -124,6 +134,23 @@
     document.getElementById("welcomeText").innerText = user;
 
     function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
+
+    // --- MONDAY LOCK LOGIC ---
+    function checkMonday() {
+        const today = new Date().getDay();
+        const btn = document.getElementById("submitBtn");
+        const status = document.getElementById("logStatus");
+        
+        if (today === 1) { // 1 = Monday
+            btn.disabled = false;
+            status.innerText = "It's Monday! Please log your weight.";
+            status.style.color = "var(--success)";
+        } else {
+            btn.disabled = true;
+            status.innerText = "Weight logging is only open on Mondays.";
+            status.style.color = "var(--danger)";
+        }
+    }
 
     async function coachResponse() {
         const input = document.getElementById("userQuery");
@@ -141,10 +168,10 @@
 
         try {
             const response = await puter.ai.chat(
-                `System: You are TIN_AI, a fitness coach. Current context: User is ${user}, Rank: ${myRank}, Loss: ${myLoss}. Rules: Keep it under 2 sentences, high energy.` + query
+                `System: You are TIN_AI, the Dark Shine Coach. Context: User is ${user}, Rank: ${myRank}, Loss: ${myLoss}. Be brief (2 sentences), high-energy.` + query
             );
             document.getElementById(loadId).innerText = response.message.content;
-        } catch (e) { document.getElementById(loadId).innerText = "Error connecting to coach."; }
+        } catch (e) { document.getElementById(loadId).innerText = "Coach is busy. Try again!"; }
         body.scrollTop = body.scrollHeight;
     }
 
@@ -154,19 +181,30 @@
             await fetch(API_URL, {method: "POST", body: JSON.stringify({action:"logChallenge", username: user, challenge: task})});
             btn.style.background = "var(--success)"; btn.innerText = "✔️";
             updateTicker();
-        } catch(e) { btn.disabled = false; btn.innerText = "Retry"; }
+        } catch(e) { btn.disabled = false; }
     }
 
     async function updateTicker() {
         try {
             const res = await fetch(API_URL, {method: "POST", body: JSON.stringify({action:"getDailyChallenges"})});
             const data = await res.json();
-            const msg = data.length ? data.map(d => `🔥 ${d.user} completed ${d.challenge}`).join(" | ") : "Be the first to finish a challenge today!";
+            const msg = data.length ? data.map(d => `🔥 ${d.user} completed ${d.challenge}`).join(" | ") : "Log challenges to inspire others!";
             document.getElementById("ticker-content").innerText = msg + " | " + msg;
         } catch(e) {}
     }
 
+    async function addWeight() {
+        const weight = document.getElementById("weightInput").value;
+        if(!weight) return alert("Enter weight");
+        try {
+            await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"addWeight", username:user, weight:weight})});
+            alert("Weight Logged!");
+            init();
+        } catch(e) { alert("Failed to log"); }
+    }
+
     async function init() {
+        checkMonday();
         try {
             const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
             const data = await res.json();
@@ -187,9 +225,9 @@
         });
         const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
         
-        let h1 = `<thead><tr><th class="sticky-col">Athlete</th>`;
-        dates.forEach(d => h1 += `<th>${d}</th>`);
-        h1 += `<th>Total %</th></tr></thead><tbody>`;
+        let h1 = `<thead><tr><th class="sticky-col">Athlete</th>`, h2 = h1;
+        dates.forEach(d => { h1 += `<th>${d}</th>`; h2 += `<th>${d}</th>`; });
+        h1 += `<th>Total %</th></tr></thead><tbody>`; h2 += `</tr></thead><tbody>`;
 
         let lb = Object.keys(usersMap).map(u => {
             const vals = dates.map(d => usersMap[u][d]).filter(v => v);
@@ -201,17 +239,25 @@
         document.getElementById("rank1").innerText = sorted[0]?.name || "--";
         document.getElementById("rank2").innerText = sorted[1]?.name || "--";
         document.getElementById("rank3").innerText = sorted[2]?.name || "--";
-
+        
         const myIdx = sorted.findIndex(i => i.name === user);
         document.getElementById("userRank").innerText = myIdx >= 0 ? `#${myIdx + 1}` : "--";
         document.getElementById("userTotalPct").innerText = myIdx >= 0 ? `${sorted[myIdx].total}%` : "--";
 
         sorted.forEach(item => {
             h1 += `<tr><td class="sticky-col">${item.name}</td>`;
-            dates.forEach(d => h1 += `<td>${usersMap[item.name][d] || '-'}</td>`);
-            h1 += `<td>${item.total}%</td></tr>`;
+            h2 += `<tr><td class="sticky-col">${item.name}</td>`;
+            dates.forEach((d, i) => {
+                const v = usersMap[item.name][d] || '-';
+                h1 += `<td>${v}</td>`;
+                let prev = dates[i-1] ? usersMap[item.name][dates[i-1]] : null;
+                let delta = (prev && v !== '-') ? `<div style="font-size:0.6rem; color:var(--success)">${(((prev-v)/prev)*100).toFixed(1)}%</div>` : "";
+                h2 += `<td>${v}${delta}</td>`;
+            });
+            h1 += `<td>${item.total}%</td></tr>`; h2 += `</tr>`;
         });
         document.getElementById("competitorTable").innerHTML = h1;
+        document.getElementById("skipTable").innerHTML = h2;
     }
 
     init();
