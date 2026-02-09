@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Shine Fitness Dashboard</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -24,52 +23,61 @@
         </div>
 
         <div class="card">
-            <h3 style="color:var(--primary)">📈 Group Performance</h3>
-            <canvas id="groupChart" height="120"></canvas>
-        </div>
-
-        <div class="card">
-            <h3 style="color:var(--primary)">⚔️ Competitor Daily Table</h3>
-            <div style="overflow-x: auto;">
-                <table id="competitorTable"></table>
+            <div class="card-header">
+                <h3 style="color:var(--primary)">⚔️ Competitor Weight Matrix</h3>
+            </div>
+            <div class="table-container">
+                <table id="competitorTable" class="matrix-table"></table>
             </div>
         </div>
     </div>
 
     <div class="side-panel">
-        <div class="card">
-            <h2 id="welcomeText">Athlete</h2>
-            <button onclick="refreshAll()" style="background:transparent; border:1px solid var(--primary); color:var(--primary); margin-top:10px">🔄 Sync Data</button>
+        <div class="card user-profile">
+            <div class="avatar">⚡</div>
+            <div>
+                <h2 id="welcomeText">Athlete</h2>
+                <button onclick="refreshAll()" class="sync-btn">🔄 Sync Cloud Data</button>
+            </div>
         </div>
 
         <div class="card motivation-card shine">
             <h3 style="color:var(--gold)">Stay Motivated 🔥</h3>
-            <p style="font-size:0.8rem; margin: 10px 0; opacity:0.8">Keep the fire burning!</p>
-            <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; margin-bottom:12px">
-                <span style="font-size:0.65rem; display:block; margin-bottom:5px">Pay INR 100 for Motivation:</span>
+            <p>Fuel the challenge!</p>
+            <div class="upi-box">
+                <span>Contribution for Pool/Motivation:</span>
                 <span class="upi-id" id="upiValue">8431257887@ybl</span>
             </div>
-            <button onclick="copyUPI()" style="background:var(--gold); color:white">Copy UPI ID</button>
+            <button onclick="copyUPI()" class="gold-btn">Copy UPI ID</button>
         </div>
 
         <div class="card">
-            <h3>⚖️ Log Weight</h3>
-            <input type="number" step="0.1" id="weightInput" placeholder="Current weight in kg">
-            <button onclick="addWeight()">Submit Entry</button>
-            <p id="msg" style="margin-top:10px; font-size:0.8rem; text-align:center"></p>
+            <h3>⚖️ Log Daily Weight</h3>
+            <div class="input-group">
+                <input type="number" step="0.1" id="weightInput" placeholder="Current weight in kg">
+                <button onclick="addWeight()">Submit</button>
+            </div>
+            <p id="msg"></p>
         </div>
 
         <div class="card">
             <h3>📜 Personal History</h3>
-            <table id="historyTable" style="font-size:0.85rem"></table>
+            <div class="table-container-mini">
+                <table id="historyTable"></table>
+            </div>
         </div>
         
         <div class="card">
             <h3>🎯 Goal Settings</h3>
-            <input type="number" id="startW" placeholder="Start Weight (Initial)">
-            <input type="number" id="targetW" placeholder="Target Weight">
-            <input type="date" id="endD">
-            <button onclick="saveGoal()" style="background:rgba(255,255,255,0.1); color:white">Update Goal</button>
+            <div class="goal-form">
+                <label>Start Weight</label>
+                <input type="number" id="startW">
+                <label>Target Weight</label>
+                <input type="number" id="targetW">
+                <label>End Date</label>
+                <input type="date" id="endD">
+                <button onclick="saveGoal()" class="outline-btn">Update Goal</button>
+            </div>
         </div>
     </div>
 </div>
@@ -79,30 +87,24 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG
 const user = localStorage.getItem("user") || "Guest";
 document.getElementById("welcomeText").innerText = user;
 
-let groupChart;
-
-// --- INITIALIZATION ---
 async function refreshAll() {
-    // 1. Instant UI: Load from Cache
     const cachedGoal = localStorage.getItem(`goal_${user}`);
     const cachedLogs = localStorage.getItem(`logs_${user}`);
 
     if (cachedGoal) renderGoalData(JSON.parse(cachedGoal));
     if (cachedLogs) processAndRender(JSON.parse(cachedLogs));
 
-    // 2. Background Sync: Update from Cloud
     await Promise.all([loadGoal(), loadData()]);
 }
 
-// --- API ACTIONS ---
 async function addWeight() {
     const w = document.getElementById("weightInput").value;
     if(!w) return;
     const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"addWeight", username:user, weight:w})});
     const result = await res.json();
     const msg = document.getElementById("msg");
-    msg.innerText = result.success ? "✅ Success!" : "❌ " + result.message;
-    msg.style.color = result.success ? "#00ff88" : "#ff4d4d";
+    msg.innerText = result.success ? "✅ Logged Successfully!" : "❌ " + result.message;
+    msg.className = result.success ? "success-text" : "error-text";
     if(result.success) refreshAll();
 }
 
@@ -145,7 +147,6 @@ async function loadData() {
     } catch(e) { console.error("Data fetch failed", e); }
 }
 
-// --- RENDERING LOGIC ---
 function renderGoalData(g) {
     document.getElementById("targetW").value = g.targetWeight || "";
     document.getElementById("startW").value = g.startWeight || "";
@@ -168,32 +169,15 @@ function processAndRender(data) {
         usersMap[r[0]].push({date:d, weight:parseFloat(r[2]), rawDate: new Date(r[1])});
     });
 
-    const dates = [...datesSet];
-    renderChart(usersMap, dates);
+    const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
     renderCompetitorTable(usersMap, dates);
     renderPersonalHistory(usersMap[user] || []);
 }
 
-function renderChart(usersMap, dates) {
-    const colors = ['#00d2ff', '#ff2e63', '#00ff88', '#ae7aff'];
-    const datasets = Object.keys(usersMap).map((u, i) => ({
-        label: u, 
-        data: dates.map(d => usersMap[u].find(x => x.date === d)?.weight || null),
-        borderColor: colors[i % colors.length], 
-        tension: 0.3, 
-        spanGaps: true
-    }));
-    if(groupChart) groupChart.destroy();
-    groupChart = new Chart(document.getElementById("groupChart"), {
-        type:'line', data:{labels:dates, datasets},
-        options:{ responsive:true, plugins:{legend:{labels:{color:'#fff'}}}, scales:{y:{ticks:{color:'#94a3b8'}, grid:{color:'rgba(255,255,255,0.05)'}}, x:{ticks:{color:'#94a3b8'}}}}
-    });
-}
-
 function renderCompetitorTable(usersMap, dates) {
-    let html = `<thead><tr><th>Athlete</th>`;
+    let html = `<thead><tr><th class="sticky-col">Athlete</th>`;
     dates.forEach(d => html += `<th>${d}</th>`);
-    html += `<th>% Loss</th></tr></thead><tbody>`;
+    html += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
     
     let leaderboard = Object.keys(usersMap).map(u => {
         let entries = usersMap[u].sort((a,b) => a.rawDate - b.rawDate);
@@ -208,20 +192,25 @@ function renderCompetitorTable(usersMap, dates) {
             document.getElementById("totalLoss").innerText = item.pct + "%";
             document.getElementById("rank").innerText = "#" + (idx + 1);
         }
-        html += `<tr><td style="color:var(--primary); text-align:left">${item.name}</td>`;
-        dates.forEach((d, idxD) => {
+        
+        const rowClass = item.name === user ? "highlight-row" : "";
+        html += `<tr class="${rowClass}"><td class="sticky-col name-cell">${item.name}</td>`;
+        
+        dates.forEach((d) => {
             let entry = item.entries.find(x => x.date === d);
             if(entry) {
-                let delta = "";
-                let prev = item.entries.filter(x => x.rawDate < entry.rawDate).slice(-1)[0];
-                if(prev) {
-                    let diff = (((entry.weight - prev.weight)/prev.weight)*100).toFixed(1);
-                    delta = `<br><span style="font-size:0.7rem; color:${diff<=0?'#00ff88':'#ff4d4d'}">${diff > 0 ? '+' : ''}${diff}%</span>`;
+                let deltaHtml = "";
+                let prevEntries = item.entries.filter(x => x.rawDate < entry.rawDate);
+                if(prevEntries.length > 0) {
+                    let prevWeight = prevEntries[prevEntries.length - 1].weight;
+                    let diff = (((entry.weight - prevWeight)/prevWeight)*100).toFixed(1);
+                    let color = diff <= 0 ? "#00ff88" : "#ff4d4d";
+                    deltaHtml = `<div class="diff" style="color:${color}">${diff > 0 ? '+' : ''}${diff}%</div>`;
                 }
-                html += `<td>${entry.weight}${delta}</td>`;
-            } else html += `<td>-</td>`;
+                html += `<td>${entry.weight}${deltaHtml}</td>`;
+            } else html += `<td class="empty">-</td>`;
         });
-        html += `<td style="font-weight:bold; background:rgba(0,210,255,0.1)">${item.pct}%</td></tr>`;
+        html += `<td class="sticky-right total-cell">${item.pct}%</td></tr>`;
     });
     html += `</tbody>`;
     document.getElementById("competitorTable").innerHTML = html;
@@ -241,21 +230,9 @@ function renderPersonalHistory(history) {
 
 function copyUPI() {
     const upiText = document.getElementById("upiValue").innerText;
-    navigator.clipboard.writeText(upiText).then(() => {
-        alert("UPI ID Copied! Let's go! 🔥");
-    }).catch(err => {
-        // Fallback for older browsers
-        const el = document.createElement('textarea');
-        el.value = upiText;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        alert("UPI ID Copied! 🔥");
-    });
+    navigator.clipboard.writeText(upiText).then(() => alert("UPI ID Copied! 🔥"));
 }
 
-// Initial Run
 refreshAll();
 </script>
 </body>
