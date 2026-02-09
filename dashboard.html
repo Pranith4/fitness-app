@@ -172,52 +172,52 @@
     const query = input.value.trim();
     if(!query) return;
 
-    // 1. Display user message
     body.innerHTML += `<div class="user-msg">${query}</div>`;
     input.value = "";
     body.scrollTop = body.scrollHeight;
     updateStatus("loading");
 
     const loadId = "load-" + Date.now();
-    body.innerHTML += `<div class="bot-msg" id="${loadId}">Coach is thinking...</div>`;
+    body.innerHTML += `<div class="bot-msg" id="${loadId}">Connecting to Coach...</div>`;
 
     try {
-        const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+        const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
             headers: { 
                 "Authorization": `Bearer ${HF_TOKEN}`, 
                 "Content-Type": "application/json" 
             },
             method: "POST",
             body: JSON.stringify({
-                // This "inputs" format is exactly what this model expects
-                inputs: `[INST] You are the Dark Shine Fitness Coach. Answer ONLY about fitness, diet, or weight loss. Be concise. Question: ${query} [/INST]`,
+                inputs: `[INST] You are a fitness coach. Be brief. Question: ${query} [/INST]`,
             }),
         });
 
-        const data = await res.json();
-
-        // Check if Hugging Face is still loading the model
-        if (data.error && data.error.includes("currently loading")) {
-            document.getElementById(loadId).innerText = "The gym is opening up... (Model is loading). Please try again in 20 seconds!";
+        // DEBUG: Check if the token is the problem
+        if (response.status === 401) {
+            document.getElementById(loadId).innerText = "Error 401: Your HF Token is invalid or expired.";
+            updateStatus("offline");
             return;
         }
 
-        // Parse the response
-        let reply = "";
-        if (Array.isArray(data) && data[0].generated_text) {
-            // This cleans the text so it doesn't repeat your question
-            reply = data[0].generated_text.split("[/INST]").pop().trim();
-        } else {
-            reply = "I'm ready! Ask me about your diet or fitness routines.";
+        const data = await response.json();
+
+        if (data.error && data.error.includes("loading")) {
+            document.getElementById(loadId).innerText = "Coach is warming up (Model loading). Please try again in 15 seconds.";
+            return;
         }
+
+        let reply = (Array.isArray(data) && data[0].generated_text) 
+                    ? data[0].generated_text.split("[/INST]").pop().trim() 
+                    : "I am ready for your fitness questions!";
 
         document.getElementById(loadId).innerText = reply;
         updateStatus("online");
 
     } catch (e) {
-        console.error("API Error:", e);
+        // If it reaches here, the browser itself blocked the call
+        console.error("Fetch Error:", e);
+        document.getElementById(loadId).innerText = "Browser blocked the connection. Try disabling Ad-Blockers or check your internet.";
         updateStatus("offline");
-        document.getElementById(loadId).innerText = "Connection error. Please check your HF token!";
     }
     body.scrollTop = body.scrollHeight;
 }
