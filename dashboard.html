@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://js.puter.com/v2/"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dark Shine Fitness Dashboard</title>
@@ -150,12 +151,13 @@
 
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
-    const HF_TOKEN = "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";
     const user = localStorage.getItem("user") || "Guest";
     document.getElementById("welcomeText").innerText = user;
 
-    // --- CHAT LOGIC ---
-    function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
+    // --- CHAT LOGIC (Using Puter.js - No API Key Needed) ---
+    function toggleChat() { 
+        document.getElementById("chat-window").classList.toggle("chat-hidden"); 
+    }
 
     function updateStatus(state) {
         const dot = document.getElementById("status-dot");
@@ -167,62 +169,44 @@
     }
 
     async function coachResponse() {
-    const input = document.getElementById("userQuery");
-    const body = document.getElementById("chat-body");
-    const query = input.value.trim();
-    if(!query) return;
+        const input = document.getElementById("userQuery");
+        const body = document.getElementById("chat-body");
+        const query = input.value.trim();
+        if(!query) return;
 
-    body.innerHTML += `<div class="user-msg">${query}</div>`;
-    input.value = "";
-    body.scrollTop = body.scrollHeight;
-    updateStatus("loading");
+        // 1. UI Update: User Message
+        body.innerHTML += `<div class="user-msg">${query}</div>`;
+        input.value = "";
+        body.scrollTop = body.scrollHeight;
+        updateStatus("loading");
 
-    const loadId = "load-" + Date.now();
-    body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
+        const loadId = "load-" + Date.now();
+        body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
 
-    try {
-        // Updated to Llama 3.1 8B - High reliability in 2026 free tier
-        const res = await fetch("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3.1-8B-Instruct", {
-            method: "POST",
-            headers: { 
-                "Authorization": `Bearer ${HF_TOKEN}`, 
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
-                You are the Dark Shine Fitness Coach. Give brief, motivating fitness advice.<|eot_id|>
-                <|start_header_id|>user<|end_header_id|>${query}<|eot_id|>
-                <|start_header_id|>assistant<|end_header_id|>`,
-                parameters: { 
-                    max_new_tokens: 150, 
-                    return_full_text: false,
-                    wait_for_model: true 
-                }
-            }),
-        });
+        try {
+            /* Puter.js Chat: Uses GPT-5-Nano by default in 2026.
+               No API keys required. It just works.
+            */
+            const response = await puter.ai.chat(
+                `System: You are the Dark Shine Fitness Coach. Give a brief (max 2 sentences), high-energy, motivational fitness response. 
+                 User says: ${query}`
+            );
 
-        const data = await res.json();
+            // Extract content from Puter's response object
+            const reply = response.message.content;
 
-        if (!res.ok) throw new Error(data.error || `HTTP Error ${res.status}`);
+            document.getElementById(loadId).innerText = reply;
+            updateStatus("online");
 
-        // Handle different response formats (sometimes HF returns an array, sometimes an object)
-        let reply = Array.isArray(data) ? data[0].generated_text : data.generated_text;
-        
-        // Clean up any remaining tags if they leak into the response
-        reply = reply.replace(/<|eot_id|>/g, "").trim();
-
-        document.getElementById(loadId).innerText = reply;
-        updateStatus("online");
-
-    } catch (e) {
-        console.error("AI Error:", e.message);
-        document.getElementById(loadId).innerText = "Coach is busy. Try again in a moment!";
-        updateStatus("offline");
+        } catch (e) {
+            console.error("AI Error:", e);
+            document.getElementById(loadId).innerText = "Coach is on a lap! Try again in a second.";
+            updateStatus("offline");
+        }
+        body.scrollTop = body.scrollHeight;
     }
-    body.scrollTop = body.scrollHeight;
-}
 
-    // --- DASHBOARD DATA ---
+    // --- DASHBOARD DATA & TABLES ---
     async function init() {
         try {
             const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
@@ -281,7 +265,9 @@
     }
 
     function copyUPI() { navigator.clipboard.writeText("8431257887@ybl").then(() => alert("UPI Copied!")); }
+    
+    // Auto-refresh data every 5 minutes
     init();
+    setInterval(init, 300000); 
 </script>
-</body>
 </html>
