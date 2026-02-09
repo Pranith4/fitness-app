@@ -1,4 +1,4 @@
-/* --- ROOT THEME --- */
+/* --- DARK SHINE THEME VARIABLES --- */
 :root {
     --bg: #0f172a;
     --card-bg: #1e293b;
@@ -8,23 +8,25 @@
     --text-muted: #94a3b8;
     --danger: #ff4d4d;
     --success: #00ff88;
+    --glass: rgba(255, 255, 255, 0.05);
 }
 
-/* --- RESET & LAYOUT --- */
+/* --- BASE STYLES --- */
 * { 
     box-sizing: border-box; 
     margin: 0; 
     padding: 0; 
-    -webkit-tap-highlight-color: transparent; 
+    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; 
+    -webkit-tap-highlight-color: transparent;
 }
 
 body { 
     background: var(--bg); 
     color: var(--text); 
-    font-family: 'Segoe UI', Roboto, -apple-system, sans-serif; 
     padding: 15px; 
     display: flex; 
-    justify-content: center; 
+    justify-content: center;
+    line-height: 1.6;
 }
 
 .layout { 
@@ -35,53 +37,74 @@ body {
     max-width: 1400px; 
 }
 
-/* --- CARD STYLING --- */
+/* --- CARD ARCHITECTURE --- */
 .card { 
     background: var(--card-bg); 
-    padding: 20px; 
-    border-radius: 16px; 
+    padding: 24px; 
+    border-radius: 20px; 
     margin-bottom: 20px; 
-    border: 1px solid rgba(255,255,255,0.05); 
-    box-shadow: 0 10px 15px rgba(0,0,0,0.2); 
+    border: 1px solid var(--glass); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
 }
 
-/* --- PRIZE HERO & PODIUM --- */
+/* --- PRIZE POOL SECTION --- */
 .prize-hero { 
     text-align: center; 
-    border: 2px solid var(--primary); 
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
+    background: linear-gradient(145deg, #1e293b, #0f172a); 
+    border: 2px solid var(--primary);
 }
 
 .prize-hero h1 { 
-    font-size: clamp(2rem, 5vw, 2.5rem); 
+    font-size: clamp(2rem, 5vw, 3rem); 
     color: var(--primary); 
     margin: 10px 0; 
-    text-shadow: 0 0 10px rgba(0,210,255,0.3); 
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
 }
 
-.podium-container { 
-    display: flex; 
-    align-items: flex-end; 
-    justify-content: center; 
+/* --- GOAL PROGRESS GRID --- */
+.goal-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
     gap: 12px; 
-    height: 120px; 
-    margin-top: 15px; 
+    margin-top: 20px; 
 }
 
-.podium-step { 
-    background: rgba(0,0,0,0.3); 
-    border-radius: 12px 12px 4px 4px; 
+.goal-box { 
+    background: rgba(15, 23, 42, 0.5); 
+    padding: 15px 10px; 
+    border-radius: 14px; 
     text-align: center; 
-    width: 85px; 
-    padding: 10px; 
-    border: 1px solid rgba(255,255,255,0.1); 
+    border: 1px solid var(--glass); 
 }
 
-.first { height: 100%; border-color: var(--gold); }
-.second { height: 75%; }
-.third { height: 55%; }
+.goal-box span { 
+    font-size: 0.65rem; 
+    color: var(--text-muted); 
+    display: block; 
+    margin-bottom: 5px; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+}
 
-/* --- STATS GRID --- */
+.goal-box h4 { 
+    font-size: 1.1rem; 
+    color: #fff; 
+    font-weight: 700;
+}
+
+.status-badge { 
+    display: inline-block; 
+    padding: 5px 12px; 
+    border-radius: 20px; 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    margin-top: 5px; 
+}
+
+.on-track { background: rgba(0, 255, 136, 0.1); color: var(--success); border: 1px solid var(--success); }
+.off-track { background: rgba(255, 77, 77, 0.1); color: var(--danger); border: 1px solid var(--danger); }
+
+/* --- CORE STATS GRID --- */
 .stat-grid { 
     display: grid; 
     grid-template-columns: repeat(3, 1fr); 
@@ -91,105 +114,131 @@ body {
 
 .stat-box { 
     background: var(--card-bg); 
-    padding: 15px 5px; 
-    border-radius: 12px; 
+    padding: 18px 10px; 
+    border-radius: 16px; 
     text-align: center; 
-    border: 1px solid rgba(255,255,255,0.1); 
+    border: 1px solid var(--glass); 
+    transition: transform 0.2s;
 }
 
-.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; }
-.stat-box h2 { font-size: 1.2rem; color: var(--primary); margin-top: 5px; }
+.stat-box:hover { transform: translateY(-3px); border-color: var(--primary); }
+.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+.stat-box h2 { font-size: 1.3rem; color: var(--primary); margin-top: 5px; }
 
-/* --- TABLES & SCROLLING --- */
+/* --- MATRIX / LEADERBOARD TABLE --- */
 .table-container { 
     overflow-x: auto; 
-    border-radius: 12px; 
-    background: rgba(0,0,0,0.2); 
-    -webkit-overflow-scrolling: touch; 
+    border-radius: 14px; 
+    background: rgba(0, 0, 0, 0.2); 
+    border: 1px solid var(--glass);
+    -webkit-overflow-scrolling: touch;
 }
 
-.matrix-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-.matrix-table th, .matrix-table td { padding: 15px 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.matrix-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 0.85rem; 
+    min-width: 550px;
+}
+
+.matrix-table th { 
+    background: rgba(255, 255, 255, 0.03); 
+    color: var(--gold); 
+    padding: 15px; 
+    text-transform: uppercase; 
+    font-size: 0.7rem; 
+    letter-spacing: 1px;
+}
+
+.matrix-table td { 
+    padding: 14px; 
+    text-align: center; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
+}
 
 .sticky-col { 
     position: sticky; 
     left: 0; 
-    background: #1e293b !important; 
+    background: var(--card-bg) !important; 
     font-weight: bold; 
     color: var(--primary); 
-    z-index: 10; 
-    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    z-index: 10;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.3);
 }
 
-/* --- CHAT SYSTEM & STATUS --- */
-#chat-icon { 
-    position: fixed; bottom: 20px; right: 20px; 
-    width: 60px; height: 60px; background: var(--primary); 
+/* --- CHAT SYSTEM --- */
+#chat-trigger { 
+    position: fixed; bottom: 25px; right: 25px; 
+    background: var(--primary); width: 60px; height: 60px; 
     border-radius: 50%; display: flex; align-items: center; 
-    justify-content: center; font-size: 30px; cursor: pointer; 
-    z-index: 9998; box-shadow: 0 4px 15px rgba(0,210,255,0.4); 
-    transition: transform 0.2s;
+    justify-content: center; font-size: 28px; cursor: pointer; 
+    box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4); 
+    z-index: 1001; transition: transform 0.2s;
 }
 
-#chat-icon:active { transform: scale(0.9); }
+#chat-trigger:hover { transform: scale(1.1); }
 
 #chat-window { 
-    position: fixed; bottom: 90px; right: 20px; 
-    width: 350px; height: 500px; background: var(--card-bg); 
-    border: 1px solid var(--primary); border-radius: 20px; 
-    display: flex; flex-direction: column; z-index: 9999; 
-    box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: 0.3s ease; 
+    position: fixed; bottom: 100px; right: 25px; 
+    width: 360px; height: 500px; background: var(--card-bg); 
+    border: 1px solid var(--primary); 
+    border-radius: 24px; display: flex; flex-direction: column; 
+    z-index: 1000; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); 
+    overflow: hidden; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.chat-hidden { transform: translateY(20px); opacity: 0; pointer-events: none; }
+.chat-hidden { opacity: 0; pointer-events: none; transform: translateY(30px); }
 
 .chat-header { 
-    background: var(--primary); color: #000; padding: 15px; 
-    font-weight: bold; display: flex; justify-content: space-between; 
-    align-items: center; border-radius: 19px 19px 0 0; 
+    background: var(--primary); color: #0f172a; 
+    padding: 16px 20px; font-weight: 800; 
+    display: flex; justify-content: space-between; align-items: center; 
 }
-
-.status-container { 
-    display: flex; align-items: center; gap: 6px; 
-    font-size: 0.6rem; background: rgba(0,0,0,0.15); 
-    padding: 3px 8px; border-radius: 20px; 
-}
-
-.status-dot { width: 8px; height: 8px; border-radius: 50%; }
-.status-online { background: #00ff00; box-shadow: 0 0 5px #00ff00; animation: pulse 1.5s infinite; }
-.status-loading { background: #ffaa00; }
-.status-offline { background: #ff4d4d; }
-
-@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
 #chat-body { 
-    padding: 15px; overflow-y: auto; flex-grow: 1; 
-    display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; 
+    flex-grow: 1; padding: 15px; overflow-y: auto; 
+    display: flex; flex-direction: column; gap: 12px;
 }
 
-.bot-msg { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 85%; }
-.user-msg { background: var(--primary); color: #000; padding: 12px; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 85%; font-weight: 500; }
+.bot-msg { 
+    background: rgba(255, 255, 255, 0.08); 
+    padding: 12px 15px; border-radius: 15px 15px 15px 0; 
+    align-self: flex-start; max-width: 85%; font-size: 0.85rem;
+}
 
-.chat-input-area { display: flex; padding: 15px; gap: 10px; border-top: 1px solid rgba(255,255,255,0.1); }
+.user-msg { 
+    background: var(--primary); color: #0f172a; 
+    padding: 12px 15px; border-radius: 15px 15px 0 15px; 
+    align-self: flex-end; max-width: 85%; font-size: 0.85rem; font-weight: 600;
+}
+
+.chat-input { 
+    display: flex; padding: 15px; gap: 10px; 
+    background: rgba(0, 0, 0, 0.2); border-top: 1px solid var(--glass); 
+}
 
 /* --- INPUTS & BUTTONS --- */
-input, button { padding: 12px; border-radius: 12px; border: none; outline: none; transition: 0.2s; }
-input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); width: 100%; }
+input { 
+    background: #0f172a; color: #fff; 
+    border: 1px solid #334155; padding: 12px; 
+    border-radius: 10px; flex-grow: 1; outline: none;
+}
+
 input:focus { border-color: var(--primary); }
 
-button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; width: auto; min-width: 60px; }
-button:active { transform: scale(0.95); }
+button { 
+    background: var(--primary); color: #0f172a; 
+    border: none; padding: 12px 18px; border-radius: 10px; 
+    font-weight: 800; cursor: pointer; transition: 0.2s;
+}
 
-/* --- MOBILE RESPONSIVE --- */
-@media (max-width: 850px) {
-    .layout { grid-template-columns: 1fr; gap: 15px; }
-    .side-panel { order: 2; }
-    .main-panel { order: 1; }
-    
-    #chat-window { width: calc(100% - 30px); height: 70vh; right: 15px; bottom: 85px; }
-    .stat-grid { gap: 8px; }
-    .stat-box h2 { font-size: 1rem; }
-    
-    .table-container { margin: 0 -15px; border-radius: 0; }
-    .matrix-table th, .matrix-table td { padding: 12px 8px; }
+button:hover { filter: brightness(1.1); }
+
+/* --- RESPONSIVENESS --- */
+@media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    #chat-window { width: calc(100% - 40px); right: 20px; left: 20px; bottom: 95px; }
+    .stat-grid, .goal-grid { gap: 8px; }
+    .card { padding: 18px; }
+    .matrix-table { font-size: 0.75rem; }
 }
