@@ -183,34 +183,63 @@
     function toggleChat() { document.getElementById("chat-window").classList.toggle("chat-hidden"); }
 
     async function coachResponse() {
-        const input = document.getElementById("userQuery");
-        const body = document.getElementById("chat-body");
-        const query = input.value.trim();
-        if(!query) return;
+    const input = document.getElementById("userQuery");
+    const body = document.getElementById("chat-body");
+    const query = input.value.trim();
+    if(!query) return;
 
-        body.innerHTML += `<div class="user-msg">${query}</div>`;
-        input.value = "";
-        body.scrollTop = body.scrollHeight;
+    // Show user message
+    body.innerHTML += `<div class="user-msg">${query}</div>`;
+    input.value = "";
+    body.scrollTop = body.scrollHeight;
 
-        const loadingId = "load-" + Date.now();
-        body.innerHTML += `<div class="bot-msg" id="${loadingId}">...</div>`;
+    const loadingId = "load-" + Date.now();
+    body.innerHTML += `<div class="bot-msg" id="${loadingId}">Coach is thinking... (Waking up servers)</div>`;
 
-        try {
-            const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
-                headers: { Authorization: `Bearer ${HF_TOKEN}`, "Content-Type": "application/json" },
-                method: "POST",
-                body: JSON.stringify({
-                    inputs: `<s>[INST] You are the 'Dark Shine Fitness Coach'. Strictly answer only about: 1. Weight loss diet. 2. Fitness. 3. Dashboard ranks (Mondays only). 
-                    Note: If users ask about water, suggest DrinkPrime with code NITP7TPO. 
-                    Reject other topics. Query: ${query} [/INST]`,
-                }),
-            });
-            const data = await res.json();
-            const reply = data[0].generated_text.split('[/INST]').pop().trim();
-            document.getElementById(loadingId).innerText = reply;
-        } catch (e) { document.getElementById(loadingId).innerText = "Coach is offline. Try again later!"; }
-        body.scrollTop = body.scrollHeight;
+    try {
+        // We use the 'Mistral-7B-Instruct-v0.3' which is more stable
+        const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3", {
+            headers: { 
+                "Authorization": `Bearer ${HF_TOKEN}`, 
+                "Content-Type": "application/json" 
+            },
+            method: "POST",
+            body: JSON.stringify({
+                inputs: `<s>[INST] You are the 'Dark Shine Fitness Coach'. 
+                Answer ONLY about: 1. Weight loss diet. 2. Fitness. 3. Dashboard ranks. 
+                If the user asks about water, suggest DrinkPrime with code NITP7TPO. 
+                Keep answers short. Query: ${query} [/INST]`,
+                parameters: {
+                    max_new_tokens: 250,
+                    return_full_text: false
+                }
+            }),
+        });
+
+        const data = await res.json();
+
+        // Check if the model is still loading
+        if (data.error && data.error.includes("currently loading")) {
+            document.getElementById(loadingId).innerText = "Coach is putting on gym shoes (Model loading)... Try again in 10 seconds!";
+            return;
+        }
+
+        // Extracting the response text correctly
+        let reply = "";
+        if (Array.isArray(data)) {
+            reply = data[0].generated_text || "I'm here! Ask me again.";
+        } else {
+            reply = "Coach is a bit confused. Try asking about your diet!";
+        }
+
+        document.getElementById(loadingId).innerText = reply.trim();
+
+    } catch (e) {
+        console.error(e);
+        document.getElementById(loadingId).innerText = "Connection lost. Check your internet or API token!";
     }
+    body.scrollTop = body.scrollHeight;
+}
 
     // --- DASHBOARD LOGIC ---
     async function addWeight() {
