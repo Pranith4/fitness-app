@@ -181,35 +181,42 @@
     body.innerHTML += `<div class="bot-msg" id="${loadId}">Thinking...</div>`;
 
     try {
-        // Direct call to HF - Vercel handles HTTPS-to-HTTPS fine
-        const res = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+        // Updated to Llama 3.1 8B - High reliability in 2026 free tier
+        const res = await fetch("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3.1-8B-Instruct", {
             method: "POST",
             headers: { 
                 "Authorization": `Bearer ${HF_TOKEN}`, 
                 "Content-Type": "application/json",
-                // Removing unnecessary headers that sometimes cause CORS pre-flight failure
             },
             body: JSON.stringify({
-                inputs: `[INST] You are the Dark Shine Fitness Coach. Answer briefly: ${query} [/INST]`,
-                parameters: { max_new_tokens: 150, wait_for_model: true } // Added wait_for_model
+                inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+                You are the Dark Shine Fitness Coach. Give brief, motivating fitness advice.<|eot_id|>
+                <|start_header_id|>user<|end_header_id|>${query}<|eot_id|>
+                <|start_header_id|>assistant<|end_header_id|>`,
+                parameters: { 
+                    max_new_tokens: 150, 
+                    return_full_text: false,
+                    wait_for_model: true 
+                }
             }),
         });
 
         const data = await res.json();
 
-        if (!res.ok) {
-            // This will tell us if it's 401 (Token), 429 (Rate Limit), or 503 (Loading)
-            throw new Error(data.error || `HTTP Error ${res.status}`);
-        }
+        if (!res.ok) throw new Error(data.error || `HTTP Error ${res.status}`);
 
-        let reply = data[0].generated_text.split("[/INST]").pop().trim();
+        // Handle different response formats (sometimes HF returns an array, sometimes an object)
+        let reply = Array.isArray(data) ? data[0].generated_text : data.generated_text;
+        
+        // Clean up any remaining tags if they leak into the response
+        reply = reply.replace(/<|eot_id|>/g, "").trim();
+
         document.getElementById(loadId).innerText = reply;
         updateStatus("online");
 
     } catch (e) {
         console.error("AI Error:", e.message);
-        // If it still fails, the error message will appear in the chat for you to see
-        document.getElementById(loadId).innerText = "Error: " + e.message;
+        document.getElementById(loadId).innerText = "Coach is busy. Try again in a moment!";
         updateStatus("offline");
     }
     body.scrollTop = body.scrollHeight;
