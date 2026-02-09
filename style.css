@@ -1,3 +1,4 @@
+/* --- ROOT VARIABLES --- */
 :root {
     --bg: #0f172a;
     --card-bg: #1e293b;
@@ -7,94 +8,266 @@
     --text-muted: #94a3b8;
     --danger: #ff4d4d;
     --success: #00ff88;
+    --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* --- RESET & BASE --- */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    -webkit-tap-highlight-color: transparent; 
+}
 
 body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    padding: 15px;
+    font-family: var(--font-main);
+    padding: 20px;
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
 }
 
+/* --- LAYOUT --- */
 .layout {
     display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 20px;
+    grid-template-columns: 1fr 360px;
+    gap: 24px;
+    width: 100%;
     max-width: 1400px;
-    margin: 0 auto;
 }
 
 .card {
     background: var(--card-bg);
-    padding: 20px;
-    border-radius: 16px;
+    padding: 24px;
+    border-radius: 20px;
     margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* Motivation Card Shine Effect */
-.motivation-card {
-    background: linear-gradient(135deg, #1e293b 0%, #2d3e50 100%);
-    border: 1px solid var(--gold);
+/* --- HERO & PODIUM --- */
+.prize-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     text-align: center;
+    border: 2px solid var(--primary);
 }
 
-.upi-box {
-    background: rgba(0,0,0,0.3);
-    padding: 10px;
-    border-radius: 8px;
-    margin: 10px 0;
-    font-family: monospace;
-    color: var(--gold);
+.prize-hero h1 { 
+    font-size: clamp(2rem, 5vw, 3.5rem); 
+    color: var(--primary); 
+    margin: 10px 0; 
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
 }
 
+.podium-section { 
+    margin-top: 25px; 
+    padding-top: 20px; 
+    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+.podium-title { 
+    color: var(--gold); 
+    font-size: 0.85rem; 
+    letter-spacing: 1.5px; 
+    margin-bottom: 20px; 
+}
+
+.podium-container {
+    display: flex; 
+    align-items: flex-end; 
+    justify-content: center; 
+    gap: 12px; 
+    height: 140px; 
+}
+
+.podium-step {
+    background: rgba(0, 0, 0, 0.2); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px 12px 6px 6px; 
+    text-align: center; 
+    width: 95px; 
+    padding: 12px 5px;
+}
+
+.first { height: 100%; border-color: var(--gold); background: linear-gradient(to top, rgba(251, 191, 36, 0.1), transparent); }
+.second { height: 80%; }
+.third { height: 65%; }
+
+.podium-step div { font-weight: bold; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium-step span { font-size: 0.6rem; color: var(--text-muted); display: block; margin-top: 4px; }
+.crown { font-size: 1.3rem; margin-bottom: -4px; display: block; }
+
+/* --- STATS --- */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
+    gap: 16px;
     margin-bottom: 20px;
 }
 
 .stat-box {
     background: var(--card-bg);
-    padding: 15px;
-    border-radius: 12px;
+    padding: 16px;
+    border-radius: 16px;
     text-align: center;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
+.stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+.stat-box h2 { font-size: 1.4rem; color: var(--primary); margin-top: 4px; }
 
-/* Sticky Table Columns */
-.table-container { overflow-x: auto; border-radius: 12px; background: rgba(0,0,0,0.2); }
-.matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
-.matrix-table th, .matrix-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
+/* --- MOTIVATION CARD --- */
+.motivation-card { 
+    border: 1.5px solid var(--gold); 
+    text-align: center; 
+    background: linear-gradient(145deg, #1e293b, #16202e);
+}
+.upi-box { 
+    background: rgba(0, 0, 0, 0.3); 
+    padding: 14px; 
+    border-radius: 12px; 
+    margin: 15px 0; 
+    border: 1px dashed var(--gold); 
+}
+.upi-id { font-family: 'Courier New', monospace; font-weight: bold; color: var(--gold); font-size: 1.1rem; }
+
+/* --- TABLES (SCROLLABLE) --- */
+.table-container { 
+    overflow-x: auto; 
+    border-radius: 12px; 
+    background: rgba(0, 0, 0, 0.15);
+    -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
+}
+
+.matrix-table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 0; 
+    font-size: 0.85rem; 
+}
+
+.matrix-table th, .matrix-table td { 
+    padding: 14px 18px; 
+    text-align: center; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); 
+}
+
+.matrix-table th {
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+}
 
 .sticky-col {
-    position: sticky !important; left: 0; z-index: 10;
-    background: #1e293b !important; text-align: left !important;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+    position: sticky !important; 
+    left: 0; 
+    z-index: 10;
+    background: #1e293b !important; 
+    text-align: left !important;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2); 
+    font-weight: bold; 
+    color: var(--primary);
+    min-width: 100px;
 }
 
-.name-cell { color: var(--primary); font-weight: bold; }
-.diff { font-size: 0.7rem; font-weight: bold; margin-top: 3px; }
+.sticky-right {
+    position: sticky !important; 
+    right: 0; 
+    z-index: 9;
+    background: #1e293b !important; 
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.2);
+    color: var(--gold); 
+    font-weight: bold;
+}
 
-/* Buttons & Inputs */
-input, button { width: 100%; padding: 12px; border-radius: 10px; border: none; margin-bottom: 10px; }
-input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
-button { font-weight: bold; cursor: pointer; transition: 0.2s; background: var(--primary); color: #000; }
+.diff { font-size: 0.7rem; font-weight: bold; margin-top: 4px; }
+
+/* --- FORMS & BUTTONS --- */
+input, button { 
+    width: 100%; 
+    padding: 14px; 
+    border-radius: 12px; 
+    border: none; 
+    margin-bottom: 12px; 
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+input { 
+    background: rgba(0, 0, 0, 0.2); 
+    color: #fff; 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+}
+
+input:focus { border-color: var(--primary); background: rgba(0, 0, 0, 0.4); }
+
+button { 
+    background: var(--primary); 
+    color: #0f172a; 
+    font-weight: 700; 
+    cursor: pointer; 
+}
+
+button:hover { transform: translateY(-2px); filter: brightness(1.1); }
+button:active { transform: translateY(0); }
+
 .gold-btn { background: var(--gold); }
-.outline-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+.outline-btn { 
+    background: transparent; 
+    border: 1.5px solid var(--primary); 
+    color: var(--primary); 
+}
 
-/* Podium */
-.podium-container { display: flex; align-items: flex-end; justify-content: center; gap: 8px; height: 120px; margin-top: 15px; }
-.podium-step { background: rgba(0,0,0,0.2); width: 80px; padding: 10px; border-radius: 8px 8px 0 0; text-align: center; }
-.first { height: 100%; border-top: 3px solid var(--gold); }
-.second { height: 75%; }
-.third { height: 55%; }
-.podium-title { color: var(--gold); font-size: 0.8rem; }
-.crown { font-size: 1.2rem; }
+#msg { text-align: center; font-size: 0.9rem; font-weight: 600; min-height: 20px; }
+.error-text { color: var(--danger); }
+.success-text { color: var(--success); }
 
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+/* --- MOBILE RESPONSIVE (iPhones & Android) --- */
+@media (max-width: 850px) {
+    body { padding: 12px; }
+
+    .layout {
+        grid-template-columns: 1fr; /* Stack panels vertically */
+        gap: 16px;
+    }
+
+    .main-panel { order: 1; }
+    .side-panel { order: 2; }
+
+    .card { padding: 18px; border-radius: 16px; }
+
+    .stat-grid { gap: 10px; }
+    .stat-box h2 { font-size: 1.1rem; }
+
+    .prize-hero h1 { font-size: 2.2rem; }
+
+    .podium-container { height: 120px; }
+    .podium-step { width: 85px; }
+
+    .table-container {
+        margin: 0 -18px; /* Allow table to touch screen edges */
+        border-radius: 0;
+    }
+
+    .matrix-table th, .matrix-table td {
+        padding: 12px 14px;
+        font-size: 0.8rem;
+    }
+
+    /* Larger tap areas for mobile */
+    input, button {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .sticky-col { min-width: 90px; }
+}
+
+/* Landscape Mode Tweak */
+@media (max-height: 500px) and (orientation: landscape) {
+    .podium-container { display: none; } /* Hide podium on short screens to save space */
+}
