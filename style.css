@@ -5,147 +5,37 @@
     --gold: #fbbf24;
     --text: #f8fafc;
     --text-muted: #94a3b8;
-    --success: #00ff88;
-    --danger: #ff4d4d;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: sans-serif; padding: 15px; }
 
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6;
-    padding: 15px;
-}
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: 20px; max-width: 1400px; margin: 0 auto; }
 
-.layout {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 20px;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+.card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
 
-.card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
+.prize-hero { text-align: center; border: 2px solid var(--primary); }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+.stat-box { background: var(--card-bg); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
 
-.prize-hero {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    text-align: center;
-    border: 2px solid var(--primary);
-}
-.prize-hero h1 { font-size: 3rem; color: var(--primary); margin: 5px 0; }
+.table-container { overflow-x: auto; border-radius: 8px; background: rgba(0,0,0,0.2); position: relative; }
+.matrix-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; }
+.matrix-table th, .matrix-table td { padding: 12px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); white-space: nowrap; }
 
-.stat-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-.stat-box {
-    background: var(--card-bg);
-    padding: 15px;
-    border-radius: 12px;
-    text-align: center;
-}
-.stat-box span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; }
-
-/* TABLE SCROLLING SYSTEM */
-.table-container {
-    overflow-x: auto;
-    border-radius: 8px;
-    background: rgba(0,0,0,0.2);
-    position: relative; /* Context for sticky */
-}
-
-.matrix-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    font-size: 0.85rem;
-}
-
-.matrix-table th, .matrix-table td {
-    padding: 12px 15px;
-    text-align: center;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    white-space: nowrap;
-}
-
-/* STICKY COLUMN LOGIC */
-.sticky-col {
-    position: sticky !important;
-    left: 0;
-    z-index: 10;
-    background-color: #1e293b !important; /* Must match card background */
-    text-align: left !important;
-    box-shadow: 4px 0 10px rgba(0,0,0,0.3); /* Visual shadow to separate name */
-}
-
-th.sticky-col {
-    z-index: 11; /* Header needs to be above body sticky cells */
-    background-color: #2a374a !important; 
-}
-
-.sticky-right {
-    position: sticky !important;
-    right: 0;
-    z-index: 9;
-    background-color: #1e293b !important;
-    box-shadow: -4px 0 10px rgba(0,0,0,0.3);
-}
+/* Sticky Column logic for Mobile/Desktop */
+.sticky-col { position: sticky !important; left: 0; z-index: 10; background: #1e293b !important; text-align: left !important; box-shadow: 4px 0 8px rgba(0,0,0,0.3); }
+.sticky-right { position: sticky !important; right: 0; z-index: 9; background: #1e293b !important; box-shadow: -4px 0 8px rgba(0,0,0,0.3); }
 
 .name-cell { color: var(--primary); font-weight: bold; }
 .total-cell { color: var(--gold); font-weight: bold; }
-.diff { font-size: 0.7rem; margin-top: 2px; }
-.empty { opacity: 0.2; }
-.highlight-row { background: rgba(0, 210, 255, 0.1); }
+.diff { font-size: 0.7rem; margin-top: 3px; font-weight: bold; }
+.table-note { font-size: 0.7rem; color: var(--text-muted); margin-top: 10px; font-style: italic; }
 
-/* SIDEBAR & UI ELEMENTS */
 .user-profile { display: flex; align-items: center; gap: 15px; }
-.avatar { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #000;}
+.avatar { width: 45px; height: 45px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: #000; }
 
-.sync-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; margin-top: 5px;}
+input, button { width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 10px; border: none; }
+input { background: rgba(0,0,0,0.3); color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+button { background: var(--primary); color: #000; font-weight: bold; cursor: pointer; }
+.outline-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
 
-.upi-box { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 10px; margin: 10px 0; font-size: 0.8rem; }
-.upi-id { display: block; font-weight: bold; color: var(--gold); }
-
-input {
-    width: 100%;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    background: var(--primary);
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.gold-btn { background: var(--gold); }
-.outline-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: white; }
-
-.goal-form label { font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 2px; }
-
-@media (max-width: 900px) {
-    .layout { grid-template-columns: 1fr; }
-    .prize-hero h1 { font-size: 2.2rem; }
-}
-
-.success-text { color: var(--success); font-size: 0.8rem; text-align: center; margin-top: 5px; }
-.error-text { color: var(--danger); font-size: 0.8rem; text-align: center; margin-top: 5px; }
+@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
