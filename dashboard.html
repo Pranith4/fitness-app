@@ -13,7 +13,7 @@
         <div class="card prize-hero">
             <h3>🏆 CHALLENGE PRIZE POOL</h3>
             <h1>₹6,000</h1>
-            <p>Top % fat loss wins the jackpot!</p>
+            <p>Overall % fat loss wins the jackpot!</p>
         </div>
 
         <div class="stat-grid">
@@ -23,12 +23,19 @@
         </div>
 
         <div class="card">
-            <div class="card-header">
-                <h3 style="color:var(--primary)">⚔️ Competitor Weight Matrix</h3>
-            </div>
+            <h3 style="color:var(--primary); margin-bottom:15px">⚔️ Weekly Weight Matrix (Overall)</h3>
             <div class="table-container">
                 <table id="competitorTable" class="matrix-table"></table>
             </div>
+            <p class="table-note">* % Loss calculated from Initial Weight to Latest.</p>
+        </div>
+
+        <div class="card">
+            <h3 style="color:var(--gold); margin-bottom:15px">🔥 Skip 500 Challenge (Weekly Delta)</h3>
+            <div class="table-container">
+                <table id="skipTable" class="matrix-table"></table>
+            </div>
+            <p class="table-note">* % Loss calculated from Current vs Previous Week.</p>
         </div>
     </div>
 
@@ -41,40 +48,20 @@
             </div>
         </div>
 
-        <div class="card motivation-card shine">
-            <h3 style="color:var(--gold)">Stay Motivated 🔥</h3>
-            <p>Fuel the challenge!</p>
-            <div class="upi-box">
-                <span>Contribution for Pool/Motivation:</span>
-                <span class="upi-id" id="upiValue">8431257887@ybl</span>
-            </div>
-            <button onclick="copyUPI()" class="gold-btn">Copy UPI ID</button>
-        </div>
-
         <div class="card">
-            <h3>⚖️ Log Daily Weight</h3>
+            <h3>⚖️ Log Weight</h3>
             <div class="input-group">
-                <input type="number" step="0.1" id="weightInput" placeholder="Current weight in kg">
+                <input type="number" step="0.1" id="weightInput" placeholder="Weight in kg">
                 <button onclick="addWeight()">Submit</button>
             </div>
             <p id="msg"></p>
         </div>
 
         <div class="card">
-            <h3>📜 Personal History</h3>
-            <div class="table-container-mini">
-                <table id="historyTable"></table>
-            </div>
-        </div>
-        
-        <div class="card">
             <h3>🎯 Goal Settings</h3>
             <div class="goal-form">
-                <label>Start Weight</label>
-                <input type="number" id="startW">
-                <label>Target Weight</label>
-                <input type="number" id="targetW">
-                <label>End Date</label>
+                <input type="number" id="startW" placeholder="Start Weight">
+                <input type="number" id="targetW" placeholder="Target Weight">
                 <input type="date" id="endD">
                 <button onclick="saveGoal()" class="outline-btn">Update Goal</button>
             </div>
@@ -90,68 +77,44 @@ document.getElementById("welcomeText").innerText = user;
 async function refreshAll() {
     const cachedGoal = localStorage.getItem(`goal_${user}`);
     const cachedLogs = localStorage.getItem(`logs_${user}`);
-
     if (cachedGoal) renderGoalData(JSON.parse(cachedGoal));
     if (cachedLogs) processAndRender(JSON.parse(cachedLogs));
-
     await Promise.all([loadGoal(), loadData()]);
 }
+
+// ... [addWeight, saveGoal, loadGoal, loadData, renderGoalData functions remain same as previous version] ...
 
 async function addWeight() {
     const w = document.getElementById("weightInput").value;
     if(!w) return;
     const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"addWeight", username:user, weight:w})});
     const result = await res.json();
-    const msg = document.getElementById("msg");
-    msg.innerText = result.success ? "✅ Logged Successfully!" : "❌ " + result.message;
-    msg.className = result.success ? "success-text" : "error-text";
+    document.getElementById("msg").innerText = result.success ? "✅ Success!" : "❌ " + result.message;
     if(result.success) refreshAll();
 }
 
 async function saveGoal() {
-    const data = {
-        action: "saveGoal",
-        username: user,
-        startWeight: document.getElementById("startW").value,
-        targetWeight: document.getElementById("targetW").value,
-        startDate: new Date().toISOString().split('T')[0],
-        endDate: document.getElementById("endD").value
-    };
+    const data = { action: "saveGoal", username: user, startWeight: document.getElementById("startW").value, targetWeight: document.getElementById("targetW").value, endDate: document.getElementById("endD").value };
     const res = await fetch(API_URL, {method: "POST", body: JSON.stringify(data)});
-    const result = await res.json();
-    if(result.success) { 
-        alert("Goal Updated! 🔥"); 
-        refreshAll(); 
-    }
+    if((await res.json()).success) { alert("Goal Updated!"); refreshAll(); }
 }
 
 async function loadGoal() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
-        const g = await res.json();
-        if(g.targetWeight) {
-            localStorage.setItem(`goal_${user}`, JSON.stringify(g));
-            renderGoalData(g);
-        }
-    } catch(e) { console.error("Goal fetch failed", e); }
+    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getGoal", username:user})});
+    const g = await res.json();
+    if(g.targetWeight) { localStorage.setItem(`goal_${user}`, JSON.stringify(g)); renderGoalData(g); }
 }
 
 async function loadData() {
-    try {
-        const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
-        const data = await res.json();
-        if(data && data.length > 1) {
-            localStorage.setItem(`logs_${user}`, JSON.stringify(data));
-            processAndRender(data);
-        }
-    } catch(e) { console.error("Data fetch failed", e); }
+    const res = await fetch(API_URL, {method:"POST", body:JSON.stringify({action:"getAllWeights"})});
+    const data = await res.json();
+    if(data && data.length > 1) { localStorage.setItem(`logs_${user}`, JSON.stringify(data)); processAndRender(data); }
 }
 
 function renderGoalData(g) {
     document.getElementById("targetW").value = g.targetWeight || "";
     document.getElementById("startW").value = g.startWeight || "";
     document.getElementById("endD").value = g.endDate ? g.endDate.split('T')[0] : "";
-    
     if(g.endDate) {
         const days = Math.ceil((new Date(g.endDate) - new Date()) / (1000*60*60*24));
         document.getElementById("daysLeft").innerText = Math.max(0, days) + "d";
@@ -160,77 +123,75 @@ function renderGoalData(g) {
 
 function processAndRender(data) {
     const rows = data.slice(1);
-    let usersMap = {}, datesSet = new Set();
+    let usersMap = {}, weeklyDatesSet = new Set();
 
     rows.forEach(r => {
-        let d = new Date(r[1]).toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
-        datesSet.add(d);
-        if(!usersMap[r[0]]) usersMap[r[0]] = [];
-        usersMap[r[0]].push({date:d, weight:parseFloat(r[2]), rawDate: new Date(r[1])});
+        const rawDate = new Date(r[1]);
+        // Group by ISO Week
+        const weekLabel = `Wk ${getWeekNumber(rawDate)}`;
+        weeklyDatesSet.add(weekLabel);
+        
+        if(!usersMap[r[0]]) usersMap[r[0]] = {};
+        // Only keep the latest entry for that week
+        if(!usersMap[r[0]][weekLabel] || rawDate > usersMap[r[0]][weekLabel].rawDate) {
+            usersMap[r[0]][weekLabel] = { weight: parseFloat(r[2]), rawDate: rawDate };
+        }
     });
 
-    const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
-    renderCompetitorTable(usersMap, dates);
-    renderPersonalHistory(usersMap[user] || []);
+    const sortedWeeks = [...weeklyDatesSet].sort();
+    renderOverallMatrix(usersMap, sortedWeeks);
+    renderSkipChallenge(usersMap, sortedWeeks);
 }
 
-function renderCompetitorTable(usersMap, dates) {
+function renderOverallMatrix(usersMap, weeks) {
     let html = `<thead><tr><th class="sticky-col">Athlete</th>`;
-    dates.forEach(d => html += `<th>${d}</th>`);
+    weeks.forEach(w => html += `<th>${w}</th>`);
     html += `<th class="sticky-right">Total %</th></tr></thead><tbody>`;
     
-    let leaderboard = Object.keys(usersMap).map(u => {
-        let entries = usersMap[u].sort((a,b) => a.rawDate - b.rawDate);
-        let start = entries[0].weight;
-        let latest = entries[entries.length-1].weight;
-        let pct = (((start - latest) / start) * 100).toFixed(2);
-        return { name: u, entries, pct };
-    }).sort((a,b) => b.pct - a.pct);
+    Object.keys(usersMap).forEach(u => {
+        const userWeeks = weeks.map(w => usersMap[u][w] ? usersMap[u][w].weight : null).filter(v => v !== null);
+        const start = userWeeks[0];
+        const latest = userWeeks[userWeeks.length - 1];
+        const totalPct = (((start - latest) / start) * 100).toFixed(2);
+        
+        if(u === user) { document.getElementById("totalLoss").innerText = totalPct + "%"; }
 
-    leaderboard.forEach((item, idx) => {
-        if(item.name === user) {
-            document.getElementById("totalLoss").innerText = item.pct + "%";
-            document.getElementById("rank").innerText = "#" + (idx + 1);
-        }
-        
-        const rowClass = item.name === user ? "highlight-row" : "";
-        html += `<tr class="${rowClass}"><td class="sticky-col name-cell">${item.name}</td>`;
-        
-        dates.forEach((d) => {
-            let entry = item.entries.find(x => x.date === d);
-            if(entry) {
-                let deltaHtml = "";
-                let prevEntries = item.entries.filter(x => x.rawDate < entry.rawDate);
-                if(prevEntries.length > 0) {
-                    let prevWeight = prevEntries[prevEntries.length - 1].weight;
-                    let diff = (((entry.weight - prevWeight)/prevWeight)*100).toFixed(1);
-                    let color = diff <= 0 ? "#00ff88" : "#ff4d4d";
-                    deltaHtml = `<div class="diff" style="color:${color}">${diff > 0 ? '+' : ''}${diff}%</div>`;
-                }
-                html += `<td>${entry.weight}${deltaHtml}</td>`;
-            } else html += `<td class="empty">-</td>`;
-        });
-        html += `<td class="sticky-right total-cell">${item.pct}%</td></tr>`;
+        html += `<tr><td class="sticky-col name-cell">${u}</td>`;
+        weeks.forEach(w => html += `<td>${usersMap[u][w]?.weight || '-'}</td>`);
+        html += `<td class="sticky-right total-cell">${totalPct}%</td></tr>`;
     });
-    html += `</tbody>`;
     document.getElementById("competitorTable").innerHTML = html;
 }
 
-function renderPersonalHistory(history) {
-    let sorted = [...history].sort((a,b) => b.rawDate - a.rawDate);
-    let html = `<thead><tr><th style="text-align:left">Date</th><th>Weight</th><th>Trend</th></tr></thead><tbody>`;
-    sorted.forEach((entry, i) => {
-        let trend = "➖";
-        if(i < sorted.length-1) trend = entry.weight < sorted[i+1].weight ? "📉" : "📈";
-        html += `<tr><td style="text-align:left">${entry.date}</td><td>${entry.weight}</td><td>${trend}</td></tr>`;
+function renderSkipChallenge(usersMap, weeks) {
+    let html = `<thead><tr><th class="sticky-col">Athlete</th>`;
+    weeks.forEach(w => html += `<th>${w}</th>`);
+    html += `</tr></thead><tbody>`;
+    
+    Object.keys(usersMap).forEach(u => {
+        html += `<tr><td class="sticky-col name-cell">${u}</td>`;
+        weeks.forEach((w, i) => {
+            const current = usersMap[u][w]?.weight;
+            let deltaHtml = "";
+            if(current && i > 0) {
+                const prevWeek = weeks[i-1];
+                const prevWeight = usersMap[u][prevWeek]?.weight;
+                if(prevWeight) {
+                    const diff = (((current - prevWeight)/prevWeight)*100).toFixed(1);
+                    deltaHtml = `<div class="diff" style="color:${diff <= 0 ? '#00ff88' : '#ff4d4d'}">${diff}%</div>`;
+                }
+            }
+            html += `<td>${current || '-'}${deltaHtml}</td>`;
+        });
+        html += `</tr>`;
     });
-    html += `</tbody>`;
-    document.getElementById("historyTable").innerHTML = html;
+    document.getElementById("skipTable").innerHTML = html;
 }
 
-function copyUPI() {
-    const upiText = document.getElementById("upiValue").innerText;
-    navigator.clipboard.writeText(upiText).then(() => alert("UPI ID Copied! 🔥"));
+function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+    return Math.ceil((((d - new Date(Date.UTC(d.getUTCFullYear(), 0, 1))) / 86400000) + 1) / 7);
 }
 
 refreshAll();
