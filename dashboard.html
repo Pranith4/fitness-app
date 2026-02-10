@@ -668,7 +668,7 @@
         </div>
 
         <div class="card">
-            <h3>GAIN TO PAY CHALLENGE (Weekly Delta)</h3>
+            <h3>🔥 ವಿಟ್ಟಲ್ ತೂಕ ದಂಡ ಯೋಜನೆ (Weekly Delta)</h3>
             <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
         </div>
     </div>
@@ -1023,6 +1023,61 @@
         document.getElementById("skipTable").innerHTML = h2;
     }
 
+    // Calculate and display days left
+    function updateDaysLeft() {
+        const startDate = new Date('2026-02-02');
+        const endDate = new Date('2026-04-24');
+        const today = new Date();
+        
+        // Calculate days remaining
+        const timeLeft = endDate - today;
+        const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+        
+        // Calculate total days and progress
+        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const daysPassed = Math.ceil((today - startDate) / (1000 * 60 * 60 * 24));
+        
+        // Update display
+        const daysLeftElement = document.getElementById("daysLeft");
+        if (daysLeft > 0) {
+            daysLeftElement.innerText = daysLeft;
+            daysLeftElement.style.color = daysLeft <= 7 ? 'var(--danger)' : 'var(--primary)';
+        } else if (daysLeft === 0) {
+            daysLeftElement.innerText = "Today!";
+            daysLeftElement.style.color = 'var(--gold)';
+        } else {
+            daysLeftElement.innerText = "Ended";
+            daysLeftElement.style.color = 'var(--text-muted)';
+        }
+        
+        // Update countdown timer
+        updateCountdown();
+    }
+    
+    // Update real-time countdown
+    function updateCountdown() {
+        const endDate = new Date('2026-04-24T23:59:59');
+        const now = new Date();
+        const diff = endDate - now;
+        
+        if (diff > 0) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById("countdown").innerText = 
+                `⏱️ ${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+        } else {
+            document.getElementById("countdown").innerText = "Challenge Completed! 🎉";
+        }
+    }
+    
+    // Initialize and start timers
+    updateDaysLeft();
+    setInterval(updateCountdown, 1000); // Update countdown every second
+    setInterval(updateDaysLeft, 60000); // Update days left every minute
+    
     init();
     setInterval(init, 300000);
     
