@@ -2,68 +2,446 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login | Dark Shine Fitness</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Layout Boys - Login</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #00d2ff;
+            --gold: #fbbf24;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --danger: #ff4d4d;
+            --success: #00ff88;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background elements */
+        .bg-animation {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,210,255,0.1) 0%, transparent 70%);
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .bg-circle:nth-child(2) {
+            width: 400px;
+            height: 400px;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 5s;
+        }
+
+        .bg-circle:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            top: 50%;
+            right: 10%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        .login-container {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid rgba(0,210,255,0.3);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,210,255,0.2);
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 24px rgba(0,210,255,0.4);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-section h1 {
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .logo-section p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0,0,0,0.5);
+            box-shadow: 0 0 0 3px rgba(0,210,255,0.1);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            animation: shake 0.3s;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,210,255,0.3);
+            margin-top: 8px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,210,255,0.5);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-btn:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .login-btn .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-text a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-text a:hover {
+            color: #00b8e6;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 24px;
+            }
+
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 35px;
+            }
+        }
+    </style>
 </head>
-<body class="login-body">
+<body>
+    <div class="bg-animation">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
 
     <div class="login-container">
-        <div class="card login-card shine">
-            <div class="login-header">
-                <div class="logo-icon">⚔️</div>
-                <h1>DARK SHINE</h1>
-                <p>Weight Loss Challenge 2026</p>
-            </div>
+        <div class="logo-section">
+            <div class="logo-icon">🏋️</div>
+            <h1>Layout Boys</h1>
+            <p>Fitness Challenge Dashboard</p>
+        </div>
 
-            <div class="login-form">
-                <div class="input-group">
-                    <input type="text" id="username" placeholder="Athlete Name" autocomplete="off">
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Enter your username" 
+                        required
+                        autocomplete="username"
+                    >
                 </div>
-                
-                <button id="loginBtn" onclick="handleLogin()">
-                    <span id="btnText">START TRAINING</span>
-                    <div id="loader" class="hidden"></div>
-                </button>
+                <div class="error-message" id="usernameError">Username is required</div>
             </div>
 
-            <p id="errorMsg" class="error-text hidden">Please enter your name to begin.</p>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password" 
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+                <div class="error-message" id="passwordError">Password is required</div>
+            </div>
+
+            <div class="error-message" id="loginError">Invalid username or password</div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                Login
+            </button>
+        </form>
+
+        <div class="footer-text">
+            First time? Contact admin for credentials
         </div>
     </div>
 
     <script>
-        // Redirect if already logged in
-        if(localStorage.getItem("user")) {
-            window.location.href = "dashboard.html";
-        }
+        const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
 
-        function handleLogin() {
-            const user = document.getElementById("username").value.trim();
-            const errorMsg = document.getElementById("errorMsg");
-            const btn = document.getElementById("loginBtn");
-            const text = document.getElementById("btnText");
-            const loader = document.getElementById("loader");
-
-            if(!user) {
-                errorMsg.classList.remove("hidden");
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            // Clear previous errors
+            document.getElementById('usernameError').classList.remove('show');
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // Basic validation
+            if (!username) {
+                document.getElementById('usernameError').classList.add('show');
                 return;
             }
-
-            // Trigger Animation
-            errorMsg.classList.add("hidden");
-            btn.disabled = true;
-            text.classList.add("hidden");
-            loader.classList.remove("hidden");
-
-            // Save user
-            localStorage.setItem("user", user);
             
-            // Dramatic delay for the animation effect
-            setTimeout(() => {
-                window.location.href = "dashboard.html";
-            }, 1500);
+            if (!password) {
+                document.getElementById('passwordError').classList.add('show');
+                return;
+            }
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span>Logging in...';
+            
+            try {
+                // Call authentication API
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'authenticate',
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store username in localStorage
+                    localStorage.setItem('user', username);
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('loginTime', new Date().getTime());
+                    
+                    // Success animation
+                    loginBtn.innerHTML = '✓ Success!';
+                    loginBtn.style.background = 'var(--success)';
+                    
+                    // Redirect to dashboard after short delay
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                } else {
+                    // Show error
+                    document.getElementById('loginError').textContent = data.message || 'Invalid username or password';
+                    document.getElementById('loginError').classList.add('show');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = 'Login';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                document.getElementById('loginError').textContent = 'Connection error. Please try again.';
+                document.getElementById('loginError').classList.add('show');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Login';
+            }
         }
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const isAuthenticated = localStorage.getItem('isAuthenticated');
+            const loginTime = localStorage.getItem('loginTime');
+            const now = new Date().getTime();
+            const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+            
+            // Auto-login if authenticated within last 24 hours
+            if (isAuthenticated === 'true' && loginTime && hoursSinceLogin < 24) {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        // Clear errors on input
+        document.getElementById('username').addEventListener('input', () => {
+            document.getElementById('usernameError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+        });
+
+        document.getElementById('password').addEventListener('input', () => {
+            document.getElementById('passwordError').classList.remove('show');
+            document.getElementById('loginError').classList.remove('show');
+        });
     </script>
 </body>
 </html>
