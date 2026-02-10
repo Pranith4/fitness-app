@@ -4,895 +4,1027 @@
     <script src="https://js.puter.com/v2/"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Boys Fitness Dashboard</title>
+    <title>ProChallenge Hub - Professional Challenges</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap');
+        
         :root {
-            --bg: #0f172a; --card-bg: #1e293b; --primary: #00d2ff;
-            --gold: #fbbf24; --text: #f8fafc; --text-muted: #94a3b8;
-            --danger: #ff4d4d; --success: #00ff88;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
+            /* Anker-inspired Dark Theme */
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151932;
+            --bg-tertiary: #1a1f3a;
+            --accent-primary: #00ff88;
+            --accent-secondary: #00d2ff;
+            --accent-tertiary: #9d4edd;
+            --accent-gold: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #6b7a8f;
+            --danger: #ff3864;
+            --success: #00ff88;
+            --warning: #ffb800;
+            --border: rgba(255, 255, 255, 0.1);
+            --glow-cyan: 0 0 20px rgba(0, 210, 255, 0.4);
+            --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
+            --glow-purple: 0 0 20px rgba(157, 78, 221, 0.4);
         }
         
-        /* NEWS TICKER */
-        #news-ticker { 
-            background: rgba(0, 210, 255, 0.1); 
-            color: var(--primary); 
-            padding: 8px; 
-            overflow: hidden; 
-            white-space: nowrap; 
-            border-bottom: 1px solid rgba(0,210,255,0.2); 
-            font-size: 0.85rem; 
-            font-weight: bold;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+        
+        body { 
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(ellipse at top, rgba(0, 210, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom, rgba(157, 78, 221, 0.05) 0%, transparent 50%);
+            color: var(--text-primary); 
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Header Navigation */
+        .main-header {
+            background: rgba(21, 25, 50, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid var(--accent-secondary);
+            padding: 15px 20px;
             position: sticky;
             top: 0;
-            z-index: 100;
-        }
-        #ticker-content { 
-            display: inline-block; 
-            padding-left: 100%; 
-            animation: marquee 25s linear infinite; 
-        }
-        @keyframes marquee { 
-            0% { transform: translate(0, 0); } 
-            100% { transform: translate(-100%, 0); } 
+            z-index: 500;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5), var(--glow-cyan);
         }
 
-        .layout { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 20px; 
-            width: 100%; 
-            max-width: 1400px; 
-            padding: 20px; 
+        .header-content {
+            max-width: 1600px;
             margin: 0 auto;
-        }
-        
-        /* Desktop layout */
-        @media (min-width: 851px) {
-            .layout {
-                grid-template-columns: 1fr 350px;
-            }
-        }
-        
-        .card { 
-            background: var(--card-bg); 
-            padding: 20px; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            box-shadow: 0 10px 15px rgba(0,0,0,0.2);
-        }
-        
-        .prize-hero { 
-            text-align: center; 
-            border: 2px solid var(--primary); 
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
-        }
-        .prize-hero h1 { 
-            font-size: clamp(2rem, 5vw, 2.5rem);
-            color: var(--primary); 
-            margin: 10px 0; 
-        }
-        .prize-hero h3 {
-            font-size: clamp(1rem, 3vw, 1.2rem);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .stat-grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 10px; 
-            margin-bottom: 20px; 
-        }
-        .stat-box { 
-            background: var(--card-bg); 
-            padding: 12px; 
-            border-radius: 12px; 
-            text-align: center; 
-            border: 1px solid rgba(255,255,255,0.1); 
-        }
-        .stat-box span {
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-        }
-        .stat-box h2 { 
-            font-size: clamp(1rem, 3vw, 1.2rem);
-            color: var(--primary); 
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            letter-spacing: 2px;
         }
 
-        .podium-container { 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: center; 
-            gap: 8px; 
-            height: 120px; 
-            margin-top: 15px; 
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
-        .podium-step { 
-            background: rgba(0,0,0,0.3); 
-            border-radius: 8px 8px 4px 4px; 
-            text-align: center; 
-            width: 80px; 
-            padding: 10px; 
-            border: 1px solid rgba(255,255,255,0.1);
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-        }
-        .first { height: 100%; border-color: var(--gold); }
-        .second { height: 75%; } 
-        .third { height: 55%; }
 
-        .table-container { 
-            overflow-x: auto; 
-            border-radius: 12px; 
-            background: rgba(0,0,0,0.2); 
-            margin-top: 10px;
+        .user-badge {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            padding: 8px 20px;
+            border-radius: 25px;
+            border: 2px solid var(--accent-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--glow-green);
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, var(--danger) 0%, #cc0033 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 56, 100, 0.4);
+        }
+
+        /* Challenge Tabs */
+        .challenge-tabs {
+            background: rgba(21, 25, 50, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-bottom: 2px solid var(--border);
+            position: sticky;
+            top: 77px;
+            z-index: 400;
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .matrix-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: clamp(0.7rem, 2vw, 0.85rem);
-        }
-        .matrix-table th, .matrix-table td { 
-            padding: 12px; 
-            text-align: center; 
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            white-space: nowrap;
-        }
-        .sticky-col { 
-            position: sticky; 
-            left: 0; 
-            background: #1e293b !important; 
-            font-weight: bold; 
-            color: var(--primary); 
-            z-index: 5; 
+
+        .challenge-tabs::-webkit-scrollbar {
+            height: 4px;
         }
 
-        /* CHAT */
-        #chat-icon { 
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px; 
-            width: 60px; 
-            height: 60px; 
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 30px; 
-            cursor: pointer; 
+        .challenge-tabs::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .challenge-tabs::-webkit-scrollbar-thumb {
+            background: var(--accent-secondary);
+            border-radius: 10px;
+        }
+
+        .tabs-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            min-width: min-content;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 2px solid transparent;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Challenge Content Areas */
+        .challenge-content {
+            display: none;
+        }
+
+        .challenge-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Card Styles */
+        .card {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.05) 0%, rgba(0, 255, 136, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), var(--glow-cyan);
+        }
+
+        .card h2, .card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-secondary);
+            margin-bottom: 15px;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Registration Card */
+        .registration-card {
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, rgba(0, 210, 255, 0.1) 100%);
+            border: 2px solid var(--accent-tertiary);
+            text-align: center;
+            padding: 40px;
+        }
+
+        .registration-card h2 {
+            color: var(--accent-tertiary);
+            margin-bottom: 20px;
+        }
+
+        .registration-card p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            box-shadow: var(--glow-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger) 0%, #cc0033 100%);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning) 0%, #ff9500 100%);
+            color: #000;
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, var(--accent-tertiary) 0%, #7209b7 100%);
+            color: white;
+            box-shadow: var(--glow-purple);
+        }
+
+        /* Input Styles */
+        .input-field {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            box-shadow: var(--glow-cyan);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Grid Layouts */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .two-col-grid {
+                grid-template-columns: 1fr 400px;
+            }
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: var(--accent-secondary);
+            transform: translateY(-3px);
+        }
+
+        .stat-box span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box h2 {
+            color: var(--accent-primary);
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-top: 8px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Prize Hero */
+        .prize-hero {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(0, 210, 255, 0.1) 100%);
+            border: 3px solid var(--accent-gold);
+            text-align: center;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .prize-hero h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--accent-gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            margin: 15px 0;
+        }
+
+        /* Podium */
+        .podium-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 15px;
+            height: 150px;
+            margin-top: 20px;
+        }
+
+        .podium-step {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border-radius: 12px 12px 4px 4px;
+            text-align: center;
+            width: 100px;
+            padding: 15px;
+            border: 2px solid var(--border);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .podium-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 100%);
+        }
+
+        .podium-step.first {
+            height: 100%;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .podium-step.second {
+            height: 80%;
+            border-color: #c0c0c0;
+        }
+
+        .podium-step.third {
+            height: 60%;
+            border-color: #cd7f32;
+        }
+
+        /* Table Styles */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        .matrix-table th {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--accent-secondary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            background: var(--bg-secondary) !important;
+            font-weight: 700;
+            color: var(--accent-primary);
+            z-index: 5;
+            border-right: 2px solid var(--border);
+        }
+
+        /* Chat Styles */
+        #chat-icon {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            cursor: pointer;
             z-index: 999;
-            box-shadow: 0 6px 20px rgba(0,210,255,0.5);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 210, 255, 0.6), var(--glow-cyan);
+            transition: all 0.3s;
+            border: 3px solid var(--bg-primary);
         }
+
         #chat-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 25px rgba(0,210,255,0.7);
+            transform: scale(1.1) rotate(5deg);
         }
+
         #chat-icon::after {
             content: '';
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 2px solid var(--primary);
+            border: 3px solid var(--accent-secondary);
             animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
+
         @keyframes ping {
             0% { transform: scale(1); opacity: 1; }
-            75%, 100% { transform: scale(1.5); opacity: 0; }
+            75%, 100% { transform: scale(1.8); opacity: 0; }
         }
-        
-        #chat-window { 
-            position: fixed; 
-            bottom: 90px; 
-            right: 20px; 
-            width: min(380px, calc(100vw - 40px));
-            height: min(550px, calc(100vh - 140px));
-            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid rgba(0,210,255,0.3);
-            border-radius: 24px; 
-            display: flex; 
-            flex-direction: column; 
-            z-index: 1000; 
+
+        #chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 25px;
+            width: min(420px, calc(100vw - 50px));
+            height: min(600px, calc(100vh - 150px));
+            background: linear-gradient(145deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0,210,255,0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), var(--glow-cyan);
         }
-        .chat-hidden { 
-            transform: translateY(30px) scale(0.9); 
-            opacity: 0; 
-            pointer-events: none; 
+
+        .chat-hidden {
+            transform: translateY(30px) scale(0.9);
+            opacity: 0;
+            pointer-events: none;
         }
-        
+
         .chat-header {
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            color: #000; 
-            padding: 18px 20px; 
-            font-weight: bold; 
-            border-radius: 22px 22px 0 0; 
-            display: flex; 
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            color: #000;
+            padding: 20px;
+            font-weight: 700;
+            border-radius: 22px 22px 0 0;
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
         }
-        
+
         .chat-header-title {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.1rem;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-family: 'Orbitron', sans-serif;
         }
-        
+
         .coach-status {
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             background: var(--success);
             border-radius: 50%;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--success);
         }
-        
+
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
         }
-        
+
         .close-chat {
             cursor: pointer;
-            font-size: 1.8rem;
-            line-height: 1;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-        
-        .close-chat:hover {
-            background: rgba(0,0,0,0.2);
-        }
-        
-        #chat-body { 
-            padding: 20px; 
-            overflow-y: auto; 
-            flex-grow: 1; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 12px; 
-            font-size: 0.9rem;
-            background: rgba(0,0,0,0.2);
-        }
-        
-        #chat-body::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        #chat-body::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-        
-        #chat-body::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-        
-        .message-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 8px;
-            animation: messageSlide 0.3s ease-out;
-        }
-        
-        @keyframes messageSlide {
-            from { 
-                opacity: 0; 
-                transform: translateY(10px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
-        }
-        
-        .bot-msg { 
-            background: linear-gradient(135deg, rgba(0,210,255,0.15) 0%, rgba(0,210,255,0.05) 100%);
-            padding: 12px 16px; 
-            border-radius: 16px 16px 16px 4px; 
-            align-self: flex-start;
-            max-width: 80%;
-            border: 1px solid rgba(0,210,255,0.2);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: relative;
-            line-height: 1.5;
-        }
-        
-        .bot-avatar {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            flex-shrink: 0;
-            box-shadow: 0 2px 6px rgba(0,210,255,0.4);
-        }
-        
-        .user-msg { 
-            background: linear-gradient(135deg, var(--primary) 0%, #00b8e6 100%);
-            color: #000; 
-            padding: 12px 16px; 
-            border-radius: 16px 16px 4px 16px; 
-            align-self: flex-end;
-            max-width: 80%;
-            font-weight: 500;
-            box-shadow: 0 2px 8px rgba(0,210,255,0.3);
-            line-height: 1.5;
-        }
-        
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-        }
-        
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
-            30% { transform: translateY(-10px); opacity: 1; }
-        }
-        
-        .chat-input-container {
-            display: flex;
-            padding: 15px;
-            gap: 8px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.2);
-            border-radius: 0 0 22px 22px;
-        }
-        
-        .chat-input-container input {
-            flex: 1;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.4);
-            color: #fff;
-            font-size: 0.95rem;
-            transition: border-color 0.3s, background 0.3s;
-        }
-        
-        .chat-input-container input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(0,0,0,0.5);
-        }
-        
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            border: none;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 8px rgba(0,210,255,0.3);
-        }
-        
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 12px rgba(0,210,255,0.5);
-        }
-        
-        .send-btn:active {
-            transform: scale(0.95);
-        }
-        
-        button { 
-            background: var(--primary); 
-            font-weight: bold; 
-            cursor: pointer; 
-            padding: 10px; 
-            border-radius: 8px; 
-            border: none;
-            color: #000;
-            transition: 0.2s;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        button:disabled { 
-            background: #444; 
-            color: #888; 
-            cursor: not-allowed; 
-        }
-        input { 
-            padding: 10px; 
-            border-radius: 8px; 
-            border: none; 
-            background: rgba(0,0,0,0.3); 
-            color: #fff;
-            font-size: 1rem;
-        }
-        input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .main-panel, .side-panel {
-            width: 100%;
-        }
-
-        /* Challenge Animations */
-        .challenge-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .challenge-content {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .challenge-icon {
-            width: 50px;
-            height: 50px;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        /* Water Glass Animation */
-        .water-glass {
-            width: 30px;
-            height: 45px;
-            border: 3px solid var(--primary);
-            border-radius: 0 0 8px 8px;
-            position: relative;
-            background: rgba(0,0,0,0.3);
-            margin: 0 auto;
-        }
-
-        .water-fill {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(180deg, rgba(0,210,255,0.3) 0%, rgba(0,210,255,0.8) 100%);
-            height: 0%;
-            transition: height 2s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 0 0 5px 5px;
-        }
-
-        .water-fill.filled {
-            height: 100%;
-        }
-
-        .water-wave {
-            position: absolute;
-            top: -10px;
-            left: -5px;
-            right: -5px;
-            height: 10px;
-            background: var(--primary);
-            border-radius: 50%;
-            opacity: 0;
-        }
-
-        .water-fill.filled .water-wave {
-            animation: wave 1s ease-in-out;
-        }
-
-        @keyframes wave {
-            0%, 100% { transform: translateY(0) scaleX(1); opacity: 0.6; }
-            50% { transform: translateY(-3px) scaleX(1.1); opacity: 0.8; }
-        }
-
-        /* Running Person Animation */
-        .runner-track {
-            width: 50px;
-            height: 50px;
-            position: relative;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .runner {
-            position: absolute;
-            bottom: 10px;
-            left: -20px;
-            font-size: 20px;
-            transition: left 2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .runner.running {
-            left: calc(100% - 10px);
-            animation: bounce 0.3s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-
-        .finish-line {
-            position: absolute;
-            right: 2px;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: repeating-linear-gradient(
-                0deg,
-                var(--success) 0px,
-                var(--success) 5px,
-                transparent 5px,
-                transparent 10px
-            );
-            opacity: 0.5;
-        }
-
-        .challenge-text {
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .challenge-complete-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--success);
-            color: #000;
-            border-radius: 50%;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            opacity: 0;
-            transform: scale(0);
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .challenge-complete-badge.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        /* Rules Modal */
-        .rules-modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .rules-modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .rules-content {
-            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid var(--primary);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            animation: slideUp 0.4s ease-out;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,210,255,0.3);
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(50px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .rules-content::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .rules-content::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-
-        .rules-content::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        .rules-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .rules-header h2 {
-            color: var(--primary);
-            font-size: 1.8rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .close-rules {
-            cursor: pointer;
             font-size: 2rem;
-            color: var(--text);
+            line-height: 1;
             width: 35px;
             height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
-            transition: background 0.2s;
+            transition: all 0.2s;
+            font-weight: 700;
         }
 
-        .close-rules:hover {
-            background: rgba(255,255,255,0.1);
+        .close-chat:hover {
+            background: rgba(0, 0, 0, 0.2);
+            transform: rotate(90deg);
         }
 
-        .rules-list {
-            list-style: none;
-            padding: 0;
+        #chat-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 0.95rem;
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        .rules-list li {
-            background: rgba(0,210,255,0.05);
-            border-left: 4px solid var(--primary);
-            padding: 15px;
-            margin-bottom: 12px;
-            border-radius: 8px;
+        #chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-body::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        #chat-body::-webkit-scrollbar-thumb {
+            background: var(--accent-secondary);
+            border-radius: 10px;
+        }
+
+        .message-wrapper {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bot-msg {
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.15) 0%, rgba(0, 255, 136, 0.15) 100%);
+            padding: 14px 18px;
+            border-radius: 18px 18px 18px 4px;
+            align-self: flex-start;
+            max-width: 80%;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             line-height: 1.6;
-            transition: transform 0.2s, background 0.2s;
         }
 
-        .rules-list li:hover {
-            background: rgba(0,210,255,0.1);
+        .bot-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            box-shadow: var(--glow-cyan);
+            border: 2px solid var(--bg-primary);
+        }
+
+        .user-msg {
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            color: #000;
+            padding: 14px 18px;
+            border-radius: 18px 18px 4px 18px;
+            align-self: flex-end;
+            max-width: 80%;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0, 210, 255, 0.4);
+            line-height: 1.6;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 5px;
+            padding: 14px 18px;
+        }
+
+        .typing-dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent-secondary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
+            30% { transform: translateY(-12px); opacity: 1; }
+        }
+
+        .chat-input-container {
+            display: flex;
+            padding: 18px;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0 0 22px 22px;
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Rajdhani', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: var(--accent-secondary);
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            border: none;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4rem;
+            transition: all 0.2s;
+            box-shadow: var(--glow-cyan);
+        }
+
+        .send-btn:hover {
+            transform: scale(1.08);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Finance Specific Styles */
+        .expense-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-primary);
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .expense-item:hover {
+            background: rgba(0, 0, 0, 0.5);
             transform: translateX(5px);
         }
 
-        .rule-number {
-            display: inline-block;
-            background: var(--primary);
-            color: #000;
-            font-weight: bold;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 28px;
-            margin-right: 10px;
-            font-size: 0.9rem;
-        }
-
-        .rules-footer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .prize-highlight {
-            background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(0,210,255,0.2) 100%);
-            border: 2px solid var(--gold);
-            border-radius: 12px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: center;
-        }
-
-        .prize-highlight h3 {
-            color: var(--gold);
-            margin-bottom: 8px;
+        .expense-amount {
+            font-weight: 700;
             font-size: 1.2rem;
+            color: var(--accent-primary);
         }
 
-        /* Mobile-specific adjustments */
-        @media (max-width: 850px) { 
-            .layout { 
-                grid-template-columns: 1fr;
-                padding: 15px;
-                gap: 15px;
+        .expense-amount.over-budget {
+            color: var(--danger);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #000;
+        }
+
+        .progress-fill.warning {
+            background: linear-gradient(90deg, var(--warning) 0%, #ff9500 100%);
+        }
+
+        .progress-fill.danger {
+            background: linear-gradient(90deg, var(--danger) 0%, #cc0033 100%);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-header {
+                padding: 12px 15px;
             }
-            .card {
-                padding: 15px;
-                margin-bottom: 15px;
+
+            .header-content {
+                gap: 10px;
             }
-            .stat-grid {
-                gap: 8px;
+
+            .logo {
+                font-size: 1.3rem;
             }
-            .podium-step {
-                width: 70px;
-                padding: 8px;
+
+            .user-badge {
+                padding: 6px 15px;
+                font-size: 0.85rem;
             }
+
+            .logout-btn {
+                padding: 8px 15px;
+                font-size: 0.85rem;
+            }
+
             #chat-window {
-                bottom: 90px;
-                right: 10px;
-                width: calc(100vw - 20px);
-            }
-            #chat-icon {
-                bottom: 15px;
+                width: calc(100vw - 30px);
                 right: 15px;
-                width: 55px;
-                height: 55px;
-                font-size: 26px;
+            }
+
+            #chat-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+                right: 15px;
+                bottom: 20px;
             }
         }
 
-        /* Very small screens */
-        @media (max-width: 480px) {
-            .layout {
-                padding: 10px;
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
             }
+
             .card {
+                padding: 20px;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 10px;
+            }
+
+            .challenge-tabs {
+                top: 68px;
+            }
+
+            .podium-step {
+                width: 80px;
                 padding: 12px;
             }
-            .matrix-table th, .matrix-table td {
-                padding: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.1rem;
+            }
+
+            .tab-btn {
+                padding: 10px 20px;
+                font-size: 0.85rem;
+            }
+
+            .card h2, .card h3 {
+                font-size: 1.2rem;
+            }
+
+            .matrix-table th,
+            .matrix-table td {
+                padding: 10px;
+                font-size: 0.8rem;
             }
         }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-warning { color: var(--warning); }
+        .text-muted { color: var(--text-muted); }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .w-100 { width: 100%; }
     </style>
 </head>
 <body>
 
-<div id="news-ticker"><div id="ticker-content">Loading live athlete feed... 🔥</div></div>
-
-<div class="layout">
-    <div class="main-panel">
-        <div class="card prize-hero">
-            <h3>🏆 CHALLENGE PRIZE POOL</h3>
-            <h1>₹6,000</h1>
-            <div class="podium-container">
-                <div class="podium-step second"><div id="rank2">--</div><span>2nd</span></div>
-                <div class="podium-step first">👑<div id="rank1">--</div><span>Champ</span></div>
-                <div class="podium-step third"><div id="rank3">--</div><span>3rd</span></div>
+<!-- Main Header -->
+<header class="main-header">
+    <div class="header-content">
+        <div class="logo">⚡ PROCHALLENGE HUB</div>
+        <div class="user-info">
+            <div class="user-badge">
+                <span>👤</span>
+                <span id="userName">Athlete</span>
             </div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
         </div>
+    </div>
+</header>
 
-        <div class="stat-grid">
-            <div class="stat-box"><span>Your Rank</span><h2 id="userRank">--</h2></div>
-            <div class="stat-box"><span>Loss %</span><h2 id="userTotalPct">--</h2></div>
-            <div class="stat-box"><span>Days Left</span><h2 id="daysLeft">--</h2></div>
-        </div>
+<!-- Challenge Tabs -->
+<nav class="challenge-tabs">
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchChallenge('fitness')" data-challenge="fitness">
+            💪 Fitness Challenge
+        </button>
+        <button class="tab-btn" onclick="switchChallenge('finance')" data-challenge="finance">
+            💰 Finance Challenge
+        </button>
+        <button class="tab-btn" onclick="switchChallenge('productivity')" data-challenge="productivity">
+            📊 Productivity Challenge
+        </button>
+        <button class="tab-btn" onclick="switchChallenge('learning')" data-challenge="learning">
+            📚 Learning Challenge
+        </button>
+    </div>
+</nav>
 
-        <div class="card">
-            <h3>⚔️ Weight Matrix</h3>
-            <div class="table-container"><table id="competitorTable" class="matrix-table"></table></div>
-        </div>
+<!-- Main Container -->
+<div class="main-container">
+    
+    <!-- FITNESS CHALLENGE CONTENT -->
+    <div id="fitness-challenge" class="challenge-content active">
+        <!-- Will be loaded dynamically based on registration status -->
+    </div>
 
-        <div class="card">
-            <h3>GAIN TO PAY 500 (Weekly Delta)</h3>
-            <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
+    <!-- FINANCE CHALLENGE CONTENT -->
+    <div id="finance-challenge" class="challenge-content">
+        <!-- Will be loaded dynamically based on registration status -->
+    </div>
+
+    <!-- PRODUCTIVITY CHALLENGE CONTENT -->
+    <div id="productivity-challenge" class="challenge-content">
+        <div class="card registration-card">
+            <h2>📊 Productivity Challenge</h2>
+            <p>Track your daily productivity metrics, set goals, and compete with other professionals to maximize your output!</p>
+            <p><strong>Coming Soon...</strong></p>
         </div>
     </div>
 
-    <div class="side-panel">
-        <div class="card">
-            <h2 id="welcomeText">Athlete</h2>
-            <p id="countdown" style="color:var(--gold); font-size:0.8rem; margin-top:5px;">--:--:--</p>
-            <button onclick="showRules()" style="width:100%; margin-top:12px; background:var(--gold); color:#000; font-size:0.85rem; padding:8px;">
-                📜 Challenge Rules
-            </button>
-            <button onclick="logout()" style="width:100%; margin-top:8px; background:#ff4d4d; font-size:0.85rem; padding:8px;">
-                🚪 Logout
-            </button>
-        </div>
-
-        <div class="card">
-            <h3 style="color:var(--primary)">🎯 Daily Challenges</h3>
-            <div id="challenge-list" style="margin-top:10px;">
-                <div class="challenge-item" id="water-challenge">
-                    <div class="challenge-content">
-                        <div class="challenge-icon">
-                            <div class="water-glass">
-                                <div class="water-fill" id="water-fill">
-                                    <div class="water-wave"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <span class="challenge-text">💧 3L Water</span>
-                    </div>
-                    <button onclick="completeChallenge(this, '3L Water', 'water')" style="font-size:0.75rem; padding: 8px 16px; position: relative;">
-                        Done
-                        <div class="challenge-complete-badge">✓</div>
-                    </button>
-                </div>
-                
-                <div class="challenge-item" id="steps-challenge">
-                    <div class="challenge-content">
-                        <div class="challenge-icon">
-                            <div class="runner-track">
-                                <div class="runner" id="runner">🏃</div>
-                                <div class="finish-line"></div>
-                            </div>
-                        </div>
-                        <span class="challenge-text">🏃 10k Steps</span>
-                    </div>
-                    <button onclick="completeChallenge(this, '10k Steps', 'steps')" style="font-size:0.75rem; padding: 8px 16px; position: relative;">
-                        Done
-                        <div class="challenge-complete-badge">✓</div>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>⚖️ Log Weight</h3>
-            <p id="logStatus" style="font-size:0.65rem; color:var(--text-muted); margin-bottom:8px;">Checking permissions...</p>
-            <input type="number" step="0.1" id="weightInput" placeholder="Enter Weight (kg)" style="width:100%; margin-bottom:10px;">
-            <button onclick="addWeight()" id="submitBtn" style="width:100%">Submit Monday Entry</button>
+    <!-- LEARNING CHALLENGE CONTENT -->
+    <div id="learning-challenge" class="challenge-content">
+        <div class="card registration-card">
+            <h2>📚 Learning Challenge</h2>
+            <p>Commit to continuous learning! Track courses completed, hours studied, and compete with peers on knowledge acquisition.</p>
+            <p><strong>Coming Soon...</strong></p>
         </div>
     </div>
+
 </div>
 
+<!-- AI Coach Chat -->
 <div id="chat-icon" onclick="toggleChat()">🤖</div>
 <div id="chat-window" class="chat-hidden">
     <div class="chat-header">
         <div class="chat-header-title">
-            <span>TIN_AI Coach</span>
+            <span>AI Coach</span>
             <div class="coach-status"></div>
         </div>
         <div class="close-chat" onclick="toggleChat()">&times;</div>
@@ -900,7 +1032,7 @@
     <div id="chat-body">
         <div class="message-wrapper">
             <div class="bot-avatar">🤖</div>
-            <div class="bot-msg">Yo! TIN_AI here, your fitness sidekick! 💪 Drop me a question about your gains, losses, or why your metabolism hates you. Let's get it! 🔥</div>
+            <div class="bot-msg">Hey! I'm TIN AI, ready to help you crush your challenges! Ask me anything about your progress, goals, or strategies. Let's get it! 🚀</div>
         </div>
     </div>
     <div class="chat-input-container">
@@ -909,408 +1041,7 @@
     </div>
 </div>
 
-<!-- Rules Modal -->
-<div id="rulesModal" class="rules-modal">
-    <div class="rules-content">
-        <div class="rules-header">
-            <h2>📜 Challenge Rules</h2>
-            <span class="close-rules" onclick="closeRules()">&times;</span>
-        </div>
-        <ul class="rules-list">
-            <li>
-                <span class="rule-number">1</span>
-                Each participant joins the challenge by paying <strong>₹1,000</strong> to the Fitness Fund.
-            </li>
-            <li>
-                <span class="rule-number">2</span>
-                Challenge starts on <strong>2nd February 2026</strong> and ends on <strong>25th April 2026</strong>.
-            </li>
-            <li>
-                <span class="rule-number">3</span>
-                Every <strong>Monday</strong>, starting <strong>2nd February 2026</strong>, every participant shares a picture/video of their weight with proof of current date.
-            </li>
-            <li>
-                <span class="rule-number">4</span>
-                If a participant <strong>gains weight</strong> compared to their weight on the previous Monday, they pay <strong>₹500</strong> to the Fitness pool as a fine.
-            </li>
-            <li>
-                <span class="rule-number">5</span>
-                If a participant <strong>fails to share</strong> their weight on Monday, they pay <strong>₹500</strong> to the Fitness pool as a fine.
-            </li>
-            <li>
-                <span class="rule-number">6</span>
-                Failure to pay the fine will lead to <strong>disqualification</strong> with no refunds and removal from the group 😬
-            </li>
-            <li>
-                <span class="rule-number">7</span>
-                Winner is decided by the <strong>highest overall % of weight loss</strong> at the end of week 12 compared to Day 1 weight.
-            </li>
-        </ul>
-        <div class="prize-highlight">
-            <h3>🏆 Prize Pool: ₹6,000</h3>
-            <p style="color:var(--text-muted); font-size:0.9rem;">May the best athlete win!</p>
-        </div>
-        <div class="rules-footer">
-            Good luck, athletes! Stay committed and crush your goals! 💪🔥
-        </div>
-    </div>
-</div>
+<script src="app.js"></script>
 
-<script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
-    
-    // Authentication Check
-    function checkAuth() {
-        const isAuthenticated = localStorage.getItem('isAuthenticated');
-        const loginTime = localStorage.getItem('loginTime');
-        const now = new Date().getTime();
-        const hoursSinceLogin = loginTime ? (now - loginTime) / (1000 * 60 * 60) : 999;
-        
-        // Redirect to login if not authenticated or session expired (24 hours)
-        if (isAuthenticated !== 'true' || hoursSinceLogin >= 24) {
-            localStorage.clear();
-            window.location.href = 'index.html';
-            return false;
-        }
-        return true;
-    }
-
-    // Run auth check immediately
-    if (!checkAuth()) {
-        throw new Error('Not authenticated');
-    }
-
-    const user = localStorage.getItem("user") || "Guest";
-    document.getElementById("welcomeText").innerText = user;
-
-    // Add logout functionality
-    function logout() {
-        if (confirm('Are you sure you want to logout?')) {
-            localStorage.clear();
-            window.location.href = 'index.html';
-        }
-    }
-
-    // Rules modal functions
-    function showRules() {
-        document.getElementById('rulesModal').classList.add('show');
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
-    }
-
-    function closeRules() {
-        document.getElementById('rulesModal').classList.remove('show');
-        document.body.style.overflow = 'auto'; // Restore scrolling
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('rulesModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeRules();
-        }
-    });
-
-    function toggleChat() { 
-        document.getElementById("chat-window").classList.toggle("chat-hidden"); 
-    }
-
-    // --- MONDAY LOCK LOGIC ---
-    function checkMonday() {
-        const today = new Date().getDay();
-        const btn = document.getElementById("submitBtn");
-        const status = document.getElementById("logStatus");
-        
-        if (today === 1) { // 1 = Monday
-            btn.disabled = false;
-            status.innerText = "It's Monday! Please log your weight.";
-            status.style.color = "var(--success)";
-        } else {
-            btn.disabled = true;
-            status.innerText = "Weight logging is only open on Mondays.";
-            status.style.color = "var(--danger)";
-        }
-    }
-
-    async function coachResponse() {
-        const input = document.getElementById("userQuery");
-        const body = document.getElementById("chat-body");
-        const query = input.value.trim();
-        if(!query) return;
-
-        const myRank = document.getElementById("userRank").innerText;
-        const myLoss = document.getElementById("userTotalPct").innerText;
-
-        // Add user message with animation
-        const userMsgWrapper = document.createElement('div');
-        userMsgWrapper.className = 'message-wrapper';
-        userMsgWrapper.style.justifyContent = 'flex-end';
-        userMsgWrapper.innerHTML = `<div class="user-msg">${query}</div>`;
-        body.appendChild(userMsgWrapper);
-        
-        input.value = "";
-        
-        // Add typing indicator
-        const typingWrapper = document.createElement('div');
-        typingWrapper.className = 'message-wrapper';
-        typingWrapper.id = 'typing-indicator';
-        typingWrapper.innerHTML = `
-            <div class="bot-avatar">🤖</div>
-            <div class="bot-msg">
-                <div class="typing-indicator">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
-            </div>
-        `;
-        body.appendChild(typingWrapper);
-        body.scrollTop = body.scrollHeight;
-
-        try {
-            const response = await puter.ai.chat(
-                `System: You are TIN_AI, the Dark Shine Coach. Context: User is ${user}, Rank: ${myRank}, Loss: ${myLoss}. Be brief (2-3 sentences), high-energy, motivational, and use emojis.` + query
-            );
-            
-            // Remove typing indicator
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-            
-            // Add bot response with avatar
-            const botMsgWrapper = document.createElement('div');
-            botMsgWrapper.className = 'message-wrapper';
-            botMsgWrapper.innerHTML = `
-                <div class="bot-avatar">🤖</div>
-                <div class="bot-msg">${response.message.content}</div>
-            `;
-            body.appendChild(botMsgWrapper);
-        } catch (e) { 
-            // Remove typing indicator on error
-            const typingIndicator = document.getElementById('typing-indicator');
-            if (typingIndicator) {
-                typingIndicator.remove();
-            }
-            
-            const errorMsgWrapper = document.createElement('div');
-            errorMsgWrapper.className = 'message-wrapper';
-            errorMsgWrapper.innerHTML = `
-                <div class="bot-avatar">🤖</div>
-                <div class="bot-msg">Coach is busy training others! Try again in a moment. 💪</div>
-            `;
-            body.appendChild(errorMsgWrapper);
-        }
-        body.scrollTop = body.scrollHeight;
-    }
-
-    async function completeChallenge(btn, task, type) {
-        btn.disabled = true; 
-        btn.innerText = "...";
-        
-        // Trigger animations
-        if (type === 'water') {
-            const waterFill = document.getElementById('water-fill');
-            waterFill.classList.add('filled');
-        } else if (type === 'steps') {
-            const runner = document.getElementById('runner');
-            runner.classList.add('running');
-        }
-        
-        try {
-            await fetch(API_URL, {
-                method: "POST", 
-                body: JSON.stringify({
-                    action:"logChallenge", 
-                    username: user, 
-                    challenge: task
-                })
-            });
-            
-            // Show success state after animation completes
-            setTimeout(() => {
-                btn.style.background = "var(--success)"; 
-                btn.innerText = "✔️";
-                const badge = btn.querySelector('.challenge-complete-badge');
-                if (badge) {
-                    badge.classList.add('show');
-                }
-            }, 2000);
-            
-            updateTicker();
-        } catch(e) { 
-            btn.disabled = false;
-            btn.innerText = "Done";
-            // Reset animations on error
-            if (type === 'water') {
-                document.getElementById('water-fill').classList.remove('filled');
-            } else if (type === 'steps') {
-                document.getElementById('runner').classList.remove('running');
-            }
-        }
-    }
-
-    async function updateTicker() {
-        try {
-            const res = await fetch(API_URL, {
-                method: "POST", 
-                body: JSON.stringify({action:"getDailyChallenges"})
-            });
-            const data = await res.json();
-            const msg = data.length ? data.map(d => `🔥 ${d.user} completed ${d.challenge}`).join(" | ") : "Log challenges to inspire others!";
-            document.getElementById("ticker-content").innerText = msg + " | " + msg;
-        } catch(e) {}
-    }
-
-    async function addWeight() {
-        const weight = document.getElementById("weightInput").value;
-        if(!weight) return alert("Enter weight");
-        try {
-            await fetch(API_URL, {
-                method:"POST", 
-                body:JSON.stringify({
-                    action:"addWeight", 
-                    username:user, 
-                    weight:weight
-                })
-            });
-            alert("Weight Logged!");
-            document.getElementById("weightInput").value = "";
-            init();
-        } catch(e) { 
-            alert("Failed to log"); 
-        }
-    }
-
-    async function init() {
-        checkMonday();
-        try {
-            const res = await fetch(API_URL, {
-                method:"POST", 
-                body:JSON.stringify({action:"getAllWeights"})
-            });
-            const data = await res.json();
-            if(data.length > 1) renderTables(data);
-            updateTicker();
-        } catch(e) { 
-            console.log("Init failed"); 
-        }
-    }
-
-    function renderTables(data) {
-        const rows = data.slice(1);
-        let usersMap = {}, datesSet = new Set();
-        rows.forEach(r => {
-            const d = new Date(r[1]);
-            const label = d.toLocaleDateString('en-GB', {day:'2-digit', month:'short'});
-            datesSet.add(label);
-            if(!usersMap[r[0]]) usersMap[r[0]] = {};
-            usersMap[r[0]][label] = parseFloat(r[2]);
-        });
-        const dates = [...datesSet].sort((a,b) => new Date(a) - new Date(b));
-        
-        let h1 = `<thead><tr><th class="sticky-col">Athlete</th>`, h2 = h1;
-        dates.forEach(d => { 
-            h1 += `<th>${d}</th>`; 
-            h2 += `<th>${d}</th>`; 
-        });
-        h1 += `<th>Total %</th></tr></thead><tbody>`; 
-        h2 += `</tr></thead><tbody>`;
-
-        let lb = Object.keys(usersMap).map(u => {
-            const vals = dates.map(d => usersMap[u][d]).filter(v => v);
-            const total = vals.length > 1 ? (((vals[0] - vals[vals.length-1])/vals[0])*100).toFixed(2) : 0;
-            return { name: u, total: parseFloat(total) };
-        });
-
-        const sorted = lb.sort((a,b) => b.total - a.total);
-        document.getElementById("rank1").innerText = sorted[0]?.name || "--";
-        document.getElementById("rank2").innerText = sorted[1]?.name || "--";
-        document.getElementById("rank3").innerText = sorted[2]?.name || "--";
-        
-        const myIdx = sorted.findIndex(i => i.name === user);
-        document.getElementById("userRank").innerText = myIdx >= 0 ? `#${myIdx + 1}` : "--";
-        document.getElementById("userTotalPct").innerText = myIdx >= 0 ? `${sorted[myIdx].total}%` : "--";
-
-        sorted.forEach(item => {
-            h1 += `<tr><td class="sticky-col">${item.name}</td>`;
-            h2 += `<tr><td class="sticky-col">${item.name}</td>`;
-            dates.forEach((d, i) => {
-                const v = usersMap[item.name][d] || '-';
-                h1 += `<td>${v}</td>`;
-                let prev = dates[i-1] ? usersMap[item.name][dates[i-1]] : null;
-                let delta = (prev && v !== '-') ? `<div style="font-size:0.6rem; color:var(--success)">${(((prev-v)/prev)*100).toFixed(1)}%</div>` : "";
-                h2 += `<td>${v}${delta}</td>`;
-            });
-            h1 += `<td>${item.total}%</td></tr>`; 
-            h2 += `</tr>`;
-        });
-        document.getElementById("competitorTable").innerHTML = h1;
-        document.getElementById("skipTable").innerHTML = h2;
-    }
-
-    // Calculate and display days left
-    function updateDaysLeft() {
-        const startDate = new Date('2026-02-02');
-        const endDate = new Date('2026-04-25');
-        const today = new Date();
-        
-        // Calculate days remaining
-        const timeLeft = endDate - today;
-        const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
-        
-        // Calculate total days and progress
-        const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-        const daysPassed = Math.ceil((today - startDate) / (1000 * 60 * 60 * 24));
-        
-        // Update display
-        const daysLeftElement = document.getElementById("daysLeft");
-        if (daysLeft > 0) {
-            daysLeftElement.innerText = daysLeft;
-            daysLeftElement.style.color = daysLeft <= 7 ? 'var(--danger)' : 'var(--primary)';
-        } else if (daysLeft === 0) {
-            daysLeftElement.innerText = "Today!";
-            daysLeftElement.style.color = 'var(--gold)';
-        } else {
-            daysLeftElement.innerText = "Ended";
-            daysLeftElement.style.color = 'var(--text-muted)';
-        }
-        
-        // Update countdown timer
-        updateCountdown();
-    }
-    
-    // Update real-time countdown
-    function updateCountdown() {
-        const endDate = new Date('2026-04-25T23:59:59');
-        const now = new Date();
-        const diff = endDate - now;
-        
-        if (diff > 0) {
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-            
-            document.getElementById("countdown").innerText = 
-                `⏱️ ${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
-        } else {
-            document.getElementById("countdown").innerText = "Challenge Completed! 🎉";
-        }
-    }
-    
-    // Initialize and start timers
-    updateDaysLeft();
-    setInterval(updateCountdown, 1000); // Update countdown every second
-    setInterval(updateDaysLeft, 60000); // Update days left every minute
-    
-    init();
-    setInterval(init, 300000);
-    
-    // Handle enter key in chat
-    document.getElementById("userQuery").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            coachResponse();
-        }
-    });
-</script>
 </body>
 </html>
