@@ -594,6 +594,162 @@
             transform: scale(1);
         }
 
+        /* Rules Modal */
+        .rules-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .rules-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .rules-content {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.4s ease-out;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,210,255,0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .rules-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .rules-content::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+
+        .rules-content::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .rules-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .rules-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-rules {
+            cursor: pointer;
+            font-size: 2rem;
+            color: var(--text);
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .close-rules:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rules-list li {
+            background: rgba(0,210,255,0.05);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .rules-list li:hover {
+            background: rgba(0,210,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .rule-number {
+            display: inline-block;
+            background: var(--primary);
+            color: #000;
+            font-weight: bold;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+
+        .rules-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .prize-highlight {
+            background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(0,210,255,0.2) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .prize-highlight h3 {
+            color: var(--gold);
+            margin-bottom: 8px;
+            font-size: 1.2rem;
+        }
+
         /* Mobile-specific adjustments */
         @media (max-width: 850px) { 
             .layout { 
@@ -668,7 +824,7 @@
         </div>
 
         <div class="card">
-            <h3>🔥 GAIN TO PAY 500 (Weekly Delta)</h3>
+            <h3>GAIN TO PAY 500 (Weekly Delta)</h3>
             <div class="table-container"><table id="skipTable" class="matrix-table"></table></div>
         </div>
     </div>
@@ -677,7 +833,10 @@
         <div class="card">
             <h2 id="welcomeText">Athlete</h2>
             <p id="countdown" style="color:var(--gold); font-size:0.8rem; margin-top:5px;">--:--:--</p>
-            <button onclick="logout()" style="width:100%; margin-top:12px; background:#ff4d4d; font-size:0.85rem; padding:8px;">
+            <button onclick="showRules()" style="width:100%; margin-top:12px; background:var(--gold); color:#000; font-size:0.85rem; padding:8px;">
+                📜 Challenge Rules
+            </button>
+            <button onclick="logout()" style="width:100%; margin-top:8px; background:#ff4d4d; font-size:0.85rem; padding:8px;">
                 🚪 Logout
             </button>
         </div>
@@ -750,6 +909,53 @@
     </div>
 </div>
 
+<!-- Rules Modal -->
+<div id="rulesModal" class="rules-modal">
+    <div class="rules-content">
+        <div class="rules-header">
+            <h2>📜 Challenge Rules</h2>
+            <span class="close-rules" onclick="closeRules()">&times;</span>
+        </div>
+        <ul class="rules-list">
+            <li>
+                <span class="rule-number">1</span>
+                Each participant joins the challenge by paying <strong>₹1,000</strong> to the Fitness Fund.
+            </li>
+            <li>
+                <span class="rule-number">2</span>
+                Challenge starts on <strong>2nd February 2026</strong> and ends on <strong>25th April 2026</strong>.
+            </li>
+            <li>
+                <span class="rule-number">3</span>
+                Every <strong>Monday</strong>, starting tomorrow, every participant shares a picture/video of their weight with proof of current date.
+            </li>
+            <li>
+                <span class="rule-number">4</span>
+                If a participant <strong>gains weight</strong> compared to their weight on the previous Monday, they pay <strong>₹500</strong> to the Fitness pool as a fine.
+            </li>
+            <li>
+                <span class="rule-number">5</span>
+                If a participant <strong>fails to share</strong> their weight on Monday, they pay <strong>₹500</strong> to the Fitness pool as a fine.
+            </li>
+            <li>
+                <span class="rule-number">6</span>
+                Failure to pay the fine will lead to <strong>disqualification</strong> with no refunds and removal from the group 😬
+            </li>
+            <li>
+                <span class="rule-number">7</span>
+                Winner is decided by the <strong>highest overall % of weight loss</strong> at the end of week 12 compared to Day 1 weight.
+            </li>
+        </ul>
+        <div class="prize-highlight">
+            <h3>🏆 Prize Pool: ₹6,000</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem;">May the best athlete win!</p>
+        </div>
+        <div class="rules-footer">
+            Good luck, athletes! Stay committed and crush your goals! 💪🔥
+        </div>
+    </div>
+</div>
+
 <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
     
@@ -784,6 +990,24 @@
             window.location.href = 'index.html';
         }
     }
+
+    // Rules modal functions
+    function showRules() {
+        document.getElementById('rulesModal').classList.add('show');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeRules() {
+        document.getElementById('rulesModal').classList.remove('show');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+
+    // Close modal when clicking outside
+    document.getElementById('rulesModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeRules();
+        }
+    });
 
     function toggleChat() { 
         document.getElementById("chat-window").classList.toggle("chat-hidden"); 
@@ -1056,7 +1280,7 @@
     
     // Update real-time countdown
     function updateCountdown() {
-        const endDate = new Date('2026-04-24T23:59:59');
+        const endDate = new Date('2026-04-25T23:59:59');
         const now = new Date();
         const diff = endDate - now;
         
