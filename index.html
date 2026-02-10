@@ -3,94 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Layout Boys - Login</title>
+    <title>ProChallenge Hub - Login</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap');
+        
         :root {
-            --bg: #0f172a;
-            --card-bg: #1e293b;
-            --primary: #00d2ff;
-            --gold: #fbbf24;
-            --text: #f8fafc;
-            --text-muted: #94a3b8;
-            --danger: #ff4d4d;
-            --success: #00ff88;
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151932;
+            --bg-tertiary: #1a1f3a;
+            --accent-primary: #00ff88;
+            --accent-secondary: #00d2ff;
+            --accent-tertiary: #9d4edd;
+            --text-primary: #ffffff;
+            --text-secondary: #b8c5d6;
+            --text-muted: #6b7a8f;
+            --border: rgba(255, 255, 255, 0.1);
+            --glow-cyan: 0 0 20px rgba(0, 210, 255, 0.4);
+            --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
         }
-
+        
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--bg-primary);
+            background-image: 
+                radial-gradient(ellipse at top left, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at bottom right, rgba(157, 78, 221, 0.08) 0%, transparent 50%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            position: relative;
+            color: var(--text-primary);
             overflow: hidden;
+            position: relative;
         }
 
-        /* Animated background elements */
-        .bg-animation {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+        /* Animated Background Grid */
+        body::before {
+            content: '';
+            position: fixed;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
             z-index: 0;
-            overflow: hidden;
         }
 
-        .bg-circle {
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        /* Floating particles */
+        .particle {
             position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-secondary);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,210,255,0.1) 0%, transparent 70%);
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .bg-circle:nth-child(1) {
-            width: 300px;
-            height: 300px;
-            top: -100px;
-            left: -100px;
-            animation-delay: 0s;
-        }
-
-        .bg-circle:nth-child(2) {
-            width: 400px;
-            height: 400px;
-            bottom: -150px;
-            right: -150px;
-            animation-delay: 5s;
-        }
-
-        .bg-circle:nth-child(3) {
-            width: 250px;
-            height: 250px;
-            top: 50%;
-            right: 10%;
-            animation-delay: 10s;
+            opacity: 0.3;
+            animation: float 20s infinite;
         }
 
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(30px, -30px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            50% {
+                transform: translate(100px, -100px);
+            }
         }
 
+        .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 60%; left: 80%; animation-delay: 2s; }
+        .particle:nth-child(3) { top: 80%; left: 20%; animation-delay: 4s; }
+        .particle:nth-child(4) { top: 40%; left: 70%; animation-delay: 6s; }
+        .particle:nth-child(5) { top: 10%; left: 90%; animation-delay: 8s; }
+
         .login-container {
-            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-            border: 2px solid rgba(0,210,255,0.3);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+            border: 2px solid var(--border);
             border-radius: 24px;
-            padding: 40px;
+            padding: 50px 40px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(0,210,255,0.2);
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), var(--glow-cyan);
             position: relative;
             z-index: 1;
             animation: slideUp 0.6s ease-out;
@@ -107,99 +116,130 @@
             }
         }
 
-        .logo-section {
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
             text-align: center;
-            margin-bottom: 35px;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
+            letter-spacing: 3px;
         }
 
-        .logo-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 24px rgba(0,210,255,0.4);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .logo-section h1 {
-            font-size: clamp(1.8rem, 5vw, 2.2rem);
-            color: var(--primary);
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-
-        .logo-section p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            font-weight: 500;
         }
 
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 25px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
-            margin-bottom: 8px;
-            color: var(--text);
-            font-weight: 500;
-            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .input-wrapper {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 1.2rem;
-            color: var(--text-muted);
-        }
-
-        input {
+        .form-input {
             width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: rgba(0,0,0,0.4);
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 15px 20px;
             border-radius: 12px;
-            color: var(--text);
-            font-size: 1rem;
+            border: 2px solid var(--border);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-family: 'Rajdhani', sans-serif;
             transition: all 0.3s;
         }
 
-        input:focus {
+        .form-input:focus {
             outline: none;
-            border-color: var(--primary);
-            background: rgba(0,0,0,0.5);
-            box-shadow: 0 0 0 3px rgba(0,210,255,0.1);
+            border-color: var(--accent-secondary);
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: var(--glow-cyan);
         }
 
-        input::placeholder {
+        .form-input::placeholder {
             color: var(--text-muted);
         }
 
-        .error-message {
-            color: var(--danger);
-            font-size: 0.85rem;
-            margin-top: 8px;
-            display: none;
-            animation: shake 0.3s;
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
+            color: #000;
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'Rajdhani', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: var(--glow-cyan);
         }
 
-        .error-message.show {
-            display: block;
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.6);
+        }
+
+        .login-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .features {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
+            border: 2px solid var(--accent-secondary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .error-message {
+            background: rgba(255, 56, 100, 0.1);
+            border: 2px solid rgba(255, 56, 100, 0.3);
+            color: #ff3864;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: shake 0.5s;
         }
 
         @keyframes shake {
@@ -208,240 +248,128 @@
             75% { transform: translateX(10px); }
         }
 
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(135deg, var(--primary) 0%, #0099cc 100%);
-            border: none;
-            border-radius: 12px;
-            color: #000;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,210,255,0.3);
-            margin-top: 8px;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,210,255,0.5);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .login-btn:disabled {
-            background: #444;
-            color: #888;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .login-btn .spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 3px solid rgba(0,0,0,0.3);
-            border-top-color: #000;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .footer-text {
+        .info-text {
             text-align: center;
-            margin-top: 24px;
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            margin-top: 25px;
         }
 
-        .footer-text a {
-            color: var(--primary);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-text a:hover {
-            color: #00b8e6;
-        }
-
-        /* Mobile adjustments */
         @media (max-width: 480px) {
             .login-container {
-                padding: 30px 24px;
+                padding: 40px 30px;
             }
 
-            .logo-icon {
-                width: 70px;
-                height: 70px;
-                font-size: 35px;
+            .logo {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="bg-animation">
-        <div class="bg-circle"></div>
-        <div class="bg-circle"></div>
-        <div class="bg-circle"></div>
-    </div>
 
-    <div class="login-container">
-        <div class="logo-section">
-            <div class="logo-icon">🏋️</div>
-            <h1>Layout Boys</h1>
-            <p>Fitness Challenge Dashboard</p>
+<!-- Floating particles -->
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+
+<div class="login-container">
+    <h1 class="logo">⚡ PROCHALLENGE</h1>
+    <p class="subtitle">Professional Challenge Platform</p>
+
+    <div id="errorMessage" class="error-message"></div>
+
+    <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label class="form-label">Username</label>
+            <input type="text" id="username" class="form-input" placeholder="Enter your username" required autofocus>
         </div>
 
-        <form id="loginForm" onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <div class="input-wrapper">
-                    <span class="input-icon">👤</span>
-                    <input 
-                        type="text" 
-                        id="username" 
-                        name="username" 
-                        placeholder="Enter your username" 
-                        required
-                        autocomplete="username"
-                    >
-                </div>
-                <div class="error-message" id="usernameError">Username is required</div>
-            </div>
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+        </div>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <div class="input-wrapper">
-                    <span class="input-icon">🔒</span>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="Enter your password" 
-                        required
-                        autocomplete="current-password"
-                    >
-                </div>
-                <div class="error-message" id="passwordError">Password is required</div>
-            </div>
+        <button type="submit" class="login-btn">🚀 Launch Dashboard</button>
+    </form>
 
-            <div class="error-message" id="loginError">Invalid username or password</div>
-
-            <button type="submit" class="login-btn" id="loginBtn">
-                Login
-            </button>
-        </form>
-
-        <div class="footer-text">
-            First time? Contact admin for credentials
+    <div class="features">
+        <div class="feature-item">
+            <div class="feature-icon">💪</div>
+            <span>Fitness & Weight Loss Challenges</span>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <span>Financial Management & Budgeting</span>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🤖</div>
+            <span>AI-Powered Coaching & Analytics</span>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">🏆</div>
+            <span>Compete & Win Real Prizes</span>
         </div>
     </div>
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+    <p class="info-text">Demo credentials: Any username & password</p>
+</div>
 
-        async function handleLogin(event) {
-            event.preventDefault();
-            
-            // Clear previous errors
-            document.getElementById('usernameError').classList.remove('show');
-            document.getElementById('passwordError').classList.remove('show');
-            document.getElementById('loginError').classList.remove('show');
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const loginBtn = document.getElementById('loginBtn');
-            
-            // Basic validation
-            if (!username) {
-                document.getElementById('usernameError').classList.add('show');
-                return;
-            }
-            
-            if (!password) {
-                document.getElementById('passwordError').classList.add('show');
-                return;
-            }
-            
-            // Show loading state
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<span class="spinner"></span>Logging in...';
-            
-            try {
-                // Call authentication API
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'authenticate',
-                        username: username,
-                        password: password
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    // Store username in localStorage
-                    localStorage.setItem('user', username);
-                    localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('loginTime', new Date().getTime());
-                    
-                    // Success animation
-                    loginBtn.innerHTML = '✓ Success!';
-                    loginBtn.style.background = 'var(--success)';
-                    
-                    // Redirect to dashboard after short delay
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 800);
-                } else {
-                    // Show error
-                    document.getElementById('loginError').textContent = data.message || 'Invalid username or password';
-                    document.getElementById('loginError').classList.add('show');
-                    loginBtn.disabled = false;
-                    loginBtn.innerHTML = 'Login';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                document.getElementById('loginError').textContent = 'Connection error. Please try again.';
-                document.getElementById('loginError').classList.add('show');
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = 'Login';
-            }
+<script>
+    function handleLogin(event) {
+        event.preventDefault();
+        
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        
+        if (!username || !password) {
+            showError('Please enter both username and password');
+            return;
         }
 
-        // Check if already logged in
-        window.addEventListener('load', () => {
-            const isAuthenticated = localStorage.getItem('isAuthenticated');
-            const loginTime = localStorage.getItem('loginTime');
-            const now = new Date().getTime();
-            const hoursSinceLogin = (now - loginTime) / (1000 * 60 * 60);
+        // For demo purposes, accept any credentials
+        // In production, verify against backend
+        if (username.length >= 3 && password.length >= 3) {
+            // Store authentication
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('loginTime', new Date().getTime());
+            localStorage.setItem('user', username);
             
-            // Auto-login if authenticated within last 24 hours
-            if (isAuthenticated === 'true' && loginTime && hoursSinceLogin < 24) {
-                window.location.href = 'dashboard.html';
-            }
-        });
+            // Redirect to dashboard
+            window.location.href = 'dashboard.html';
+        } else {
+            showError('Username and password must be at least 3 characters');
+        }
+    }
 
-        // Clear errors on input
-        document.getElementById('username').addEventListener('input', () => {
-            document.getElementById('usernameError').classList.remove('show');
-            document.getElementById('loginError').classList.remove('show');
-        });
+    function showError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 4000);
+    }
 
-        document.getElementById('password').addEventListener('input', () => {
-            document.getElementById('passwordError').classList.remove('show');
-            document.getElementById('loginError').classList.remove('show');
-        });
-    </script>
+    // Check if already logged in
+    window.addEventListener('DOMContentLoaded', function() {
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+        const loginTime = localStorage.getItem('loginTime');
+        const now = new Date().getTime();
+        const hoursSinceLogin = loginTime ? (now - loginTime) / (1000 * 60 * 60) : 999;
+        
+        if (isAuthenticated === 'true' && hoursSinceLogin < 24) {
+            window.location.href = 'dashboard.html';
+        }
+    });
+</script>
+
 </body>
 </html>
