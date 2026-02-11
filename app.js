@@ -1283,6 +1283,8 @@ function resetBMICalculator() {
     document.getElementById('bmi-age').value = '';
 }
 
+// Add this improved PDF export function to replace the existing one in app.js
+
 async function exportBMIToPDF() {
     if (!window.bmiData) {
         alert('No BMI data to export');
@@ -1291,21 +1293,21 @@ async function exportBMIToPDF() {
     
     const { bmi, category, categoryDesc, recommendations, dietPlan, mealPlan, foodsToEat, foodsToAvoid, height, weight, age, gender, idealWeightMin, idealWeightMax, date } = window.bmiData;
     
-    // Generate meal plan HTML for PDF
+    // Generate meal plan HTML
     const mealPlanKeys = Object.keys(mealPlan);
     const mealPlanHTML = mealPlanKeys.map(mealTime => {
         const mealTitle = mealTime.charAt(0).toUpperCase() + mealTime.slice(1).replace(/([A-Z])/g, ' $1');
         const meals = mealPlan[mealTime];
         
         return `
-            <div style="margin-bottom: 20px;">
-                <h4 style="color: #00ff88; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 2px solid rgba(0, 255, 136, 0.3); padding-bottom: 5px;">
+            <div style="margin-bottom: 12px; page-break-inside: avoid;">
+                <h4 style="color: #2e7d32; margin-bottom: 6px; font-size: 10pt; border-bottom: 1px solid #ddd; padding-bottom: 3px;">
                     ${mealTitle}
                 </h4>
                 <ul style="list-style: none; padding-left: 0; margin: 0;">
                     ${meals.map(meal => `
-                        <li style="padding: 6px 0; padding-left: 20px; position: relative; color: #b8c5d6;">
-                            <span style="position: absolute; left: 0; color: #00ff88;">•</span>
+                        <li style="padding: 3px 0; padding-left: 12px; position: relative; color: #555; font-size: 9pt;">
+                            <span style="position: absolute; left: 0; color: #4caf50;">•</span>
                             ${meal}
                         </li>
                     `).join('')}
@@ -1314,198 +1316,200 @@ async function exportBMIToPDF() {
         `;
     }).join('');
     
-    // Create PDF content as HTML
-    const pdfContent = `
+    // Create print-optimized HTML
+    const printHTML = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
+    <title>BMI Report - ${date}</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap');
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
         
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Rajdhani', sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 30px;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            color: #ffffff;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.4;
+            color: #333;
+            background: white;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            border-bottom: 3px solid #9d4edd;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #6a1b9a;
+            padding-bottom: 12px;
         }
         
         .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00d2ff 0%, #00ff88 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 8px;
+            font-size: 24pt;
+            font-weight: bold;
+            color: #0066cc;
         }
         
         .subtitle {
-            color: #b8c5d6;
-            font-size: 1.1rem;
+            color: #666;
+            font-size: 12pt;
+            margin-top: 5px;
         }
         
-        .bmi-score-section {
-            background: rgba(157, 78, 221, 0.1);
-            border: 2px solid #9d4edd;
-            border-radius: 16px;
-            padding: 25px;
+        .bmi-box {
+            background: #f5f5f5;
+            border: 2px solid #6a1b9a;
+            border-radius: 8px;
+            padding: 15px;
             text-align: center;
-            margin: 25px 0;
-        }
-        
-        .bmi-score {
-            font-size: 3.5rem;
-            font-weight: 900;
-            font-family: 'Orbitron', sans-serif;
-            color: #9d4edd;
             margin: 15px 0;
         }
         
-        .bmi-category {
-            font-size: 1.8rem;
-            font-weight: 700;
+        .bmi-score {
+            font-size: 42pt;
+            font-weight: bold;
+            color: #6a1b9a;
             margin: 8px 0;
+        }
+        
+        .bmi-category {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 5px 0;
         }
         
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 25px 0;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
         }
         
         .info-card {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 10px;
         }
         
         .info-label {
-            color: #6b7a8f;
-            font-size: 0.85rem;
+            color: #666;
+            font-size: 8pt;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
+            font-weight: bold;
         }
         
         .info-value {
-            color: #00ff88;
-            font-size: 1.3rem;
-            font-weight: 700;
+            color: #2e7d32;
+            font-size: 14pt;
+            font-weight: bold;
+            margin-top: 3px;
         }
         
         .section {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px 0;
+            margin: 15px 0;
+            page-break-inside: avoid;
         }
         
         .section-title {
-            font-family: 'Orbitron', sans-serif;
-            color: #00d2ff;
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            border-bottom: 2px solid rgba(0, 210, 255, 0.3);
-            padding-bottom: 8px;
-        }
-        
-        .diet-plan-box {
-            background: rgba(0, 210, 255, 0.05);
-            border: 2px solid #00d2ff;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .diet-plan-item {
-            margin-bottom: 12px;
-        }
-        
-        .diet-plan-item strong {
-            color: #00ff88;
-            display: block;
-            margin-bottom: 4px;
-        }
-        
-        .meal-plan-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .foods-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 15px;
-        }
-        
-        .foods-box {
-            border-radius: 10px;
-            padding: 15px;
-        }
-        
-        .foods-to-eat {
-            background: rgba(0, 255, 136, 0.05);
-            border: 2px solid rgba(0, 255, 136, 0.3);
-        }
-        
-        .foods-to-avoid {
-            background: rgba(255, 56, 100, 0.05);
-            border: 2px solid rgba(255, 56, 100, 0.3);
-        }
-        
-        .foods-box h4 {
+            color: #0066cc;
+            font-size: 12pt;
+            font-weight: bold;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 5px;
             margin-bottom: 10px;
-            font-size: 1.1rem;
         }
         
-        .foods-to-eat h4 {
-            color: #00ff88;
+        .diet-box {
+            background: #e3f2fd;
+            border: 2px solid #0066cc;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
         }
         
-        .foods-to-avoid h4 {
-            color: #ff3864;
+        .diet-item {
+            margin-bottom: 8px;
+            padding: 6px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        .diet-item strong {
+            color: #2e7d32;
+            font-size: 9pt;
+        }
+        
+        .diet-item span {
+            color: #555;
+            font-size: 9pt;
+        }
+        
+        .meal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .food-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        
+        .food-box {
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .food-yes {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+        
+        .food-no {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+        
+        .food-box h4 {
+            font-size: 10pt;
+            margin-bottom: 8px;
+        }
+        
+        .food-yes h4 {
+            color: #2e7d32;
+        }
+        
+        .food-no h4 {
+            color: #c62828;
         }
         
         .food-item {
-            padding: 4px 0;
-            font-size: 0.9rem;
-            color: #b8c5d6;
+            padding: 2px 0;
+            font-size: 8pt;
+            color: #555;
         }
         
         .recommendations {
-            background: rgba(0, 0, 0, 0.2);
-            border-left: 4px solid #9d4edd;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 20px 0;
+            background: #f3e5f5;
+            border-left: 4px solid #6a1b9a;
+            padding: 12px;
+            margin: 12px 0;
         }
         
         .recommendations h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: #9d4edd;
-            margin-bottom: 12px;
+            color: #6a1b9a;
+            font-size: 11pt;
+            margin-bottom: 8px;
         }
         
         .recommendations ul {
@@ -1514,39 +1518,42 @@ async function exportBMIToPDF() {
         }
         
         .recommendations li {
-            padding: 8px 0;
-            padding-left: 25px;
+            padding: 4px 0;
+            padding-left: 15px;
             position: relative;
+            font-size: 9pt;
         }
         
         .recommendations li:before {
             content: '✓';
             position: absolute;
             left: 0;
-            color: #00ff88;
+            color: #4caf50;
             font-weight: bold;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 6px;
+            padding: 10px;
+            margin: 12px 0;
+            font-size: 8pt;
+            color: #856404;
         }
         
         .footer {
             text-align: center;
-            margin-top: 30px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: #6b7a8f;
-            font-size: 0.85rem;
-        }
-        
-        .page-break {
-            page-break-after: always;
+            margin-top: 20px;
+            padding-top: 12px;
+            border-top: 2px solid #ddd;
+            font-size: 8pt;
+            color: #666;
         }
         
         @media print {
             body {
-                background: white;
-                color: black;
-            }
-            .logo {
-                color: #00d2ff;
+                background: white !important;
             }
         }
     </style>
@@ -1554,14 +1561,14 @@ async function exportBMIToPDF() {
 <body>
     <div class="header">
         <div class="logo">⚡ PROCHALLENGE HUB</div>
-        <div class="subtitle">Comprehensive BMI & Diet Report</div>
+        <div class="subtitle">BMI & Nutrition Report</div>
     </div>
     
-    <div class="bmi-score-section">
-        <div style="font-size: 1.1rem; color: #b8c5d6;">Your Body Mass Index</div>
+    <div class="bmi-box">
+        <div style="font-size: 10pt; color: #666;">Body Mass Index</div>
         <div class="bmi-score">${bmi}</div>
         <div class="bmi-category">${category}</div>
-        <div style="color: #b8c5d6; margin-top: 8px;">${categoryDesc}</div>
+        <div style="color: #666; margin-top: 5px; font-size: 9pt;">${categoryDesc}</div>
     </div>
     
     <div class="info-grid">
@@ -1583,90 +1590,90 @@ async function exportBMIToPDF() {
         </div>
     </div>
     
-    <div class="info-card" style="margin-bottom: 20px;">
+    <div class="info-card" style="margin-bottom: 12px;">
         <div class="info-label">Ideal Weight Range</div>
         <div class="info-value">${idealWeightMin} - ${idealWeightMax} kg</div>
-        <div style="color: #b8c5d6; margin-top: 6px; font-size: 0.85rem;">
-            Based on healthy BMI range (18.5 - 24.9)
-        </div>
+        <div style="color: #666; margin-top: 4px; font-size: 8pt;">Healthy BMI: 18.5 - 24.9</div>
     </div>
     
-    <!-- Diet Plan Section -->
     <div class="section">
-        <h3 class="section-title">🍽️ Personalized Diet Plan</h3>
-        
-        <div class="diet-plan-box">
-            <div class="diet-plan-item">
-                <strong>Daily Calorie Target:</strong>
-                <span style="color: #b8c5d6;">${dietPlan.calorieTarget}</span>
+        <div class="section-title">🍽️ Diet Plan</div>
+        <div class="diet-box">
+            <div class="diet-item">
+                <strong>Daily Calories:</strong>
+                <span>${dietPlan.calorieTarget}</span>
             </div>
-            <div class="diet-plan-item">
-                <strong>Macronutrient Distribution:</strong>
-                <span style="color: #b8c5d6;">${dietPlan.macros}</span>
+            <div class="diet-item">
+                <strong>Macros:</strong>
+                <span>${dietPlan.macros}</span>
             </div>
-            <div class="diet-plan-item">
-                <strong>Dietary Focus:</strong>
-                <span style="color: #b8c5d6;">${dietPlan.focus}</span>
+            <div class="diet-item">
+                <strong>Focus:</strong>
+                <span>${dietPlan.focus}</span>
             </div>
         </div>
     </div>
     
-    <!-- Sample Meal Plan -->
+    <div style="page-break-before: always;"></div>
+    
     <div class="section">
-        <h3 class="section-title">📅 Sample Daily Meal Plan</h3>
-        <div class="meal-plan-grid">
+        <div class="section-title">📅 Sample Meal Plan</div>
+        <div class="meal-grid">
             ${mealPlanHTML}
         </div>
     </div>
     
-    <div class="page-break"></div>
-    
-    <!-- Foods to Eat and Avoid -->
     <div class="section">
-        <h3 class="section-title">🥗 Food Guidelines</h3>
-        <div class="foods-grid">
-            <div class="foods-box foods-to-eat">
-                <h4>✅ Foods to Include</h4>
+        <div class="section-title">🥗 Food Guide</div>
+        <div class="food-grid">
+            <div class="food-box food-yes">
+                <h4>✅ Include These</h4>
                 ${foodsToEat.map(food => `<div class="food-item">${food}</div>`).join('')}
             </div>
-            <div class="foods-box foods-to-avoid">
-                <h4>⛔ Foods to Limit/Avoid</h4>
+            <div class="food-box food-no">
+                <h4>⛔ Avoid These</h4>
                 ${foodsToAvoid.map(food => `<div class="food-item">${food}</div>`).join('')}
             </div>
         </div>
     </div>
     
-    <!-- Health Recommendations -->
     <div class="recommendations">
-        <h3>💡 Personalized Health Recommendations</h3>
+        <h3>💡 Health Tips</h3>
         <ul>
             ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
         </ul>
     </div>
     
-    <div class="footer">
-        <div><strong>Report Generated:</strong> ${date}</div>
-        <div style="margin-top: 8px;">
-            This report provides general dietary guidance based on BMI. For personalized medical advice,
-            please consult with healthcare professionals, registered dietitians, or nutritionists.
-        </div>
-        <div style="margin-top: 12px; color: #9d4edd; font-weight: 700; font-size: 1rem;">
-            ProChallenge Hub - Transform Your Health Journey
-        </div>
+    <div class="disclaimer">
+        <strong>⚠️ Disclaimer:</strong> General guidance only. Consult healthcare professionals for personalized medical advice.
     </div>
+    
+    <div class="footer">
+        <div><strong>Generated:</strong> ${date}</div>
+        <div style="margin-top: 5px; color: #6a1b9a; font-weight: bold;">ProChallenge Hub - Your Health Journey</div>
+    </div>
+    
+    <script>
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 200);
+        };
+    </script>
 </body>
 </html>
     `;
     
-    // Create a new window and print to PDF
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(pdfContent);
-    printWindow.document.close();
+    // Open in new window
+    const win = window.open('', '_blank');
+    if (!win) {
+        alert('Please allow pop-ups to generate PDF');
+        return;
+    }
     
-    // Wait for content to load
-    setTimeout(() => {
-        printWindow.print();
-    }, 500);
+    win.document.write(printHTML);
+    win.document.close();
+    win.focus();
 }
 
 function checkMonday() {
