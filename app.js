@@ -798,8 +798,8 @@ function calculateBMI() {
     const heightInMeters = height / 100;
     const bmi = weight / (heightInMeters * heightInMeters);
     
-    // Determine category
-    let category, categoryColor, categoryDesc, recommendations;
+    // Determine category and diet plan
+    let category, categoryColor, categoryDesc, recommendations, dietPlan, mealPlan, foodsToEat, foodsToAvoid;
     
     if (bmi < 18.5) {
         category = 'Underweight';
@@ -808,9 +808,69 @@ function calculateBMI() {
         recommendations = [
             'Increase caloric intake with nutrient-rich foods',
             'Focus on strength training to build muscle mass',
-            'Consult with a nutritionist for a personalized meal plan',
+            'Eat 5-6 smaller meals throughout the day',
             'Monitor your progress weekly'
         ];
+        
+        dietPlan = {
+            calorieTarget: 'Aim for calorie surplus of 300-500 calories above maintenance',
+            macros: 'Protein: 1.6-2.2g/kg | Carbs: 4-6g/kg | Fats: 0.8-1g/kg',
+            focus: 'Nutrient-dense, calorie-rich foods to gain healthy weight'
+        };
+        
+        mealPlan = {
+            breakfast: [
+                'Oatmeal with nuts, dried fruits, and whole milk',
+                'Scrambled eggs (3-4) with avocado and whole grain toast',
+                'Smoothie: banana, peanut butter, oats, protein powder, milk'
+            ],
+            midMorning: [
+                'Greek yogurt with granola and honey',
+                'Trail mix with nuts and dried fruits',
+                'Protein shake with banana'
+            ],
+            lunch: [
+                'Grilled chicken/paneer with quinoa and roasted vegetables',
+                'Fish curry with brown rice and dal',
+                'Pasta with lean meat sauce and vegetables'
+            ],
+            evening: [
+                'Whole grain sandwich with chicken/cheese and veggies',
+                'Hummus with whole wheat pita bread',
+                'Fruit smoothie with protein powder'
+            ],
+            dinner: [
+                'Grilled salmon/chicken with sweet potato and salad',
+                'Paneer tikka with roti and mixed vegetables',
+                'Egg curry with brown rice and lentils'
+            ],
+            bedtime: [
+                'Casein protein shake or Greek yogurt',
+                'Glass of milk with almonds',
+                'Cottage cheese with berries'
+            ]
+        };
+        
+        foodsToEat = [
+            '🥑 Avocados - healthy fats and calories',
+            '🥜 Nuts & nut butters - dense calories and protein',
+            '🥛 Whole milk and dairy products',
+            '🍚 Brown rice, quinoa, whole grains',
+            '🥩 Lean meats, fish, eggs for protein',
+            '🍌 Bananas, dried fruits for quick energy',
+            '🧀 Cheese and full-fat dairy',
+            '🥔 Sweet potatoes and starchy vegetables'
+        ];
+        
+        foodsToAvoid = [
+            '🚫 Diet/low-calorie foods',
+            '🚫 Excessive caffeine (suppresses appetite)',
+            '🚫 Too much fiber before meals',
+            '🚫 Carbonated drinks (fills you up)',
+            '🚫 Empty calorie junk food',
+            '🚫 Skipping meals'
+        ];
+        
     } else if (bmi >= 18.5 && bmi < 25) {
         category = 'Normal Weight';
         categoryColor = 'var(--success)';
@@ -821,25 +881,210 @@ function calculateBMI() {
             'Eat a balanced diet with variety',
             'Stay hydrated and get adequate sleep'
         ];
+        
+        dietPlan = {
+            calorieTarget: 'Maintain current calorie intake (approx. 1800-2400 cal/day)',
+            macros: 'Protein: 1.2-1.6g/kg | Carbs: 3-5g/kg | Fats: 0.5-0.8g/kg',
+            focus: 'Balanced nutrition to maintain healthy weight'
+        };
+        
+        mealPlan = {
+            breakfast: [
+                'Poha/Upma with vegetables and peanuts',
+                'Whole grain toast with eggs and avocado',
+                'Idli/Dosa with sambar and chutney'
+            ],
+            midMorning: [
+                'Fresh fruit (apple, orange, berries)',
+                'Handful of almonds or walnuts',
+                'Green tea with digestive biscuits'
+            ],
+            lunch: [
+                'Roti with dal, sabzi, and yogurt',
+                'Grilled chicken salad with quinoa',
+                'Fish/paneer curry with brown rice and vegetables'
+            ],
+            evening: [
+                'Sprouts chaat with lemon',
+                'Vegetable sandwich on whole grain bread',
+                'Fruit salad with nuts'
+            ],
+            dinner: [
+                'Grilled fish/chicken with steamed vegetables',
+                'Mixed vegetable curry with 2 rotis',
+                'Khichdi with yogurt and salad'
+            ],
+            optional: [
+                'Small dessert 2-3 times per week',
+                'Herbal tea before bed',
+                'Dark chocolate (1-2 pieces) if craving'
+            ]
+        };
+        
+        foodsToEat = [
+            '🥗 Variety of colorful vegetables',
+            '🍎 Fresh seasonal fruits',
+            '🐟 Lean proteins: fish, chicken, legumes',
+            '🌾 Whole grains: oats, quinoa, brown rice',
+            '🥜 Nuts and seeds in moderation',
+            '🥛 Low-fat dairy or alternatives',
+            '🫒 Healthy fats: olive oil, avocado',
+            '💧 Plenty of water throughout day'
+        ];
+        
+        foodsToAvoid = [
+            '🚫 Excessive processed foods',
+            '🚫 Too much added sugar',
+            '🚫 Deep fried items regularly',
+            '🚫 Overly large portions',
+            '🚫 Eating late at night',
+            '🚫 Skipping breakfast'
+        ];
+        
     } else if (bmi >= 25 && bmi < 30) {
         category = 'Overweight';
         categoryColor = 'var(--warning)';
         categoryDesc = 'Your BMI is above the healthy range';
         recommendations = [
             'Create a moderate caloric deficit (300-500 cal/day)',
-            'Increase physical activity gradually',
+            'Increase physical activity to 200+ min/week',
             'Focus on whole foods and reduce processed items',
-            'Track your food intake and exercise'
+            'Practice portion control and mindful eating'
         ];
+        
+        dietPlan = {
+            calorieTarget: 'Deficit of 300-500 calories (approx. 1400-1800 cal/day)',
+            macros: 'Protein: 1.6-2g/kg | Carbs: 2-3g/kg | Fats: 0.4-0.6g/kg',
+            focus: 'High protein, moderate carbs, controlled portions for fat loss'
+        };
+        
+        mealPlan = {
+            breakfast: [
+                'Oats with skim milk, berries, and chia seeds',
+                'Egg white omelette with vegetables and 1 whole wheat toast',
+                'Moong dal chilla with mint chutney'
+            ],
+            midMorning: [
+                'Apple or orange with 5-6 almonds',
+                'Green tea with 2-3 crackers',
+                'Cucumber/carrot sticks with hummus'
+            ],
+            lunch: [
+                'Grilled chicken breast with large salad and 1 small roti',
+                'Dal with lots of vegetables and 1 cup brown rice',
+                'Fish tikka with quinoa and steamed broccoli'
+            ],
+            evening: [
+                'Roasted chana (chickpeas)',
+                'Vegetable soup (no cream)',
+                'Buttermilk with cucumber slices'
+            ],
+            dinner: [
+                'Grilled fish/tofu with stir-fried vegetables',
+                'Chicken/mushroom soup with side salad',
+                'Palak paneer (low oil) with 1 roti and salad'
+            ],
+            tips: [
+                'Drink water before meals',
+                'Use smaller plates',
+                'Stop eating when 80% full'
+            ]
+        };
+        
+        foodsToEat = [
+            '🥦 Non-starchy vegetables (unlimited)',
+            '🍗 Lean proteins: chicken breast, fish, tofu',
+            '🥚 Egg whites and whole eggs (limited)',
+            '🫘 Legumes and lentils',
+            '🍓 Low-sugar fruits: berries, apple, orange',
+            '🌾 Small portions of whole grains',
+            '🥗 Large salads with light dressing',
+            '💧 Water, green tea, black coffee'
+        ];
+        
+        foodsToAvoid = [
+            '🚫 Refined carbs: white bread, pasta, rice',
+            '🚫 Sugary drinks and fruit juices',
+            '🚫 Fried foods and heavy curries',
+            '🚫 Sweets and desserts',
+            '🚫 High-fat dairy products',
+            '🚫 Alcohol and beer',
+            '🚫 Processed snacks and chips',
+            '🚫 Large portions of any food'
+        ];
+        
     } else {
         category = 'Obese';
         categoryColor = 'var(--danger)';
         categoryDesc = 'Your BMI indicates obesity';
         recommendations = [
-            'Consult with a healthcare professional',
-            'Start with low-impact exercises',
-            'Set small, achievable goals',
-            'Consider joining a support group or challenge'
+            'Consult with a healthcare professional immediately',
+            'Start with low-impact exercises (walking, swimming)',
+            'Work with a registered dietitian',
+            'Set small, achievable weekly goals'
+        ];
+        
+        dietPlan = {
+            calorieTarget: 'Deficit of 500-750 calories (1200-1600 cal/day under supervision)',
+            macros: 'Protein: 2-2.5g/kg | Carbs: 1.5-2.5g/kg | Fats: 0.3-0.5g/kg',
+            focus: 'High protein, low carb, very controlled portions - medical supervision recommended'
+        };
+        
+        mealPlan = {
+            breakfast: [
+                'Vegetable omelette (2 eggs) with mushrooms and spinach',
+                'Greek yogurt (low-fat) with berries and flaxseeds',
+                'Vegetable upma with minimal oil'
+            ],
+            midMorning: [
+                'Cucumber and tomato salad',
+                'Green tea',
+                '10-12 almonds (soaked)'
+            ],
+            lunch: [
+                'Large mixed salad with grilled chicken/fish (palm-sized portion)',
+                'Clear vegetable soup with tofu',
+                'Steamed vegetables with 1 small bowl dal'
+            ],
+            evening: [
+                'Herbal tea with roasted makhana',
+                'Vegetable sticks (carrot, celery, cucumber)',
+                'Buttermilk (no salt/sugar)'
+            ],
+            dinner: [
+                'Grilled fish/chicken with steamed vegetables (no rice/roti)',
+                'Clear soup with lots of vegetables',
+                'Egg white curry with mixed vegetable salad'
+            ],
+            important: [
+                'Consult doctor before starting',
+                'Monitor health markers regularly',
+                'Consider meal replacement under supervision',
+                'Join support group or weight loss program'
+            ]
+        };
+        
+        foodsToEat = [
+            '🥬 Green leafy vegetables (unlimited)',
+            '🥒 Cucumbers, tomatoes, bell peppers',
+            '🍗 Very lean proteins: fish, chicken breast',
+            '🥚 Egg whites',
+            '🫘 Small portions of legumes',
+            '🍋 Lemon water and herbal teas',
+            '🥗 Raw salads with vinegar dressing',
+            '💧 Minimum 3L water daily'
+        ];
+        
+        foodsToAvoid = [
+            '🚫 ALL refined carbohydrates',
+            '🚫 ALL sugary foods and drinks',
+            '🚫 ALL fried and oily foods',
+            '🚫 ALL fast food and junk food',
+            '🚫 Full-fat dairy products',
+            '🚫 Alcohol completely',
+            '🚫 Fruit juices (eat whole fruits only)',
+            '🚫 Late night eating',
+            '🚫 Emotional eating triggers'
         ];
     }
     
@@ -853,6 +1098,10 @@ function calculateBMI() {
         category,
         categoryDesc,
         recommendations,
+        dietPlan,
+        mealPlan,
+        foodsToEat,
+        foodsToAvoid,
         height,
         weight,
         age,
@@ -867,10 +1116,10 @@ function calculateBMI() {
     };
     
     // Display results
-    displayBMIResults(bmi, category, categoryColor, categoryDesc, recommendations, idealWeightMin, idealWeightMax);
+    displayBMIResults(bmi, category, categoryColor, categoryDesc, recommendations, idealWeightMin, idealWeightMax, dietPlan, mealPlan, foodsToEat, foodsToAvoid);
 }
 
-function displayBMIResults(bmi, category, categoryColor, categoryDesc, recommendations, idealWeightMin, idealWeightMax) {
+function displayBMIResults(bmi, category, categoryColor, categoryDesc, recommendations, idealWeightMin, idealWeightMax, dietPlan, mealPlan, foodsToEat, foodsToAvoid) {
     // Hide input section, show results
     document.querySelector('.bmi-input-section').style.display = 'none';
     document.getElementById('bmi-result-section').style.display = 'block';
@@ -890,7 +1139,29 @@ function displayBMIResults(bmi, category, categoryColor, categoryDesc, recommend
     const markerPosition = calculateMarkerPosition(bmi);
     document.getElementById('bmi-marker').style.left = markerPosition + '%';
     
-    // Update details
+    // Generate meal plan HTML
+    const mealPlanKeys = Object.keys(mealPlan);
+    const mealPlanHTML = mealPlanKeys.map(mealTime => {
+        const mealTitle = mealTime.charAt(0).toUpperCase() + mealTime.slice(1).replace(/([A-Z])/g, ' $1');
+        const meals = mealPlan[mealTime];
+        
+        return `
+            <div style="margin-bottom: 15px;">
+                <h5 style="color: var(--accent-secondary); margin-bottom: 8px; font-size: 1rem;">
+                    ${mealTitle}
+                </h5>
+                <ul style="list-style: none; padding-left: 15px; margin: 0;">
+                    ${meals.map(meal => `
+                        <li style="padding: 4px 0; color: var(--text-secondary); font-size: 0.9rem;">
+                            • ${meal}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+    }).join('');
+    
+    // Update details with comprehensive diet information
     const detailsHTML = `
         <div class="bmi-detail-row">
             <span class="bmi-detail-label">Your BMI</span>
@@ -904,14 +1175,80 @@ function displayBMIResults(bmi, category, categoryColor, categoryDesc, recommend
             <span class="bmi-detail-label">Ideal Weight Range</span>
             <span class="bmi-detail-value">${idealWeightMin} - ${idealWeightMax} kg</span>
         </div>
+        
+        <!-- Diet Plan Section -->
+        <div style="margin-top: 30px; padding: 20px; background: rgba(0, 210, 255, 0.05); border-radius: 12px; border: 2px solid var(--accent-secondary);">
+            <h4 style="color: var(--accent-secondary); margin-bottom: 15px; font-family: 'Orbitron', sans-serif; font-size: 1.3rem;">
+                🍽️ Personalized Diet Plan
+            </h4>
+            
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: var(--accent-primary);">Daily Calorie Target:</strong><br>
+                    <span style="color: var(--text-secondary);">${dietPlan.calorieTarget}</span>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <strong style="color: var(--accent-primary);">Macronutrient Ratio:</strong><br>
+                    <span style="color: var(--text-secondary);">${dietPlan.macros}</span>
+                </div>
+                <div>
+                    <strong style="color: var(--accent-primary);">Focus:</strong><br>
+                    <span style="color: var(--text-secondary);">${dietPlan.focus}</span>
+                </div>
+            </div>
+            
+            <!-- Sample Meal Plan -->
+            <div style="margin-top: 20px;">
+                <h5 style="color: var(--accent-tertiary); margin-bottom: 12px; font-size: 1.1rem;">
+                    📅 Sample Daily Meal Plan
+                </h5>
+                <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px;">
+                    ${mealPlanHTML}
+                </div>
+            </div>
+            
+            <!-- Foods to Eat -->
+            <div style="margin-top: 20px;">
+                <h5 style="color: var(--success); margin-bottom: 12px; font-size: 1.1rem;">
+                    ✅ Foods to Include
+                </h5>
+                <div style="background: rgba(0, 255, 136, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(0, 255, 136, 0.2);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+                        ${foodsToEat.map(food => `
+                            <div style="padding: 6px; color: var(--text-secondary); font-size: 0.9rem;">
+                                ${food}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Foods to Avoid -->
+            <div style="margin-top: 20px;">
+                <h5 style="color: var(--danger); margin-bottom: 12px; font-size: 1.1rem;">
+                    ⛔ Foods to Limit/Avoid
+                </h5>
+                <div style="background: rgba(255, 56, 100, 0.05); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 56, 100, 0.2);">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px;">
+                        ${foodsToAvoid.map(food => `
+                            <div style="padding: 6px; color: var(--text-secondary); font-size: 0.9rem;">
+                                ${food}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- General Recommendations -->
         <div style="margin-top: 20px;">
             <h4 style="color: var(--accent-tertiary); margin-bottom: 12px; font-family: 'Orbitron', sans-serif;">
-                💡 Recommendations
+                💡 Health Recommendations
             </h4>
             <ul style="list-style: none; padding: 0;">
                 ${recommendations.map(rec => `
                     <li style="padding: 8px 0; padding-left: 20px; position: relative;">
-                        <span style="position: absolute; left: 0;">✓</span>
+                        <span style="position: absolute; left: 0; color: var(--success);">✓</span>
                         ${rec}
                     </li>
                 `).join('')}
@@ -952,7 +1289,30 @@ async function exportBMIToPDF() {
         return;
     }
     
-    const { bmi, category, categoryDesc, recommendations, height, weight, age, gender, idealWeightMin, idealWeightMax, date } = window.bmiData;
+    const { bmi, category, categoryDesc, recommendations, dietPlan, mealPlan, foodsToEat, foodsToAvoid, height, weight, age, gender, idealWeightMin, idealWeightMax, date } = window.bmiData;
+    
+    // Generate meal plan HTML for PDF
+    const mealPlanKeys = Object.keys(mealPlan);
+    const mealPlanHTML = mealPlanKeys.map(mealTime => {
+        const mealTitle = mealTime.charAt(0).toUpperCase() + mealTime.slice(1).replace(/([A-Z])/g, ' $1');
+        const meals = mealPlan[mealTime];
+        
+        return `
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #00ff88; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 2px solid rgba(0, 255, 136, 0.3); padding-bottom: 5px;">
+                    ${mealTitle}
+                </h4>
+                <ul style="list-style: none; padding-left: 0; margin: 0;">
+                    ${meals.map(meal => `
+                        <li style="padding: 6px 0; padding-left: 20px; position: relative; color: #b8c5d6;">
+                            <span style="position: absolute; left: 0; color: #00ff88;">•</span>
+                            ${meal}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+    }).join('');
     
     // Create PDF content as HTML
     const pdfContent = `
@@ -963,100 +1323,189 @@ async function exportBMIToPDF() {
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@700;900&display=swap');
         
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             font-family: 'Rajdhani', sans-serif;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 30px;
             background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
             color: #ffffff;
+            line-height: 1.6;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             border-bottom: 3px solid #9d4edd;
             padding-bottom: 20px;
         }
         
         .logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             background: linear-gradient(135deg, #00d2ff 0%, #00ff88 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .subtitle {
             color: #b8c5d6;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         .bmi-score-section {
             background: rgba(157, 78, 221, 0.1);
             border: 2px solid #9d4edd;
             border-radius: 16px;
-            padding: 30px;
+            padding: 25px;
             text-align: center;
-            margin: 30px 0;
+            margin: 25px 0;
         }
         
         .bmi-score {
-            font-size: 4rem;
+            font-size: 3.5rem;
             font-weight: 900;
             font-family: 'Orbitron', sans-serif;
             color: #9d4edd;
-            margin: 20px 0;
+            margin: 15px 0;
         }
         
         .bmi-category {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            margin: 10px 0;
+            margin: 8px 0;
         }
         
         .info-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin: 30px 0;
+            gap: 15px;
+            margin: 25px 0;
         }
         
         .info-card {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
         }
         
         .info-label {
             color: #6b7a8f;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .info-value {
             color: #00ff88;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 700;
+        }
+        
+        .section {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            color: #00d2ff;
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(0, 210, 255, 0.3);
+            padding-bottom: 8px;
+        }
+        
+        .diet-plan-box {
+            background: rgba(0, 210, 255, 0.05);
+            border: 2px solid #00d2ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .diet-plan-item {
+            margin-bottom: 12px;
+        }
+        
+        .diet-plan-item strong {
+            color: #00ff88;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .meal-plan-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .foods-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .foods-box {
+            border-radius: 10px;
+            padding: 15px;
+        }
+        
+        .foods-to-eat {
+            background: rgba(0, 255, 136, 0.05);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .foods-to-avoid {
+            background: rgba(255, 56, 100, 0.05);
+            border: 2px solid rgba(255, 56, 100, 0.3);
+        }
+        
+        .foods-box h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .foods-to-eat h4 {
+            color: #00ff88;
+        }
+        
+        .foods-to-avoid h4 {
+            color: #ff3864;
+        }
+        
+        .food-item {
+            padding: 4px 0;
+            font-size: 0.9rem;
+            color: #b8c5d6;
         }
         
         .recommendations {
             background: rgba(0, 0, 0, 0.2);
-            border-left: 4px solid #00ff88;
+            border-left: 4px solid #9d4edd;
             border-radius: 8px;
-            padding: 25px;
-            margin: 30px 0;
+            padding: 20px;
+            margin: 20px 0;
         }
         
         .recommendations h3 {
             font-family: 'Orbitron', sans-serif;
-            color: #00ff88;
-            margin-bottom: 15px;
+            color: #9d4edd;
+            margin-bottom: 12px;
         }
         
         .recommendations ul {
@@ -1065,7 +1514,7 @@ async function exportBMIToPDF() {
         }
         
         .recommendations li {
-            padding: 10px 0;
+            padding: 8px 0;
             padding-left: 25px;
             position: relative;
         }
@@ -1080,11 +1529,15 @@ async function exportBMIToPDF() {
         
         .footer {
             text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
+            margin-top: 30px;
+            padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: #6b7a8f;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+        }
+        
+        .page-break {
+            page-break-after: always;
         }
         
         @media print {
@@ -1092,20 +1545,23 @@ async function exportBMIToPDF() {
                 background: white;
                 color: black;
             }
+            .logo {
+                color: #00d2ff;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="logo">⚡ PROCHALLENGE HUB</div>
-        <div class="subtitle">BMI Health Report</div>
+        <div class="subtitle">Comprehensive BMI & Diet Report</div>
     </div>
     
     <div class="bmi-score-section">
-        <div style="font-size: 1.2rem; color: #b8c5d6;">Your Body Mass Index</div>
+        <div style="font-size: 1.1rem; color: #b8c5d6;">Your Body Mass Index</div>
         <div class="bmi-score">${bmi}</div>
         <div class="bmi-category">${category}</div>
-        <div style="color: #b8c5d6; margin-top: 10px;">${categoryDesc}</div>
+        <div style="color: #b8c5d6; margin-top: 8px;">${categoryDesc}</div>
     </div>
     
     <div class="info-grid">
@@ -1127,16 +1583,62 @@ async function exportBMIToPDF() {
         </div>
     </div>
     
-    <div class="info-card">
+    <div class="info-card" style="margin-bottom: 20px;">
         <div class="info-label">Ideal Weight Range</div>
         <div class="info-value">${idealWeightMin} - ${idealWeightMax} kg</div>
-        <div style="color: #b8c5d6; margin-top: 8px; font-size: 0.9rem;">
+        <div style="color: #b8c5d6; margin-top: 6px; font-size: 0.85rem;">
             Based on healthy BMI range (18.5 - 24.9)
         </div>
     </div>
     
+    <!-- Diet Plan Section -->
+    <div class="section">
+        <h3 class="section-title">🍽️ Personalized Diet Plan</h3>
+        
+        <div class="diet-plan-box">
+            <div class="diet-plan-item">
+                <strong>Daily Calorie Target:</strong>
+                <span style="color: #b8c5d6;">${dietPlan.calorieTarget}</span>
+            </div>
+            <div class="diet-plan-item">
+                <strong>Macronutrient Distribution:</strong>
+                <span style="color: #b8c5d6;">${dietPlan.macros}</span>
+            </div>
+            <div class="diet-plan-item">
+                <strong>Dietary Focus:</strong>
+                <span style="color: #b8c5d6;">${dietPlan.focus}</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sample Meal Plan -->
+    <div class="section">
+        <h3 class="section-title">📅 Sample Daily Meal Plan</h3>
+        <div class="meal-plan-grid">
+            ${mealPlanHTML}
+        </div>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <!-- Foods to Eat and Avoid -->
+    <div class="section">
+        <h3 class="section-title">🥗 Food Guidelines</h3>
+        <div class="foods-grid">
+            <div class="foods-box foods-to-eat">
+                <h4>✅ Foods to Include</h4>
+                ${foodsToEat.map(food => `<div class="food-item">${food}</div>`).join('')}
+            </div>
+            <div class="foods-box foods-to-avoid">
+                <h4>⛔ Foods to Limit/Avoid</h4>
+                ${foodsToAvoid.map(food => `<div class="food-item">${food}</div>`).join('')}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Health Recommendations -->
     <div class="recommendations">
-        <h3>💡 Personalized Recommendations</h3>
+        <h3>💡 Personalized Health Recommendations</h3>
         <ul>
             ${recommendations.map(rec => `<li>${rec}</li>`).join('')}
         </ul>
@@ -1144,11 +1646,12 @@ async function exportBMIToPDF() {
     
     <div class="footer">
         <div><strong>Report Generated:</strong> ${date}</div>
-        <div style="margin-top: 10px;">
-            This report is for informational purposes only. Consult with healthcare professionals for medical advice.
+        <div style="margin-top: 8px;">
+            This report provides general dietary guidance based on BMI. For personalized medical advice,
+            please consult with healthcare professionals, registered dietitians, or nutritionists.
         </div>
-        <div style="margin-top: 10px; color: #9d4edd; font-weight: 700;">
-            ProChallenge Hub - Your Journey to Better Health
+        <div style="margin-top: 12px; color: #9d4edd; font-weight: 700; font-size: 1rem;">
+            ProChallenge Hub - Transform Your Health Journey
         </div>
     </div>
 </body>
