@@ -255,22 +255,6 @@ function loadFitnessChallenge() {
                 </div>
 
                 <div class="card">
-                    <h3>🎯 Daily Challenges</h3>
-                    <div id="challenge-list" style="margin-top:15px;">
-                        <div class="stat-box mb-1" style="cursor: pointer; border: 2px solid var(--accent-primary);" onclick="completeChallenge('3L Water')">
-                            <span>💧 Hydration</span>
-                            <h2 style="font-size: 1.2rem; margin-top: 8px;">3L Water</h2>
-                            <button class="btn mt-1" style="font-size: 0.85rem; padding: 8px 20px;">Mark Done</button>
-                        </div>
-                        <div class="stat-box" style="cursor: pointer; border: 2px solid var(--accent-secondary);" onclick="completeChallenge('10k Steps')">
-                            <span>🏃 Movement</span>
-                            <h2 style="font-size: 1.2rem; margin-top: 8px;">10k Steps</h2>
-                            <button class="btn mt-1" style="font-size: 0.85rem; padding: 8px 20px;">Mark Done</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
                     <h3>⏱️ Challenge Timer</h3>
                     <p id="countdown" style="color:var(--accent-gold); font-size:1.1rem; margin-top:10px; text-align: center;">--:--:--</p>
                 </div>
