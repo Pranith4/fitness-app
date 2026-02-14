@@ -2232,7 +2232,7 @@ async function coachResponse() {
         }
         
         const response = await puter.ai.chat(
-            `System: You are an AI Coach for ProChallenge Hub. ${context}. Be brief (2-3 sentences), motivational, and use relevant emojis. User query: ${query}`
+            `System: You are an AI Coach for ProChallenge Hub. ${context}. Be brief (2-3 sentences) about fitness only, motivational, and use relevant emojis. User query: ${query}`
         );
         
         // Remove typing indicator
