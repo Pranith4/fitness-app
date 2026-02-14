@@ -2219,7 +2219,7 @@ async function coachResponse() {
 
     try {
         // Get context based on current challenge
-        let context = `User: ${user}, Challenge: ${currentChallenge}`;
+         let context = `User: ${user}, Challenge: ${currentChallenge}`;
         
         if (currentChallenge === 'fitness' && document.getElementById("userRank")) {
             const rank = document.getElementById("userRank").innerText;
@@ -2231,9 +2231,15 @@ async function coachResponse() {
             context += `, Spent: ${spent}, Target: ${target}`;
         }
         
-        const response = await puter.ai.chat(
-            `System: You are an AI Coach for ProChallenge Hub. ${context}. Be brief (2-3 sentences) about fitness only, motivational, and use relevant emojis. User query: ${query}`
-        );
+        // Strong system prompt: only fitness-related replies allowed.
+        const systemPrompt = `System: You are an AI Coach for ProChallenge Hub. ${context}.
+RULES:
+- Only answer questions strictly related to physical fitness, workouts, nutrition, BMI, weight tracking, recovery, or motivational fitness guidance.
+- Be brief (2-3 sentences), motivational, and use relevant emojis.
+- If the user asks anything outside fitness, reply exactly: "I can only answer fitness-related questions. Please ask about workouts, nutrition, BMI, weight tracking, or motivation."
+User query: ${query}`;
+        
+        const response = await puter.ai.chat(systemPrompt);
         
         // Remove typing indicator
         const typingIndicator = document.getElementById('typing-indicator');
