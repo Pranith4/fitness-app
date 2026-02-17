@@ -40,7 +40,7 @@ if (!checkAuth()) {
 }
 
 const user = localStorage.getItem("user") || "Guest";
-document.getElementById("userName").innerText = user;
+document.getElementById("username").innerText = user;
 
 // Load user registrations from backend
 async function loadUserRegistrations() {
