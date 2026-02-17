@@ -2219,7 +2219,7 @@ async function coachResponse() {
 
     try {
         // Get context based on current challenge
-         let context = `User: ${user}, Challenge: ${currentChallenge}`;
+        let context = `User: ${user}, Challenge: ${currentChallenge}`;
         
         if (currentChallenge === 'fitness' && document.getElementById("userRank")) {
             const rank = document.getElementById("userRank").innerText;
@@ -2232,7 +2232,7 @@ async function coachResponse() {
         }
         
         // Strong system prompt: only fitness-related replies allowed.
-        const systemPrompt = `System: You are an AI Fitness Coach for ProChallenge Hub. ${context}.
+        const systemPrompt = `System: You are an AI Coach for ProChallenge Hub. ${context}.
 RULES:
 - Only answer questions strictly related to physical fitness, workouts, nutrition, BMI, weight tracking, recovery, or motivational fitness guidance.
 - Be brief (2-3 sentences), motivational, and use relevant emojis.
