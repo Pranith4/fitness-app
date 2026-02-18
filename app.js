@@ -180,14 +180,6 @@ function renderFitnessChallenge() {
                     <button onclick="addWeight()" id="submitWeightBtn" class="btn w-100" disabled>Submit Monday Weigh-in</button>
                 </div>
 
-                <!-- Goal Setter -->
-                <div class="card">
-                    <h3>🎯 Set Your Goal</h3>
-                    <input type="number" step="0.1" id="startWeightInput" class="input-field" placeholder="Start Weight (kg)">
-                    <input type="number" step="0.1" id="targetWeightInput" class="input-field" placeholder="Target Weight (kg)">
-                    <button onclick="saveGoal()" class="btn btn-purple w-100">Save Goal</button>
-                </div>
-
                 <!-- Countdown Timer -->
                 <div class="card text-center">
                     <h3 style="justify-content:center;">⏱️ Challenge Ends In</h3>
