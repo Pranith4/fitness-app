@@ -22,11 +22,7 @@
             --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
         }
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
             font-family: 'Rajdhani', sans-serif;
@@ -44,14 +40,11 @@
             position: relative;
         }
 
-        /* Animated Background Grid */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             background-image: 
                 linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
@@ -66,11 +59,9 @@
             100% { transform: translate(50px, 50px); }
         }
 
-        /* Floating particles */
         .particle {
             position: absolute;
-            width: 4px;
-            height: 4px;
+            width: 4px; height: 4px;
             background: var(--accent-secondary);
             border-radius: 50%;
             opacity: 0.3;
@@ -78,12 +69,8 @@
         }
 
         @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0);
-            }
-            50% {
-                transform: translate(100px, -100px);
-            }
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(100px, -100px); }
         }
 
         .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
@@ -106,14 +93,8 @@
         }
 
         @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .logo {
@@ -126,7 +107,6 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 10px;
-            text-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
             letter-spacing: 3px;
         }
 
@@ -138,9 +118,7 @@
             font-weight: 500;
         }
 
-        .form-group {
-            margin-bottom: 25px;
-        }
+        .form-group { margin-bottom: 25px; }
 
         .form-label {
             display: block;
@@ -171,9 +149,7 @@
             box-shadow: var(--glow-cyan);
         }
 
-        .form-input::placeholder {
-            color: var(--text-muted);
-        }
+        .form-input::placeholder { color: var(--text-muted); }
 
         .login-btn {
             width: 100%;
@@ -197,8 +173,10 @@
             box-shadow: 0 10px 30px rgba(0, 210, 255, 0.6);
         }
 
-        .login-btn:active {
-            transform: translateY(-1px);
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .features {
@@ -217,8 +195,7 @@
         }
 
         .feature-icon {
-            width: 40px;
-            height: 40px;
+            width: 40px; height: 40px;
             background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
             border: 2px solid var(--accent-secondary);
             border-radius: 10px;
@@ -248,31 +225,55 @@
             75% { transform: translateX(10px); }
         }
 
-        .info-text {
+        .success-message {
+            background: rgba(0, 255, 136, 0.1);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            color: var(--accent-primary);
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
             text-align: center;
+            display: none;
+        }
+
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
             color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 25px;
+            font-size: 0.95rem;
+        }
+
+        .toggle-form a {
+            color: var(--accent-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px; height: 20px;
+            border: 3px solid rgba(0,0,0,0.3);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         @media (max-width: 480px) {
-            .login-container {
-                padding: 40px 30px;
-            }
-
-            .logo {
-                font-size: 2rem;
-            }
-
-            .subtitle {
-                font-size: 1rem;
-            }
+            .login-container { padding: 40px 25px; }
+            .logo { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- Floating particles -->
 <div class="particle"></div>
 <div class="particle"></div>
 <div class="particle"></div>
@@ -280,24 +281,51 @@
 <div class="particle"></div>
 
 <div class="login-container">
-    <h1 class="logo">⚡ PC</h1>
-    <p class="subtitle">Professional Challenge Platform</p>
+    <h1 class="logo">⚡ PCH</h1>
+    <p class="subtitle">ProChallenge Hub</p>
 
     <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
 
-    <form onsubmit="handleLogin(event)">
-        <div class="form-group">
-            <label class="form-label">Username</label>
-            <input type="text" id="username" class="form-input" placeholder="Enter your username" required autofocus>
+    <!-- LOGIN FORM -->
+    <div id="loginForm">
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" id="loginUsername" class="form-input" placeholder="Enter your username" required autofocus autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">⚡ Launch Dashboard</button>
+        </form>
+        <div class="toggle-form">
+            New here? <a onclick="showRegister()">Create an account</a>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label class="form-label">Password</label>
-            <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+    <!-- REGISTER FORM -->
+    <div id="registerForm" style="display:none;">
+        <form onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" id="regUsername" class="form-input" placeholder="Choose a username" required minlength="3" autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email (optional)</label>
+                <input type="email" id="regEmail" class="form-input" placeholder="your@email.com" autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="regPassword" class="form-input" placeholder="Create a password" required minlength="3" autocomplete="new-password">
+            </div>
+            <button type="submit" class="login-btn" id="registerBtn">🚀 Create Account</button>
+        </form>
+        <div class="toggle-form">
+            Already have an account? <a onclick="showLogin()">Sign in</a>
         </div>
-
-        <button type="submit" class="login-btn"> Launch Dashboard</button>
-    </form>
+    </div>
 
     <div class="features">
         <div class="feature-item">
@@ -305,67 +333,151 @@
             <span>Fitness & Weight Loss Challenges</span>
         </div>
         <div class="feature-item">
-            <div class="feature-icon">💰</div>
-            <span>Financial Management & Budgeting</span>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">🤖</div>
-            <span>AI-Powered Coaching & Analytics</span>
-        </div>
-        <div class="feature-item">
             <div class="feature-icon">🏆</div>
             <span>Compete & Win Real Prizes</span>
         </div>
+        <div class="feature-item">
+            <div class="feature-icon">🤖</div>
+            <span>AI-Powered Fitness Coaching</span>
+        </div>
+        <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <span>Weekly Progress Tracking</span>
+        </div>
     </div>
-
-    <p class="info-text">Demo credentials: Any username & password</p>
 </div>
 
 <script>
-    function handleLogin(event) {
+    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+
+    function showRegister() {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('registerForm').style.display = 'block';
+        hideMessages();
+        document.getElementById('regUsername').focus();
+    }
+
+    function showLogin() {
+        document.getElementById('registerForm').style.display = 'none';
+        document.getElementById('loginForm').style.display = 'block';
+        hideMessages();
+        document.getElementById('loginUsername').focus();
+    }
+
+    function showError(msg) {
+        const el = document.getElementById('errorMessage');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('successMessage').style.display = 'none';
+        setTimeout(() => el.style.display = 'none', 5000);
+    }
+
+    function showSuccess(msg) {
+        const el = document.getElementById('successMessage');
+        el.textContent = msg;
+        el.style.display = 'block';
+        document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    function hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+    }
+
+    async function handleLogin(event) {
         event.preventDefault();
-        
-        const username = document.getElementById('username').value.trim();
-        const password = document.getElementById('password').value;
-        
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
         if (!username || !password) {
             showError('Please enter both username and password');
             return;
         }
 
-        // For demo purposes, accept any credentials
-        // In production, verify against backend
-        if (username.length >= 3 && password.length >= 3) {
-            // Store authentication
-            localStorage.setItem('isAuthenticated', 'true');
-            localStorage.setItem('loginTime', new Date().getTime());
-            localStorage.setItem('user', username);
-            
-            // Redirect to dashboard
-            window.location.href = 'dashboard.html';
-        } else {
-            showError('Username and password must be at least 3 characters');
+        const btn = document.getElementById('loginBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span>Authenticating...';
+
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "authenticate", username, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('loginTime', new Date().getTime());
+                localStorage.setItem('user', data.username);
+                localStorage.setItem('userEmail', data.email || '');
+                window.location.href = 'dashboard.html';
+            } else {
+                showError(data.message || 'Invalid username or password');
+                btn.disabled = false;
+                btn.innerHTML = '⚡ Launch Dashboard';
+            }
+        } catch (e) {
+            showError('Connection failed. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '⚡ Launch Dashboard';
         }
     }
 
-    function showError(message) {
-        const errorDiv = document.getElementById('errorMessage');
-        errorDiv.textContent = message;
-        errorDiv.style.display = 'block';
-        
-        setTimeout(() => {
-            errorDiv.style.display = 'none';
-        }, 4000);
+    async function handleRegister(event) {
+        event.preventDefault();
+        const username = document.getElementById('regUsername').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+
+        if (!username || !password) {
+            showError('Please fill in all required fields');
+            return;
+        }
+        if (username.length < 3) {
+            showError('Username must be at least 3 characters');
+            return;
+        }
+        if (password.length < 3) {
+            showError('Password must be at least 3 characters');
+            return;
+        }
+
+        const btn = document.getElementById('registerBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span>Creating Account...';
+
+        try {
+            const res = await fetch(API_URL, {
+                method: "POST",
+                body: JSON.stringify({ action: "registerUser", username, email, password })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showSuccess('Account created! Redirecting to dashboard...');
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('loginTime', new Date().getTime());
+                localStorage.setItem('user', username);
+                localStorage.setItem('userEmail', email);
+                setTimeout(() => window.location.href = 'dashboard.html', 1500);
+            } else {
+                showError(data.message || 'Registration failed');
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Create Account';
+            }
+        } catch (e) {
+            showError('Connection failed. Please try again.');
+            btn.disabled = false;
+            btn.innerHTML = '🚀 Create Account';
+        }
     }
 
-    // Check if already logged in
-    window.addEventListener('DOMContentLoaded', function() {
+    // Redirect if already logged in
+    window.addEventListener('DOMContentLoaded', function () {
         const isAuthenticated = localStorage.getItem('isAuthenticated');
         const loginTime = localStorage.getItem('loginTime');
-        const now = new Date().getTime();
-        const hoursSinceLogin = loginTime ? (now - loginTime) / (1000 * 60 * 60) : 999;
-        
-        if (isAuthenticated === 'true' && hoursSinceLogin < 24) {
+        const hoursSince = loginTime ? (Date.now() - loginTime) / 3600000 : 999;
+        if (isAuthenticated === 'true' && hoursSince < 24) {
             window.location.href = 'dashboard.html';
         }
     });
