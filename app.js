@@ -118,7 +118,7 @@ function renderFitnessChallenge() {
                 <!-- Prize & Podium -->
                 <div class="card prize-hero">
                     <h3>🏆 CHALLENGE PRIZE POOL</h3>
-                    <div class="prize-amount">₹6,000</div>
+                    <div class="prize-amount">₹6,500</div>
                     <div class="podium-container">
                         <div class="podium-step second">
                             <div>🥈</div>
