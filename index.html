@@ -238,6 +238,28 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .proof-date{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:6px 5px 4px;font-family:var(--fm);font-size:9px;color:#fff}
 .proof-empty{grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);font-size:12px}
 
+/* EXPAND PANEL */
+.rc-wrap{display:flex;flex-direction:column;border-radius:var(--rl);overflow:hidden;transition:box-shadow .2s}
+.rc-wrap .rc{border-radius:0;border-bottom:none}
+.rc-wrap.open .rc{border-radius:var(--rl) var(--rl) 0 0}
+.rc-expand{display:none;background:var(--surf2);border:1px solid var(--brd2);border-top:none;border-radius:0 0 var(--rl) var(--rl);padding:0 14px 14px;animation:expandIn .22s ease both}
+@keyframes expandIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.rc-wrap.open .rc-expand{display:block}
+.rc-expand-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 2px 10px;border-bottom:1px solid var(--brd);margin-bottom:10px}
+.rc-expand-title{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)}
+.rc-expand-stat{display:flex;gap:14px}
+.rc-es{text-align:center}
+.rc-esv{font-family:var(--fm);font-weight:700;font-size:.85rem;display:block}
+.rc-esk{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
+.rc-chevron{font-size:12px;color:var(--text3);transition:transform .25s;flex-shrink:0;margin-left:6px;display:inline-block}
+.rc-wrap.open .rc-chevron{transform:rotate(180deg)}
+.exp-table{width:100%;border-collapse:collapse;font-size:12px}
+.exp-table th{color:var(--text3);font-weight:700;font-size:9px;letter-spacing:.8px;text-transform:uppercase;padding:5px 8px;text-align:left;border-bottom:1px solid var(--brd)}
+.exp-table td{padding:8px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;font-family:var(--fm);font-size:12px}
+.exp-table tr:last-child td{border-bottom:none}
+.exp-table tr.latest td{background:rgba(245,200,66,.04)}
+.chg-dn{color:var(--green);font-weight:700}.chg-up{color:var(--red);font-weight:700}.chg-nil{color:var(--text3)}
+
 /* HISTORY TABLE */
 .ht{width:100%;border-collapse:collapse;font-size:12px}
 .ht th{background:rgba(245,200,66,.07);color:var(--gold);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.8px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--brd)}
@@ -531,7 +553,7 @@ const CSTART=new Date('2026-02-02');
 const PRIZE='₹6,500';
 const CLRS=['#7c5cfc','#ff3b3b','#4fc3f7','#f5c842','#00e676','#ff6d00','#f53c7a','#54aeff','#a78bfa','#34d399'];
 
-let CU=null, ROOMS=[], cdI=null;
+let CU=null, ROOMS=[], cdI=null, LB_DATA=[];
 
 // ── INIT ──
 (function(){
@@ -676,6 +698,7 @@ function parseLBFromRaw(raw){
 function renderLB(area,lb){
   // Normalise field names — server returns totalLossPct, fallback returns total
   lb=lb.map(e=>({...e,total:e.totalLossPct??e.total??0}));
+  LB_DATA=lb; // store globally for expand/collapse
 
   // shame: gained this week
   const shamers=lb.filter(x=>x.weekChange!==null&&x.weekChange<0).sort((a,b)=>a.weekChange-b.weekChange);
@@ -770,7 +793,9 @@ function renderLB(area,lb){
     const wkTxt=e.weekChange===null?'–':e.weekChange>0?`▼ ${e.weekChange.toFixed(2)} kg`:`▲ ${Math.abs(e.weekChange).toFixed(2)} kg`;
     const rankNum=i===0?'1':i===1?'2':i===2?'3':(i+1).toString();
     const medalIcon=i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
-    html+=`<div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s">
+    const safeId='rc-'+e.name.replace(/[^a-zA-Z0-9]/g,'_');
+    html+=`<div class="rc-wrap" id="${safeId}">
+    <div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s;cursor:pointer" onclick="toggleExpand('${safeId}')">
       <div class="rc-rank">${medalIcon||rankNum}</div>
       <div class="rc-av" style="background:${CLRS[i%CLRS.length]}">${e.name[0].toUpperCase()}${e.streak>=2?`<div class="streak">🔥${e.streak}</div>`:''}</div>
       <div class="rc-body">
@@ -784,7 +809,10 @@ function renderLB(area,lb){
       <div class="rc-right">
         <div class="rc-pct">${e.total>0?e.total+'%':'0%'}</div>
         <div class="rc-week ${wkCol}">${wkTxt}</div>
+        <div class="rc-chevron">▼</div>
       </div>
+    </div>
+    <div class="rc-expand" id="${safeId}-exp"></div>
     </div>`;
   });
 
@@ -800,6 +828,55 @@ function renderLB(area,lb){
   area.innerHTML=html;
 
   clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
+}
+
+function toggleExpand(id){
+  const wrap=document.getElementById(id);
+  if(!wrap)return;
+  const isOpen=wrap.classList.contains('open');
+  // close all others
+  document.querySelectorAll('.rc-wrap.open').forEach(w=>{
+    if(w.id!==id){w.classList.remove('open');}
+  });
+  if(isOpen){wrap.classList.remove('open');return;}
+  // find entry data
+  const nm=id.replace('rc-','').replace(/_/g,' ');
+  // fuzzy match name from LB_DATA
+  const entry=LB_DATA.find(e=>e.name.replace(/[^a-zA-Z0-9]/g,'_')===id.replace('rc-',''));
+  if(!entry)return;
+  const expEl=document.getElementById(id+'-exp');
+  if(!expEl)return;
+  // build entries table
+  const entries=(entry.entries||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const color=CLRS[LB_DATA.indexOf(entry)%CLRS.length];
+  const startW=entries.length?entries[entries.length-1].weight:null;
+  const curW=entries.length?entries[0].weight:null;
+  const totalLoss=startW&&curW?parseFloat((startW-curW).toFixed(2)):null;
+  let html=`
+    <div class="rc-expand-hdr">
+      <div class="rc-expand-title">📊 ${esc(entry.name)}'s History</div>
+      <div class="rc-expand-stat">
+        <div class="rc-es"><span class="rc-esv" style="color:var(--gold)">${entry.total}%</span><div class="rc-esk">Lost</div></div>
+        ${totalLoss!==null?`<div class="rc-es"><span class="rc-esv" style="color:var(--green)">-${totalLoss}kg</span><div class="rc-esk">Total</div></div>`:''}
+        <div class="rc-es"><span class="rc-esv" style="color:var(--text2)">${entries.length}</span><div class="rc-esk">Weigh-ins</div></div>
+      </div>
+    </div>`;
+  if(entries.length){
+    html+=`<table class="exp-table"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>`;
+    entries.forEach((w,idx)=>{
+      const next=entries[idx+1];
+      const chg=next?parseFloat((next.weight-w.weight).toFixed(2)):null;
+      const cls=chg===null?'chg-nil':chg>0?'chg-dn':'chg-up';
+      const arrow=chg===null?'—':chg>0?`▼ ${chg}kg`:`▲ ${Math.abs(chg)}kg`;
+      const isLatest=idx===0;
+      html+=`<tr${isLatest?' class="latest"':''}><td style="color:var(--text2);font-family:var(--fb);font-size:11px">${new Date(w.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-weight:700;color:var(--text)">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;
+    });
+    html+=`</tbody></table>`;
+  } else {
+    html+=`<div style="text-align:center;padding:14px;color:var(--text3);font-size:12px">No weigh-ins yet</div>`;
+  }
+  expEl.innerHTML=html;
+  wrap.classList.add('open');
 }
 
 function shameMsg(delta){
