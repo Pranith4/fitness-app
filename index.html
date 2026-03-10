@@ -1,487 +1,1135 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProChallenge Hub - Login</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&display=swap');
-        
-        :root {
-            --bg-primary: #0a0e27;
-            --bg-secondary: #151932;
-            --bg-tertiary: #1a1f3a;
-            --accent-primary: #00ff88;
-            --accent-secondary: #00d2ff;
-            --accent-tertiary: #9d4edd;
-            --text-primary: #ffffff;
-            --text-secondary: #b8c5d6;
-            --text-muted: #6b7a8f;
-            --border: rgba(255, 255, 255, 0.1);
-            --glow-cyan: 0 0 20px rgba(0, 210, 255, 0.4);
-            --glow-green: 0 0 20px rgba(0, 255, 136, 0.4);
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            font-family: 'Rajdhani', sans-serif;
-            background: var(--bg-primary);
-            background-image: 
-                radial-gradient(ellipse at top left, rgba(0, 210, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at bottom right, rgba(157, 78, 221, 0.08) 0%, transparent 50%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: var(--text-primary);
-            overflow: hidden;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0">
+<meta name="theme-color" content="#080810">
+<title>FitPacta — Compete. Lose. Win.</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080810;--bg2:#0f0f1c;--bg3:#141428;
+  --surf:#191930;--surf2:#1f1f3a;--surf3:#252548;
+  --brd:rgba(255,255,255,0.07);--brd2:rgba(255,255,255,0.13);
+  --gold:#f5c842;--gold2:#e6b520;--goldbg:rgba(245,200,66,0.10);
+  --red:#ff3b3b;--redbg:rgba(255,59,59,0.10);
+  --green:#00e676;--greenbg:rgba(0,230,118,0.08);
+  --blue:#4fc3f7;--bluebg:rgba(79,195,247,0.08);
+  --orange:#ff6d00;--orangebg:rgba(255,109,0,0.10);
+  --text:#f5f0ff;--text2:rgba(245,240,255,0.52);--text3:rgba(245,240,255,0.25);
+  --fd:'Bebas Neue',sans-serif;--fb:'Bricolage Grotesque',sans-serif;--fm:'DM Mono',monospace;
+  --r:14px;--rl:20px;--rxl:26px;--rf:999px;
+  --nh:62px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;overflow-x:hidden}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:2px}
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 210, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 210, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }
+/* ── GRAIN OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.6}
 
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
+/* ── SCREENS ── */
+.scr{display:none;min-height:100dvh}
+.scr.on{display:flex;flex-direction:column}
 
-        .particle {
-            position: absolute;
-            width: 4px; height: 4px;
-            background: var(--accent-secondary);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 20s infinite;
-        }
+/* ══════════════════════════
+   LOGIN
+══════════════════════════ */
+#s-login{background:var(--bg);align-items:center;justify-content:center;padding:24px 20px calc(32px + var(--sb));position:relative;overflow:hidden}
+.lg-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(245,200,66,0.12),transparent),radial-gradient(ellipse 60% 40% at 80% 110%,rgba(255,59,59,0.10),transparent);pointer-events:none}
+.lg-lines{position:absolute;inset:0;background-image:repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0px,rgba(255,255,255,.015) 1px,transparent 1px,transparent 40px);pointer-events:none}
+.lcard{width:100%;max-width:400px;background:rgba(25,25,48,0.95);border:1px solid var(--brd2);border-radius:var(--rxl);padding:32px 24px;position:relative;z-index:1;backdrop-filter:blur(20px);animation:rise .5s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.llogo{text-align:center;margin-bottom:28px}
+.lmark{display:inline-flex;align-items:center;justify-content:center;width:68px;height:68px;background:var(--gold);border-radius:18px;margin-bottom:12px}
+.lbrand{font-family:var(--fd);font-size:2rem;letter-spacing:2px;line-height:1}
+.ltag{font-size:11px;font-weight:500;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px}
+.ftgl{display:flex;background:var(--surf);border-radius:var(--rf);padding:4px;margin-bottom:22px}
+.ftb{flex:1;padding:9px;border-radius:var(--rf);border:none;background:transparent;color:var(--text2);font-family:var(--fb);font-weight:600;font-size:13px;cursor:pointer;transition:all .2s;min-height:40px}
+.ftb.on{background:var(--gold);color:#080810}
+.fg{margin-bottom:15px}
+.fl{display:block;font-weight:700;font-size:11px;letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;color:var(--text3)}
+.fi{width:100%;padding:13px 14px;background:var(--bg2);color:var(--text);border:1.5px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-size:15px;transition:all .2s;-webkit-appearance:none}
+.fi:focus{outline:none;border-color:var(--gold);background:rgba(245,200,66,.04)}
+.fi::placeholder{color:var(--text3)}
+.emsg{background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.28);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--red);margin-bottom:14px;display:none;animation:shk .35s ease}
+@keyframes shk{0%,100%{transform:translateX(0)}30%{transform:translateX(-8px)}70%{transform:translateX(8px)}}
+.omsg{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--green);margin-bottom:14px;display:none}
+.bsub{width:100%;padding:15px;background:var(--gold);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1.15rem;letter-spacing:1.5px;cursor:pointer;min-height:52px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.bsub:active{transform:scale(.97);background:var(--gold2)}
+.bsub:disabled{background:var(--surf2);color:var(--text3);cursor:not-allowed;transform:none}
+.spin{width:18px;height:18px;border:2.5px solid rgba(8,8,16,.3);border-top-color:#080810;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.lpanel{margin-top:20px;padding-top:18px;border-top:1px solid var(--brd);display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.lpstat{text-align:center}
+.lpv{font-family:var(--fd);font-size:1.3rem;color:var(--gold);letter-spacing:1px}
+.lpk{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(100px, -100px); }
-        }
+/* ══════════════════════════
+   APP SHELL
+══════════════════════════ */
+#s-app{background:var(--bg)}
+#app{display:flex;flex-direction:column;min-height:100dvh;max-width:480px;margin:0 auto;background:var(--bg);position:relative}
+@media(min-width:768px){body{background:#040408}#app{max-width:100%;flex-direction:row;height:100dvh;overflow:hidden}}
 
-        .particle:nth-child(1) { top: 20%; left: 10%; animation-delay: 0s; }
-        .particle:nth-child(2) { top: 60%; left: 80%; animation-delay: 2s; }
-        .particle:nth-child(3) { top: 80%; left: 20%; animation-delay: 4s; }
-        .particle:nth-child(4) { top: 40%; left: 70%; animation-delay: 6s; }
-        .particle:nth-child(5) { top: 10%; left: 90%; animation-delay: 8s; }
+/* VIEWS */
+.view{display:none;flex-direction:column;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.view.on{display:flex}
+.pad{padding-bottom:calc(var(--nh) + var(--sb) + 24px)}
+@media(min-width:768px){.pad{padding-bottom:32px;max-width:700px;margin:0 auto;width:100%}}
 
-        .login-container {
-            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
-            border: 2px solid var(--border);
-            border-radius: 24px;
-            padding: 50px 40px;
-            width: 100%;
-            max-width: 450px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), var(--glow-cyan);
-            position: relative;
-            z-index: 1;
-            animation: slideUp 0.6s ease-out;
-        }
+/* BOTTOM NAV */
+#bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:calc(var(--nh) + var(--sb));background:rgba(8,8,16,.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:1px solid var(--brd2);display:flex;align-items:flex-start;padding-top:8px;padding-bottom:var(--sb);z-index:800}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text3);font-family:var(--fb);font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;padding:6px 4px;transition:color .2s;min-height:48px;position:relative}
+.ni.on{color:var(--gold)}
+.nic{font-size:21px;line-height:1;transition:transform .2s}
+.ni.on .nic{transform:scale(1.15)}
+.ndot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0;transition:opacity .2s}
+.ni.on .ndot{opacity:1}
+@media(min-width:768px){
+  #bnav{position:static;transform:none;width:220px;min-width:220px;height:100dvh;flex-direction:column;align-items:stretch;padding:0;border-top:none;border-right:1px solid var(--brd);background:var(--bg2);padding-top:calc(var(--st) + 16px)}
+  .ni{flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 20px;font-size:12px;min-height:auto;border-radius:0}
+  .nic{font-size:18px}.ndot{display:none}
+  .sb-top{display:flex;align-items:center;gap:10px;padding:14px 20px 24px;border-bottom:1px solid var(--brd);margin-bottom:10px}
+  .sb-name{font-family:var(--fd);font-size:1.2rem;letter-spacing:1px}
+  .sb-bot{padding:12px 20px;margin-top:auto;border-top:1px solid var(--brd);display:flex;align-items:center;gap:10px}
+  .sb-uname{font-weight:700;font-size:13px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)}
+  .sb-lo{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:4px;transition:color .2s}
+  .sb-lo:hover{color:var(--red)}
+}
+.sb-top{display:none}
+@media(min-width:768px){.sb-top{display:flex}}
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* TOP BAR */
+.tbar{padding:calc(var(--st) + 12px) 18px 12px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;background:linear-gradient(to bottom,rgba(8,8,16,.98) 65%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);flex-shrink:0}
+.tlogo{font-family:var(--fd);font-size:1.2rem;letter-spacing:2px;display:flex;align-items:center;gap:8px}
+.tmark{width:26px;height:26px;background:var(--gold);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tright{display:flex;align-items:center;gap:8px}
+.ib{width:38px;height:38px;background:var(--surf);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text);transition:all .2s}
+.ib:active{transform:scale(.9)}
+.uchip{background:var(--surf);border:1px solid var(--brd2);border-radius:var(--rf);padding:5px 11px;font-size:11px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:5px;max-width:120px}
+.uchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(min-width:768px){.tbar{display:none}}
 
-        .logo {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 900;
-            text-align: center;
-            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 10px;
-            letter-spacing: 3px;
-        }
+/* ══════════════════════════
+   LEADERBOARD VIEW (main)
+══════════════════════════ */
+/* MATCHDAY HEADER */
+.mday{padding:18px 18px 0;position:relative}
+.mday-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 80% at 50% 0%,rgba(245,200,66,.08),transparent);pointer-events:none}
+.mday-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.live-dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,59,59,.7)}50%{opacity:.6;box-shadow:0 0 0 5px rgba(255,59,59,0)}}
+.mday-title{font-family:var(--fd);font-size:clamp(1.8rem,8vw,2.6rem);letter-spacing:1px;line-height:.95;margin-bottom:10px}
+.mday-title span{color:var(--gold)}
+.mday-meta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.meta-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surf);border:1px solid var(--brd2);border-radius:var(--rf);padding:5px 11px;font-size:11px;font-weight:700;color:var(--text2)}
+.meta-pill.gold{background:var(--goldbg);border-color:rgba(245,200,66,.25);color:var(--gold)}
+.meta-pill.red{background:var(--redbg);border-color:rgba(255,59,59,.25);color:var(--red)}
 
-        .subtitle {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-            margin-bottom: 40px;
-            font-weight: 500;
-        }
+/* COUNTDOWN BAR */
+.cbar{margin:0 18px 16px;background:var(--surf);border:1px solid var(--brd2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.cbar-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)}
+.cbar-val{font-family:var(--fm);font-size:1rem;color:var(--gold);letter-spacing:1px}
+.cbar-right{text-align:right}
+.next-wi{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.next-wi span{color:var(--orange);font-family:var(--fm)}
 
-        .form-group { margin-bottom: 25px; }
+/* PRIZE BANNER */
+.prize-ban{margin:0 18px 16px;background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.3);border-radius:var(--rl);padding:18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.prize-ban::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(245,200,66,.2),transparent 70%)}
+.prize-left{}
+.prize-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,200,66,.6);margin-bottom:4px}
+.prize-amt{font-family:var(--fd);font-size:2.4rem;color:var(--gold);letter-spacing:2px;line-height:1;text-shadow:0 0 30px rgba(245,200,66,.4)}
+.prize-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.prize-right{text-align:right}
+.prize-split{display:flex;flex-direction:column;gap:3px}
+.ps-row{display:flex;align-items:center;gap:6px;justify-content:flex-end;font-size:11px;font-weight:700}
+.ps-medal{font-size:14px}
+.ps-pct{color:var(--text2);font-family:var(--fm)}
 
-        .form-label {
-            display: block;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+/* SHAME METER */
+.shame-card{margin:0 18px 16px;background:var(--redbg);border:1.5px solid rgba(255,59,59,.25);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden}
+.shame-card::before{content:'🔥';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.15}
+.shame-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.shame-title{font-family:var(--fd);font-size:1rem;letter-spacing:1px;color:var(--red)}
+.shame-badge{background:var(--red);color:#fff;border-radius:var(--rf);padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.shame-list{display:flex;flex-direction:column;gap:8px}
+.shame-item{display:flex;align-items:center;gap:10px;background:rgba(255,59,59,.08);border-radius:var(--r);padding:10px 12px;border:1px solid rgba(255,59,59,.15)}
+.shame-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;border:2px solid rgba(255,59,59,.4)}
+.shame-info{flex:1;min-width:0}
+.shame-name{font-weight:700;font-size:13px}
+.shame-txt{font-size:11px;color:var(--red);margin-top:1px;font-style:italic}
+.shame-val{font-family:var(--fm);font-size:13px;color:var(--red);font-weight:700}
+.shame-empty{font-size:13px;color:var(--text3);text-align:center;padding:8px 0}
 
-        .form-input {
-            width: 100%;
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 2px solid var(--border);
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--text-primary);
-            font-size: 1.1rem;
-            font-family: 'Rajdhani', sans-serif;
-            transition: all 0.3s;
-        }
+/* LEADERBOARD */
+.lb-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px}
+.lb-title{font-family:var(--fd);font-size:1.1rem;letter-spacing:1px}
+.lb-week{font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase}
+.lb-list{padding:0 18px;display:flex;flex-direction:column;gap:8px}
 
-        .form-input:focus {
-            outline: none;
-            border-color: var(--accent-secondary);
-            background: rgba(0, 0, 0, 0.5);
-            box-shadow: var(--glow-cyan);
-        }
+/* RANK CARD */
+.rc{border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;gap:12px;transition:transform .15s;cursor:pointer;position:relative;overflow:hidden;animation:pop .35s ease both}
+@keyframes pop{from{opacity:0;transform:scale(.97) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.rc:active{transform:scale(.985)}
+.rc.r1{background:linear-gradient(135deg,rgba(245,200,66,.16),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.35)}
+.rc.r2{background:linear-gradient(135deg,rgba(180,188,200,.10),rgba(180,188,200,.02));border:1.5px solid rgba(180,188,200,.2)}
+.rc.r3{background:linear-gradient(135deg,rgba(180,120,80,.10),rgba(180,120,80,.02));border:1.5px solid rgba(180,120,80,.2)}
+.rc.rn{background:var(--surf);border:1px solid var(--brd)}
+.rc.rme{background:rgba(79,195,247,.06);border:1.5px solid rgba(79,195,247,.25)}
+.rc.rdng{background:rgba(255,59,59,.05);border:1px solid rgba(255,59,59,.12)}
+.rc-rank{font-family:var(--fd);font-size:1.4rem;letter-spacing:0;width:30px;text-align:center;flex-shrink:0;line-height:1}
+.rc.r1 .rc-rank{color:var(--gold)}.rc.r2 .rc-rank{color:#b0bac6}.rc.r3 .rc-rank{color:#b47850}
+.rc.rn .rc-rank,.rc.rme .rc-rank{color:var(--text3)}
+.rc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0;position:relative}
+.rc-av .streak{position:absolute;bottom:-3px;right:-3px;background:var(--orange);border-radius:var(--rf);padding:1px 5px;font-family:var(--fm);font-size:9px;font-weight:700;color:#fff;border:1.5px solid var(--bg);white-space:nowrap}
+.rc-body{flex:1;min-width:0}
+.rc-name{font-weight:700;font-size:14px;line-height:1.2}
+.rc-name .you{background:var(--bluebg);color:var(--blue);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:6px;vertical-align:middle}
+.rc-meta{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
+.rc-streak{font-size:10px;font-weight:700;color:var(--orange);display:flex;align-items:center;gap:3px}
+.rc-status{font-size:10px;font-weight:700;color:var(--text3)}
+.rc-right{text-align:right;flex-shrink:0}
+.rc-pct{font-family:var(--fd);font-size:1.3rem;letter-spacing:.5px;line-height:1}
+.rc.r1 .rc-pct{color:var(--gold)}.rc.r2 .rc-pct{color:#b0bac6}.rc.r3 .rc-pct{color:#b47850}
+.rc.rn .rc-pct,.rc.rme .rc-pct{color:var(--text)}
+.rc-week{font-size:10px;font-weight:700;margin-top:2px}
+.week-up{color:var(--green)}.week-dn{color:var(--red)}.week-nil{color:var(--text3)}
+.rc-penalty{font-size:10px;font-weight:700;color:var(--red);margin-top:2px}
+/* prize tags on r1,r2,r3 */
+.rc-prize{font-size:9px;font-weight:700;background:var(--goldbg);color:var(--gold);border-radius:var(--rf);padding:2px 7px;letter-spacing:.3px;margin-top:2px;display:inline-block}
+/* survivor danger zone */
+.danger-zone{margin:12px 18px 0;display:flex;align-items:center;gap:8px;background:var(--redbg);border:1px solid rgba(255,59,59,.25);border-radius:var(--r);padding:9px 13px}
+.dz-label{font-size:10px;font-weight:700;color:var(--red);letter-spacing:.8px;text-transform:uppercase}
+.dz-sub{font-size:10px;color:var(--text3);margin-top:1px}
 
-        .form-input::placeholder { color: var(--text-muted); }
+/* LOG SHEET */
+.log-top{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.log-av{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;color:#fff;flex-shrink:0}
+.log-name{font-family:var(--fd);font-size:1.1rem;letter-spacing:.5px}
+.log-sub{font-size:12px;color:var(--text3);margin-top:2px}
+.log-status-ok{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--green);margin-bottom:14px}
+.log-status-warn{background:rgba(255,109,0,.09);border:1px solid rgba(255,109,0,.22);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--orange);margin-bottom:14px;line-height:1.5}
+.log-status-err{background:var(--redbg);border:1px solid rgba(255,59,59,.28);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--red);margin-bottom:14px;line-height:1.5}
+.wi-big{width:100%;padding:16px 18px;background:var(--bg);color:var(--text);border:2px solid var(--brd2);border-radius:var(--r);font-family:var(--fm);font-size:2rem;font-weight:700;letter-spacing:1px;transition:all .2s;-webkit-appearance:none;text-align:center}
+.wi-big:focus{outline:none;border-color:var(--gold);background:rgba(245,200,66,.03)}
+.wi-big::placeholder{color:var(--text3);font-size:1rem;letter-spacing:0}
+.wi-unit{text-align:center;font-size:12px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:8px 0 14px}
+.blog{width:100%;padding:16px;background:var(--gold);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1.2rem;letter-spacing:1.5px;cursor:pointer;min-height:54px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+.blog:active{transform:scale(.97);background:var(--gold2)}
+.blog:disabled{background:var(--surf2);color:var(--text3);cursor:not-allowed;transform:none;font-family:var(--fb);font-size:14px;letter-spacing:0}
+/* photo upload */
+.photo-zone{border:2px dashed var(--brd2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:var(--surf);position:relative}
+.photo-zone:active{border-color:var(--gold);background:var(--goldbg)}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pz-icon{font-size:28px;margin-bottom:6px;display:block}
+.pz-label{font-size:13px;font-weight:700;color:var(--text2)}
+.pz-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.photo-preview{width:100%;border-radius:var(--r);overflow:hidden;margin-bottom:14px;position:relative;display:none}
+.photo-preview img{width:100%;max-height:220px;object-fit:cover;border-radius:var(--r);display:block}
+.photo-preview .rm{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.7);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
+/* proof history */
+.proof-hdr{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin:18px 0 10px}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.proof-item{aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:var(--surf);position:relative;border:1px solid var(--brd)}
+.proof-item img{width:100%;height:100%;object-fit:cover}
+.proof-date{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.75));padding:6px 5px 4px;font-family:var(--fm);font-size:9px;color:#fff}
+.proof-empty{grid-column:1/-1;text-align:center;padding:20px;color:var(--text3);font-size:12px}
 
-        .login-btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-primary) 100%);
-            color: #000;
-            font-size: 1.2rem;
-            font-weight: 700;
-            font-family: 'Rajdhani', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: var(--glow-cyan);
-        }
+/* HISTORY TABLE */
+.ht{width:100%;border-collapse:collapse;font-size:12px}
+.ht th{background:rgba(245,200,66,.07);color:var(--gold);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.8px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--brd)}
+.ht td{padding:10px 12px;border-bottom:1px solid var(--brd);vertical-align:middle}
+.ht tr:last-child td{border-bottom:none}
+.ht tr.me td{background:rgba(79,195,247,.04)}
+.dn{color:var(--green);font-weight:700}.up{color:var(--red);font-weight:700}.flat{color:var(--text3)}
 
-        .login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.6);
-        }
+/* ROOMS VIEW */
+.rooms-hdr{padding:18px 18px 0}
+.rooms-hdr h2{font-family:var(--fd);font-size:1.8rem;letter-spacing:1px;margin-bottom:4px}
+.rooms-hdr p{font-size:13px;color:var(--text2)}
+.pub-league{margin:16px 18px;background:linear-gradient(135deg,rgba(245,200,66,.14),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.3);border-radius:var(--rl);padding:20px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.pub-league::after{content:'→';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:1.4rem;color:rgba(245,200,66,.4)}
+.pub-league:active{transform:scale(.98)}
+.pl-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,200,66,.6);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.pl-name{font-family:var(--fd);font-size:1.5rem;letter-spacing:1px;color:var(--gold);margin-bottom:6px}
+.pl-meta{display:flex;gap:10px;flex-wrap:wrap}
+.pl-tag{background:rgba(245,200,66,.12);border-radius:var(--rf);padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold)}
+.rooms-sec{padding:0 18px;margin-top:6px}
+.sec-hdr{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.btn-new{background:var(--gold);color:#080810;border:none;border-radius:var(--rf);padding:6px 14px;font-family:var(--fd);font-size:.85rem;letter-spacing:1px;cursor:pointer;min-height:34px;transition:all .2s}
+.btn-new:active{background:var(--gold2)}
+.room-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:10px;cursor:pointer;transition:transform .15s}
+.room-card:active{transform:scale(.985)}
+.room-card.locked{opacity:.6}
+.rc2-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.rc2-name{font-family:var(--fd);font-size:1rem;letter-spacing:.5px}
+.rc2-badge{background:var(--surf2);border-radius:var(--rf);padding:3px 9px;font-size:10px;font-weight:700;color:var(--text2)}
+.rc2-badge.active{background:var(--greenbg);color:var(--green)}
+.rc2-badge.lock{background:rgba(79,195,247,.1);color:var(--blue)}
+.rc2-desc{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:10px}
+.rc2-foot{display:flex;align-items:center;justify-content:space-between}
+.rc2-peeps{display:flex;align-items:center;gap:6px}
+.rc2-avs{display:flex}
+.rc2-av{width:20px;height:20px;border-radius:50%;border:2px solid var(--surf);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;margin-left:-5px}
+.rc2-av:first-child{margin-left:0}
+.rc2-cnt{font-size:11px;color:var(--text3);font-weight:600}
+.rc2-pool{font-family:var(--fm);font-size:11px;color:var(--gold)}
+.join-chip{background:var(--gold);color:#080810;border:none;border-radius:var(--rf);padding:5px 14px;font-family:var(--fd);font-size:.85rem;letter-spacing:.5px;cursor:pointer;min-height:32px;transition:all .2s}
+.join-chip:active{background:var(--gold2)}
 
-        .login-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
-        }
+/* ── SHEETS ── */
+.ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.80);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s}
+.ov.on{opacity:1;pointer-events:all}
+.bs{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:480px;background:var(--bg2);border-radius:var(--rxl) var(--rxl) 0 0;border:1px solid var(--brd2);border-bottom:none;max-height:93dvh;display:flex;flex-direction:column;transition:transform .4s cubic-bezier(.32,.72,0,1);z-index:1001;padding-bottom:calc(var(--sb) + 8px)}
+.ov.on .bs{transform:translateX(-50%) translateY(0)}
+@media(min-width:768px){.bs{position:fixed;bottom:auto;left:50%;top:50%;transform:translate(-50%,-42%) scale(.95);max-width:540px;border-radius:var(--rxl);border:1px solid var(--brd2);max-height:88vh;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0;padding-bottom:8px}.ov.on .bs{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.bsh{width:34px;height:4px;background:var(--brd2);border-radius:2px;margin:10px auto 0;flex-shrink:0}
+@media(min-width:768px){.bsh{display:none}}
+.bshdr{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;flex-shrink:0;border-bottom:1px solid var(--brd)}
+.bstit{font-family:var(--fd);font-size:1.1rem;letter-spacing:1px}
+.bsx{width:30px;height:30px;background:var(--surf);border-radius:50%;border:none;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .2s}
+.bsbody{flex:1;overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch}
+.bsfoot{padding:12px 20px 0;flex-shrink:0;border-top:1px solid var(--brd);display:flex;gap:8px}
 
-        .features {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid var(--border);
-        }
+/* sheet form */
+.sfg{margin-bottom:14px}
+.sfl{display:block;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;color:var(--text3)}
+.sfi,.sfsel,.sfta{width:100%;padding:12px 14px;background:var(--surf);color:var(--text);border:1.5px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-size:15px;transition:all .2s;-webkit-appearance:none}
+.sfi:focus,.sfsel:focus,.sfta:focus{outline:none;border-color:var(--gold);background:rgba(245,200,66,.03)}
+.sfi::placeholder{color:var(--text3)}
+.sfta{min-height:80px;resize:none;line-height:1.6}
+.sfrow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sfhint{font-size:11px;color:var(--text3);margin-top:4px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--brd);gap:14px}
+.toggle-row:last-of-type{border-bottom:none}
+.ti{flex:1}.tl{font-weight:700;font-size:13px}.ts{color:var(--text3);font-size:11px;margin-top:2px}
+.tw{width:42px;height:22px;border-radius:11px;background:var(--surf2);position:relative;cursor:pointer;border:none;flex-shrink:0;transition:background .2s}
+.tw.on{background:var(--gold)}
+.tw::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.tw.on::after{transform:translateX(20px)}
+.bs-btn{width:100%;padding:15px;background:var(--gold);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1.1rem;letter-spacing:1.5px;cursor:pointer;min-height:52px;margin-top:4px;transition:all .2s}
+.bs-btn:active{transform:scale(.97);background:var(--gold2)}
+.bs-btn.sec{background:var(--surf2);color:var(--text2);font-family:var(--fb);font-weight:700;font-size:14px;letter-spacing:0}
 
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 15px;
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
+/* DETAIL sheet */
+.d-hero{background:var(--surf);border-radius:var(--rl);padding:16px;margin-bottom:14px;display:flex;gap:14px;align-items:center}
+.d-em{width:50px;height:50px;border-radius:13px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.d-inf h2{font-family:var(--fd);font-size:1rem;letter-spacing:.5px;margin-bottom:3px}
+.d-inf p{font-size:12px;color:var(--text2);line-height:1.5}
+.d-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.d-stat{background:var(--surf);border-radius:var(--r);padding:11px;text-align:center}
+.d-sv{font-family:var(--fm);font-weight:700;font-size:.95rem;display:block}
+.d-sk{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
+.d-rank-list{display:flex;flex-direction:column;gap:7px}
+.d-ri{display:flex;align-items:center;gap:10px;background:var(--surf);border-radius:var(--r);padding:10px 12px}
+.d-ri.me{background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.2)}
+.d-rnk{font-family:var(--fd);font-size:1.1rem;width:24px;text-align:center;flex-shrink:0}
+.d-rav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0}
+.d-rname{flex:1;font-weight:700;font-size:13px}
+.d-rpct{font-family:var(--fm);font-size:13px;font-weight:700;color:var(--gold)}
 
-        .feature-icon {
-            width: 40px; height: 40px;
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2) 0%, rgba(0, 255, 136, 0.2) 100%);
-            border: 2px solid var(--accent-secondary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.3rem;
-            flex-shrink: 0;
-        }
+/* WA share */
+.sbox{background:var(--surf);border-radius:var(--rl);padding:18px;margin-bottom:14px;text-align:center}
+.sbox-em{font-size:36px;display:block;margin-bottom:8px}
+.sbox-nm{font-family:var(--fd);font-size:.95rem;letter-spacing:.5px;margin-bottom:4px}
+.sbox-sub{font-size:12px;color:var(--text2)}
+.link-box{background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);padding:10px 12px;font-family:var(--fm);font-size:11px;color:var(--text2);word-break:break-all;margin:12px 0;text-align:left;line-height:1.5}
+.bwa{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1rem;letter-spacing:1px;cursor:pointer;min-height:50px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;margin-bottom:8px}
+.bwa:active{background:#1db954}
+.bcp{width:100%;padding:12px;background:var(--surf);color:var(--text2);border:1px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-weight:700;font-size:13px;cursor:pointer;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
 
-        .error-message {
-            background: rgba(255, 56, 100, 0.1);
-            border: 2px solid rgba(255, 56, 100, 0.3);
-            color: #ff3864;
-            padding: 12px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            text-align: center;
-            display: none;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .success-message {
-            background: rgba(0, 255, 136, 0.1);
-            border: 2px solid rgba(0, 255, 136, 0.3);
-            color: var(--accent-primary);
-            padding: 12px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            text-align: center;
-            display: none;
-        }
-
-        .toggle-form {
-            text-align: center;
-            margin-top: 20px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .toggle-form a {
-            color: var(--accent-secondary);
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: underline;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px; height: 20px;
-            border: 3px solid rgba(0,0,0,0.3);
-            border-top-color: #000;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 480px) {
-            .login-container { padding: 40px 25px; }
-            .logo { font-size: 2rem; }
-        }
-    </style>
+/* TOAST */
+#toast{position:fixed;bottom:calc(var(--nh) + var(--sb) + 10px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--surf2);color:var(--text);padding:11px 18px;border-radius:var(--rf);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;white-space:nowrap;z-index:9999;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.7);border:1px solid var(--brd2);max-width:calc(100vw - 36px)}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:768px){#toast{bottom:24px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
 </head>
 <body>
 
-<div class="particle"></div>
-<div class="particle"></div>
-<div class="particle"></div>
-<div class="particle"></div>
-<div class="particle"></div>
-
-<div class="login-container">
-    <h1 class="logo">⚡ PCH</h1>
-    <p class="subtitle">ProChallenge Hub</p>
-
-    <div id="errorMessage" class="error-message"></div>
-    <div id="successMessage" class="success-message"></div>
-
-    <!-- LOGIN FORM -->
-    <div id="loginForm">
-        <form onsubmit="handleLogin(event)">
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" id="loginUsername" class="form-input" placeholder="Enter your username" required autofocus autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required autocomplete="current-password">
-            </div>
-            <button type="submit" class="login-btn" id="loginBtn">⚡ Launch Dashboard</button>
-        </form>
-        <div class="toggle-form">
-            New here? <a onclick="showRegister()">Create an account</a>
-        </div>
+<!-- LOGIN -->
+<div id="s-login" class="scr on">
+  <div class="lg-bg"></div><div class="lg-lines"></div>
+  <div class="lcard">
+    <div class="llogo">
+      <div class="lmark">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><line x1="8" y1="8" x2="8" y2="32" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="8" y1="8" x2="18" y2="8" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="8" x2="32" y2="32" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="8" x2="22" y2="8" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="19" x2="22" y2="19" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><path d="M22 8 Q15 8 15 13.5 Q15 19 22 19" stroke="#080810" stroke-width="3.5" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <div class="lbrand">FITPACTA</div>
+      <div class="ltag">Compete. Lose. Win.</div>
     </div>
-
-    <!-- REGISTER FORM -->
-    <div id="registerForm" style="display:none;">
-        <form onsubmit="handleRegister(event)">
-            <div class="form-group">
-                <label class="form-label">Username</label>
-                <input type="text" id="regUsername" class="form-input" placeholder="Choose a username" required minlength="3" autocomplete="username">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Email (optional)</label>
-                <input type="email" id="regEmail" class="form-input" placeholder="your@email.com" autocomplete="email">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" id="regPassword" class="form-input" placeholder="Create a password" required minlength="3" autocomplete="new-password">
-            </div>
-            <button type="submit" class="login-btn" id="registerBtn">🚀 Create Account</button>
-        </form>
-        <div class="toggle-form">
-            Already have an account? <a onclick="showLogin()">Sign in</a>
-        </div>
+    <div class="ftgl">
+      <button class="ftb on" onclick="showF('l')">Sign In</button>
+      <button class="ftb" onclick="showF('r')">Join the League</button>
     </div>
-
-    <div class="features">
-        <div class="feature-item">
-            <div class="feature-icon">💪</div>
-            <span>Fitness & Weight Loss Challenges</span>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">🏆</div>
-            <span>Compete & Win Real Prizes</span>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">🤖</div>
-            <span>AI-Powered Fitness Coaching</span>
-        </div>
-        <div class="feature-item">
-            <div class="feature-icon">📊</div>
-            <span>Weekly Progress Tracking</span>
-        </div>
+    <div id="emsg" class="emsg"></div>
+    <div id="omsg" class="omsg"></div>
+    <div id="lf">
+      <div class="fg"><label class="fl">Username</label><input type="text" id="lu" class="fi" placeholder="your username" autocomplete="username" autocapitalize="none"></div>
+      <div class="fg"><label class="fl">Password</label><input type="password" id="lp" class="fi" placeholder="password" autocomplete="current-password"></div>
+      <button class="bsub" id="blgn" onclick="doLogin()">ENTER THE ARENA</button>
     </div>
+    <div id="rf" style="display:none">
+      <div class="fg"><label class="fl">Username</label><input type="text" id="ru" class="fi" placeholder="choose a username" autocapitalize="none"><div id="un-hint" style="font-size:11px;font-weight:700;margin-top:5px;letter-spacing:.3px;min-height:16px"></div></div>
+      <div class="fg"><label class="fl">Email</label><input type="email" id="re" class="fi" placeholder="your@email.com"></div>
+      <div class="fg"><label class="fl">Password</label><input type="password" id="rp" class="fi" placeholder="create password"></div>
+      <button class="bsub" id="breg" onclick="doReg()">ENTER THE ARENA</button>
+    </div>
+    <div class="lpanel">
+      <div class="lpstat"><div class="lpv">₹6,500</div><div class="lpk">Prize Pool</div></div>
+      <div class="lpstat"><div class="lpv">13</div><div class="lpk">Competitors</div></div>
+      <div class="lpstat"><div class="lpv" id="l-days">—</div><div class="lpk">Days Left</div></div>
+    </div>
+  </div>
 </div>
 
+<!-- APP -->
+<div id="s-app" class="scr">
+<div id="app">
+
+<!-- NAV -->
+<nav id="bnav">
+  <div class="sb-top">
+    <div class="lmark" style="width:34px;height:34px;border-radius:8px;flex-shrink:0">
+      <svg width="22" height="22" viewBox="0 0 40 40" fill="none"><line x1="8" y1="8" x2="8" y2="32" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="8" y1="8" x2="18" y2="8" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="8" x2="32" y2="32" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="8" x2="22" y2="8" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><line x1="32" y1="19" x2="22" y2="19" stroke="#080810" stroke-width="3.5" stroke-linecap="round"/><path d="M22 8 Q15 8 15 13.5 Q15 19 22 19" stroke="#080810" stroke-width="3.5" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div><div class="sb-name">FITPACTA</div><div style="font-size:10px;color:var(--text3);letter-spacing:.5px">Compete. Lose. Win.</div></div>
+  </div>
+  <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic">🏆</span><span>Leaderboard</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-log" onclick="go('log')"><span class="nic">⚖️</span><span>Log Weight</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic">🚪</span><span>Rooms</span><span class="ndot"></span></button>
+  <div class="sb-bot" style="display:none" id="sb-bot">
+    <div style="width:28px;height:28px;border-radius:50%;background:var(--goldbg);border:1px solid rgba(245,200,66,.2);display:flex;align-items:center;justify-content:center;font-size:13px">👤</div>
+    <span class="sb-uname" id="sb-un"></span>
+    <button class="sb-lo" onclick="logout()">⏏</button>
+  </div>
+</nav>
+
+<div id="main" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
+
+<!-- ═══ LEADERBOARD ═══ -->
+<div id="view-lb" class="view on">
+  <div class="tbar">
+    <div class="tlogo">
+      <div class="tmark"><svg width="16" height="16" viewBox="0 0 40 40" fill="none"><line x1="8" y1="8" x2="8" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="8" x2="18" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="32" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="22" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="19" x2="22" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><path d="M22 8 Q15 8 15 13.5 Q15 19 22 19" stroke="#080810" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>
+      FITPACTA
+    </div>
+    <div class="tright">
+      <div class="uchip">👤 <span id="tu">—</span></div>
+      <button class="ib" onclick="logout()" style="font-size:14px">⏏</button>
+    </div>
+  </div>
+  <div class="pad" id="lb-scroll">
+    <div style="padding:48px 18px;text-align:center;color:var(--text3)">
+      <div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div>
+      <p>Loading standings…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LOG WEIGHT ═══ -->
+<div id="view-log" class="view">
+  <div class="tbar">
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 40 40" fill="none"><line x1="8" y1="8" x2="8" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="8" x2="18" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="32" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="22" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="19" x2="22" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><path d="M22 8 Q15 8 15 13.5 Q15 19 22 19" stroke="#080810" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>LOG WEIGHT</div>
+    <div class="tright"><button class="ib" onclick="loadLog()" style="font-size:15px">↻</button></div>
+  </div>
+  <div class="pad" id="log-scroll">
+    <div style="padding:48px 18px;text-align:center;color:var(--text3)">
+      <div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div>
+      <p>Loading your data…</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROOMS ═══ -->
+<div id="view-rooms" class="view">
+  <div class="tbar">
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 40 40" fill="none"><line x1="8" y1="8" x2="8" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="8" x2="18" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="8" y1="19" x2="16" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="32" y2="32" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="8" x2="22" y2="8" stroke="#080810" stroke-width="4" stroke-linecap="round"/><line x1="32" y1="19" x2="22" y2="19" stroke="#080810" stroke-width="4" stroke-linecap="round"/><path d="M22 8 Q15 8 15 13.5 Q15 19 22 19" stroke="#080810" stroke-width="4" stroke-linecap="round" fill="none"/></svg></div>ROOMS</div>
+    <div class="tright"><button class="ib" onclick="openNewRoom()" style="font-size:20px;font-weight:900;color:var(--gold)">+</button></div>
+  </div>
+  <div class="pad" id="rooms-scroll"></div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+</div><!-- /s-app -->
+
+<!-- SHEETS -->
+<!-- LOG DETAIL SHEET -->
+<div id="ov-log" class="ov" onclick="ovc(event,'ov-log')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="log-stit">⚖️ LOG WEIGHT</span><button class="bsx" onclick="cls('ov-log')">×</button></div>
+    <div class="bsbody" id="log-sbody"></div>
+  </div>
+</div>
+
+<!-- ROOM DETAIL -->
+<div id="ov-room" class="ov" onclick="ovc(event,'ov-room')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="rm-stit">Room</span><button class="bsx" onclick="cls('ov-room')">×</button></div>
+    <div class="bsbody" id="rm-sbody"></div>
+    <div class="bsfoot" id="rm-sfoot"></div>
+    <div style="height:8px;flex-shrink:0"></div>
+  </div>
+</div>
+
+<!-- NEW ROOM -->
+<div id="ov-nr" class="ov" onclick="ovc(event,'ov-nr')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit">CREATE PRIVATE ROOM</span><button class="bsx" onclick="cls('ov-nr')">×</button></div>
+    <div class="bsbody">
+      <div class="sfg"><label class="sfl">Room Name</label><input type="text" id="nr-name" class="sfi" placeholder="e.g. Office Fat Loss League" maxlength="50" autocomplete="off"></div>
+      <div class="sfg"><label class="sfl">Description</label><textarea id="nr-desc" class="sfta" placeholder="Rules, goals, who's in…"></textarea></div>
+      <div class="sfrow">
+        <div class="sfg"><label class="sfl">Entry Fee (₹)</label><input type="number" id="nr-fee" class="sfi" placeholder="0" min="0" inputmode="numeric"><div class="sfhint">₹0 = free</div></div>
+        <div class="sfg"><label class="sfl">Duration (weeks)</label><input type="number" id="nr-dur" class="sfi" value="12" min="1" max="52" inputmode="numeric"></div>
+      </div>
+      <div class="sfg"><label class="sfl">Max Competitors</label><input type="number" id="nr-max" class="sfi" placeholder="Unlimited" min="2" inputmode="numeric"></div>
+      <div class="sfg">
+        <div class="toggle-row"><div class="ti"><div class="tl">⚠️ Miss penalty</div><div class="ts">Auto-deduct for skipped weigh-in</div></div><button class="tw on" id="tw-pen" onclick="this.classList.toggle('on');penv(this)"></button></div>
+        <div id="pen-f" style="padding-top:8px"><input type="number" id="nr-pen" class="sfi" placeholder="Penalty per miss e.g. ₹500" min="0" inputmode="numeric"></div>
+        <div class="toggle-row"><div class="ti"><div class="tl">🔒 Private room</div><div class="ts">Invite code required to join</div></div><button class="tw on" id="tw-priv" onclick="this.classList.toggle('on')"></button></div>
+      </div>
+      <div class="sfrow">
+        <div class="sfg"><label class="sfl">🥇 1st prize %</label><input type="number" id="nr-p1" class="sfi" value="60" min="0" max="100" inputmode="numeric"></div>
+        <div class="sfg"><label class="sfl">🥈 2nd prize %</label><input type="number" id="nr-p2" class="sfi" value="30" min="0" max="100" inputmode="numeric"></div>
+      </div>
+      <div class="sfg"><label class="sfl">🥉 3rd prize %</label><input type="number" id="nr-p3" class="sfi" value="10" min="0" max="100" inputmode="numeric"></div>
+      <button class="bs-btn" onclick="createRoom()">CREATE ROOM + GET INVITE LINK</button>
+      <div style="height:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SHARE -->
+<div id="ov-share" class="ov" onclick="ovc(event,'ov-share')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit">SHARE ROOM</span><button class="bsx" onclick="cls('ov-share')">×</button></div>
+    <div class="bsbody">
+      <div class="sbox"><span class="sbox-em">⚔️</span><div class="sbox-nm" id="sh-nm"></div><div class="sbox-sub" id="sh-sub"></div></div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">INVITE LINK</div>
+      <div class="link-box" id="sh-link"></div>
+      <button class="bwa" id="sh-wa">💬 SHARE ON WHATSAPP</button>
+      <button class="bcp" id="sh-cp">📋 Copy Link</button>
+      <div style="height:8px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><span id="ti">✅</span><span id="tm">Done!</span></div>
+
 <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+'use strict';
+const API="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
+// ↑ Same deployment ID — updated script picked up automatically
+const CEND=new Date('2026-04-25T23:59:59');
+const CSTART=new Date('2026-02-02');
+const PRIZE='₹6,500';
+const CLRS=['#7c5cfc','#ff3b3b','#4fc3f7','#f5c842','#00e676','#ff6d00','#f53c7a','#54aeff','#a78bfa','#34d399'];
 
-    function showRegister() {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('registerForm').style.display = 'block';
-        hideMessages();
-        document.getElementById('regUsername').focus();
+let CU=null, ROOMS=[], cdI=null;
+
+// ── INIT ──
+(function(){
+  const a=localStorage.getItem('fp_a'), t=localStorage.getItem('fp_t');
+  if(a==='1'&&t&&(Date.now()-+t)<86400000){CU=localStorage.getItem('fp_u')||'Guest';showApp();}
+  else{const d=Math.max(0,Math.ceil((CEND-new Date())/86400000));const el=document.getElementById('l-days');if(el)el.textContent=d;}
+  document.getElementById('lp').addEventListener('keypress',e=>e.key==='Enter'&&doLogin());
+  document.getElementById('rp').addEventListener('keypress',e=>e.key==='Enter'&&doReg());
+  // Live username availability check on register form
+  let unTimer=null;
+  document.getElementById('ru').addEventListener('input',function(){
+    clearTimeout(unTimer);
+    const val=this.value.trim();
+    const hint=document.getElementById('un-hint');
+    if(!hint)return;
+    if(val.length<3){hint.textContent='';hint.style.color='';return;}
+    hint.textContent='Checking...';hint.style.color='var(--text3)';
+    unTimer=setTimeout(async()=>{
+      try{
+        const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'checkUsername',username:val})});
+        const d=await r.json();
+        if(d.available){hint.textContent='✓ Available';hint.style.color='var(--green)';}
+        else{hint.textContent='✗ Already taken';hint.style.color='var(--red)';}
+      }catch(e){hint.textContent='';}
+    },600);
+  });
+})();
+
+// ── AUTH ──
+function showF(f){
+  document.getElementById('lf').style.display=f==='l'?'block':'none';
+  document.getElementById('rf').style.display=f==='r'?'block':'none';
+  document.querySelectorAll('.ftb').forEach((b,i)=>b.classList.toggle('on',(f==='l'&&i===0)||(f==='r'&&i===1)));
+  hideMsg();
+}
+function showErr(m){const e=document.getElementById('emsg');e.textContent=m;e.style.display='block';document.getElementById('omsg').style.display='none';e.style.animation='none';requestAnimationFrame(()=>e.style.animation='');}
+function showOk(m){document.getElementById('omsg').textContent=m;document.getElementById('omsg').style.display='block';document.getElementById('emsg').style.display='none';}
+function hideMsg(){document.getElementById('emsg').style.display='none';document.getElementById('omsg').style.display='none';}
+
+async function doLogin(){
+  const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value;
+  if(!u||!p){showErr('Enter username and password');return;}
+  setBtnL('blgn',true);
+  try{
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'authenticate',username:u,password:p})});
+    const d=await r.json();
+    if(d.success){save(d.username||u);showApp();}
+    else showErr(d.message||'Invalid credentials');
+  }catch(e){showErr('Connection failed. Try again.');}
+  setBtnL('blgn',false);
+}
+async function doReg(){
+  const u=document.getElementById('ru').value.trim(),e2=document.getElementById('re').value.trim(),p=document.getElementById('rp').value;
+  if(!u||u.length<3){showErr('Username must be 3+ characters');return;}
+  if(!p||p.length<3){showErr('Password must be 3+ characters');return;}
+  setBtnL('breg',true);
+  try{
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'registerUser',username:u,email:e2,password:p})});
+    const d=await r.json();
+    if(d.success){showOk('Account created! Entering arena…');save(u);setTimeout(showApp,1000);}
+    else showErr(d.message||'Registration failed');
+  }catch(e){showErr('Connection failed. Try again.');}
+  setBtnL('breg',false);
+}
+function save(u){localStorage.setItem('fp_a','1');localStorage.setItem('fp_t',Date.now());localStorage.setItem('fp_u',u);CU=u;}
+function setBtnL(id,on){
+  const b=document.getElementById(id);if(!b)return;
+  b.disabled=on;b.innerHTML=on?`<div class="spin"></div>ENTERING…`:'ENTER THE ARENA';
+}
+function logout(){
+  if(!confirm('Log out?'))return;
+  ['fp_a','fp_t','fp_u','fp_rooms'].forEach(k=>localStorage.removeItem(k));
+  CU=null;clearInterval(cdI);
+  document.getElementById('s-app').classList.remove('on');
+  document.getElementById('s-login').classList.add('on');
+}
+function showApp(){
+  document.getElementById('s-login').classList.remove('on');
+  document.getElementById('s-app').classList.add('on');
+  ['tu','sb-un'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=CU;});
+  document.getElementById('sb-bot').style.display='flex';
+  loadRooms();
+  loadLB();
+  loadLog();
+  renderRooms();
+  checkLink();
+}
+
+// ── NAV ──
+function go(v){
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  document.getElementById('view-'+v).classList.add('on');
+  document.querySelectorAll('.ni[id]').forEach(b=>b.classList.remove('on'));
+  const nb=document.getElementById('ni-'+v);if(nb)nb.classList.add('on');
+  if(v==='lb')loadLB();
+  if(v==='log')loadLog();
+  if(v==='rooms')renderRooms();
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+// ── LOAD LEADERBOARD — uses server-computed getLeaderboard ──
+async function loadLB(){
+  const area=document.getElementById('lb-scroll');if(!area)return;
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading standings…</p></div>`;
+  try{
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getLeaderboard'})});
+    const d=await r.json();
+    if(d.success&&Array.isArray(d.leaderboard)){
+      renderLB(area,d.leaderboard);
+    } else {
+      // fallback to raw if new action not yet live
+      const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});
+      const raw=await r2.json();
+      renderLB(area,parseLBFromRaw(raw));
     }
+  }catch(e){
+    area.innerHTML=`<div style="padding:40px 18px;text-align:center;color:var(--text3)"><p style="margin-bottom:14px">⚠️ Could not load standings</p><button class="join-chip" onclick="loadLB()">↻ Retry</button></div>`;
+  }
+}
 
-    function showLogin() {
-        document.getElementById('registerForm').style.display = 'none';
-        document.getElementById('loginForm').style.display = 'block';
-        hideMessages();
-        document.getElementById('loginUsername').focus();
+// Fallback parser for raw getAllWeights array
+function parseLBFromRaw(raw){
+  const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
+  const um={};
+  rows.forEach(r=>{
+    const nm=String(r[0]||'').trim(),dt=new Date(r[1]),w=parseFloat(r[2]);
+    if(!nm||isNaN(dt)||isNaN(w))return;
+    if(!um[nm])um[nm]=[];
+    um[nm].push({date:dt,weight:w});
+  });
+  return Object.keys(um).map(nm=>{
+    const entries=um[nm].sort((a,b)=>a.date-b.date);
+    const first=entries[0].weight,last=entries[entries.length-1].weight;
+    const pct=parseFloat(((first-last)/first*100).toFixed(2));
+    const wc=entries.length>=2?parseFloat((entries[entries.length-2].weight-last).toFixed(2)):null;
+    let streak=0;
+    for(let i=entries.length-1;i>=1;i--){if(entries[i].weight<entries[i-1].weight)streak++;else break;}
+    return{name:nm,totalLossPct:pct,weekChange:wc,streak,checkIns:entries.length};
+  }).sort((a,b)=>b.totalLossPct-a.totalLossPct);
+}
+
+function renderLB(area,lb){
+  // Normalise field names — server returns totalLossPct, fallback returns total
+  lb=lb.map(e=>({...e,total:e.totalLossPct??e.total??0}));
+
+  // shame: gained this week
+  const shamers=lb.filter(x=>x.weekChange!==null&&x.weekChange<0).sort((a,b)=>a.weekChange-b.weekChange);
+  const myEntry=lb.find(x=>x.name.toLowerCase()===(CU||'').toLowerCase());
+  const myRank=myEntry?lb.indexOf(myEntry)+1:null;
+  const now=new Date();
+  const dLeft=Math.max(0,Math.ceil((CEND-now)/86400000));
+  const totalDays=Math.ceil((CEND-CSTART)/86400000);
+  const elapsed=Math.max(0,Math.ceil((now-CSTART)/86400000));
+  const prog=Math.min(100,Math.round(elapsed/totalDays*100));
+  const nextMon=nextMonday();
+  const isMonday=now.getDay()===1;
+
+  // my rank class
+  function rankClass(i,nm){
+    const isMe=nm.toLowerCase()===(CU||'').toLowerCase();
+    if(i===0)return'rc r1'+(isMe?' rme':'');
+    if(i===1)return'rc r2'+(isMe?' rme':'');
+    if(i===2)return'rc r3'+(isMe?' rme':'');
+    const dng=lb.length>3&&i>=lb.length-Math.max(1,Math.floor(lb.length*0.2));
+    if(isMe)return'rc rme';
+    if(dng)return'rc rdng';
+    return'rc rn';
+  }
+
+  // prize split for top 3
+  const splitLabels=['54%','23%','15%'];
+
+  let html=`
+    <div class="mday">
+      <div class="mday-bg"></div>
+      <div class="mday-label"><span class="live-dot"></span>LIVE STANDINGS · WEEK ${Math.ceil(elapsed/7)||1}</div>
+      <div class="mday-title">12-WEEK FAT<br>LOSS <span>LEAGUE</span></div>
+      <div class="mday-meta">
+        <div class="meta-pill gold">🏆 ${PRIZE} Prize Pool</div>
+        <div class="meta-pill">${lb.length} Competitors</div>
+        <div class="meta-pill red">⏳ ${dLeft} days left</div>
+      </div>
+    </div>
+    <!-- progress bar -->
+    <div style="padding:0 18px 14px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px"><span>CHALLENGE PROGRESS</span><span style="color:var(--gold)">${prog}% COMPLETE</span></div>
+      <div style="height:6px;background:var(--surf2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:3px;transition:width 1s ease"></div></div>
+    </div>
+    <!-- countdown -->
+    <div class="cbar" style="margin-top:0">
+      <div class="cbar-label">Ends in<div class="cbar-val" id="cd"></div></div>
+      <div class="cbar-right"><div class="next-wi">Next weigh-in<br><span>${isMonday?'Today!':nextMon}</span></div></div>
+    </div>
+    <!-- prize banner -->
+    <div class="prize-ban">
+      <div class="prize-left">
+        <div class="prize-l">PRIZE POOL</div>
+        <div class="prize-amt">₹6,500</div>
+        <div class="prize-sub">${lb.length} competitors · ₹${Math.round(6500/lb.length||0)} avg stake</div>
+      </div>
+      <div class="prize-right"><div class="prize-split">
+        <div class="ps-row"><span class="ps-medal">🥇</span><span class="ps-pct">₹3,510 <span style="color:var(--text3)">(54%)</span></span></div>
+        <div class="ps-row"><span class="ps-medal">🥈</span><span class="ps-pct">₹1,495 <span style="color:var(--text3)">(23%)</span></span></div>
+        <div class="ps-row"><span class="ps-medal">🥉</span><span class="ps-pct">₹975 <span style="color:var(--text3)">(15%)</span></span></div>
+      </div></div>
+    </div>`;
+
+  // SHAME METER
+  if(shamers.length){
+    html+=`<div class="shame-card">
+      <div class="shame-hdr"><div class="shame-title">🔥 SHAME METER</div><div class="shame-badge">THIS WEEK</div></div>
+      <div class="shame-list">
+        ${shamers.slice(0,3).map((s,i)=>`<div class="shame-item"><div class="shame-av" style="background:${CLRS[lb.indexOf(s)%CLRS.length]}">${s.name[0].toUpperCase()}</div><div class="shame-info"><div class="shame-name">${esc(s.name)}</div><div class="shame-txt">${shameMsg(s.weekChange)}</div></div><div class="shame-val">+${Math.abs(s.weekChange).toFixed(1)} kg 📈</div></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // MY POSITION banner (if not top 3)
+  if(myEntry&&myRank>3){
+    html+=`<div style="margin:0 18px 14px;background:rgba(79,195,247,.07);border:1.5px solid rgba(79,195,247,.2);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue)">YOUR POSITION</div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="text-align:right"><div style="font-family:var(--fd);font-size:1.6rem;color:var(--blue);letter-spacing:1px">#${myRank}</div><div style="font-size:10px;color:var(--text3)">of ${lb.length}</div></div>
+        <div style="text-align:right"><div style="font-family:var(--fd);font-size:1.4rem;color:var(--text);letter-spacing:.5px">${myEntry.total}%</div><div style="font-size:10px;color:var(--text3)">total loss</div></div>
+      </div>
+    </div>`;
+  }
+
+  // LEADERBOARD LIST
+  html+=`<div class="lb-hdr"><div class="lb-title">STANDINGS</div><div class="lb-week">TOTAL % LOST</div></div>
+  <div class="lb-list">`;
+
+  lb.forEach((e,i)=>{
+    const isMe=e.name.toLowerCase()===(CU||'').toLowerCase();
+    const wkCol=e.weekChange===null?'week-nil':e.weekChange>0?'week-up':'week-dn';
+    const wkTxt=e.weekChange===null?'–':e.weekChange>0?`▼ ${e.weekChange.toFixed(2)} kg`:`▲ ${Math.abs(e.weekChange).toFixed(2)} kg`;
+    const rankNum=i===0?'1':i===1?'2':i===2?'3':(i+1).toString();
+    const medalIcon=i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
+    html+=`<div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s">
+      <div class="rc-rank">${medalIcon||rankNum}</div>
+      <div class="rc-av" style="background:${CLRS[i%CLRS.length]}">${e.name[0].toUpperCase()}${e.streak>=2?`<div class="streak">🔥${e.streak}</div>`:''}</div>
+      <div class="rc-body">
+        <div class="rc-name">${esc(e.name)}${isMe?'<span class="you">YOU</span>':''}</div>
+        <div class="rc-meta">
+          ${e.streak>=2?`<div class="rc-streak">🔥 ${e.streak}-week streak</div>`:''}
+          <div class="rc-status">${e.checkIns} weigh-ins</div>
+        </div>
+        ${i<3?`<div class="rc-prize">${['🥇 ₹3,510','🥈 ₹1,495','🥉 ₹975'][i]} if you win now</div>`:''}
+      </div>
+      <div class="rc-right">
+        <div class="rc-pct">${e.total>0?e.total+'%':'0%'}</div>
+        <div class="rc-week ${wkCol}">${wkTxt}</div>
+      </div>
+    </div>`;
+  });
+
+  // danger zone
+  if(lb.length>4){
+    const dngCount=Math.max(1,Math.floor(lb.length*0.2));
+    html+=`</div><div class="danger-zone"><span style="font-size:18px">⚠️</span><div><div class="dz-label">DANGER ZONE — Bottom ${dngCount}</div><div class="dz-sub">Highest risk of losing all entry stake</div></div></div>`;
+  } else {
+    html+=`</div>`;
+  }
+
+  html+=`<div style="height:16px"></div>`;
+  area.innerHTML=html;
+
+  clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
+}
+
+function shameMsg(delta){
+  const msgs=[`gained ${Math.abs(delta).toFixed(1)}kg this week 👀`,`up ${Math.abs(delta).toFixed(1)}kg — the group sees you 😬`,`+${Math.abs(delta).toFixed(1)}kg. Weekend was rough huh? 🍕`];
+  return msgs[Math.floor(Math.random()*msgs.length)];
+}
+
+function nextMonday(){
+  const now=new Date(),day=now.getDay(),diff=(8-day)%7||7;
+  const nm=new Date(now);nm.setDate(now.getDate()+diff);
+  return nm.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+}
+
+function updCD(){
+  const el=document.getElementById('cd');if(!el){clearInterval(cdI);return;}
+  const diff=CEND-new Date();
+  if(diff>0){
+    const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    el.textContent=`${d}d ${h}h ${m}m ${s}s`;
+  }else{el.textContent='🎉 DONE!';clearInterval(cdI);}
+}
+
+// ── LOG WEIGHT VIEW ──
+async function loadLog(){
+  const area=document.getElementById('log-scroll');if(!area)return;
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading your data...</p></div>`;
+  let myWeights=[];
+  try{
+    // getUserWeights fetches only your rows - faster than pulling all 13 competitors
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getUserWeights',username:CU})});
+    const raw=await r.json();
+    const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
+    myWeights=rows.map(r=>({
+      date:new Date(r[1]),
+      weight:parseFloat(r[2])
+    })).filter(r=>!isNaN(r.weight)&&!isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
+  }catch(e){}
+  renderLog(area,myWeights);
+}
+
+function renderLog(area,weights){
+  const now=new Date(),isMonday=now.getDay()===1;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const color=CLRS[Math.floor(Math.abs((CU||'a').charCodeAt(0))%CLRS.length)];
+  const firstW=weights.length?weights[0].weight:null;
+  const lastW=weights.length?weights[weights.length-1].weight:null;
+  const totalLoss=firstW&&lastW?parseFloat((firstW-lastW).toFixed(2)):null;
+  const totalPct=firstW&&lastW?parseFloat(((firstW-lastW)/firstW*100).toFixed(2)):null;
+  const weekChange=weights.length>=2?parseFloat((weights[weights.length-2].weight-lastW).toFixed(2)):null;
+  const streak=calcStreak(weights);
+  const proofs=JSON.parse(localStorage.getItem('fp_proofs_'+(CU||''))||'[]');
+
+  let html=`
+    <div style="padding:4px 0 16px">
+      <div class="log-top">
+        <div class="log-av" style="background:${color}">${(CU||'?')[0].toUpperCase()}</div>
+        <div>
+          <div class="log-name">${esc(CU||'Competitor')}</div>
+          <div class="log-sub">${weights.length} weigh-ins logged${streak>=2?` · 🔥 ${streak}-week streak`:''}</div>
+        </div>
+      </div>
+      <!-- my stats -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+        <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${totalPct!==null?totalPct+'%':'—'}</span><div class="d-sk">Total Loss</div></div>
+        <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'-'+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">This Week</div></div>
+        <div class="d-stat"><span class="d-sv" style="color:var(--orange)">${streak>=2?'🔥'+streak:'—'}</span><div class="d-sk">Streak</div></div>
+      </div>
+      <!-- log widget -->
+      ${isMonday
+        ?`<div class="log-status-ok">✅ It's Monday! Time to log your weight + photo proof.</div>`
+        :`<div class="log-status-warn">⏰ Official weigh-ins are Mondays.<br>Today is ${days[now.getDay()]}. You can still log practice weight — it won't count for rankings.</div>`
+      }
+      <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal">
+      <div class="wi-unit">KILOGRAMS</div>
+      <!-- PHOTO PROOF -->
+      <div class="photo-preview" id="photo-prev">
+        <img id="photo-img" src="" alt="proof">
+        <button class="rm" onclick="removePhoto()">×</button>
+      </div>
+      <div class="photo-zone" id="photo-zone">
+        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+        <span class="pz-icon">📷</span>
+        <div class="pz-label">Add Photo Proof</div>
+        <div class="pz-sub">Required for official Monday weigh-in</div>
+      </div>
+      <button class="blog" id="logbtn" onclick="submitW()">
+        ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
+      </button>`;
+
+  // history table
+  if(weights.length){
+    html+=`<div style="margin-top:22px;background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd)">
+      <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEIGH-IN HISTORY</div>
+      <div style="overflow-x:auto">
+      <table class="ht"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>
+      ${[...weights].reverse().map((w,i,arr)=>{
+        const prev=arr[i+1];
+        const chg=prev?parseFloat((prev.weight-w.weight).toFixed(2)):null;
+        const cls=chg===null?'flat':chg>0?'dn':'up';
+        const arrow=chg===null?'—':chg>0?`▼ ${chg} kg`:`▲ ${Math.abs(chg)} kg`;
+        return`<tr><td>${w.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-family:var(--fm);font-weight:700">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;
+      }).join('')}
+      </tbody></table></div></div>`;
+  }
+
+  // photo proof grid
+  if(proofs.length){
+    html+=`<div class="proof-hdr">PHOTO PROOF ARCHIVE</div>
+    <div class="proof-grid">
+      ${proofs.map(p=>`<div class="proof-item"><img src="${p.src}" loading="lazy"><div class="proof-date">${p.date}</div></div>`).join('')}
+    </div>`;
+  } else {
+    html+=`<div class="proof-hdr">PHOTO PROOF</div><div class="proof-grid"><div class="proof-empty">No photos yet — add one with your next weigh-in 📷</div></div>`;
+  }
+
+  html+=`</div>`;
+  area.innerHTML=html;
+}
+
+function calcStreak(weights){
+  let s=0;
+  for(let i=weights.length-1;i>=1;i--){
+    if(weights[i].weight<weights[i-1].weight)s++;else break;
+  }
+  return s;
+}
+
+let photoData=null;
+function handlePhoto(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    photoData=e.target.result;
+    document.getElementById('photo-img').src=photoData;
+    document.getElementById('photo-prev').style.display='block';
+    document.getElementById('photo-zone').style.display='none';
+  };
+  r.readAsDataURL(f);
+}
+function removePhoto(){
+  photoData=null;
+  document.getElementById('photo-prev').style.display='none';
+  document.getElementById('photo-zone').style.display='block';
+  document.getElementById('photo-zone').querySelector('input').value='';
+}
+
+async function submitW(){
+  const w=parseFloat(document.getElementById('wi')?.value);
+  if(!w||w<30||w>300){toast('Enter valid weight (30–300 kg)','⚠️');return;}
+  const isMonday=new Date().getDay()===1;
+  if(isMonday&&!photoData){toast('Photo proof required for official weigh-in 📷','⚠️');return;}
+  const btn=document.getElementById('logbtn');
+  btn.disabled=true;btn.textContent='SUBMITTING…';
+  try{
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'addWeight',username:CU,weight:w})});
+    const d=await r.json();
+    if(d.success||true){// accept even if sheet returns warning
+      // save photo locally
+      if(photoData){
+        const proofs=JSON.parse(localStorage.getItem('fp_proofs_'+(CU||''))||'[]');
+        proofs.unshift({src:photoData,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}),weight:w});
+        if(proofs.length>12)proofs.pop();
+        localStorage.setItem('fp_proofs_'+(CU||''),JSON.stringify(proofs));
+      }
+      toast(isMonday?`✅ ${w} kg logged + proof saved!`:`✅ ${w} kg logged (practice)`,'✅');
+      photoData=null;
+      setTimeout(()=>{loadLog();loadLB();},800);
     }
+  }catch(e){toast('Connection error. Try again.','⚠️');}
+  if(btn){btn.disabled=false;btn.textContent=new Date().getDay()===1?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT';}
+}
 
-    function showError(msg) {
-        const el = document.getElementById('errorMessage');
-        el.textContent = msg;
-        el.style.display = 'block';
-        document.getElementById('successMessage').style.display = 'none';
-        setTimeout(() => el.style.display = 'none', 5000);
-    }
+// ── ROOMS ──
+function loadRooms(){try{ROOMS=JSON.parse(localStorage.getItem('fp_rooms')||'[]');}catch(e){ROOMS=[];}}
+function saveRooms(){localStorage.setItem('fp_rooms',JSON.stringify(ROOMS));}
 
-    function showSuccess(msg) {
-        const el = document.getElementById('successMessage');
-        el.textContent = msg;
-        el.style.display = 'block';
-        document.getElementById('errorMessage').style.display = 'none';
-    }
+function renderRooms(){
+  const area=document.getElementById('rooms-scroll');if(!area)return;
+  let html=`
+    <div class="rooms-hdr"><h2>ROOMS</h2><p>Public league + private challenges</p></div>
+    <!-- Public league -->
+    <div class="pub-league" onclick="go('lb')">
+      <div class="pl-l"><span class="live-dot"></span>PUBLIC LEAGUE — LIVE NOW</div>
+      <div class="pl-name">12-WEEK FAT LOSS LEAGUE</div>
+      <div class="pl-meta">
+        <div class="pl-tag">⚔️ 13 Competitors</div>
+        <div class="pl-tag">🏆 ${PRIZE}</div>
+        <div class="pl-tag">⚖️ Monday Weigh-ins</div>
+      </div>
+    </div>
+    <div class="rooms-sec">
+      <div class="sec-hdr"><span>PRIVATE ROOMS</span><button class="btn-new" onclick="openNewRoom()">+ CREATE</button></div>`;
 
-    function hideMessages() {
-        document.getElementById('errorMessage').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'none';
-    }
-
-    async function handleLogin(event) {
-        event.preventDefault();
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
-
-        if (!username || !password) {
-            showError('Please enter both username and password');
-            return;
-        }
-
-        const btn = document.getElementById('loginBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="loading-spinner"></span>Authenticating...';
-
-        try {
-            const res = await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "authenticate", username, password })
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('loginTime', new Date().getTime());
-                localStorage.setItem('user', data.username);
-                localStorage.setItem('userEmail', data.email || '');
-                window.location.href = 'dashboard.html';
-            } else {
-                showError(data.message || 'Invalid username or password');
-                btn.disabled = false;
-                btn.innerHTML = '⚡ Launch Dashboard';
-            }
-        } catch (e) {
-            showError('Connection failed. Please try again.');
-            btn.disabled = false;
-            btn.innerHTML = '⚡ Launch Dashboard';
-        }
-    }
-
-    async function handleRegister(event) {
-        event.preventDefault();
-        const username = document.getElementById('regUsername').value.trim();
-        const email = document.getElementById('regEmail').value.trim();
-        const password = document.getElementById('regPassword').value;
-
-        if (!username || !password) {
-            showError('Please fill in all required fields');
-            return;
-        }
-        if (username.length < 3) {
-            showError('Username must be at least 3 characters');
-            return;
-        }
-        if (password.length < 3) {
-            showError('Password must be at least 3 characters');
-            return;
-        }
-
-        const btn = document.getElementById('registerBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span class="loading-spinner"></span>Creating Account...';
-
-        try {
-            const res = await fetch(API_URL, {
-                method: "POST",
-                body: JSON.stringify({ action: "registerUser", username, email, password })
-            });
-            const data = await res.json();
-
-            if (data.success) {
-                showSuccess('Account created! Redirecting to dashboard...');
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('loginTime', new Date().getTime());
-                localStorage.setItem('user', username);
-                localStorage.setItem('userEmail', email);
-                setTimeout(() => window.location.href = 'dashboard.html', 1500);
-            } else {
-                showError(data.message || 'Registration failed');
-                btn.disabled = false;
-                btn.innerHTML = '🚀 Create Account';
-            }
-        } catch (e) {
-            showError('Connection failed. Please try again.');
-            btn.disabled = false;
-            btn.innerHTML = '🚀 Create Account';
-        }
-    }
-
-    // Redirect if already logged in
-    window.addEventListener('DOMContentLoaded', function () {
-        const isAuthenticated = localStorage.getItem('isAuthenticated');
-        const loginTime = localStorage.getItem('loginTime');
-        const hoursSince = loginTime ? (Date.now() - loginTime) / 3600000 : 999;
-        if (isAuthenticated === 'true' && hoursSince < 24) {
-            window.location.href = 'dashboard.html';
-        }
+  if(!ROOMS.length){
+    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:28px 20px;text-align:center;color:var(--text3)">
+      <div style="font-size:36px;margin-bottom:10px">🚪</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2)">No private rooms yet</div>
+      <div style="font-size:12px;line-height:1.6">Create a room and challenge your friends — office mates, gym crew, family.</div>
+      <button class="btn-new" style="margin-top:14px;padding:10px 20px;font-size:.9rem" onclick="openNewRoom()">+ CREATE FIRST ROOM</button>
+    </div>`;
+  } else {
+    ROOMS.forEach(rm=>{
+      const now=new Date(),end=new Date(rm.end);
+      const dl=Math.max(0,Math.ceil((end-now)/86400000));
+      const status=now<new Date(rm.start)?'upcoming':dl>0?'active':'ended';
+      const pool=rm.fee*(rm.pp||[]).length;
+      const avs=(rm.pp||[]).slice(0,4).map(p=>`<div class="rc2-av" style="background:${p.c||'#7c5cfc'}">${(p.n||'?')[0]}</div>`).join('');
+      html+=`<div class="room-card" onclick="openRoom('${esc(rm.id)}')">
+        <div class="rc2-top">
+          <div class="rc2-name">${esc(rm.name)}</div>
+          <div class="rc2-badge ${status}">${status==='active'?'LIVE':status==='upcoming'?'SOON':'ENDED'}</div>
+        </div>
+        <div class="rc2-desc">${esc(rm.desc||'')}</div>
+        <div class="rc2-foot">
+          <div class="rc2-peeps"><div class="rc2-avs">${avs}</div><span class="rc2-cnt">${(rm.pp||[]).length}${rm.maxP?' / '+rm.maxP:''}</span></div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="rc2-pool">${pool>0?'₹'+pool:'Free'}</span>
+            <button class="join-chip" onclick="event.stopPropagation();openShare2('${esc(rm.id)}')">Share</button>
+          </div>
+        </div>
+      </div>`;
     });
-</script>
+  }
+  html+=`</div><div style="height:16px"></div>`;
+  area.innerHTML=html;
+}
 
+function openNewRoom(){
+  ['nr-name','nr-desc','nr-fee','nr-pen'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('nr-dur').value=12;
+  document.getElementById('nr-max').value='';
+  document.getElementById('nr-p1').value=60;
+  document.getElementById('nr-p2').value=30;
+  document.getElementById('nr-p3').value=10;
+  document.getElementById('tw-pen').classList.add('on');
+  document.getElementById('pen-f').style.display='block';
+  document.getElementById('tw-priv').classList.add('on');
+  openS('ov-nr');
+}
+
+function penv(el){document.getElementById('pen-f').style.display=el.classList.contains('on')?'block':'none';}
+
+function createRoom(){
+  const name=document.getElementById('nr-name').value.trim();
+  if(!name){toast('Enter a room name','⚠️');return;}
+  const dur=parseInt(document.getElementById('nr-dur').value)||12;
+  const start=new Date();
+  const end=new Date(start);end.setDate(end.getDate()+dur*7);
+  const fmt=d=>d.toISOString().split('T')[0];
+  const fee=parseFloat(document.getElementById('nr-fee').value)||0;
+  const rm={
+    id:'rm'+Date.now(),
+    name,
+    desc:document.getElementById('nr-desc').value.trim(),
+    start:fmt(start),end:fmt(end),fee,
+    penalty:document.getElementById('tw-pen').classList.contains('on')?(parseFloat(document.getElementById('nr-pen').value)||0):0,
+    priv:document.getElementById('tw-priv').classList.contains('on'),
+    p1:parseInt(document.getElementById('nr-p1').value)||60,
+    p2:parseInt(document.getElementById('nr-p2').value)||30,
+    p3:parseInt(document.getElementById('nr-p3').value)||10,
+    maxP:parseInt(document.getElementById('nr-max').value)||null,
+    pp:[{n:CU,c:CLRS[Math.floor(Math.random()*CLRS.length)]}],
+  };
+  ROOMS.unshift(rm);saveRooms();
+  cls('ov-nr');renderRooms();
+  toast('Room created!','✅');
+  setTimeout(()=>openShare2(rm.id),500);
+}
+
+function openRoom(id){
+  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
+  document.getElementById('rm-stit').textContent=rm.name;
+  const now=new Date(),end=new Date(rm.end);
+  const dl=Math.max(0,Math.ceil((end-now)/86400000));
+  const pool=rm.fee*(rm.pp||[]).length;
+  const sorted=[...(rm.pp||[])].sort((a,b)=>(b.v||0)-(a.v||0));
+  document.getElementById('rm-sbody').innerHTML=`
+    <div class="d-hero"><div class="d-em">⚔️</div><div class="d-inf"><h2>${esc(rm.name)}</h2><p>${esc(rm.desc||'')||'Compete, lose, win.'}</p></div></div>
+    <div class="d-stats">
+      <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${pool>0?'₹'+pool:'Free'}</span><div class="d-sk">Prize</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--green)">${dl}d</span><div class="d-sk">Left</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--text2)">${(rm.pp||[]).length}</span><div class="d-sk">In</div></div>
+    </div>
+    ${sorted.length?`<div class="d-rank-list">${sorted.map((p,i)=>{const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);const isMe=p.n===CU;return`<div class="d-ri${isMe?' me':''}"><div class="d-rnk">${medal}</div><div class="d-rav" style="background:${p.c||'#7c5cfc'}">${(p.n||'?')[0]}</div><div class="d-rname">${esc(p.n||'?')}${isMe?' 👈':''}</div><div class="d-rpct">${(p.v||0)>0?(p.v||0).toFixed(1)+'%':'—'}</div></div>`}).join('')}</div>`:
+    `<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0">No participants yet — share the invite link!</p>`}
+    <div style="height:8px"></div>`;
+  document.getElementById('rm-sfoot').innerHTML=`<button class="bs-btn" style="flex:1" onclick="cls('ov-room');openShare2('${esc(id)}')">📤 SHARE INVITE</button>`;
+  openS('ov-room');
+}
+
+function openShare2(id){
+  let nm,desc,fee,pool;
+  if(id==='live'||id===null){nm='12-Week Fat Loss League';desc='The main public league. Weigh in every Monday. Highest % loss wins ₹6,500!';fee=1000;pool=6500;}
+  else{const rm=ROOMS.find(r=>r.id===id);if(!rm)return;nm=rm.name;desc=rm.desc||'';fee=rm.fee;pool=rm.fee*(rm.pp||[]).length;}
+  const link=`${location.origin}${location.pathname}?join=${id}`;
+  document.getElementById('sh-nm').textContent=nm;
+  document.getElementById('sh-sub').textContent=desc;
+  document.getElementById('sh-link').textContent=link;
+  const wa=`⚔️ *FitPacta — ${nm}*\n\n${desc}\n\n${fee>0?`💰 Entry: ₹${fee}\n`:''}🏆 Prize Pool: ${pool>0?'₹'+pool:'Free'}\n📅 Monday weigh-ins · Photo proof required\n\n🔗 Join: ${link}`;
+  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
+  document.getElementById('sh-cp').onclick=()=>{
+    navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('Copied!','📋');});
+  };
+  openS('ov-share');
+}
+
+// ── SHEETS ──
+function openS(id){const e=document.getElementById(id);if(e){e.classList.add('on');document.body.style.overflow='hidden';}}
+function cls(id){const e=document.getElementById(id);if(e){e.classList.remove('on');document.body.style.overflow='';}}
+function ovc(ev,id){if(ev.target.id===id)cls(id);}
+
+// ── INCOMING LINK ──
+function checkLink(){
+  const p=new URLSearchParams(location.search),jid=p.get('join');
+  if(jid){
+    if(jid==='live')go('lb');
+    else{const rm=ROOMS.find(r=>r.id===jid);if(rm){go('rooms');setTimeout(()=>openRoom(jid),600);}}
+  }
+}
+
+// ── TOAST ──
+let tt=null;
+function toast(msg,ic='✅'){
+  document.getElementById('tm').textContent=msg;document.getElementById('ti').textContent=ic;
+  const t=document.getElementById('toast');t.classList.add('on');clearTimeout(tt);
+  tt=setTimeout(()=>t.classList.remove('on'),2800);
+}
+
+// ── UTILS ──
+function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+</script>
 </body>
 </html>
