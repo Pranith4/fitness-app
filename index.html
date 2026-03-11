@@ -6,8 +6,11 @@
 <meta name="theme-color" content="#080810">
 <title>FitBounty — Earn Your Bounty.</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Google Maps JS API - free tier, no billing needed for basic Maps + Places -->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-placeholder-replace-me&libraries=geometry,places&callback=gmapsReady" async defer></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <style>
 :root{
   --bg:#080810;--bg2:#0f0f1c;--bg3:#141428;
@@ -337,6 +340,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 #gmap{width:100%;height:100%}
 .map-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text3)}
 .map-placeholder-icon{font-size:40px}
+.leaflet-routing-container { display: none; }
 .map-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .map-btn{padding:8px 16px;border-radius:var(--rf);border:none;font-family:var(--fb);font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
 .map-btn.primary{background:var(--gold);color:#080810}
@@ -1814,6 +1818,80 @@ function toast(msg,ic='✅'){
 
 // ── UTILS ──
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
+
+/* =============================== OPEN MAP SYSTEM (Leaflet) ================================ */
+let crMap = null;
+let routingControl = null;
+let crPath = [];
+
+function initCreateMap() {
+    const mapEl = document.getElementById("cr-map");
+    if (!mapEl) return;
+
+    // 1. Initialize Map
+    crMap = L.map(mapEl).setView([12.9716, 77.5946], 13);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "© OpenStreetMap"
+    }).addTo(crMap);
+
+    // 2. Setup the Open Routing Engine (OSRM)
+    routingControl = L.Routing.control({
+        waypoints: [],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        show: false, // Hide instruction panel
+        router: L.Routing.osrmv1({
+            serviceUrl: `https://router.project-osrm.org/route/v1`
+        }),
+        lineOptions: {
+            styles: [{ color: '#4fc3f7', weight: 5, opacity: 0.8 }]
+        }
+    }).addTo(crMap);
+
+    // 3. Listen for path calculation to update distance
+    routingControl.on('routesfound', function(e) {
+        const routes = e.routes;
+        const summary = routes[0].summary;
+        const dist = summary.totalDistance; // distance in meters
+        
+        const distEl = document.getElementById("cr-dist");
+        if (distEl) {
+            distEl.textContent = dist > 1000 
+                ? (dist / 1000).toFixed(2) + " km" 
+                : Math.round(dist) + " m";
+        }
+        
+        // Update the path coordinates for saving to your backend
+        crPath = routes[0].coordinates;
+    });
+
+    // 4. Handle clicks to add waypoints
+    crMap.on("click", function(e) {
+        addWaypoint(e.latlng);
+    });
+}
+
+function addWaypoint(latlng) {
+    const currentWaypoints = routingControl.getWaypoints();
+    // Filter to get only points that have coordinates
+    const newWaypoints = currentWaypoints
+        .filter(wp => wp.latLng)
+        .map(wp => wp.latLng);
+    
+    newWaypoints.push(latlng);
+    routingControl.setWaypoints(newWaypoints);
+}
+
+// Update your clear button logic to use this
+function clearRoute() {
+    if (routingControl) {
+        routingControl.setWaypoints([]);
+        crPath = [];
+        const distEl = document.getElementById("cr-dist");
+        if (distEl) distEl.textContent = "0 m";
+    }
+}
 </script>
 </body>
 </html>
