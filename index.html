@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#080810">
 <title>FitBounty — Earn Your Bounty.</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- Google Maps JS API - free tier, no billing needed for basic Maps + Places -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-placeholder-replace-me&libraries=geometry,places&callback=gmapsReady" async defer></script>
 <style>
 :root{
   --bg:#080810;--bg2:#0f0f1c;--bg3:#141428;
@@ -28,17 +28,7 @@
 html,body{min-height:100%;overflow-x:hidden}
 body{font-family:var(--fb);background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:2px}
-#cr-map{
-height:260px;
-width:100%;
-border-radius:14px;
-}
 
-#route-detail-map{
-height:260px;
-width:100%;
-border-radius:14px;
-}
 /* ── GRAIN OVERLAY ── */
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.6}
 
@@ -1824,128 +1814,6 @@ function toast(msg,ic='✅'){
 
 // ── UTILS ──
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-
-/* ===============================
-   FREE MAP SYSTEM (Leaflet)
-================================ */
-
-let crMap=null
-let crMarkers=[]
-let crPolyline=null
-let crPath=[]
-
-function initCreateMap(){
-
-const mapEl=document.getElementById("cr-map")
-
-if(!mapEl) return
-
-crMap=L.map(mapEl).setView([12.9716,77.5946],13)
-
-L.tileLayer(
-"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-{
-attribution:"© OpenStreetMap"
-}).addTo(crMap)
-
-crPolyline=L.polyline([],{
-color:"#4fc3f7",
-weight:4
-}).addTo(crMap)
-
-crMap.on("click",function(e){
-
-addWaypoint(e.latlng)
-
-})
-
-}
-
-function addWaypoint(latlng){
-
-crPath.push(latlng)
-
-const marker=L.circleMarker(latlng,{
-radius:6,
-color:"#fff",
-weight:2,
-fillColor:"#f5c842",
-fillOpacity:1
-}).addTo(crMap)
-
-crMarkers.push(marker)
-
-crPolyline.setLatLngs(crPath)
-
-updateRouteDist()
-
-}
-
-function updateRouteDist(){
-
-if(crPath.length<2){
-
-document.getElementById("cr-dist").textContent="0 m"
-return
-
-}
-
-let dist=0
-
-for(let i=1;i<crPath.length;i++){
-
-dist+=crPath[i-1].distanceTo(crPath[i])
-
-}
-
-document.getElementById("cr-dist").textContent=
-dist>1000
-?(dist/1000).toFixed(2)+" km"
-:Math.round(dist)+" m"
-
-}
-
-function clearRoute(){
-
-crMarkers.forEach(m=>crMap.removeLayer(m))
-
-crMarkers=[]
-crPath=[]
-
-crPolyline.setLatLngs([])
-
-updateRouteDist()
-
-}
-
-function saveRoute(){
-
-if(crPath.length<2){
-
-toast("Create a route first","⚠️")
-return
-
-}
-
-let distM=0
-
-for(let i=1;i<crPath.length;i++){
-
-distM+=crPath[i-1].distanceTo(crPath[i])
-
-}
-
-const route={
-id:"rt"+Date.now(),
-distance:distM,
-path:crPath.map(p=>({lat:p.lat,lng:p.lng}))
-}
-
-console.log(route)
-
-toast("Route saved","✅")
-
-}
 </script>
 </body>
 </html>
