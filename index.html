@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0">
 <meta name="theme-color" content="#080810">
-<title>FitPacta — Compete. Lose. Win.</title>
+<title>FitBounty — Earn Your Bounty.</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
 :root{
   --bg:#080810;--bg2:#0f0f1c;--bg3:#141428;
@@ -16,6 +18,7 @@
   --green:#00e676;--greenbg:rgba(0,230,118,0.08);
   --blue:#4fc3f7;--bluebg:rgba(79,195,247,0.08);
   --orange:#ff6d00;--orangebg:rgba(255,109,0,0.10);
+  --purple:#a78bfa;--purplebg:rgba(167,139,250,0.10);
   --text:#f5f0ff;--text2:rgba(245,240,255,0.52);--text3:rgba(245,240,255,0.25);
   --fd:'Bebas Neue',sans-serif;--fb:'Bricolage Grotesque',sans-serif;--fm:'DM Mono',monospace;
   --r:14px;--rl:20px;--rxl:26px;--rf:999px;
@@ -25,7 +28,17 @@
 html,body{min-height:100%;overflow-x:hidden}
 body{font-family:var(--fb);background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surf2);border-radius:2px}
+#cr-map{
+height:260px;
+width:100%;
+border-radius:14px;
+}
 
+#route-detail-map{
+height:260px;
+width:100%;
+border-radius:14px;
+}
 /* ── GRAIN OVERLAY ── */
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.6}
 
@@ -66,6 +79,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .lpv{font-family:var(--fd);font-size:1.3rem;color:var(--gold);letter-spacing:1px}
 .lpk{font-size:10px;color:var(--text3);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
 
+/* admin badge on login */
+.admin-hint{background:var(--purplebg);border:1px solid rgba(167,139,250,.25);border-radius:var(--r);padding:8px 12px;font-size:11px;font-weight:700;color:var(--purple);letter-spacing:.5px;margin-bottom:14px;display:none;text-align:center}
+
 /* ══════════════════════════
    APP SHELL
 ══════════════════════════ */
@@ -87,6 +103,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ni.on .nic{transform:scale(1.15)}
 .ndot{position:absolute;top:3px;left:50%;transform:translateX(-50%);width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0;transition:opacity .2s}
 .ni.on .ndot{opacity:1}
+/* admin nav item — purple tint when active */
+.ni.admin-nav.on{color:var(--purple)}
+.ni.admin-nav.on .ndot{background:var(--purple)}
 @media(min-width:768px){
   #bnav{position:static;transform:none;width:220px;min-width:220px;height:100dvh;flex-direction:column;align-items:stretch;padding:0;border-top:none;border-right:1px solid var(--brd);background:var(--bg2);padding-top:calc(var(--st) + 16px)}
   .ni{flex-direction:row;justify-content:flex-start;gap:14px;padding:13px 20px;font-size:12px;min-height:auto;border-radius:0}
@@ -108,14 +127,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .tright{display:flex;align-items:center;gap:8px}
 .ib{width:38px;height:38px;background:var(--surf);border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text);transition:all .2s}
 .ib:active{transform:scale(.9)}
-.uchip{background:var(--surf);border:1px solid var(--brd2);border-radius:var(--rf);padding:5px 11px;font-size:11px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:5px;max-width:120px}
+.uchip{background:var(--surf);border:1px solid var(--brd2);border-radius:var(--rf);padding:5px 11px;font-size:11px;font-weight:700;color:var(--text2);display:flex;align-items:center;gap:5px;max-width:140px}
 .uchip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.uchip.admin{background:var(--purplebg);border-color:rgba(167,139,250,.3);color:var(--purple)}
 @media(min-width:768px){.tbar{display:none}}
 
 /* ══════════════════════════
    LEADERBOARD VIEW (main)
 ══════════════════════════ */
-/* MATCHDAY HEADER */
 .mday{padding:18px 18px 0;position:relative}
 .mday-bg{position:absolute;inset:0;background:radial-gradient(ellipse 100% 80% at 50% 0%,rgba(245,200,66,.08),transparent);pointer-events:none}
 .mday-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;display:flex;align-items:center;gap:6px}
@@ -127,6 +146,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .meta-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surf);border:1px solid var(--brd2);border-radius:var(--rf);padding:5px 11px;font-size:11px;font-weight:700;color:var(--text2)}
 .meta-pill.gold{background:var(--goldbg);border-color:rgba(245,200,66,.25);color:var(--gold)}
 .meta-pill.red{background:var(--redbg);border-color:rgba(255,59,59,.25);color:var(--red)}
+.meta-pill.purple{background:var(--purplebg);border-color:rgba(167,139,250,.25);color:var(--purple)}
 
 /* COUNTDOWN BAR */
 .cbar{margin:0 18px 16px;background:var(--surf);border:1px solid var(--brd2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
@@ -139,7 +159,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 /* PRIZE BANNER */
 .prize-ban{margin:0 18px 16px;background:linear-gradient(135deg,rgba(245,200,66,.15),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.3);border-radius:var(--rl);padding:18px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
 .prize-ban::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(245,200,66,.2),transparent 70%)}
-.prize-left{}
 .prize-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,200,66,.6);margin-bottom:4px}
 .prize-amt{font-family:var(--fd);font-size:2.4rem;color:var(--gold);letter-spacing:2px;line-height:1;text-shadow:0 0 30px rgba(245,200,66,.4)}
 .prize-sub{font-size:11px;color:var(--text3);margin-top:3px}
@@ -149,7 +168,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ps-medal{font-size:14px}
 .ps-pct{color:var(--text2);font-family:var(--fm)}
 
-/* SHAME METER */
+/* GRIND CHECK */
 .shame-card{margin:0 18px 16px;background:var(--redbg);border:1.5px solid rgba(255,59,59,.25);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden}
 .shame-card::before{content:'🔥';position:absolute;right:14px;top:50%;transform:translateY(-50%);font-size:40px;opacity:.15}
 .shame-hdr{display:flex;align-items:center;gap:8px;margin-bottom:12px}
@@ -162,7 +181,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .shame-name{font-weight:700;font-size:13px}
 .shame-txt{font-size:11px;color:var(--red);margin-top:1px;font-style:italic}
 .shame-val{font-family:var(--fm);font-size:13px;color:var(--red);font-weight:700}
-.shame-empty{font-size:13px;color:var(--text3);text-align:center;padding:8px 0}
 
 /* LEADERBOARD */
 .lb-hdr{display:flex;align-items:center;justify-content:space-between;padding:0 18px 10px}
@@ -176,12 +194,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .rc:active{transform:scale(.985)}
 .rc.r1{background:linear-gradient(135deg,rgba(245,200,66,.16),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.35)}
 .rc.r2{background:linear-gradient(135deg,rgba(180,188,200,.10),rgba(180,188,200,.02));border:1.5px solid rgba(180,188,200,.2)}
-.rc.r3{background:linear-gradient(135deg,rgba(180,120,80,.10),rgba(180,120,80,.02));border:1.5px solid rgba(180,120,80,.2)}
 .rc.rn{background:var(--surf);border:1px solid var(--brd)}
 .rc.rme{background:rgba(79,195,247,.06);border:1.5px solid rgba(79,195,247,.25)}
 .rc.rdng{background:rgba(255,59,59,.05);border:1px solid rgba(255,59,59,.12)}
 .rc-rank{font-family:var(--fd);font-size:1.4rem;letter-spacing:0;width:30px;text-align:center;flex-shrink:0;line-height:1}
-.rc.r1 .rc-rank{color:var(--gold)}.rc.r2 .rc-rank{color:#b0bac6}.rc.r3 .rc-rank{color:#b47850}
+.rc.r1 .rc-rank{color:var(--gold)}.rc.r2 .rc-rank{color:#b0bac6}
 .rc.rn .rc-rank,.rc.rme .rc-rank{color:var(--text3)}
 .rc-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0;position:relative}
 .rc-av .streak{position:absolute;bottom:-3px;right:-3px;background:var(--orange);border-radius:var(--rf);padding:1px 5px;font-family:var(--fm);font-size:9px;font-weight:700;color:#fff;border:1.5px solid var(--bg);white-space:nowrap}
@@ -193,14 +210,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .rc-status{font-size:10px;font-weight:700;color:var(--text3)}
 .rc-right{text-align:right;flex-shrink:0}
 .rc-pct{font-family:var(--fd);font-size:1.3rem;letter-spacing:.5px;line-height:1}
-.rc.r1 .rc-pct{color:var(--gold)}.rc.r2 .rc-pct{color:#b0bac6}.rc.r3 .rc-pct{color:#b47850}
+.rc.r1 .rc-pct{color:var(--gold)}.rc.r2 .rc-pct{color:#b0bac6}
 .rc.rn .rc-pct,.rc.rme .rc-pct{color:var(--text)}
 .rc-week{font-size:10px;font-weight:700;margin-top:2px}
 .week-up{color:var(--green)}.week-dn{color:var(--red)}.week-nil{color:var(--text3)}
-.rc-penalty{font-size:10px;font-weight:700;color:var(--red);margin-top:2px}
-/* prize tags on r1,r2,r3 */
 .rc-prize{font-size:9px;font-weight:700;background:var(--goldbg);color:var(--gold);border-radius:var(--rf);padding:2px 7px;letter-spacing:.3px;margin-top:2px;display:inline-block}
-/* survivor danger zone */
 .danger-zone{margin:12px 18px 0;display:flex;align-items:center;gap:8px;background:var(--redbg);border:1px solid rgba(255,59,59,.25);border-radius:var(--r);padding:9px 13px}
 .dz-label{font-size:10px;font-weight:700;color:var(--red);letter-spacing:.8px;text-transform:uppercase}
 .dz-sub{font-size:10px;color:var(--text3);margin-top:1px}
@@ -212,7 +226,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .log-sub{font-size:12px;color:var(--text3);margin-top:2px}
 .log-status-ok{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--green);margin-bottom:14px}
 .log-status-warn{background:rgba(255,109,0,.09);border:1px solid rgba(255,109,0,.22);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--orange);margin-bottom:14px;line-height:1.5}
-.log-status-err{background:var(--redbg);border:1px solid rgba(255,59,59,.28);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:600;color:var(--red);margin-bottom:14px;line-height:1.5}
 .wi-big{width:100%;padding:16px 18px;background:var(--bg);color:var(--text);border:2px solid var(--brd2);border-radius:var(--r);font-family:var(--fm);font-size:2rem;font-weight:700;letter-spacing:1px;transition:all .2s;-webkit-appearance:none;text-align:center}
 .wi-big:focus{outline:none;border-color:var(--gold);background:rgba(245,200,66,.03)}
 .wi-big::placeholder{color:var(--text3);font-size:1rem;letter-spacing:0}
@@ -220,7 +233,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .blog{width:100%;padding:16px;background:var(--gold);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1.2rem;letter-spacing:1.5px;cursor:pointer;min-height:54px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
 .blog:active{transform:scale(.97);background:var(--gold2)}
 .blog:disabled{background:var(--surf2);color:var(--text3);cursor:not-allowed;transform:none;font-family:var(--fb);font-size:14px;letter-spacing:0}
-/* photo upload */
 .photo-zone{border:2px dashed var(--brd2);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:var(--surf);position:relative}
 .photo-zone:active{border-color:var(--gold);background:var(--goldbg)}
 .photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -230,7 +242,6 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .photo-preview{width:100%;border-radius:var(--r);overflow:hidden;margin-bottom:14px;position:relative;display:none}
 .photo-preview img{width:100%;max-height:220px;object-fit:cover;border-radius:var(--r);display:block}
 .photo-preview .rm{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.7);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center}
-/* proof history */
 .proof-hdr{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin:18px 0 10px}
 .proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .proof-item{aspect-ratio:1;border-radius:var(--r);overflow:hidden;background:var(--surf);position:relative;border:1px solid var(--brd)}
@@ -265,32 +276,39 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .ht th{background:rgba(245,200,66,.07);color:var(--gold);font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:.8px;padding:9px 12px;text-align:left;border-bottom:1px solid var(--brd)}
 .ht td{padding:10px 12px;border-bottom:1px solid var(--brd);vertical-align:middle}
 .ht tr:last-child td{border-bottom:none}
-.ht tr.me td{background:rgba(79,195,247,.04)}
 .dn{color:var(--green);font-weight:700}.up{color:var(--red);font-weight:700}.flat{color:var(--text3)}
 
-/* ROOMS VIEW */
+/* ══════════════════════════
+   ROOMS VIEW
+══════════════════════════ */
 .rooms-hdr{padding:18px 18px 0}
 .rooms-hdr h2{font-family:var(--fd);font-size:1.8rem;letter-spacing:1px;margin-bottom:4px}
 .rooms-hdr p{font-size:13px;color:var(--text2)}
-.pub-league{margin:16px 18px;background:linear-gradient(135deg,rgba(245,200,66,.14),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.3);border-radius:var(--rl);padding:20px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
-.pub-league::after{content:'→';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:1.4rem;color:rgba(245,200,66,.4)}
-.pub-league:active{transform:scale(.98)}
+.section-banner{margin:16px 18px;border-radius:var(--rl);padding:20px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.section-banner.private-main{background:linear-gradient(135deg,rgba(245,200,66,.14),rgba(245,200,66,.04));border:1.5px solid rgba(245,200,66,.3)}
+.section-banner.private-main::after{content:'→';position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:1.4rem;color:rgba(245,200,66,.4)}
+.section-banner:active{transform:scale(.98)}
 .pl-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(245,200,66,.6);margin-bottom:6px;display:flex;align-items:center;gap:6px}
 .pl-name{font-family:var(--fd);font-size:1.5rem;letter-spacing:1px;color:var(--gold);margin-bottom:6px}
 .pl-meta{display:flex;gap:10px;flex-wrap:wrap}
 .pl-tag{background:rgba(245,200,66,.12);border-radius:var(--rf);padding:4px 10px;font-size:11px;font-weight:700;color:var(--gold)}
+.pl-tag.blue{background:var(--bluebg);color:var(--blue)}
+.pl-tag.purple{background:var(--purplebg);color:var(--purple)}
 .rooms-sec{padding:0 18px;margin-top:6px}
 .sec-hdr{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
 .btn-new{background:var(--gold);color:#080810;border:none;border-radius:var(--rf);padding:6px 14px;font-family:var(--fd);font-size:.85rem;letter-spacing:1px;cursor:pointer;min-height:34px;transition:all .2s}
 .btn-new:active{background:var(--gold2)}
+.btn-new.purple{background:var(--purple);color:#080810}
 .room-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:10px;cursor:pointer;transition:transform .15s}
 .room-card:active{transform:scale(.985)}
-.room-card.locked{opacity:.6}
+.room-card.route-card{border-color:rgba(79,195,247,.2);background:linear-gradient(135deg,rgba(79,195,247,.06),rgba(79,195,247,.01))}
 .rc2-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
 .rc2-name{font-family:var(--fd);font-size:1rem;letter-spacing:.5px}
 .rc2-badge{background:var(--surf2);border-radius:var(--rf);padding:3px 9px;font-size:10px;font-weight:700;color:var(--text2)}
 .rc2-badge.active{background:var(--greenbg);color:var(--green)}
 .rc2-badge.lock{background:rgba(79,195,247,.1);color:var(--blue)}
+.rc2-badge.route{background:rgba(79,195,247,.12);color:var(--blue)}
+.rc2-badge.admin{background:var(--purplebg);color:var(--purple)}
 .rc2-desc{font-size:12px;color:var(--text2);line-height:1.55;margin-bottom:10px}
 .rc2-foot{display:flex;align-items:center;justify-content:space-between}
 .rc2-peeps{display:flex;align-items:center;gap:6px}
@@ -301,6 +319,68 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .rc2-pool{font-family:var(--fm);font-size:11px;color:var(--gold)}
 .join-chip{background:var(--gold);color:#080810;border:none;border-radius:var(--rf);padding:5px 14px;font-family:var(--fd);font-size:.85rem;letter-spacing:.5px;cursor:pointer;min-height:32px;transition:all .2s}
 .join-chip:active{background:var(--gold2)}
+.join-chip.blue{background:var(--blue);color:#080810}
+
+/* ══════════════════════════
+   ADMIN VIEW
+══════════════════════════ */
+.admin-header{padding:18px 18px 0}
+.admin-header h2{font-family:var(--fd);font-size:1.8rem;letter-spacing:1px;color:var(--purple);margin-bottom:4px}
+.admin-header p{font-size:13px;color:var(--text2)}
+.admin-badge-row{display:flex;align-items:center;gap:8px;padding:10px 18px;margin-bottom:4px}
+.admin-badge{background:var(--purplebg);border:1.5px solid rgba(167,139,250,.3);border-radius:var(--rf);padding:6px 14px;font-size:11px;font-weight:700;color:var(--purple);letter-spacing:1px}
+.admin-sec{padding:0 18px;margin-bottom:16px}
+.admin-sec h3{font-family:var(--fd);font-size:1rem;letter-spacing:1px;color:var(--text2);margin-bottom:12px;padding-top:16px;border-top:1px solid var(--brd)}
+.pub-contest-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;margin-bottom:10px}
+.pub-contest-card.live{border-color:rgba(245,200,66,.3);background:linear-gradient(135deg,rgba(245,200,66,.07),rgba(245,200,66,.01))}
+.pcc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.pcc-name{font-family:var(--fd);font-size:1rem;letter-spacing:.5px}
+.pcc-actions{display:flex;gap:6px;margin-top:10px}
+.pcc-btn{padding:6px 14px;border-radius:var(--rf);border:none;font-family:var(--fb);font-weight:700;font-size:12px;cursor:pointer;transition:all .2s}
+.pcc-btn.primary{background:var(--gold);color:#080810}
+.pcc-btn.danger{background:var(--redbg);color:var(--red);border:1px solid rgba(255,59,59,.2)}
+
+/* ══════════════════════════
+   ROUTE CHALLENGE VIEW
+══════════════════════════ */
+#map-container{position:relative;width:100%;height:320px;border-radius:var(--rl);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:12px}
+#gmap{width:100%;height:100%}
+.map-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--text3)}
+.map-placeholder-icon{font-size:40px}
+.map-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.map-btn{padding:8px 16px;border-radius:var(--rf);border:none;font-family:var(--fb);font-weight:700;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px}
+.map-btn.primary{background:var(--gold);color:#080810}
+.map-btn.secondary{background:var(--surf);color:var(--text2);border:1px solid var(--brd2)}
+.map-btn.danger{background:var(--redbg);color:var(--red);border:1px solid rgba(255,59,59,.2)}
+.map-btn.gps{background:var(--bluebg);color:var(--blue);border:1px solid rgba(79,195,247,.25)}
+.map-btn:disabled{opacity:.5;cursor:not-allowed}
+.route-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.route-stat{background:var(--surf);border-radius:var(--r);padding:11px;text-align:center;border:1px solid var(--brd)}
+.rsv{font-family:var(--fm);font-weight:700;font-size:.95rem;display:block}
+.rsk{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
+.gps-tracker{background:var(--greenbg);border:1px solid rgba(0,230,118,.2);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px;display:none}
+.gps-tracker.on{display:block}
+.gps-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.gps-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1s infinite}
+.gps-title{font-family:var(--fd);font-size:1rem;letter-spacing:1px;color:var(--green)}
+.gps-time{font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--green);letter-spacing:2px;text-align:center;padding:8px 0}
+.route-winner-card{background:linear-gradient(135deg,rgba(79,195,247,.15),rgba(79,195,247,.04));border:1.5px solid rgba(79,195,247,.3);border-radius:var(--rl);padding:20px;text-align:center;margin-bottom:12px}
+.rwc-emoji{font-size:48px;margin-bottom:8px}
+.rwc-name{font-family:var(--fd);font-size:1.8rem;letter-spacing:1px;color:var(--blue);margin-bottom:4px}
+.rwc-time{font-family:var(--fm);font-size:1.1rem;color:var(--text2);margin-bottom:12px}
+.rwc-route{font-size:12px;color:var(--text3);margin-bottom:14px}
+.share-winner-btn{width:100%;padding:14px;background:var(--blue);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1rem;letter-spacing:1.5px;cursor:pointer;min-height:48px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.share-winner-btn:active{transform:scale(.97)}
+/* leaderboard of completions */
+.route-completions{background:var(--surf);border-radius:var(--rl);border:1px solid var(--brd);overflow:hidden;margin-bottom:12px}
+.rc-list-hdr{padding:12px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)}
+.completion-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--brd)}
+.completion-row:last-child{border-bottom:none}
+.cr-rank{font-family:var(--fd);font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;color:var(--text3)}
+.cr-rank.gold{color:var(--gold)}
+.cr-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px;color:#fff;flex-shrink:0}
+.cr-name{flex:1;font-weight:700;font-size:13px}
+.cr-time{font-family:var(--fm);font-size:13px;color:var(--blue)}
 
 /* ── SHEETS ── */
 .ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.80);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s}
@@ -335,6 +415,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .bs-btn{width:100%;padding:15px;background:var(--gold);color:#080810;border:none;border-radius:var(--r);font-family:var(--fd);font-size:1.1rem;letter-spacing:1.5px;cursor:pointer;min-height:52px;margin-top:4px;transition:all .2s}
 .bs-btn:active{transform:scale(.97);background:var(--gold2)}
 .bs-btn.sec{background:var(--surf2);color:var(--text2);font-family:var(--fb);font-weight:700;font-size:14px;letter-spacing:0}
+.bs-btn.purple{background:var(--purple);color:#080810}
 
 /* DETAIL sheet */
 .d-hero{background:var(--surf);border-radius:var(--rl);padding:16px;margin-bottom:14px;display:flex;gap:14px;align-items:center}
@@ -363,6 +444,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .bwa:active{background:#1db954}
 .bcp{width:100%;padding:12px;background:var(--surf);color:var(--text2);border:1px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-weight:700;font-size:13px;cursor:pointer;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
 
+/* winner share card canvas */
+#winner-canvas{display:none;border-radius:var(--rl);overflow:hidden;width:100%;margin-bottom:10px}
+
 /* TOAST */
 #toast{position:fixed;bottom:calc(var(--nh) + var(--sb) + 10px);left:50%;transform:translateX(-50%) translateY(10px);background:var(--surf2);color:var(--text);padding:11px 18px;border-radius:var(--rf);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;white-space:nowrap;z-index:9999;opacity:0;pointer-events:none;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.7);border:1px solid var(--brd2);max-width:calc(100vw - 36px)}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -380,8 +464,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <div class="lmark" style="background:#13131f;border:2px solid rgba(245,200,66,.25);">
         <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/><circle cx="32" cy="19.5" r="2" fill="#080810"/><circle cx="16.5" cy="27.5" r="1.6" fill="#080810"/><circle cx="47.5" cy="27.5" r="1.6" fill="#080810"/></svg>
       </div>
-      <div class="lbrand">FITPACTA</div>
-      <div class="ltag">Compete. Lose. Win.</div>
+      <div class="lbrand">FITBOUNTY</div>
+      <div class="ltag">Earn Your Bounty.</div>
     </div>
     <div class="ftgl">
       <button class="ftb on" onclick="showF('l')">Sign In</button>
@@ -389,8 +473,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     </div>
     <div id="emsg" class="emsg"></div>
     <div id="omsg" class="omsg"></div>
+    <div id="admin-hint" class="admin-hint">🛡️ ADMIN ACCESS DETECTED</div>
     <div id="lf">
-      <div class="fg"><label class="fl">Username</label><input type="text" id="lu" class="fi" placeholder="your username" autocomplete="username" autocapitalize="none"></div>
+      <div class="fg"><label class="fl">Username</label><input type="text" id="lu" class="fi" placeholder="your username" autocomplete="username" autocapitalize="none" oninput="checkAdminHint()"></div>
       <div class="fg"><label class="fl">Password</label><input type="password" id="lp" class="fi" placeholder="password" autocomplete="current-password"></div>
       <button class="bsub" id="blgn" onclick="doLogin()">ENTER THE ARENA</button>
     </div>
@@ -401,7 +486,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
       <button class="bsub" id="breg" onclick="doReg()">ENTER THE ARENA</button>
     </div>
     <div class="lpanel">
-      <div class="lpstat"><div class="lpv">₹6,500</div><div class="lpk">Prize Pool</div></div>
+      <div class="lpstat"><div class="lpv">₹6,500</div><div class="lpk">Reward Pool</div></div>
       <div class="lpstat"><div class="lpv">13</div><div class="lpk">Competitors</div></div>
       <div class="lpstat"><div class="lpv" id="l-days">—</div><div class="lpk">Days Left</div></div>
     </div>
@@ -418,11 +503,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="lmark" style="width:34px;height:34px;border-radius:8px;flex-shrink:0;background:#13131f;border:2px solid rgba(245,200,66,.2);">
       <svg width="22" height="22" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/><circle cx="32" cy="19.5" r="2" fill="#080810"/><circle cx="16.5" cy="27.5" r="1.6" fill="#080810"/><circle cx="47.5" cy="27.5" r="1.6" fill="#080810"/></svg>
     </div>
-    <div><div class="sb-name">FITPACTA</div><div style="font-size:10px;color:var(--text3);letter-spacing:.5px">Compete. Lose. Win.</div></div>
+    <div><div class="sb-name">FITBOUNTY</div><div style="font-size:10px;color:var(--text3);letter-spacing:.5px">Earn Your Bounty.</div></div>
   </div>
   <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic">🏆</span><span>Leaderboard</span><span class="ndot"></span></button>
   <button class="ni" id="ni-log" onclick="go('log')"><span class="nic">⚖️</span><span>Log Weight</span><span class="ndot"></span></button>
   <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic">🚪</span><span>Rooms</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic">🗺️</span><span>Routes</span><span class="ndot"></span></button>
+  <button class="ni admin-nav" id="ni-admin" style="display:none" onclick="go('admin')"><span class="nic">🛡️</span><span>Admin</span><span class="ndot"></span></button>
   <div class="sb-bot" style="display:none" id="sb-bot">
     <div style="width:28px;height:28px;border-radius:50%;background:var(--goldbg);border:1px solid rgba(245,200,66,.2);display:flex;align-items:center;justify-content:center;font-size:13px">👤</div>
     <span class="sb-uname" id="sb-un"></span>
@@ -436,11 +523,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <div id="view-lb" class="view on">
   <div class="tbar">
     <div class="tlogo">
-      <div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>
-      FITPACTA
+      <div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>
+      FITBOUNTY
     </div>
     <div class="tright">
-      <div class="uchip">👤 <span id="tu">—</span></div>
+      <div class="uchip" id="top-chip">👤 <span id="tu">—</span></div>
       <button class="ib" onclick="logout()" style="font-size:14px">⏏</button>
     </div>
   </div>
@@ -455,7 +542,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <!-- ═══ LOG WEIGHT ═══ -->
 <div id="view-log" class="view">
   <div class="tbar">
-    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>LOG WEIGHT</div>
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>LOG WEIGHT</div>
     <div class="tright"><button class="ib" onclick="loadLog()" style="font-size:15px">↻</button></div>
   </div>
   <div class="pad" id="log-scroll">
@@ -469,10 +556,27 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <!-- ═══ ROOMS ═══ -->
 <div id="view-rooms" class="view">
   <div class="tbar">
-    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>ROOMS</div>
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>ROOMS</div>
     <div class="tright"><button class="ib" onclick="openNewRoom()" style="font-size:20px;font-weight:900;color:var(--gold)">+</button></div>
   </div>
   <div class="pad" id="rooms-scroll"></div>
+</div>
+
+<!-- ═══ ROUTES ═══ -->
+<div id="view-routes" class="view">
+  <div class="tbar">
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>ROUTE CHALLENGES</div>
+    <div class="tright"><button class="ib" onclick="openCreateRoute()" style="font-size:20px;font-weight:900;color:var(--blue)">+</button></div>
+  </div>
+  <div class="pad" id="routes-scroll"></div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div id="view-admin" class="view">
+  <div class="tbar">
+    <div class="tlogo" style="color:var(--purple)"><div class="tmark" style="border-color:rgba(167,139,250,.3)"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#a78bfa"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#a78bfa"/></svg></div>ADMIN</div>
+  </div>
+  <div class="pad" id="admin-scroll"></div>
 </div>
 
 </div><!-- /main -->
@@ -498,7 +602,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
-<!-- NEW ROOM -->
+<!-- NEW PRIVATE ROOM (end-user) -->
 <div id="ov-nr" class="ov" onclick="ovc(event,'ov-nr')">
   <div class="bs"><div class="bsh"></div>
     <div class="bshdr"><span class="bstit">CREATE PRIVATE ROOM</span><button class="bsx" onclick="cls('ov-nr')">×</button></div>
@@ -515,28 +619,117 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <div id="pen-f" style="padding-top:8px"><input type="number" id="nr-pen" class="sfi" placeholder="Penalty per miss e.g. ₹500" min="0" inputmode="numeric"></div>
         <div class="toggle-row"><div class="ti"><div class="tl">🔒 Private room</div><div class="ts">Invite code required to join</div></div><button class="tw on" id="tw-priv" onclick="this.classList.toggle('on')"></button></div>
       </div>
-      <div class="sfrow">
-        <div class="sfg"><label class="sfl">🥇 1st prize %</label><input type="number" id="nr-p1" class="sfi" value="60" min="0" max="100" inputmode="numeric"></div>
-        <div class="sfg"><label class="sfl">🥈 2nd prize %</label><input type="number" id="nr-p2" class="sfi" value="30" min="0" max="100" inputmode="numeric"></div>
+      <div style="background:var(--surf);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--text2);border:1px solid var(--brd)">
+        🥇 <strong>Single winner takes all</strong> — or set custom split below
       </div>
-      <div class="sfg"><label class="sfl">🥉 3rd prize %</label><input type="number" id="nr-p3" class="sfi" value="10" min="0" max="100" inputmode="numeric"></div>
+      <div class="toggle-row"><div class="ti"><div class="tl">🏆 Custom prize split</div><div class="ts">Distribute across top 3</div></div><button class="tw" id="tw-split" onclick="this.classList.toggle('on');splitToggle(this)"></button></div>
+      <div id="split-f" style="display:none;padding-top:8px">
+        <div class="sfrow">
+          <div class="sfg"><label class="sfl">🥇 1st prize %</label><input type="number" id="nr-p1" class="sfi" value="60" min="0" max="100" inputmode="numeric"></div>
+          <div class="sfg"><label class="sfl">🥈 2nd prize %</label><input type="number" id="nr-p2" class="sfi" value="30" min="0" max="100" inputmode="numeric"></div>
+        </div>
+        <div class="sfg"><label class="sfl">🥉 3rd prize %</label><input type="number" id="nr-p3" class="sfi" value="10" min="0" max="100" inputmode="numeric"></div>
+      </div>
       <button class="bs-btn" onclick="createRoom()">CREATE ROOM + GET INVITE LINK</button>
       <div style="height:12px"></div>
     </div>
   </div>
 </div>
 
+<!-- ADMIN: NEW PUBLIC CONTEST -->
+<div id="ov-pub" class="ov" onclick="ovc(event,'ov-pub')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--purple)">🛡️ CREATE PUBLIC CONTEST</span><button class="bsx" onclick="cls('ov-pub')">×</button></div>
+    <div class="bsbody">
+      <div style="background:var(--purplebg);border:1px solid rgba(167,139,250,.2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--purple);margin-bottom:16px">
+        ⚠️ Public contests are visible to all FitBounty users and shown on the main leaderboard.
+      </div>
+      <div class="sfg"><label class="sfl">Contest Name</label><input type="text" id="pub-name" class="sfi" placeholder="e.g. Monsoon Fat Loss Series" maxlength="60" autocomplete="off"></div>
+      <div class="sfg"><label class="sfl">Description</label><textarea id="pub-desc" class="sfta" placeholder="Rules, start weight, theme…"></textarea></div>
+      <div class="sfrow">
+        <div class="sfg"><label class="sfl">Start Date</label><input type="date" id="pub-start" class="sfi"></div>
+        <div class="sfg"><label class="sfl">End Date</label><input type="date" id="pub-end" class="sfi"></div>
+      </div>
+      <div class="sfrow">
+        <div class="sfg"><label class="sfl">Entry Fee (₹)</label><input type="number" id="pub-fee" class="sfi" placeholder="1000" min="0" inputmode="numeric"></div>
+        <div class="sfg"><label class="sfl">Miss Penalty (₹)</label><input type="number" id="pub-pen" class="sfi" placeholder="500" min="0" inputmode="numeric"></div>
+      </div>
+      <div class="sfg"><label class="sfl">Max Participants</label><input type="number" id="pub-max" class="sfi" placeholder="Unlimited" min="2" inputmode="numeric"></div>
+      <div style="background:var(--surf);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;border:1px solid var(--brd)">
+        <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Prize Distribution</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div><label class="sfl">🥇 1st</label><input type="number" id="pub-p1" class="sfi" value="60" min="0" max="100" inputmode="numeric" style="padding:9px"></div>
+          <div><label class="sfl">🥈 2nd</label><input type="number" id="pub-p2" class="sfi" value="25" min="0" max="100" inputmode="numeric" style="padding:9px"></div>
+          <div><label class="sfl">🥉 3rd</label><input type="number" id="pub-p3" class="sfi" value="15" min="0" max="100" inputmode="numeric" style="padding:9px"></div>
+        </div>
+      </div>
+      <button class="bs-btn purple" onclick="createPublicContest()">🛡️ PUBLISH CONTEST</button>
+      <div style="height:12px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE DETAIL / ATTEMPT -->
+<div id="ov-route" class="ov" onclick="ovc(event,'ov-route')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="route-stit">Route</span><button class="bsx" onclick="cls('ov-route');stopGPS()">×</button></div>
+    <div class="bsbody" id="route-sbody"></div>
+    <div class="bsfoot" id="route-sfoot"></div>
+    <div style="height:8px;flex-shrink:0"></div>
+  </div>
+</div>
+
 <!-- SHARE -->
 <div id="ov-share" class="ov" onclick="ovc(event,'ov-share')">
   <div class="bs"><div class="bsh"></div>
-    <div class="bshdr"><span class="bstit">SHARE ROOM</span><button class="bsx" onclick="cls('ov-share')">×</button></div>
+    <div class="bshdr"><span class="bstit">SHARE</span><button class="bsx" onclick="cls('ov-share')">×</button></div>
     <div class="bsbody">
       <div class="sbox"><span class="sbox-em">⚔️</span><div class="sbox-nm" id="sh-nm"></div><div class="sbox-sub" id="sh-sub"></div></div>
+      <canvas id="winner-canvas" width="600" height="300"></canvas>
       <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">INVITE LINK</div>
       <div class="link-box" id="sh-link"></div>
       <button class="bwa" id="sh-wa">💬 SHARE ON WHATSAPP</button>
       <button class="bcp" id="sh-cp">📋 Copy Link</button>
+      <button class="bcp" id="sh-img" style="display:none;margin-top:8px;background:var(--bluebg);color:var(--blue);border-color:rgba(79,195,247,.2)">🖼️ Save Winner Card</button>
       <div style="height:8px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CREATE ROUTE SHEET -->
+<div id="ov-create-route" class="ov" onclick="ovc(event,'ov-create-route')">
+  <div class="bs" style="max-height:96dvh"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--blue)">🗺️ CREATE ROUTE CHALLENGE</span><button class="bsx" onclick="cls('ov-create-route')">×</button></div>
+    <div class="bsbody">
+      <div style="background:var(--bluebg);border:1px solid rgba(79,195,247,.2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:14px">
+        📍 Draw your route on the map by tapping points. Route challenges are public — anyone can attempt to beat your time.
+      </div>
+      <div class="sfg"><label class="sfl">Route Name</label><input type="text" id="cr-name" class="sfi" placeholder="e.g. Indiranagar 5K Loop" maxlength="60" autocomplete="off"></div>
+      <div class="sfg"><label class="sfl">Description</label><textarea id="cr-desc" class="sfta" placeholder="Surface type, difficulty, landmarks…" style="min-height:60px"></textarea></div>
+      <div class="sfg"><label class="sfl">Activity Type</label>
+        <select id="cr-type" class="sfsel">
+          <option value="run">🏃 Running</option>
+          <option value="cycle">🚴 Cycling</option>
+          <option value="walk">🚶 Walking</option>
+          <option value="hike">⛰️ Hiking</option>
+        </select>
+      </div>
+      <!-- Embedded map for route drawing -->
+      <div id="cr-map-container" style="width:100%;height:240px;border-radius:var(--r);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:10px">
+        <div id="cr-map" style="width:100%;height:100%"></div>
+        <div id="cr-map-ph" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3)">
+          <div style="font-size:32px">🗺️</div>
+          <div style="font-size:12px;font-weight:700">Map loading…</div>
+          <div style="font-size:11px;color:var(--text3)">Tap to place route waypoints</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button class="map-btn secondary" onclick="undoWaypoint()" style="flex:1">↩ Undo</button>
+        <button class="map-btn danger" onclick="clearRoute()" style="flex:1">🗑 Clear</button>
+        <div style="flex:1;text-align:center;background:var(--surf);border-radius:var(--rf);padding:8px;font-family:var(--fm);font-size:11px;color:var(--text2);border:1px solid var(--brd)"><span id="cr-dist">0 m</span></div>
+      </div>
+      <button class="bs-btn" style="background:var(--blue);color:#080810" onclick="saveRoute()">📍 PUBLISH ROUTE CHALLENGE</button>
+      <div style="height:12px"></div>
     </div>
   </div>
 </div>
@@ -547,22 +740,44 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 <script>
 'use strict';
 const API="https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec";
-// ↑ Same deployment ID — updated script picked up automatically
 const CEND=new Date('2026-04-25T23:59:59');
 const CSTART=new Date('2026-02-02');
 const PRIZE='₹6,500';
 const CLRS=['#7c5cfc','#ff3b3b','#4fc3f7','#f5c842','#00e676','#ff6d00','#f53c7a','#54aeff','#a78bfa','#34d399'];
+const ADMIN_USER='pranith'; // single admin account
 
-let CU=null, ROOMS=[], cdI=null, LB_DATA=[];
+// ─── KEY CHANGES:
+// 1. Rooms stored per-user: fb_rooms_<username>  →  survives page reload
+// 2. Live contest = private, 1 winner, created by pranith
+// 3. Admin role unlocks /admin panel + public contest creation
+// 4. Public contests stored in fb_pub_contests (shared key)
+// 5. Route challenges stored in fb_routes (shared)
+
+let CU=null, ROOMS=[], PUBLIC_CONTESTS=[], ROUTES=[], cdI=null, LB_DATA=[];
+let GMAPS_READY=false, crMap=null, crMarkers=[], crPolyline=null, crPath=[];
+let gpsWatchId=null, gpsStartTime=null, gpsTimerI=null;
+let CURRENT_ROUTE_ID=null;
+
+// ── GOOGLE MAPS CALLBACK ──
+window.gmapsReady=function(){
+  GMAPS_READY=true;
+};
+
+function isAdmin(){return (CU||'').toLowerCase()===ADMIN_USER.toLowerCase();}
 
 // ── INIT ──
 (function(){
-  const a=localStorage.getItem('fp_a'), t=localStorage.getItem('fp_t');
-  if(a==='1'&&t&&(Date.now()-+t)<86400000){CU=localStorage.getItem('fp_u')||'Guest';showApp();}
-  else{const d=Math.max(0,Math.ceil((CEND-new Date())/86400000));const el=document.getElementById('l-days');if(el)el.textContent=d;}
+  const a=localStorage.getItem('fb_a'), t=localStorage.getItem('fb_t');
+  if(a==='1'&&t&&(Date.now()-+t)<86400000){
+    CU=localStorage.getItem('fb_u')||'Guest';
+    showApp();
+  } else {
+    const d=Math.max(0,Math.ceil((CEND-new Date())/86400000));
+    const el=document.getElementById('l-days');if(el)el.textContent=d;
+  }
   document.getElementById('lp').addEventListener('keypress',e=>e.key==='Enter'&&doLogin());
   document.getElementById('rp').addEventListener('keypress',e=>e.key==='Enter'&&doReg());
-  // Live username availability check on register form
+  // username availability check
   let unTimer=null;
   document.getElementById('ru').addEventListener('input',function(){
     clearTimeout(unTimer);
@@ -581,6 +796,12 @@ let CU=null, ROOMS=[], cdI=null, LB_DATA=[];
     },600);
   });
 })();
+
+function checkAdminHint(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const h=document.getElementById('admin-hint');
+  if(h)h.style.display=u===ADMIN_USER?'block':'none';
+}
 
 // ── AUTH ──
 function showF(f){
@@ -618,24 +839,33 @@ async function doReg(){
   }catch(e){showErr('Connection failed. Try again.');}
   setBtnL('breg',false);
 }
-function save(u){localStorage.setItem('fp_a','1');localStorage.setItem('fp_t',Date.now());localStorage.setItem('fp_u',u);CU=u;}
+function save(u){localStorage.setItem('fb_a','1');localStorage.setItem('fb_t',Date.now());localStorage.setItem('fb_u',u);CU=u;}
 function setBtnL(id,on){
   const b=document.getElementById(id);if(!b)return;
   b.disabled=on;b.innerHTML=on?`<div class="spin"></div>ENTERING…`:'ENTER THE ARENA';
 }
 function logout(){
   if(!confirm('Log out?'))return;
-  ['fp_a','fp_t','fp_u','fp_rooms'].forEach(k=>localStorage.removeItem(k));
-  CU=null;clearInterval(cdI);
+  ['fb_a','fb_t','fb_u'].forEach(k=>localStorage.removeItem(k));
+  CU=null;clearInterval(cdI);stopGPS();
   document.getElementById('s-app').classList.remove('on');
   document.getElementById('s-login').classList.add('on');
+  document.getElementById('admin-hint').style.display='none';
 }
 function showApp(){
   document.getElementById('s-login').classList.remove('on');
   document.getElementById('s-app').classList.add('on');
   ['tu','sb-un'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=CU;});
   document.getElementById('sb-bot').style.display='flex';
+  // Admin chip tint
+  if(isAdmin()){
+    const chip=document.getElementById('top-chip');
+    if(chip){chip.className='uchip admin';chip.innerHTML='🛡️ <span>'+esc(CU)+'</span>';}
+    document.getElementById('ni-admin').style.display='';
+  }
   loadRooms();
+  loadPublicContests();
+  loadRoutes();
   loadLB();
   loadLog();
   renderRooms();
@@ -651,56 +881,44 @@ function go(v){
   if(v==='lb')loadLB();
   if(v==='log')loadLog();
   if(v==='rooms')renderRooms();
+  if(v==='routes')renderRoutes();
+  if(v==='admin')renderAdmin();
   window.scrollTo({top:0,behavior:'instant'});
 }
 
-// ── LOAD LEADERBOARD — uses server-computed getLeaderboard ──
+// ══════════════════════════════════════════════════════
+// LEADERBOARD
+// ══════════════════════════════════════════════════════
 async function loadLB(){
   const area=document.getElementById('lb-scroll');if(!area)return;
   area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading standings…</p></div>`;
   try{
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getLeaderboard'})});
     const d=await r.json();
-    if(d.success&&Array.isArray(d.leaderboard)){
-      renderLB(area,d.leaderboard);
-    } else {
-      // fallback to raw if new action not yet live
-      const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});
-      const raw=await r2.json();
-      renderLB(area,parseLBFromRaw(raw));
-    }
+    if(d.success&&Array.isArray(d.leaderboard)){renderLB(area,d.leaderboard);}
+    else{const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});const raw=await r2.json();renderLB(area,parseLBFromRaw(raw));}
   }catch(e){
     area.innerHTML=`<div style="padding:40px 18px;text-align:center;color:var(--text3)"><p style="margin-bottom:14px">⚠️ Could not load standings</p><button class="join-chip" onclick="loadLB()">↻ Retry</button></div>`;
   }
 }
 
-// Fallback parser for raw getAllWeights array
 function parseLBFromRaw(raw){
   const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
   const um={};
-  rows.forEach(r=>{
-    const nm=String(r[0]||'').trim(),dt=new Date(r[1]),w=parseFloat(r[2]);
-    if(!nm||isNaN(dt)||isNaN(w))return;
-    if(!um[nm])um[nm]=[];
-    um[nm].push({date:dt,weight:w});
-  });
+  rows.forEach(r=>{const nm=String(r[0]||'').trim(),dt=new Date(r[1]),w=parseFloat(r[2]);if(!nm||isNaN(dt)||isNaN(w))return;if(!um[nm])um[nm]=[];um[nm].push({date:dt,weight:w});});
   return Object.keys(um).map(nm=>{
     const entries=um[nm].sort((a,b)=>a.date-b.date);
     const first=entries[0].weight,last=entries[entries.length-1].weight;
     const pct=parseFloat(((first-last)/first*100).toFixed(2));
     const wc=entries.length>=2?parseFloat((entries[entries.length-2].weight-last).toFixed(2)):null;
-    let streak=0;
-    for(let i=entries.length-1;i>=1;i--){if(entries[i].weight<entries[i-1].weight)streak++;else break;}
+    let streak=0;for(let i=entries.length-1;i>=1;i--){if(entries[i].weight<entries[i-1].weight)streak++;else break;}
     return{name:nm,totalLossPct:pct,weekChange:wc,streak,checkIns:entries.length};
   }).sort((a,b)=>b.totalLossPct-a.totalLossPct);
 }
 
 function renderLB(area,lb){
-  // Normalise field names — server returns totalLossPct, fallback returns total
   lb=lb.map(e=>({...e,total:e.totalLossPct??e.total??0}));
-  LB_DATA=lb; // store globally for expand/collapse
-
-  // shame: gained this week
+  LB_DATA=lb;
   const shamers=lb.filter(x=>x.weekChange!==null&&x.weekChange<0).sort((a,b)=>a.weekChange-b.weekChange);
   const myEntry=lb.find(x=>x.name.toLowerCase()===(CU||'').toLowerCase());
   const myRank=myEntry?lb.indexOf(myEntry)+1:null;
@@ -712,20 +930,15 @@ function renderLB(area,lb){
   const nextMon=nextMonday();
   const isMonday=now.getDay()===1;
 
-  // my rank class
   function rankClass(i,nm){
     const isMe=nm.toLowerCase()===(CU||'').toLowerCase();
     if(i===0)return'rc r1'+(isMe?' rme':'');
     if(i===1)return'rc r2'+(isMe?' rme':'');
-    if(i===2)return'rc r3'+(isMe?' rme':'');
     const dng=lb.length>3&&i>=lb.length-Math.max(1,Math.floor(lb.length*0.2));
     if(isMe)return'rc rme';
     if(dng)return'rc rdng';
     return'rc rn';
   }
-
-  // prize split for top 3
-  const splitLabels=['54%','23%','15%'];
 
   let html=`
     <div class="mday">
@@ -733,70 +946,62 @@ function renderLB(area,lb){
       <div class="mday-label"><span class="live-dot"></span>LIVE STANDINGS · WEEK ${Math.ceil(elapsed/7)||1}</div>
       <div class="mday-title">12-WEEK FAT<br>LOSS <span>LEAGUE</span></div>
       <div class="mday-meta">
-        <div class="meta-pill gold">🏆 ${PRIZE} Prize Pool</div>
+        <div class="meta-pill gold">🏆 ${PRIZE} Reward Pool</div>
         <div class="meta-pill">${lb.length} Competitors</div>
         <div class="meta-pill red">⏳ ${dLeft} days left</div>
+        <div class="meta-pill purple">🔒 Private · @pranith</div>
       </div>
     </div>
-    <!-- progress bar -->
     <div style="padding:0 18px 14px">
       <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px"><span>CHALLENGE PROGRESS</span><span style="color:var(--gold)">${prog}% COMPLETE</span></div>
       <div style="height:6px;background:var(--surf2);border-radius:3px;overflow:hidden"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:3px;transition:width 1s ease"></div></div>
     </div>
-    <!-- countdown -->
     <div class="cbar" style="margin-top:0">
       <div class="cbar-label">Ends in<div class="cbar-val" id="cd"></div></div>
       <div class="cbar-right"><div class="next-wi">Next weigh-in<br><span>${isMonday?'Today!':nextMon}</span></div></div>
     </div>
-    <!-- prize banner -->
     <div class="prize-ban">
-      <div class="prize-left">
-        <div class="prize-l">PRIZE POOL</div>
+      <div>
+        <div class="prize-l">REWARD POOL</div>
         <div class="prize-amt">₹6,500</div>
-        <div class="prize-sub">${lb.length} competitors · ₹${Math.round(6500/lb.length||0)} avg stake</div>
+        <div class="prize-sub">${lb.length} competitors · winner takes all</div>
       </div>
-      <div class="prize-right"><div class="prize-split">
-        <div class="ps-row"><span class="ps-medal">🥇</span><span class="ps-pct">₹3,510 <span style="color:var(--text3)">(54%)</span></span></div>
-        <div class="ps-row"><span class="ps-medal">🥈</span><span class="ps-pct">₹1,495 <span style="color:var(--text3)">(23%)</span></span></div>
-        <div class="ps-row"><span class="ps-medal">🥉</span><span class="ps-pct">₹975 <span style="color:var(--text3)">(15%)</span></span></div>
-      </div></div>
+      <div class="prize-right">
+        <div class="prize-split">
+          <div class="ps-row"><span class="ps-medal">🥇</span><span class="ps-pct">₹6,500 <span style="color:var(--text3)">(100%)</span></span></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:4px;text-align:right">SINGLE WINNER</div>
+        </div>
+      </div>
     </div>`;
 
-  // SHAME METER
   if(shamers.length){
     html+=`<div class="shame-card">
-      <div class="shame-hdr"><div class="shame-title">🔥 SHAME METER</div><div class="shame-badge">THIS WEEK</div></div>
+      <div class="shame-hdr"><div class="shame-title">🔥 GRIND CHECK</div><div class="shame-badge">THIS WEEK</div></div>
       <div class="shame-list">
-        ${shamers.slice(0,3).map((s,i)=>`<div class="shame-item"><div class="shame-av" style="background:${CLRS[lb.indexOf(s)%CLRS.length]}">${s.name[0].toUpperCase()}</div><div class="shame-info"><div class="shame-name">${esc(s.name)}</div><div class="shame-txt">${shameMsg(s.weekChange)}</div></div><div class="shame-val">+${Math.abs(s.weekChange).toFixed(1)} kg 📈</div></div>`).join('')}
+        ${shamers.slice(0,3).map(s=>`<div class="shame-item"><div class="shame-av" style="background:${CLRS[lb.indexOf(s)%CLRS.length]}">${s.name[0].toUpperCase()}</div><div class="shame-info"><div class="shame-name">${esc(s.name)}</div><div class="shame-txt">${shameMsg(s.weekChange)}</div></div><div class="shame-val">+${Math.abs(s.weekChange).toFixed(1)} kg 📈</div></div>`).join('')}
       </div>
-    </div>`;
-  }
+    </div>`;}
 
-  // MY POSITION banner (if not top 3)
-  if(myEntry&&myRank>3){
+  if(myEntry&&myRank>2){
     html+=`<div style="margin:0 18px 14px;background:rgba(79,195,247,.07);border:1.5px solid rgba(79,195,247,.2);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
       <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--blue)">YOUR POSITION</div>
       <div style="display:flex;align-items:center;gap:12px">
         <div style="text-align:right"><div style="font-family:var(--fd);font-size:1.6rem;color:var(--blue);letter-spacing:1px">#${myRank}</div><div style="font-size:10px;color:var(--text3)">of ${lb.length}</div></div>
         <div style="text-align:right"><div style="font-family:var(--fd);font-size:1.4rem;color:var(--text);letter-spacing:.5px">${myEntry.total}%</div><div style="font-size:10px;color:var(--text3)">total loss</div></div>
       </div>
-    </div>`;
-  }
+    </div>`;}
 
-  // LEADERBOARD LIST
-  html+=`<div class="lb-hdr"><div class="lb-title">STANDINGS</div><div class="lb-week">TOTAL % LOST</div></div>
-  <div class="lb-list">`;
+  html+=`<div class="lb-hdr"><div class="lb-title">STANDINGS</div><div class="lb-week">TOTAL % LOST</div></div><div class="lb-list">`;
 
   lb.forEach((e,i)=>{
     const isMe=e.name.toLowerCase()===(CU||'').toLowerCase();
     const wkCol=e.weekChange===null?'week-nil':e.weekChange>0?'week-up':'week-dn';
     const wkTxt=e.weekChange===null?'–':e.weekChange>0?`▼ ${e.weekChange.toFixed(2)} kg`:`▲ ${Math.abs(e.weekChange).toFixed(2)} kg`;
-    const rankNum=i===0?'1':i===1?'2':i===2?'3':(i+1).toString();
-    const medalIcon=i===0?'🥇':i===1?'🥈':i===2?'🥉':null;
+    const rankNum=i===0?'🥇':i===1?'🥈':(i+1).toString();
     const safeId='rc-'+e.name.replace(/[^a-zA-Z0-9]/g,'_');
     html+=`<div class="rc-wrap" id="${safeId}">
     <div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s;cursor:pointer" onclick="toggleExpand('${safeId}')">
-      <div class="rc-rank">${medalIcon||rankNum}</div>
+      <div class="rc-rank">${rankNum}</div>
       <div class="rc-av" style="background:${CLRS[i%CLRS.length]}">${e.name[0].toUpperCase()}${e.streak>=2?`<div class="streak">🔥${e.streak}</div>`:''}</div>
       <div class="rc-body">
         <div class="rc-name">${esc(e.name)}${isMe?'<span class="you">YOU</span>':''}</div>
@@ -804,7 +1009,7 @@ function renderLB(area,lb){
           ${e.streak>=2?`<div class="rc-streak">🔥 ${e.streak}-week streak</div>`:''}
           <div class="rc-status">${e.checkIns} weigh-ins</div>
         </div>
-        ${i<3?`<div class="rc-prize">${['🥇 ₹3,510','🥈 ₹1,495','🥉 ₹975'][i]} if you win now</div>`:''}
+        ${i===0?`<div class="rc-prize">🥇 ₹6,500 — winner takes all</div>`:''}
       </div>
       <div class="rc-right">
         <div class="rc-pct">${e.total>0?e.total+'%':'0%'}</div>
@@ -816,103 +1021,58 @@ function renderLB(area,lb){
     </div>`;
   });
 
-  // danger zone
-  if(lb.length>4){
-    const dngCount=Math.max(1,Math.floor(lb.length*0.2));
-    html+=`</div><div class="danger-zone"><span style="font-size:18px">⚠️</span><div><div class="dz-label">DANGER ZONE — Bottom ${dngCount}</div><div class="dz-sub">Highest risk of losing all entry stake</div></div></div>`;
-  } else {
-    html+=`</div>`;
-  }
-
+  if(lb.length>4){const dngCount=Math.max(1,Math.floor(lb.length*0.2));html+=`</div><div class="danger-zone"><span style="font-size:18px">⚠️</span><div><div class="dz-label">DANGER ZONE — Bottom ${dngCount}</div><div class="dz-sub">Risk of losing all entry</div></div></div>`;}
+  else html+=`</div>`;
   html+=`<div style="height:16px"></div>`;
   area.innerHTML=html;
-
   clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
 }
 
 function toggleExpand(id){
-  const wrap=document.getElementById(id);
-  if(!wrap)return;
+  const wrap=document.getElementById(id);if(!wrap)return;
   const isOpen=wrap.classList.contains('open');
-  // close all others
-  document.querySelectorAll('.rc-wrap.open').forEach(w=>{
-    if(w.id!==id){w.classList.remove('open');}
-  });
+  document.querySelectorAll('.rc-wrap.open').forEach(w=>{if(w.id!==id)w.classList.remove('open');});
   if(isOpen){wrap.classList.remove('open');return;}
-  // find entry data
-  const nm=id.replace('rc-','').replace(/_/g,' ');
-  // fuzzy match name from LB_DATA
   const entry=LB_DATA.find(e=>e.name.replace(/[^a-zA-Z0-9]/g,'_')===id.replace('rc-',''));
   if(!entry)return;
-  const expEl=document.getElementById(id+'-exp');
-  if(!expEl)return;
-  // build entries table
+  const expEl=document.getElementById(id+'-exp');if(!expEl)return;
   const entries=(entry.entries||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const color=CLRS[LB_DATA.indexOf(entry)%CLRS.length];
   const startW=entries.length?entries[entries.length-1].weight:null;
   const curW=entries.length?entries[0].weight:null;
   const totalLoss=startW&&curW?parseFloat((startW-curW).toFixed(2)):null;
-  let html=`
-    <div class="rc-expand-hdr">
-      <div class="rc-expand-title">📊 ${esc(entry.name)}'s History</div>
-      <div class="rc-expand-stat">
-        <div class="rc-es"><span class="rc-esv" style="color:var(--gold)">${entry.total}%</span><div class="rc-esk">Lost</div></div>
-        ${totalLoss!==null?`<div class="rc-es"><span class="rc-esv" style="color:var(--green)">-${totalLoss}kg</span><div class="rc-esk">Total</div></div>`:''}
-        <div class="rc-es"><span class="rc-esv" style="color:var(--text2)">${entries.length}</span><div class="rc-esk">Weigh-ins</div></div>
-      </div>
-    </div>`;
+  let html=`<div class="rc-expand-hdr">
+    <div class="rc-expand-title">📊 ${esc(entry.name)}'s History</div>
+    <div class="rc-expand-stat">
+      <div class="rc-es"><span class="rc-esv" style="color:var(--gold)">${entry.total}%</span><div class="rc-esk">Lost</div></div>
+      ${totalLoss!==null?`<div class="rc-es"><span class="rc-esv" style="color:var(--green)">-${totalLoss}kg</span><div class="rc-esk">Total</div></div>`:''}
+      <div class="rc-es"><span class="rc-esv" style="color:var(--text2)">${entries.length}</span><div class="rc-esk">Weigh-ins</div></div>
+    </div>
+  </div>`;
   if(entries.length){
     html+=`<table class="exp-table"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>`;
-    entries.forEach((w,idx)=>{
-      const next=entries[idx+1];
-      const chg=next?parseFloat((next.weight-w.weight).toFixed(2)):null;
-      const cls=chg===null?'chg-nil':chg>0?'chg-dn':'chg-up';
-      const arrow=chg===null?'—':chg>0?`▼ ${chg}kg`:`▲ ${Math.abs(chg)}kg`;
-      const isLatest=idx===0;
-      html+=`<tr${isLatest?' class="latest"':''}><td style="color:var(--text2);font-family:var(--fb);font-size:11px">${new Date(w.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-weight:700;color:var(--text)">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;
-    });
+    entries.forEach((w,idx)=>{const next=entries[idx+1];const chg=next?parseFloat((next.weight-w.weight).toFixed(2)):null;const cls=chg===null?'chg-nil':chg>0?'chg-dn':'chg-up';const arrow=chg===null?'—':chg>0?`▼ ${chg}kg`:`▲ ${Math.abs(chg)}kg`;html+=`<tr${idx===0?' class="latest"':''}><td style="color:var(--text2);font-family:var(--fb);font-size:11px">${new Date(w.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-weight:700;color:var(--text)">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;});
     html+=`</tbody></table>`;
-  } else {
-    html+=`<div style="text-align:center;padding:14px;color:var(--text3);font-size:12px">No weigh-ins yet</div>`;
-  }
+  } else html+=`<div style="text-align:center;padding:14px;color:var(--text3);font-size:12px">No weigh-ins yet</div>`;
   expEl.innerHTML=html;
   wrap.classList.add('open');
 }
 
-function shameMsg(delta){
-  const msgs=[`gained ${Math.abs(delta).toFixed(1)}kg this week 👀`,`up ${Math.abs(delta).toFixed(1)}kg — the group sees you 😬`,`+${Math.abs(delta).toFixed(1)}kg. Weekend was rough huh? 🍕`];
-  return msgs[Math.floor(Math.random()*msgs.length)];
-}
+function shameMsg(delta){const msgs=[`gained ${Math.abs(delta).toFixed(1)}kg this week 👀`,`up ${Math.abs(delta).toFixed(1)}kg — the group sees you 😬`,`+${Math.abs(delta).toFixed(1)}kg. Weekend was rough huh? 🍕`];return msgs[Math.floor(Math.random()*msgs.length)];}
+function nextMonday(){const now=new Date(),day=now.getDay(),diff=(8-day)%7||7;const nm=new Date(now);nm.setDate(now.getDate()+diff);return nm.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});}
+function updCD(){const el=document.getElementById('cd');if(!el){clearInterval(cdI);return;}const diff=CEND-new Date();if(diff>0){const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);el.textContent=`${d}d ${h}h ${m}m ${s}s`;}else{el.textContent='🎉 DONE!';clearInterval(cdI);}}
 
-function nextMonday(){
-  const now=new Date(),day=now.getDay(),diff=(8-day)%7||7;
-  const nm=new Date(now);nm.setDate(now.getDate()+diff);
-  return nm.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
-}
-
-function updCD(){
-  const el=document.getElementById('cd');if(!el){clearInterval(cdI);return;}
-  const diff=CEND-new Date();
-  if(diff>0){
-    const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-    el.textContent=`${d}d ${h}h ${m}m ${s}s`;
-  }else{el.textContent='🎉 DONE!';clearInterval(cdI);}
-}
-
-// ── LOG WEIGHT VIEW ──
+// ══════════════════════════════════════════════════════
+// LOG WEIGHT
+// ══════════════════════════════════════════════════════
 async function loadLog(){
   const area=document.getElementById('log-scroll');if(!area)return;
   area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading your data...</p></div>`;
   let myWeights=[];
   try{
-    // getUserWeights fetches only your rows - faster than pulling all 13 competitors
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getUserWeights',username:CU})});
     const raw=await r.json();
     const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
-    myWeights=rows.map(r=>({
-      date:new Date(r[1]),
-      weight:parseFloat(r[2])
-    })).filter(r=>!isNaN(r.weight)&&!isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
+    myWeights=rows.map(r=>({date:new Date(r[1]),weight:parseFloat(r[2])})).filter(r=>!isNaN(r.weight)&&!isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
   }catch(e){}
   renderLog(area,myWeights);
 }
@@ -927,101 +1087,59 @@ function renderLog(area,weights){
   const totalPct=firstW&&lastW?parseFloat(((firstW-lastW)/firstW*100).toFixed(2)):null;
   const weekChange=weights.length>=2?parseFloat((weights[weights.length-2].weight-lastW).toFixed(2)):null;
   const streak=calcStreak(weights);
-  const proofs=JSON.parse(localStorage.getItem('fp_proofs_'+(CU||''))||'[]');
+  const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
 
-  let html=`
-    <div style="padding:4px 0 16px">
-      <div class="log-top">
-        <div class="log-av" style="background:${color}">${(CU||'?')[0].toUpperCase()}</div>
-        <div>
-          <div class="log-name">${esc(CU||'Competitor')}</div>
-          <div class="log-sub">${weights.length} weigh-ins logged${streak>=2?` · 🔥 ${streak}-week streak`:''}</div>
-        </div>
+  let html=`<div style="padding:4px 0 16px">
+    <div class="log-top">
+      <div class="log-av" style="background:${color}">${(CU||'?')[0].toUpperCase()}</div>
+      <div>
+        <div class="log-name">${esc(CU||'Competitor')}</div>
+        <div class="log-sub">${weights.length} weigh-ins logged${streak>=2?` · 🔥 ${streak}-week streak`:''}</div>
       </div>
-      <!-- my stats -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-        <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${totalPct!==null?totalPct+'%':'—'}</span><div class="d-sk">Total Loss</div></div>
-        <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'-'+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">This Week</div></div>
-        <div class="d-stat"><span class="d-sv" style="color:var(--orange)">${streak>=2?'🔥'+streak:'—'}</span><div class="d-sk">Streak</div></div>
-      </div>
-      <!-- log widget -->
-      ${isMonday
-        ?`<div class="log-status-ok">✅ It's Monday! Time to log your weight + photo proof.</div>`
-        :`<div class="log-status-warn">⏰ Official weigh-ins are Mondays.<br>Today is ${days[now.getDay()]}. You can still log practice weight — it won't count for rankings.</div>`
-      }
-      <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal">
-      <div class="wi-unit">KILOGRAMS</div>
-      <!-- PHOTO PROOF -->
-      <div class="photo-preview" id="photo-prev">
-        <img id="photo-img" src="" alt="proof">
-        <button class="rm" onclick="removePhoto()">×</button>
-      </div>
-      <div class="photo-zone" id="photo-zone">
-        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
-        <span class="pz-icon">📷</span>
-        <div class="pz-label">Add Photo Proof</div>
-        <div class="pz-sub">Required for official Monday weigh-in</div>
-      </div>
-      <button class="blog" id="logbtn" onclick="submitW()">
-        ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
-      </button>`;
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
+      <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${totalPct!==null?totalPct+'%':'—'}</span><div class="d-sk">Total Loss</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'-'+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">This Week</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--orange)">${streak>=2?'🔥'+streak:'—'}</span><div class="d-sk">Streak</div></div>
+    </div>
+    ${isMonday?`<div class="log-status-ok">✅ It's Monday! Time to log your weight + photo proof.</div>`:`<div class="log-status-warn">⏰ Official weigh-ins are Mondays.<br>Today is ${days[now.getDay()]}. You can still log practice weight.</div>`}
+    <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal">
+    <div class="wi-unit">KILOGRAMS</div>
+    <div class="photo-preview" id="photo-prev"><img id="photo-img" src="" alt="proof"><button class="rm" onclick="removePhoto()">×</button></div>
+    <div class="photo-zone" id="photo-zone">
+      <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+      <span class="pz-icon">📷</span>
+      <div class="pz-label">Add Photo Proof</div>
+      <div class="pz-sub">Required for official Monday weigh-in</div>
+    </div>
+    <button class="blog" id="logbtn" onclick="submitW()">
+      ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
+    </button>`;
 
-  // history table
   if(weights.length){
     html+=`<div style="margin-top:22px;background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd)">
       <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEIGH-IN HISTORY</div>
       <div style="overflow-x:auto">
       <table class="ht"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>
-      ${[...weights].reverse().map((w,i,arr)=>{
-        const prev=arr[i+1];
-        const chg=prev?parseFloat((prev.weight-w.weight).toFixed(2)):null;
-        const cls=chg===null?'flat':chg>0?'dn':'up';
-        const arrow=chg===null?'—':chg>0?`▼ ${chg} kg`:`▲ ${Math.abs(chg)} kg`;
-        return`<tr><td>${w.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-family:var(--fm);font-weight:700">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;
-      }).join('')}
+      ${[...weights].reverse().map((w,i,arr)=>{const prev=arr[i+1];const chg=prev?parseFloat((prev.weight-w.weight).toFixed(2)):null;const cls=chg===null?'flat':chg>0?'dn':'up';const arrow=chg===null?'—':chg>0?`▼ ${chg} kg`:`▲ ${Math.abs(chg)} kg`;return`<tr><td>${w.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-family:var(--fm);font-weight:700">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;}).join('')}
       </tbody></table></div></div>`;
   }
 
-  // photo proof grid
   if(proofs.length){
     html+=`<div class="proof-hdr">PHOTO PROOF ARCHIVE</div>
-    <div class="proof-grid">
-      ${proofs.map(p=>`<div class="proof-item"><img src="${p.src}" loading="lazy"><div class="proof-date">${p.date}</div></div>`).join('')}
-    </div>`;
+    <div class="proof-grid">${proofs.map(p=>`<div class="proof-item"><img src="${p.src}" loading="lazy"><div class="proof-date">${p.date}</div></div>`).join('')}</div>`;
   } else {
     html+=`<div class="proof-hdr">PHOTO PROOF</div><div class="proof-grid"><div class="proof-empty">No photos yet — add one with your next weigh-in 📷</div></div>`;
   }
-
   html+=`</div>`;
   area.innerHTML=html;
 }
 
-function calcStreak(weights){
-  let s=0;
-  for(let i=weights.length-1;i>=1;i--){
-    if(weights[i].weight<weights[i-1].weight)s++;else break;
-  }
-  return s;
-}
+function calcStreak(weights){let s=0;for(let i=weights.length-1;i>=1;i--){if(weights[i].weight<weights[i-1].weight)s++;else break;}return s;}
 
 let photoData=null;
-function handlePhoto(inp){
-  const f=inp.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    photoData=e.target.result;
-    document.getElementById('photo-img').src=photoData;
-    document.getElementById('photo-prev').style.display='block';
-    document.getElementById('photo-zone').style.display='none';
-  };
-  r.readAsDataURL(f);
-}
-function removePhoto(){
-  photoData=null;
-  document.getElementById('photo-prev').style.display='none';
-  document.getElementById('photo-zone').style.display='block';
-  document.getElementById('photo-zone').querySelector('input').value='';
-}
+function handlePhoto(inp){const f=inp.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{photoData=e.target.result;document.getElementById('photo-img').src=photoData;document.getElementById('photo-prev').style.display='block';document.getElementById('photo-zone').style.display='none';};r.readAsDataURL(f);}
+function removePhoto(){photoData=null;document.getElementById('photo-prev').style.display='none';document.getElementById('photo-zone').style.display='block';document.getElementById('photo-zone').querySelector('input').value='';}
 
 async function submitW(){
   const w=parseFloat(document.getElementById('wi')?.value);
@@ -1033,13 +1151,12 @@ async function submitW(){
   try{
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'addWeight',username:CU,weight:w})});
     const d=await r.json();
-    if(d.success||true){// accept even if sheet returns warning
-      // save photo locally
+    if(d.success||true){
       if(photoData){
-        const proofs=JSON.parse(localStorage.getItem('fp_proofs_'+(CU||''))||'[]');
+        const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
         proofs.unshift({src:photoData,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}),weight:w});
         if(proofs.length>12)proofs.pop();
-        localStorage.setItem('fp_proofs_'+(CU||''),JSON.stringify(proofs));
+        localStorage.setItem('fb_proofs_'+(CU||''),JSON.stringify(proofs));
       }
       toast(isMonday?`✅ ${w} kg logged + proof saved!`:`✅ ${w} kg logged (practice)`,'✅');
       photoData=null;
@@ -1049,32 +1166,81 @@ async function submitW(){
   if(btn){btn.disabled=false;btn.textContent=new Date().getDay()===1?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT';}
 }
 
-// ── ROOMS ──
-function loadRooms(){try{ROOMS=JSON.parse(localStorage.getItem('fp_rooms')||'[]');}catch(e){ROOMS=[];}}
-function saveRooms(){localStorage.setItem('fp_rooms',JSON.stringify(ROOMS));}
+// ══════════════════════════════════════════════════════
+// ROOMS — per-user persistent storage
+// ══════════════════════════════════════════════════════
+function roomsKey(){return 'fb_rooms_'+(CU||'anon');}
+function loadRooms(){try{ROOMS=JSON.parse(localStorage.getItem(roomsKey())||'[]');}catch(e){ROOMS=[];}}
+function saveRooms(){localStorage.setItem(roomsKey(),JSON.stringify(ROOMS));}
+
+// Public contests — admin creates, stored under shared key
+function pubKey(){return 'fb_pub_contests';}
+function loadPublicContests(){try{PUBLIC_CONTESTS=JSON.parse(localStorage.getItem(pubKey())||'[]');}catch(e){PUBLIC_CONTESTS=[];}}
+function savePubContests(){localStorage.setItem(pubKey(),JSON.stringify(PUBLIC_CONTESTS));}
 
 function renderRooms(){
   const area=document.getElementById('rooms-scroll');if(!area)return;
-  let html=`
-    <div class="rooms-hdr"><h2>ROOMS</h2><p>Public league + private challenges</p></div>
-    <!-- Public league -->
-    <div class="pub-league" onclick="go('lb')">
-      <div class="pl-l"><span class="live-dot"></span>PUBLIC LEAGUE — LIVE NOW</div>
-      <div class="pl-name">12-WEEK FAT LOSS LEAGUE</div>
-      <div class="pl-meta">
-        <div class="pl-tag">⚔️ 13 Competitors</div>
-        <div class="pl-tag">🏆 ${PRIZE}</div>
-        <div class="pl-tag">⚖️ Monday Weigh-ins</div>
-      </div>
-    </div>
-    <div class="rooms-sec">
-      <div class="sec-hdr"><span>PRIVATE ROOMS</span><button class="btn-new" onclick="openNewRoom()">+ CREATE</button></div>`;
+  loadRooms();loadPublicContests();
 
+  // Live private contest (pranith's contest) — the main one
+  const mainContest={
+    id:'main-2026',
+    name:'12-WEEK FITNESS LEAGUE',
+    creator:'pranith',
+    isPrivate:true,
+    entry:'₹1,000',
+    prize:'₹6,500',
+    winner:'1 winner takes all',
+    end:CEND.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}),
+  };
+
+  let html=`
+    <div class="rooms-hdr"><h2>ROOMS</h2><p>Private contests + public challenges</p></div>
+    <!-- Main private contest (pranith) -->
+    <div class="section-banner private-main" onclick="go('lb')">
+      <div class="pl-l"><span class="live-dot"></span>PRIVATE CONTEST — LIVE NOW</div>
+      <div class="pl-name">${mainContest.name}</div>
+      <div class="pl-meta">
+        <div class="pl-tag">🔒 Private · @pranith</div>
+        <div class="pl-tag">🏆 ${mainContest.prize}</div>
+        <div class="pl-tag blue">🥇 1 Winner</div>
+        <div class="pl-tag">⚖️ Ends ${mainContest.end}</div>
+      </div>
+    </div>`;
+
+  // Admin-created public contests
+  if(PUBLIC_CONTESTS.length){
+    html+=`<div class="rooms-sec"><div class="sec-hdr"><span>PUBLIC CONTESTS</span></div>`;
+    PUBLIC_CONTESTS.forEach(pc=>{
+      const now=new Date(),end=new Date(pc.end);
+      const dl=Math.max(0,Math.ceil((end-now)/86400000));
+      const isLive=now>=new Date(pc.start)&&dl>0;
+      const pool=(pc.fee||0)*(pc.participants||0);
+      html+=`<div class="room-card" style="${isLive?'border-color:rgba(245,200,66,.2);background:linear-gradient(135deg,rgba(245,200,66,.05),transparent)':''}">
+        <div class="rc2-top">
+          <div class="rc2-name">${esc(pc.name)}</div>
+          <div class="rc2-badge admin">🛡️ Admin</div>
+        </div>
+        <div class="rc2-desc">${esc(pc.desc||'')}</div>
+        <div class="rc2-foot">
+          <div style="font-size:11px;color:var(--text3)">${isLive?`⏳ ${dl}d left`:'Upcoming'}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="rc2-pool">${pool>0?'₹'+pool:'₹'+(pc.fee||0)+' entry'}</span>
+            <button class="join-chip" onclick="event.stopPropagation();openSharePub('${esc(pc.id)}')">Share</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // My private rooms
+  html+=`<div class="rooms-sec"><div class="sec-hdr"><span>MY PRIVATE ROOMS</span><button class="btn-new" onclick="openNewRoom()">+ CREATE</button></div>`;
   if(!ROOMS.length){
     html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:28px 20px;text-align:center;color:var(--text3)">
       <div style="font-size:36px;margin-bottom:10px">🚪</div>
       <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2)">No private rooms yet</div>
-      <div style="font-size:12px;line-height:1.6">Create a room and challenge your friends — office mates, gym crew, family.</div>
+      <div style="font-size:12px;line-height:1.6">Challenge friends, colleagues, or family on your own terms.</div>
       <button class="btn-new" style="margin-top:14px;padding:10px 20px;font-size:.9rem" onclick="openNewRoom()">+ CREATE FIRST ROOM</button>
     </div>`;
   } else {
@@ -1084,6 +1250,7 @@ function renderRooms(){
       const status=now<new Date(rm.start)?'upcoming':dl>0?'active':'ended';
       const pool=rm.fee*(rm.pp||[]).length;
       const avs=(rm.pp||[]).slice(0,4).map(p=>`<div class="rc2-av" style="background:${p.c||'#7c5cfc'}">${(p.n||'?')[0]}</div>`).join('');
+      const hasSplit=rm.p2>0||rm.p3>0;
       html+=`<div class="room-card" onclick="openRoom('${esc(rm.id)}')">
         <div class="rc2-top">
           <div class="rc2-name">${esc(rm.name)}</div>
@@ -1093,7 +1260,7 @@ function renderRooms(){
         <div class="rc2-foot">
           <div class="rc2-peeps"><div class="rc2-avs">${avs}</div><span class="rc2-cnt">${(rm.pp||[]).length}${rm.maxP?' / '+rm.maxP:''}</span></div>
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="rc2-pool">${pool>0?'₹'+pool:'Free'}</span>
+            <span class="rc2-pool">${pool>0?'₹'+pool:'Free'} · ${hasSplit?'Top 3':'1 winner'}</span>
             <button class="join-chip" onclick="event.stopPropagation();openShare2('${esc(rm.id)}')">Share</button>
           </div>
         </div>
@@ -1114,10 +1281,13 @@ function openNewRoom(){
   document.getElementById('tw-pen').classList.add('on');
   document.getElementById('pen-f').style.display='block';
   document.getElementById('tw-priv').classList.add('on');
+  document.getElementById('tw-split').classList.remove('on');
+  document.getElementById('split-f').style.display='none';
   openS('ov-nr');
 }
 
 function penv(el){document.getElementById('pen-f').style.display=el.classList.contains('on')?'block':'none';}
+function splitToggle(el){document.getElementById('split-f').style.display=el.classList.contains('on')?'block':'none';}
 
 function createRoom(){
   const name=document.getElementById('nr-name').value.trim();
@@ -1127,6 +1297,7 @@ function createRoom(){
   const end=new Date(start);end.setDate(end.getDate()+dur*7);
   const fmt=d=>d.toISOString().split('T')[0];
   const fee=parseFloat(document.getElementById('nr-fee').value)||0;
+  const hasSplit=document.getElementById('tw-split').classList.contains('on');
   const rm={
     id:'rm'+Date.now(),
     name,
@@ -1134,11 +1305,12 @@ function createRoom(){
     start:fmt(start),end:fmt(end),fee,
     penalty:document.getElementById('tw-pen').classList.contains('on')?(parseFloat(document.getElementById('nr-pen').value)||0):0,
     priv:document.getElementById('tw-priv').classList.contains('on'),
-    p1:parseInt(document.getElementById('nr-p1').value)||60,
-    p2:parseInt(document.getElementById('nr-p2').value)||30,
-    p3:parseInt(document.getElementById('nr-p3').value)||10,
+    p1:hasSplit?(parseInt(document.getElementById('nr-p1').value)||100):100,
+    p2:hasSplit?(parseInt(document.getElementById('nr-p2').value)||0):0,
+    p3:hasSplit?(parseInt(document.getElementById('nr-p3').value)||0):0,
     maxP:parseInt(document.getElementById('nr-max').value)||null,
     pp:[{n:CU,c:CLRS[Math.floor(Math.random()*CLRS.length)]}],
+    createdBy:CU,
   };
   ROOMS.unshift(rm);saveRooms();
   cls('ov-nr');renderRooms();
@@ -1153,12 +1325,17 @@ function openRoom(id){
   const dl=Math.max(0,Math.ceil((end-now)/86400000));
   const pool=rm.fee*(rm.pp||[]).length;
   const sorted=[...(rm.pp||[])].sort((a,b)=>(b.v||0)-(a.v||0));
+  const hasSplit=rm.p2>0||rm.p3>0;
   document.getElementById('rm-sbody').innerHTML=`
-    <div class="d-hero"><div class="d-em">⚔️</div><div class="d-inf"><h2>${esc(rm.name)}</h2><p>${esc(rm.desc||'')||'Compete, lose, win.'}</p></div></div>
+    <div class="d-hero"><div class="d-em">⚔️</div><div class="d-inf"><h2>${esc(rm.name)}</h2><p>${esc(rm.desc||'')||'Private challenge.'}</p></div></div>
     <div class="d-stats">
       <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${pool>0?'₹'+pool:'Free'}</span><div class="d-sk">Prize</div></div>
       <div class="d-stat"><span class="d-sv" style="color:var(--green)">${dl}d</span><div class="d-sk">Left</div></div>
       <div class="d-stat"><span class="d-sv" style="color:var(--text2)">${(rm.pp||[]).length}</span><div class="d-sk">In</div></div>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">${hasSplit?'PRIZE SPLIT':'WINNER'}</div>
+    <div style="background:var(--surf);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--text2)">
+      ${hasSplit?`🥇 ${rm.p1}%  🥈 ${rm.p2}%  🥉 ${rm.p3}%`:`🥇 100% — winner takes all`}
     </div>
     ${sorted.length?`<div class="d-rank-list">${sorted.map((p,i)=>{const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);const isMe=p.n===CU;return`<div class="d-ri${isMe?' me':''}"><div class="d-rnk">${medal}</div><div class="d-rav" style="background:${p.c||'#7c5cfc'}">${(p.n||'?')[0]}</div><div class="d-rname">${esc(p.n||'?')}${isMe?' 👈':''}</div><div class="d-rpct">${(p.v||0)>0?(p.v||0).toFixed(1)+'%':'—'}</div></div>`}).join('')}</div>`:
     `<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0">No participants yet — share the invite link!</p>`}
@@ -1169,19 +1346,461 @@ function openRoom(id){
 
 function openShare2(id){
   let nm,desc,fee,pool;
-  if(id==='live'||id===null){nm='12-Week Fat Loss League';desc='The main public league. Weigh in every Monday. Highest % loss wins ₹6,500!';fee=1000;pool=6500;}
-  else{const rm=ROOMS.find(r=>r.id===id);if(!rm)return;nm=rm.name;desc=rm.desc||'';fee=rm.fee;pool=rm.fee*(rm.pp||[]).length;}
+  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
+  nm=rm.name;desc=rm.desc||'';fee=rm.fee;pool=rm.fee*(rm.pp||[]).length;
   const link=`${location.origin}${location.pathname}?join=${id}`;
   document.getElementById('sh-nm').textContent=nm;
   document.getElementById('sh-sub').textContent=desc;
   document.getElementById('sh-link').textContent=link;
-  const wa=`⚔️ *FitPacta — ${nm}*\n\n${desc}\n\n${fee>0?`💰 Entry: ₹${fee}\n`:''}🏆 Prize Pool: ${pool>0?'₹'+pool:'Free'}\n📅 Monday weigh-ins · Photo proof required\n\n🔗 Join: ${link}`;
+  document.getElementById('sh-img').style.display='none';
+  const wa=`⚔️ *FitBounty — ${nm}*\n\n${desc}\n\n${fee>0?`💰 Entry: ₹${fee}\n`:''}🏆 Reward Pool: ${pool>0?'₹'+pool:'Free'}\n📅 Monday weigh-ins · Photo proof required\n\n🔗 Join: ${link}`;
   document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
-  document.getElementById('sh-cp').onclick=()=>{
-    navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('Copied!','📋');});
-  };
+  document.getElementById('sh-cp').onclick=()=>{navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('Copied!','📋');});};
   openS('ov-share');
 }
+
+function openSharePub(id){
+  const pc=PUBLIC_CONTESTS.find(c=>c.id===id);if(!pc)return;
+  const link=`${location.origin}${location.pathname}?contest=${id}`;
+  document.getElementById('sh-nm').textContent=pc.name;
+  document.getElementById('sh-sub').textContent=pc.desc||'';
+  document.getElementById('sh-link').textContent=link;
+  document.getElementById('sh-img').style.display='none';
+  const wa=`🏆 *FitBounty Public Contest — ${pc.name}*\n\n${pc.desc||''}\n\n💰 Entry: ₹${pc.fee||0}\n📅 Ends: ${new Date(pc.end).toLocaleDateString()}\n\n🔗 Join: ${link}`;
+  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
+  document.getElementById('sh-cp').onclick=()=>navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋'));
+  openS('ov-share');
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN VIEW
+// ══════════════════════════════════════════════════════
+function renderAdmin(){
+  if(!isAdmin()){document.getElementById('admin-scroll').innerHTML=`<div style="padding:60px 18px;text-align:center;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">🔒</div><p>Admin access only</p></div>`;return;}
+  loadPublicContests();
+  const area=document.getElementById('admin-scroll');
+  let html=`
+    <div class="admin-header"><h2>🛡️ ADMIN</h2><p>Manage FitBounty contests and platform</p></div>
+    <div class="admin-badge-row"><div class="admin-badge">👑 Logged in as ${esc(CU)}</div></div>
+    <div class="admin-sec">
+      <h3>PUBLIC CONTESTS</h3>
+      <button class="btn-new purple" onclick="openS('ov-pub')" style="width:100%;padding:12px;font-size:.95rem;border-radius:var(--r);margin-bottom:14px">🛡️ + CREATE PUBLIC CONTEST</button>`;
+
+  if(!PUBLIC_CONTESTS.length){
+    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No public contests yet. Create one above.</div>`;
+  } else {
+    PUBLIC_CONTESTS.forEach(pc=>{
+      const now=new Date(),isLive=now>=new Date(pc.start)&&now<=new Date(pc.end);
+      html+=`<div class="pub-contest-card${isLive?' live':''}">
+        <div class="pcc-top">
+          <div class="pcc-name">${esc(pc.name)}</div>
+          <div class="rc2-badge${isLive?' active':''}">${isLive?'LIVE':'UPCOMING'}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(pc.desc||'')}</div>
+        <div style="font-size:11px;color:var(--text3)">${new Date(pc.start).toLocaleDateString()} → ${new Date(pc.end).toLocaleDateString()} · ₹${pc.fee||0} entry</div>
+        <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="openSharePub('${pc.id}')">📤 Share</button>
+          <button class="pcc-btn danger" onclick="deletePubContest('${pc.id}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+
+  html+=`</div>
+    <div class="admin-sec">
+      <h3>LIVE CONTEST STATS</h3>
+      <div style="background:var(--surf);border-radius:var(--r);padding:14px;border:1px solid var(--brd)">
+        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">12-Week Fitness League (Private · Pranith)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div class="d-stat"><span class="d-sv" style="color:var(--gold)">₹6,500</span><div class="d-sk">Prize Pool</div></div>
+          <div class="d-stat"><span class="d-sv" style="color:var(--text2)">13</span><div class="d-sk">Participants</div></div>
+          <div class="d-stat"><span class="d-sv" style="color:var(--green)">1</span><div class="d-sk">Winner</div></div>
+          <div class="d-stat"><span class="d-sv" style="color:var(--orange)" id="admin-daysLeft">—</span><div class="d-sk">Days Left</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="height:16px"></div>`;
+
+  area.innerHTML=html;
+  const dl=document.getElementById('admin-daysLeft');
+  if(dl)dl.textContent=Math.max(0,Math.ceil((CEND-new Date())/86400000))+'d';
+}
+
+function createPublicContest(){
+  const name=document.getElementById('pub-name').value.trim();
+  if(!name){toast('Enter contest name','⚠️');return;}
+  const start=document.getElementById('pub-start').value;
+  const end=document.getElementById('pub-end').value;
+  if(!start||!end){toast('Enter start and end dates','⚠️');return;}
+  const pc={
+    id:'pub'+Date.now(),
+    name,
+    desc:document.getElementById('pub-desc').value.trim(),
+    start,end,
+    fee:parseFloat(document.getElementById('pub-fee').value)||0,
+    penalty:parseFloat(document.getElementById('pub-pen').value)||0,
+    maxP:parseInt(document.getElementById('pub-max').value)||null,
+    p1:parseInt(document.getElementById('pub-p1').value)||60,
+    p2:parseInt(document.getElementById('pub-p2').value)||25,
+    p3:parseInt(document.getElementById('pub-p3').value)||15,
+    participants:0,
+    createdBy:CU,
+  };
+  PUBLIC_CONTESTS.unshift(pc);savePubContests();
+  cls('ov-pub');renderAdmin();renderRooms();
+  toast('Public contest published!','🛡️');
+}
+
+function deletePubContest(id){
+  if(!confirm('Delete this public contest?'))return;
+  PUBLIC_CONTESTS=PUBLIC_CONTESTS.filter(c=>c.id!==id);savePubContests();renderAdmin();renderRooms();toast('Deleted','🗑');
+}
+
+// ══════════════════════════════════════════════════════
+// ROUTE CHALLENGES — Map-based public challenges
+// ══════════════════════════════════════════════════════
+function routesKey(){return 'fb_routes';}
+function loadRoutes(){try{ROUTES=JSON.parse(localStorage.getItem(routesKey())||'[]');}catch(e){ROUTES=[];}}
+function saveRoutes(){localStorage.setItem(routesKey(),JSON.stringify(ROUTES));}
+
+function renderRoutes(){
+  loadRoutes();
+  const area=document.getElementById('routes-scroll');if(!area)return;
+  let html=`
+    <div class="rooms-hdr" style="padding-bottom:12px">
+      <h2 style="color:var(--blue)">ROUTE CHALLENGES</h2>
+      <p>Draw a route, track your time, challenge anyone to beat it</p>
+    </div>
+    <div style="padding:0 18px;margin-bottom:16px">
+      <button class="map-btn primary" style="width:100%;padding:14px;border-radius:var(--r);font-size:.95rem;justify-content:center" onclick="openCreateRoute()">
+        📍 CREATE NEW ROUTE CHALLENGE
+      </button>
+    </div>`;
+
+  if(!ROUTES.length){
+    html+=`<div style="margin:0 18px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:32px 20px;text-align:center;color:var(--text3)">
+      <div style="font-size:48px;margin-bottom:12px">🗺️</div>
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2)">No routes yet</div>
+      <div style="font-size:12px;line-height:1.6">Draw a running or cycling route.<br>Anyone can attempt to beat your time.<br>Winner gets a shareable victory card.</div>
+    </div>`;
+  } else {
+    html+=`<div style="padding:0 18px;display:flex;flex-direction:column;gap:10px">`;
+    ROUTES.forEach(rt=>{
+      const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
+      const best=completions[0];
+      const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
+      const isMyRoute=rt.createdBy===CU;
+      html+=`<div class="room-card route-card" onclick="openRoute('${rt.id}')">
+        <div class="rc2-top">
+          <div class="rc2-name">${typeIcon} ${esc(rt.name)}</div>
+          <div class="rc2-badge route">${(rt.completions||[]).length} attempts</div>
+        </div>
+        <div class="rc2-desc">${esc(rt.desc||'')||'Public route challenge'}</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <div style="font-size:11px;color:var(--text3)">📍 ${rt.distM?Math.round(rt.distM)+'m':'—'}</div>
+          <div style="font-size:11px;color:var(--text3)">👤 by ${esc(rt.createdBy||'?')}</div>
+          ${isMyRoute?`<div style="font-size:10px;font-weight:700;color:var(--gold);background:var(--goldbg);border-radius:var(--rf);padding:2px 7px">YOURS</div>`:''}
+        </div>
+        <div class="rc2-foot">
+          <div style="font-size:12px;color:var(--text2)">${best?`🥇 Best: <span style="font-family:var(--fm);color:var(--blue)">${fmtTime(best.secs)}</span> — ${esc(best.name)}`:' No completions yet'}</div>
+          <button class="join-chip blue" onclick="event.stopPropagation();openRoute('${rt.id}')">Attempt</button>
+        </div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+  html+=`<div style="height:16px"></div>`;
+  area.innerHTML=html;
+}
+
+function openCreateRoute(){
+  // Reset state
+  crPath=[];crMarkers=[];crPolyline=null;
+  document.getElementById('cr-name').value='';
+  document.getElementById('cr-desc').value='';
+  document.getElementById('cr-dist').textContent='0 m';
+  openS('ov-create-route');
+  if(GMAPS_READY){
+    setTimeout(()=>initCreateMap(),300);
+  } else {
+    // Show helpful message if Maps not loaded
+    document.getElementById('cr-map-ph').style.display='flex';
+    document.getElementById('cr-map-ph').innerHTML=`
+      <div style="font-size:28px">⚠️</div>
+      <div style="font-size:12px;font-weight:700;color:var(--orange)">Google Maps not loaded</div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;padding:0 16px;line-height:1.6">Add your Google Maps API key to enable map-based route creation. Route will still save with manual distance entry.</div>
+      <div class="sfg" style="width:100%;padding:0 12px;margin-top:8px">
+        <label class="sfl">Route Distance (meters)</label>
+        <input type="number" id="cr-manual-dist" class="sfi" placeholder="e.g. 5000 for 5km" min="100" inputmode="numeric">
+      </div>`;
+  }
+}
+
+function initCreateMap(){
+  const mapEl=document.getElementById('cr-map');if(!mapEl)return;
+  document.getElementById('cr-map-ph').style.display='none';
+  crMap=new google.maps.Map(mapEl,{
+    center:{lat:12.9716,lng:77.5946}, // Bangalore default
+    zoom:14,
+    mapTypeId:'roadmap',
+    styles:[{elementType:'geometry',stylers:[{color:'#1a1a2e'}]},{elementType:'labels.text.fill',stylers:[{color:'#8888aa'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2d2d50'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f0f1c'}]}],
+    disableDefaultUI:true,zoomControl:true,
+  });
+  crPolyline=new google.maps.Polyline({
+    path:[],strokeColor:'#4fc3f7',strokeWeight:3,strokeOpacity:.9,map:crMap
+  });
+  crMap.addListener('click',e=>addWaypoint(e.latLng));
+  // Try to center on user's location
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{crMap.setCenter({lat:pos.coords.latitude,lng:pos.coords.longitude});},()=>{});
+  }
+}
+
+function addWaypoint(latLng){
+  crPath.push(latLng);
+  const marker=new google.maps.Marker({position:latLng,map:crMap,
+    icon:{path:google.maps.SymbolPath.CIRCLE,scale:crPath.length===1?8:5,fillColor:crPath.length===1?'#f5c842':'#4fc3f7',fillOpacity:1,strokeColor:'#fff',strokeWeight:1.5},
+    title:`Point ${crPath.length}`});
+  crMarkers.push(marker);
+  crPolyline.setPath(crPath);
+  updateRouteDist();
+}
+
+function undoWaypoint(){
+  if(!crPath.length)return;
+  crPath.pop();
+  const m=crMarkers.pop();if(m)m.setMap(null);
+  if(crPolyline)crPolyline.setPath(crPath);
+  updateRouteDist();
+}
+
+function clearRoute(){
+  crPath=[];
+  crMarkers.forEach(m=>m.setMap(null));crMarkers=[];
+  if(crPolyline)crPolyline.setPath([]);
+  document.getElementById('cr-dist').textContent='0 m';
+}
+
+function updateRouteDist(){
+  if(!crPath.length||crPath.length<2){document.getElementById('cr-dist').textContent='0 m';return;}
+  let dist=0;
+  for(let i=1;i<crPath.length;i++){
+    dist+=google.maps.geometry.spherical.computeDistanceBetween(crPath[i-1],crPath[i]);
+  }
+  document.getElementById('cr-dist').textContent=dist>1000?`${(dist/1000).toFixed(2)} km`:`${Math.round(dist)} m`;
+}
+
+function saveRoute(){
+  const name=document.getElementById('cr-name').value.trim();
+  if(!name){toast('Enter a route name','⚠️');return;}
+  if(crPath.length<2&&!document.getElementById('cr-manual-dist')){toast('Draw at least 2 points on the map','⚠️');return;}
+  let distM=0;
+  if(crPath.length>=2&&GMAPS_READY){
+    for(let i=1;i<crPath.length;i++)distM+=google.maps.geometry.spherical.computeDistanceBetween(crPath[i-1],crPath[i]);
+  } else {
+    const manualEl=document.getElementById('cr-manual-dist');
+    distM=manualEl?parseFloat(manualEl.value)||0:0;
+  }
+  const rt={
+    id:'rt'+Date.now(),
+    name,
+    desc:document.getElementById('cr-desc').value.trim(),
+    type:document.getElementById('cr-type').value,
+    path:crPath.map(p=>({lat:p.lat(),lng:p.lng()})),
+    distM,
+    createdBy:CU,
+    createdAt:new Date().toISOString(),
+    completions:[],
+  };
+  loadRoutes();
+  ROUTES.unshift(rt);saveRoutes();
+  cls('ov-create-route');renderRoutes();
+  toast(`Route "${name}" published!`,'📍');
+}
+
+function openRoute(id){
+  loadRoutes();
+  const rt=ROUTES.find(r=>r.id===id);if(!rt)return;
+  CURRENT_ROUTE_ID=id;
+  const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
+  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
+  const myBest=completions.find(c=>c.name===CU);
+  let html=`
+    <div class="d-hero">
+      <div class="d-em">${typeIcon}</div>
+      <div class="d-inf">
+        <h2>${esc(rt.name)}</h2>
+        <p>${esc(rt.desc||'Public route challenge')}</p>
+      </div>
+    </div>
+    <div class="route-stats">
+      <div class="route-stat"><span class="rsv" style="color:var(--blue)">${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}</span><div class="rsk">Distance</div></div>
+      <div class="route-stat"><span class="rsv" style="color:var(--gold)">${completions.length}</span><div class="rsk">Attempts</div></div>
+      <div class="route-stat"><span class="rsv" style="color:var(--green)">${myBest?fmtTime(myBest.secs):'—'}</span><div class="rsk">My Best</div></div>
+    </div>`;
+
+  // Show map if available
+  if(GMAPS_READY&&rt.path&&rt.path.length>1){
+    html+=`<div id="route-detail-map" style="width:100%;height:180px;border-radius:var(--r);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:12px"></div>`;
+  }
+
+  // GPS Tracker
+  html+=`
+    <div class="gps-tracker" id="gps-tracker">
+      <div class="gps-hdr"><div class="gps-dot"></div><div class="gps-title">GPS TRACKING</div></div>
+      <div class="gps-time" id="gps-time">00:00</div>
+      <div style="font-size:11px;color:var(--green);text-align:center;margin-bottom:8px" id="gps-status">Waiting for GPS signal…</div>
+    </div>`;
+
+  // Completions leaderboard
+  if(completions.length){
+    html+=`<div class="route-completions">
+      <div class="rc-list-hdr">🏆 FASTEST COMPLETIONS</div>
+      ${completions.slice(0,10).map((c,i)=>`
+        <div class="completion-row">
+          <div class="cr-rank${i===0?' gold':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</div>
+          <div class="cr-av" style="background:${CLRS[i%CLRS.length]}">${(c.name||'?')[0].toUpperCase()}</div>
+          <div class="cr-name">${esc(c.name||'?')}${c.name===CU?' 👈':''}</div>
+          <div class="cr-time">${fmtTime(c.secs)}</div>
+        </div>`).join('')}
+    </div>`;
+  } else {
+    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px;margin-bottom:12px">Be the first to complete this route! 🏃</div>`;
+  }
+
+  document.getElementById('route-sbody').innerHTML=html;
+  document.getElementById('route-stit').textContent=`${typeIcon} ${rt.name}`;
+  document.getElementById('route-sfoot').innerHTML=`
+    <button class="bs-btn" id="gps-start-btn" onclick="startGPS()" style="flex:1">📍 START GPS TRACKING</button>
+    <button class="bs-btn sec" onclick="cls('ov-route');stopGPS()">Close</button>`;
+
+  openS('ov-route');
+
+  // Init route preview map
+  if(GMAPS_READY&&rt.path&&rt.path.length>1){
+    setTimeout(()=>{
+      const mapEl=document.getElementById('route-detail-map');if(!mapEl)return;
+      const previewMap=new google.maps.Map(mapEl,{
+        zoom:14,mapTypeId:'roadmap',disableDefaultUI:true,
+        styles:[{elementType:'geometry',stylers:[{color:'#1a1a2e'}]},{elementType:'labels.text.fill',stylers:[{color:'#8888aa'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2d2d50'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f0f1c'}]}],
+      });
+      const path=rt.path.map(p=>new google.maps.LatLng(p.lat,p.lng));
+      new google.maps.Polyline({path,strokeColor:'#4fc3f7',strokeWeight:3,strokeOpacity:.9,map:previewMap});
+      const bounds=new google.maps.LatLngBounds();path.forEach(p=>bounds.extend(p));previewMap.fitBounds(bounds);
+      // start/end markers
+      new google.maps.Marker({position:path[0],map:previewMap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#f5c842',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
+      new google.maps.Marker({position:path[path.length-1],map:previewMap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#00e676',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
+    },400);
+  }
+}
+
+function startGPS(){
+  const tracker=document.getElementById('gps-tracker');
+  const btn=document.getElementById('gps-start-btn');
+  if(!navigator.geolocation){toast('GPS not available on this device','⚠️');return;}
+  tracker.classList.add('on');
+  if(btn)btn.innerHTML='⏹ STOP & RECORD TIME';
+  if(btn)btn.onclick=stopGPS;
+  gpsStartTime=Date.now();
+  gpsTimerI=setInterval(()=>{
+    const el=document.getElementById('gps-time');
+    if(el)el.textContent=fmtTime(Math.floor((Date.now()-gpsStartTime)/1000));
+  },1000);
+  gpsWatchId=navigator.geolocation.watchPosition(
+    pos=>{const s=document.getElementById('gps-status');if(s)s.textContent=`📡 Tracking — ${pos.coords.accuracy.toFixed(0)}m accuracy`;},
+    err=>{const s=document.getElementById('gps-status');if(s)s.textContent=`⚠️ GPS: ${err.message}`;},
+    {enableHighAccuracy:true,maximumAge:2000,timeout:10000}
+  );
+  toast('GPS tracking started 📍','📍');
+}
+
+function stopGPS(){
+  if(gpsWatchId!==null){navigator.geolocation.clearWatch(gpsWatchId);gpsWatchId=null;}
+  if(gpsTimerI){clearInterval(gpsTimerI);gpsTimerI=null;}
+  const tracker=document.getElementById('gps-tracker');if(tracker)tracker.classList.remove('on');
+  if(!gpsStartTime)return;
+  const totalSecs=Math.floor((Date.now()-gpsStartTime)/1000);
+  gpsStartTime=null;
+  if(totalSecs<10){toast('Too short to record','⚠️');return;}
+  recordCompletion(CURRENT_ROUTE_ID,totalSecs);
+}
+
+function recordCompletion(routeId,secs){
+  loadRoutes();
+  const rt=ROUTES.find(r=>r.id===routeId);if(!rt)return;
+  if(!rt.completions)rt.completions=[];
+  const existing=rt.completions.findIndex(c=>c.name===CU);
+  const rec={name:CU,secs,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})};
+  if(existing>=0){
+    if(secs<rt.completions[existing].secs)rt.completions[existing]=rec; // only save PB
+    else{toast('Not your best time — not saved','ℹ️');return;}
+  } else {
+    rt.completions.push(rec);
+  }
+  saveRoutes();
+  // Check if winner (first completion or new #1)
+  const sorted=rt.completions.sort((a,b)=>a.secs-b.secs);
+  const isFirst=sorted[0].name===CU;
+  toast(`Time recorded: ${fmtTime(secs)} 🏁`,'🏁');
+  // Refresh route sheet
+  setTimeout(()=>{
+    openRoute(routeId);
+    if(isFirst){showWinnerCard(rt,secs);}
+  },600);
+}
+
+function showWinnerCard(rt,secs){
+  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
+  // Build winner card with Canvas
+  const canvas=document.getElementById('winner-canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=600;canvas.height=280;
+  canvas.style.display='block';
+  // dark bg
+  const bg=ctx.createLinearGradient(0,0,600,280);
+  bg.addColorStop(0,'#080810');bg.addColorStop(1,'#0f0f1c');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,600,280);
+  // gold accent
+  ctx.fillStyle='rgba(245,200,66,0.08)';ctx.beginPath();ctx.arc(550,50,120,0,Math.PI*2);ctx.fill();
+  // border
+  ctx.strokeStyle='rgba(79,195,247,0.4)';ctx.lineWidth=1.5;ctx.strokeRect(1,1,598,278);
+  // FITBOUNTY
+  ctx.font='bold 13px Arial';ctx.fillStyle='rgba(79,195,247,0.7)';ctx.letterSpacing='3px';ctx.fillText('FITBOUNTY  ·  ROUTE CHALLENGE',24,32);
+  // trophy
+  ctx.font='52px serif';ctx.fillText('🏆',24,100);
+  // Winner name
+  ctx.font='bold 42px Arial';ctx.fillStyle='#4fc3f7';ctx.fillText(CU.toUpperCase(),90,96);
+  // route name
+  ctx.font='18px Arial';ctx.fillStyle='rgba(245,240,255,0.6)';ctx.fillText(`${typeIcon} ${rt.name}`,90,122);
+  // time
+  ctx.font='bold 28px monospace';ctx.fillStyle='#f5c842';ctx.fillText(fmtTime(secs),24,168);
+  ctx.font='12px Arial';ctx.fillStyle='rgba(245,240,255,0.4)';ctx.fillText('WINNING TIME',24,186);
+  // distance
+  ctx.font='bold 20px monospace';ctx.fillStyle='rgba(0,230,118,0.9)';ctx.fillText(rt.distM>1000?`${(rt.distM/1000).toFixed(1)} km`:`${Math.round(rt.distM||0)} m`,200,168);
+  ctx.font='12px Arial';ctx.fillStyle='rgba(245,240,255,0.4)';ctx.fillText('DISTANCE',200,186);
+  // date
+  const dateStr=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  ctx.font='13px Arial';ctx.fillStyle='rgba(245,240,255,0.35)';ctx.fillText(dateStr,24,240);
+  // tagline
+  ctx.font='bold 14px Arial';ctx.fillStyle='rgba(79,195,247,0.5)';ctx.fillText('BEAT MY TIME ON FITBOUNTY',24,260);
+
+  // Setup share
+  document.getElementById('sh-nm').textContent=`🏆 ${CU} wins "${rt.name}"!`;
+  document.getElementById('sh-sub').textContent=`Time: ${fmtTime(secs)} · ${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}`;
+  const link=`${location.origin}${location.pathname}?route=${rt.id}`;
+  document.getElementById('sh-link').textContent=link;
+  document.getElementById('sh-img').style.display='flex';
+  document.getElementById('sh-img').onclick=()=>{
+    const a=document.createElement('a');a.download=`fitbounty-winner-${CU}.png`;a.href=canvas.toDataURL();a.click();
+    toast('Winner card saved!','🖼️');
+  };
+  const wa=`🏆 *${CU} just set the fastest time!*\n\n${typeIcon} Route: ${rt.name}\n⏱️ Time: ${fmtTime(secs)}\n📍 Distance: ${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}\n📅 ${dateStr}\n\nThink you can beat it? 💪\n🔗 ${link}`;
+  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
+  document.getElementById('sh-cp').onclick=()=>navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋'));
+  openS('ov-share');
+}
+
+function fmtTime(secs){const m=Math.floor(secs/60),s=secs%60;return`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
 
 // ── SHEETS ──
 function openS(id){const e=document.getElementById(id);if(e){e.classList.add('on');document.body.style.overflow='hidden';}}
@@ -1190,11 +1809,9 @@ function ovc(ev,id){if(ev.target.id===id)cls(id);}
 
 // ── INCOMING LINK ──
 function checkLink(){
-  const p=new URLSearchParams(location.search),jid=p.get('join');
-  if(jid){
-    if(jid==='live')go('lb');
-    else{const rm=ROOMS.find(r=>r.id===jid);if(rm){go('rooms');setTimeout(()=>openRoom(jid),600);}}
-  }
+  const p=new URLSearchParams(location.search),jid=p.get('join'),rid=p.get('route');
+  if(jid){const rm=ROOMS.find(r=>r.id===jid);if(rm){go('rooms');setTimeout(()=>openRoom(jid),600);}}
+  if(rid){go('routes');setTimeout(()=>openRoute(rid),600);}
 }
 
 // ── TOAST ──
@@ -1210,3 +1827,125 @@ function esc(s){const d=document.createElement('div');d.textContent=s||'';return
 </script>
 </body>
 </html>
+
+/* ===============================
+   FREE MAP SYSTEM (Leaflet)
+================================ */
+
+let crMap=null
+let crMarkers=[]
+let crPolyline=null
+let crPath=[]
+
+function initCreateMap(){
+
+const mapEl=document.getElementById("cr-map")
+
+if(!mapEl) return
+
+crMap=L.map(mapEl).setView([12.9716,77.5946],13)
+
+L.tileLayer(
+"https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+{
+attribution:"© OpenStreetMap"
+}).addTo(crMap)
+
+crPolyline=L.polyline([],{
+color:"#4fc3f7",
+weight:4
+}).addTo(crMap)
+
+crMap.on("click",function(e){
+
+addWaypoint(e.latlng)
+
+})
+
+}
+
+function addWaypoint(latlng){
+
+crPath.push(latlng)
+
+const marker=L.circleMarker(latlng,{
+radius:6,
+color:"#fff",
+weight:2,
+fillColor:"#f5c842",
+fillOpacity:1
+}).addTo(crMap)
+
+crMarkers.push(marker)
+
+crPolyline.setLatLngs(crPath)
+
+updateRouteDist()
+
+}
+
+function updateRouteDist(){
+
+if(crPath.length<2){
+
+document.getElementById("cr-dist").textContent="0 m"
+return
+
+}
+
+let dist=0
+
+for(let i=1;i<crPath.length;i++){
+
+dist+=crPath[i-1].distanceTo(crPath[i])
+
+}
+
+document.getElementById("cr-dist").textContent=
+dist>1000
+?(dist/1000).toFixed(2)+" km"
+:Math.round(dist)+" m"
+
+}
+
+function clearRoute(){
+
+crMarkers.forEach(m=>crMap.removeLayer(m))
+
+crMarkers=[]
+crPath=[]
+
+crPolyline.setLatLngs([])
+
+updateRouteDist()
+
+}
+
+function saveRoute(){
+
+if(crPath.length<2){
+
+toast("Create a route first","⚠️")
+return
+
+}
+
+let distM=0
+
+for(let i=1;i<crPath.length;i++){
+
+distM+=crPath[i-1].distanceTo(crPath[i])
+
+}
+
+const route={
+id:"rt"+Date.now(),
+distance:distM,
+path:crPath.map(p=>({lat:p.lat,lng:p.lng}))
+}
+
+console.log(route)
+
+toast("Route saved","✅")
+
+}
