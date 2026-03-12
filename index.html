@@ -311,6 +311,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .join-chip{background:var(--gold);color:#080810;border:none;border-radius:var(--rf);padding:5px 14px;font-family:var(--fd);font-size:.85rem;letter-spacing:.5px;cursor:pointer;min-height:32px;transition:all .2s}
 .join-chip:active{background:var(--gold2)}
 .join-chip.blue{background:var(--blue);color:#080810}
+.join-chip.danger{background:var(--redbg);color:var(--red);border:1px solid rgba(255,59,59,.3)}
 
 /* ══════════════════════════
    ADMIN VIEW
@@ -1215,6 +1216,7 @@ function renderRooms(){
           <div style="font-size:11px;color:var(--text3)">${isLive?`⏳ ${dl}d left`:'Upcoming'}</div>
           <div style="display:flex;align-items:center;gap:8px">
             <span class="rc2-pool">${pool>0?'₹'+pool:'₹'+(pc.fee||0)+' entry'}</span>
+            <button class="join-chip" onclick="event.stopPropagation();sharePublicContestWhatsApp('${esc(pc.id)}')">💬 Invite</button>
             <button class="join-chip" onclick="event.stopPropagation();openSharePub('${esc(pc.id)}')">Share</button>
           </div>
         </div>
@@ -1250,6 +1252,7 @@ function renderRooms(){
           <div class="rc2-peeps"><div class="rc2-avs">${avs}</div><span class="rc2-cnt">${(rm.pp||[]).length}${rm.maxP?' / '+rm.maxP:''}</span></div>
           <div style="display:flex;align-items:center;gap:8px">
             <span class="rc2-pool">${pool>0?'₹'+pool:'Free'} · ${hasSplit?'Top 3':'1 winner'}</span>
+            <button class="join-chip" onclick="event.stopPropagation();shareRoomWhatsApp('${esc(rm.id)}')">💬 Invite</button>
             <button class="join-chip" onclick="event.stopPropagation();openShare2('${esc(rm.id)}')">Share</button>
           </div>
         </div>
@@ -1361,16 +1364,60 @@ function openSharePub(id){
   openS('ov-share');
 }
 
-// ══════════════════════════════════════════════════════
-// ADMIN VIEW
-// ══════════════════════════════════════════════════════
+// ── WHATSAPP SHARE HELPERS ──
+function shareRoomWhatsApp(id){
+  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
+  const link=`${location.origin}${location.pathname}?join=${id}`;
+  const pool=rm.fee*(rm.pp||[]).length;
+  const msg=`⚔️ *FitBounty — ${rm.name}*\n\n${rm.desc||''}\n\n${rm.fee>0?`💰 Entry: ₹${rm.fee}\n`:''}🏆 ${pool>0?'Pool: ₹'+pool:'Free'}\n📅 Monday weigh-ins · Photo proof required\n\nJoin here 👇\n${link}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function sharePublicContestWhatsApp(id){
+  const pc=PUBLIC_CONTESTS.find(c=>c.id===id);if(!pc)return;
+  const link=`${location.origin}${location.pathname}?contest=${id}`;
+  const msg=`🏆 *FitBounty Public Contest — ${pc.name}*\n\n${pc.desc||''}\n\n💰 Entry: ₹${pc.fee||0}\n📅 Ends: ${new Date(pc.end).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}\n\nSign up 👇\n${link}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function shareRouteWhatsApp(id){
+  loadRoutes();
+  const rt=ROUTES.find(r=>r.id===id);if(!rt)return;
+  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
+  const link=`${location.origin}${location.pathname}?route=${id}`;
+  const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
+  const best=completions[0];
+  const dist=rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`;
+  const msg=`${typeIcon} *FitBounty Route Challenge — ${rt.name}*\n\n${rt.desc||''}\n\n📍 Distance: ${dist}${best?`\n🥇 Record: ${fmtTime(best.secs)} by ${best.name}`:''}\n\nThink you can beat it? 💪\n${link}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+function deleteRoute(id){
+  if(!confirm('Delete this route challenge? All completions will be lost.'))return;
+  loadRoutes();
+  ROUTES=ROUTES.filter(r=>r.id!==id);
+  saveRoutes();renderRoutes();
+  if(isAdmin())renderAdmin();
+  toast('Route deleted','🗑');
+}
+
+function deleteRoom(id){
+  if(!confirm('Delete this private room?'))return;
+  loadRooms();
+  ROOMS=ROOMS.filter(r=>r.id!==id);
+  saveRooms();renderRooms();
+  if(isAdmin())renderAdmin();
+  toast('Room deleted','🗑');
+}
 function renderAdmin(){
   if(!isAdmin()){document.getElementById('admin-scroll').innerHTML=`<div style="padding:60px 18px;text-align:center;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">🔒</div><p>Admin access only</p></div>`;return;}
-  loadPublicContests();
+  loadPublicContests();loadRoutes();loadRooms();
   const area=document.getElementById('admin-scroll');
   let html=`
     <div class="admin-header"><h2>🛡️ ADMIN</h2><p>Manage FitBounty contests and platform</p></div>
     <div class="admin-badge-row"><div class="admin-badge">👑 Logged in as ${esc(CU)}</div></div>
+
+    <!-- PUBLIC CONTESTS -->
     <div class="admin-sec">
       <h3>PUBLIC CONTESTS</h3>
       <button class="btn-new purple" onclick="openS('ov-pub')" style="width:100%;padding:12px;font-size:.95rem;border-radius:var(--r);margin-bottom:14px">🛡️ + CREATE PUBLIC CONTEST</button>`;
@@ -1388,15 +1435,66 @@ function renderAdmin(){
         <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(pc.desc||'')}</div>
         <div style="font-size:11px;color:var(--text3)">${new Date(pc.start).toLocaleDateString()} → ${new Date(pc.end).toLocaleDateString()} · ₹${pc.fee||0} entry</div>
         <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="sharePublicContestWhatsApp('${pc.id}')">💬 WhatsApp</button>
           <button class="pcc-btn primary" onclick="openSharePub('${pc.id}')">📤 Share</button>
           <button class="pcc-btn danger" onclick="deletePubContest('${pc.id}')">🗑 Delete</button>
         </div>
       </div>`;
     });
   }
+  html+=`</div>`;
 
-  html+=`</div>
-    <div class="admin-sec">
+  // ROUTE CHALLENGES
+  html+=`<div class="admin-sec"><h3>ROUTE CHALLENGES</h3>`;
+  if(!ROUTES.length){
+    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No routes yet.</div>`;
+  } else {
+    ROUTES.forEach(rt=>{
+      const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
+      const dist=rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`;
+      html+=`<div class="pub-contest-card">
+        <div class="pcc-top">
+          <div class="pcc-name">${typeIcon} ${esc(rt.name)}</div>
+          <div class="rc2-badge">${(rt.completions||[]).length} attempts</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">📍 ${dist} · by ${esc(rt.createdBy||'?')} · ${new Date(rt.createdAt||0).toLocaleDateString()}</div>
+        <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="shareRouteWhatsApp('${rt.id}')">💬 WhatsApp</button>
+          <button class="pcc-btn danger" onclick="deleteRoute('${rt.id}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // PRIVATE ROOMS
+  html+=`<div class="admin-sec"><h3>MY PRIVATE ROOMS</h3>`;
+  if(!ROOMS.length){
+    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No private rooms.</div>`;
+  } else {
+    ROOMS.forEach(rm=>{
+      const now=new Date(),end=new Date(rm.end);
+      const dl=Math.max(0,Math.ceil((end-now)/86400000));
+      const status=now<new Date(rm.start)?'upcoming':dl>0?'active':'ended';
+      const pool=rm.fee*(rm.pp||[]).length;
+      html+=`<div class="pub-contest-card${status==='active'?' live':''}">
+        <div class="pcc-top">
+          <div class="pcc-name">${esc(rm.name)}</div>
+          <div class="rc2-badge${status==='active'?' active':''}">${status==='active'?'LIVE':status==='upcoming'?'SOON':'ENDED'}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${(rm.pp||[]).length} participants · ${pool>0?'₹'+pool+' pool':'Free'} · ${dl}d left</div>
+        <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="shareRoomWhatsApp('${rm.id}')">💬 WhatsApp</button>
+          <button class="pcc-btn primary" onclick="openShare2('${rm.id}')">📤 Share</button>
+          <button class="pcc-btn danger" onclick="deleteRoom('${rm.id}')">🗑 Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // LIVE CONTEST STATS
+  html+=`<div class="admin-sec">
       <h3>LIVE CONTEST STATS</h3>
       <div style="background:var(--surf);border-radius:var(--r);padding:14px;border:1px solid var(--brd)">
         <div style="font-size:13px;color:var(--text2);margin-bottom:8px">12-Week Fitness League (Private · Pranith)</div>
@@ -1492,7 +1590,11 @@ function renderRoutes(){
         </div>
         <div class="rc2-foot">
           <div style="font-size:12px;color:var(--text2)">${best?`🥇 Best: <span style="font-family:var(--fm);color:var(--blue)">${fmtTime(best.secs)}</span> — ${esc(best.name)}`:' No completions yet'}</div>
-          <button class="join-chip blue" onclick="event.stopPropagation();openRoute('${rt.id}')">Attempt</button>
+          <div style="display:flex;gap:6px">
+            <button class="join-chip" onclick="event.stopPropagation();shareRouteWhatsApp('${rt.id}')">💬 Share</button>
+            <button class="join-chip blue" onclick="event.stopPropagation();openRoute('${rt.id}')">Attempt</button>
+            ${isMyRoute||isAdmin()?`<button class="join-chip danger" onclick="event.stopPropagation();deleteRoute('${rt.id}')">🗑</button>`:''}
+          </div>
         </div>
       </div>`;
     });
