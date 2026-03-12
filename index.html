@@ -853,12 +853,9 @@ function showApp(){
     if(chip){chip.className='uchip admin';chip.innerHTML='🛡️ <span>'+esc(CU)+'</span>';}
     document.getElementById('ni-admin').style.display='';
   }
-  loadRooms();
-  loadPublicContests();
-  loadRoutes();
   loadLB();
   loadLog();
-  renderRooms();
+  renderRooms();  // async — handles its own loading
   checkLink();
 }
 
@@ -1157,20 +1154,37 @@ async function submitW(){
 }
 
 // ══════════════════════════════════════════════════════
-// ROOMS — per-user persistent storage
+// CENTRAL API HELPER
 // ══════════════════════════════════════════════════════
-function roomsKey(){return 'fb_rooms_'+(CU||'anon');}
-function loadRooms(){try{ROOMS=JSON.parse(localStorage.getItem(roomsKey())||'[]');}catch(e){ROOMS=[];}}
-function saveRooms(){localStorage.setItem(roomsKey(),JSON.stringify(ROOMS));}
+async function api(action, payload={}){
+  const r=await fetch(API,{method:'POST',body:JSON.stringify({action,...payload})});
+  return r.json();
+}
 
-// Public contests — admin creates, stored under shared key
-function pubKey(){return 'fb_pub_contests';}
-function loadPublicContests(){try{PUBLIC_CONTESTS=JSON.parse(localStorage.getItem(pubKey())||'[]');}catch(e){PUBLIC_CONTESTS=[];}}
-function savePubContests(){localStorage.setItem(pubKey(),JSON.stringify(PUBLIC_CONTESTS));}
+// ══════════════════════════════════════════════════════
+// ROOMS — Google Sheets backed
+// ══════════════════════════════════════════════════════
+async function loadRooms(){
+  try{const d=await api('getRooms');ROOMS=Array.isArray(d)?d:[];}
+  catch(e){ROOMS=[];}
+}
 
-function renderRooms(){
+// Public contests — Google Sheets backed
+async function loadPublicContests(){
+  try{const d=await api('getPublicContests');PUBLIC_CONTESTS=Array.isArray(d)?d:[];}
+  catch(e){PUBLIC_CONTESTS=[];}
+}
+
+// Routes — Google Sheets backed
+async function loadRoutes(){
+  try{const d=await api('getRoutes');ROUTES=Array.isArray(d)?d:[];}
+  catch(e){ROUTES=[];}
+}
+
+async function renderRooms(){
   const area=document.getElementById('rooms-scroll');if(!area)return;
-  loadRooms();loadPublicContests();
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading rooms…</p></div>`;
+  await loadRooms();await loadPublicContests();
 
   // Live private contest (pranith's contest) — the main one
   const mainContest={
@@ -1281,7 +1295,7 @@ function openNewRoom(){
 function penv(el){document.getElementById('pen-f').style.display=el.classList.contains('on')?'block':'none';}
 function splitToggle(el){document.getElementById('split-f').style.display=el.classList.contains('on')?'block':'none';}
 
-function createRoom(){
+async function createRoom(){
   const name=document.getElementById('nr-name').value.trim();
   if(!name){toast('Enter a room name','⚠️');return;}
   const dur=parseInt(document.getElementById('nr-dur').value)||12;
@@ -1304,13 +1318,20 @@ function createRoom(){
     pp:[{n:CU,c:CLRS[Math.floor(Math.random()*CLRS.length)]}],
     createdBy:CU,
   };
-  ROOMS.unshift(rm);saveRooms();
-  cls('ov-nr');renderRooms();
-  toast('Room created!','✅');
-  setTimeout(()=>openShare2(rm.id),500);
+  try{
+    await api('createRoom',{room:rm});
+    cls('ov-nr');await renderRooms();
+    toast('Room created!','✅');
+    setTimeout(()=>openShare2(rm.id),500);
+  }catch(e){toast('Could not save room. Try again.','⚠️');}
 }
 
-function openRoom(id){
+async function openRoom(id){
+  // Fetch fresh from API so anyone with the link can see it
+  try{
+    const d=await api('getRoom',{id});
+    if(d&&d.id)ROOMS=[d,...ROOMS.filter(r=>r.id!==d.id)];
+  }catch(e){}
   const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
   document.getElementById('rm-stit').textContent=rm.name;
   const now=new Date(),end=new Date(rm.end);
@@ -1380,8 +1401,8 @@ function sharePublicContestWhatsApp(id){
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
-function shareRouteWhatsApp(id){
-  loadRoutes();
+async function shareRouteWhatsApp(id){
+  await loadRoutes();
   const rt=ROUTES.find(r=>r.id===id);if(!rt)return;
   const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
   const link=`${location.origin}${location.pathname}?route=${id}`;
@@ -1392,27 +1413,30 @@ function shareRouteWhatsApp(id){
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 
-function deleteRoute(id){
+async function deleteRoute(id){
   if(!confirm('Delete this route challenge? All completions will be lost.'))return;
-  loadRoutes();
-  ROUTES=ROUTES.filter(r=>r.id!==id);
-  saveRoutes();renderRoutes();
-  if(isAdmin())renderAdmin();
-  toast('Route deleted','🗑');
+  try{
+    await api('deleteRoute',{id});
+    await renderRoutes();
+    if(isAdmin())await renderAdmin();
+    toast('Route deleted','🗑');
+  }catch(e){toast('Could not delete. Try again.','⚠️');}
 }
 
-function deleteRoom(id){
+async function deleteRoom(id){
   if(!confirm('Delete this private room?'))return;
-  loadRooms();
-  ROOMS=ROOMS.filter(r=>r.id!==id);
-  saveRooms();renderRooms();
-  if(isAdmin())renderAdmin();
-  toast('Room deleted','🗑');
+  try{
+    await api('deleteRoom',{id});
+    await renderRooms();
+    if(isAdmin())await renderAdmin();
+    toast('Room deleted','🗑');
+  }catch(e){toast('Could not delete. Try again.','⚠️');}
 }
-function renderAdmin(){
+async function renderAdmin(){
   if(!isAdmin()){document.getElementById('admin-scroll').innerHTML=`<div style="padding:60px 18px;text-align:center;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">🔒</div><p>Admin access only</p></div>`;return;}
-  loadPublicContests();loadRoutes();loadRooms();
   const area=document.getElementById('admin-scroll');
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--purple);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading admin data…</p></div>`;
+  await loadPublicContests();await loadRoutes();await loadRooms();
   let html=`
     <div class="admin-header"><h2>🛡️ ADMIN</h2><p>Manage FitBounty contests and platform</p></div>
     <div class="admin-badge-row"><div class="admin-badge">👑 Logged in as ${esc(CU)}</div></div>
@@ -1513,7 +1537,7 @@ function renderAdmin(){
   if(dl)dl.textContent=Math.max(0,Math.ceil((CEND-new Date())/86400000))+'d';
 }
 
-function createPublicContest(){
+async function createPublicContest(){
   const name=document.getElementById('pub-name').value.trim();
   if(!name){toast('Enter contest name','⚠️');return;}
   const start=document.getElementById('pub-start').value;
@@ -1533,26 +1557,28 @@ function createPublicContest(){
     participants:0,
     createdBy:CU,
   };
-  PUBLIC_CONTESTS.unshift(pc);savePubContests();
-  cls('ov-pub');renderAdmin();renderRooms();
-  toast('Public contest published!','🛡️');
+  try{
+    await api('createPublicContest',{contest:pc});
+    cls('ov-pub');await renderAdmin();await renderRooms();
+    toast('Public contest published!','🛡️');
+  }catch(e){toast('Could not publish. Try again.','⚠️');}
 }
 
-function deletePubContest(id){
+async function deletePubContest(id){
   if(!confirm('Delete this public contest?'))return;
-  PUBLIC_CONTESTS=PUBLIC_CONTESTS.filter(c=>c.id!==id);savePubContests();renderAdmin();renderRooms();toast('Deleted','🗑');
+  try{
+    await api('deletePublicContest',{id});
+    await renderAdmin();await renderRooms();toast('Deleted','🗑');
+  }catch(e){toast('Could not delete. Try again.','⚠️');}
 }
 
 // ══════════════════════════════════════════════════════
 // ROUTE CHALLENGES — Map-based public challenges
 // ══════════════════════════════════════════════════════
-function routesKey(){return 'fb_routes';}
-function loadRoutes(){try{ROUTES=JSON.parse(localStorage.getItem(routesKey())||'[]');}catch(e){ROUTES=[];}}
-function saveRoutes(){localStorage.setItem(routesKey(),JSON.stringify(ROUTES));}
-
-function renderRoutes(){
-  loadRoutes();
+async function renderRoutes(){
   const area=document.getElementById('routes-scroll');if(!area)return;
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading routes…</p></div>`;
+  await loadRoutes();
   let html=`
     <div class="rooms-hdr" style="padding-bottom:12px">
       <h2 style="color:var(--blue)">ROUTE CHALLENGES</h2>
@@ -1675,7 +1701,7 @@ function updateRouteDist(){
   document.getElementById('cr-dist').textContent=dist>1000?`${(dist/1000).toFixed(2)} km`:`${Math.round(dist)} m`;
 }
 
-function saveRoute(){
+async function saveRoute(){
   const name=document.getElementById('cr-name').value.trim();
   if(!name){toast('Enter a route name','⚠️');return;}
   if(crPath.length<2){toast('Draw at least 2 points on the map','⚠️');return;}
@@ -1690,18 +1716,22 @@ function saveRoute(){
     distM,
     createdBy:CU,
     createdAt:new Date().toISOString(),
-    completions:[],
   };
-  loadRoutes();
-  ROUTES.unshift(rt);saveRoutes();
-  cls('ov-create-route');renderRoutes();
-  toast(`Route "${name}" published!`,'📍');
+  try{
+    toast('Publishing route…','⏳');
+    await api('createRoute',{route:rt});
+    cls('ov-create-route');await renderRoutes();
+    toast(`Route "${name}" published!`,'📍');
+  }catch(e){toast('Could not publish route. Try again.','⚠️');}
 }
 
-function openRoute(id){
-  loadRoutes();
-  const rt=ROUTES.find(r=>r.id===id);if(!rt)return;
+async function openRoute(id){
   CURRENT_ROUTE_ID=id;
+  // Fetch fresh route + completions from API so shared links always work
+  let rt=null;
+  try{const d=await api('getRoute',{id});if(d&&d.id){rt=d;ROUTES=[d,...ROUTES.filter(r=>r.id!==d.id)];}}catch(e){}
+  if(!rt)rt=ROUTES.find(r=>r.id===id);
+  if(!rt)return;
   const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
   const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
   const myBest=completions.find(c=>c.name===CU);
@@ -1804,28 +1834,19 @@ function stopGPS(){
   recordCompletion(CURRENT_ROUTE_ID,totalSecs);
 }
 
-function recordCompletion(routeId,secs){
-  loadRoutes();
-  const rt=ROUTES.find(r=>r.id===routeId);if(!rt)return;
-  if(!rt.completions)rt.completions=[];
-  const existing=rt.completions.findIndex(c=>c.name===CU);
-  const rec={name:CU,secs,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})};
-  if(existing>=0){
-    if(secs<rt.completions[existing].secs)rt.completions[existing]=rec; // only save PB
-    else{toast('Not your best time — not saved','ℹ️');return;}
-  } else {
-    rt.completions.push(rec);
-  }
-  saveRoutes();
-  // Check if winner (first completion or new #1)
-  const sorted=rt.completions.sort((a,b)=>a.secs-b.secs);
-  const isFirst=sorted[0].name===CU;
-  toast(`Time recorded: ${fmtTime(secs)} 🏁`,'🏁');
-  // Refresh route sheet
-  setTimeout(()=>{
-    openRoute(routeId);
-    if(isFirst){showWinnerCard(rt,secs);}
-  },600);
+async function recordCompletion(routeId,secs){
+  const rt=ROUTES.find(r=>r.id===routeId);
+  try{
+    const d=await api('addCompletion',{routeId,username:CU,secs,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})});
+    if(d.skipped){toast('Not your best time — not saved','ℹ️');return;}
+    toast(`Time recorded: ${fmtTime(secs)} 🏁`,'🏁');
+    // Refresh route sheet with fresh data
+    setTimeout(async()=>{
+      await openRoute(routeId);
+      const freshRt=ROUTES.find(r=>r.id===routeId);
+      if(freshRt&&d.isFirst){showWinnerCard(freshRt,secs);}
+    },600);
+  }catch(e){toast('Could not save time. Try again.','⚠️');}
 }
 
 function showWinnerCard(rt,secs){
@@ -1889,7 +1910,7 @@ function ovc(ev,id){if(ev.target.id===id)cls(id);}
 // ── INCOMING LINK ──
 function checkLink(){
   const p=new URLSearchParams(location.search),jid=p.get('join'),rid=p.get('route');
-  if(jid){const rm=ROOMS.find(r=>r.id===jid);if(rm){go('rooms');setTimeout(()=>openRoom(jid),600);}}
+  if(jid){go('rooms');setTimeout(()=>openRoom(jid),600);}
   if(rid){go('routes');setTimeout(()=>openRoute(rid),600);}
 }
 
