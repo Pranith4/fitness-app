@@ -353,6 +353,15 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .rsk{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:3px}
 .gps-tracker{background:var(--greenbg);border:1px solid rgba(0,230,118,.2);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px;display:none}
 .gps-tracker.on{display:block}
+.gps-prog-wrap{margin:8px 0 4px}
+.gps-prog-row{display:flex;justify-content:space-between;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.gps-prog-bar{height:7px;background:var(--surf2);border-radius:4px;overflow:hidden}
+.gps-prog-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--green),#34d399);border-radius:4px;transition:width .6s ease}
+.gps-prog-fill.done{background:var(--gold)}
+.gps-dist-row{display:flex;justify-content:center;gap:16px;margin-top:6px}
+.gps-dst{text-align:center}
+.gps-dst-v{font-family:var(--fm);font-size:1rem;font-weight:700;color:var(--green)}
+.gps-dst-k{font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
 .gps-hdr{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .gps-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:blink 1s infinite}
 .gps-title{font-family:var(--fd);font-size:1rem;letter-spacing:1px;color:var(--green)}
@@ -750,6 +759,7 @@ let CU=null, ROOMS=[], PUBLIC_CONTESTS=[], ROUTES=[], cdI=null, LB_DATA=[];
 let crMap=null, crMarkers=[], crPolyline=null, crPath=[];
 let gpsWatchId=null, gpsStartTime=null, gpsTimerI=null;
 let CURRENT_ROUTE_ID=null;
+let gpsLastPos=null, gpsDistCovered=0, gpsRequiredDist=0, gpsActivityType='run';
 
 
 
@@ -1759,7 +1769,18 @@ async function openRoute(id){
     <div class="gps-tracker" id="gps-tracker">
       <div class="gps-hdr"><div class="gps-dot"></div><div class="gps-title">GPS TRACKING</div></div>
       <div class="gps-time" id="gps-time">00:00</div>
-      <div style="font-size:11px;color:var(--green);text-align:center;margin-bottom:8px" id="gps-status">Waiting for GPS signal…</div>
+      <div class="gps-prog-wrap">
+        <div class="gps-prog-row">
+          <span>DISTANCE COVERED</span>
+          <span id="gps-prog-pct">0%</span>
+        </div>
+        <div class="gps-prog-bar"><div class="gps-prog-fill" id="gps-prog-fill"></div></div>
+      </div>
+      <div class="gps-dist-row">
+        <div class="gps-dst"><div class="gps-dst-v" id="gps-dist-covered">0 m</div><div class="gps-dst-k">Covered</div></div>
+        <div class="gps-dst" style="color:var(--text3)"><div class="gps-dst-v" style="color:var(--text3)">${rt.distM>1000?(rt.distM/1000).toFixed(1)+' km':Math.round(rt.distM||0)+' m'}</div><div class="gps-dst-k">Required</div></div>
+      </div>
+      <div style="font-size:11px;color:var(--green);text-align:center;margin-top:8px" id="gps-status">Waiting for GPS signal…</div>
     </div>`;
 
   // Completions leaderboard
@@ -1803,48 +1824,121 @@ async function openRoute(id){
   }
 }
 
+// Minimum finish time — seconds per METRE, based on world record pace with buffer
+// run:   WR 1km ≈ 131s → 0.131s/m, use 0.10s/m (10% faster than WR = impossible)
+// cycle: WR 1km ≈ 56s  → 0.056s/m, use 0.045s/m
+// walk:  brisk ~720s/km → 0.72s/m,  use 0.40s/m
+// hike:  ~900s/km       → 0.90s/m,  use 0.55s/m
+const MIN_PACE = { run:0.10, cycle:0.045, walk:0.40, hike:0.55 };
+
 function startGPS(){
   const tracker=document.getElementById('gps-tracker');
   const btn=document.getElementById('gps-start-btn');
   if(!navigator.geolocation){toast('GPS not available on this device','⚠️');return;}
+
+  // Pull required distance and activity type from current route
+  const rt=ROUTES.find(r=>r.id===CURRENT_ROUTE_ID);
+  gpsRequiredDist = rt ? (rt.distM||0) : 0;
+  gpsActivityType = rt ? (rt.type||'run') : 'run';
+  gpsDistCovered  = 0;
+  gpsLastPos      = null;
+
   tracker.classList.add('on');
-  if(btn)btn.innerHTML='⏹ STOP & RECORD TIME';
-  if(btn)btn.onclick=stopGPS;
+  if(btn){btn.innerHTML='⏹ STOP & RECORD TIME';btn.disabled=true;btn.style.opacity='0.45';btn.onclick=stopGPS;}
   gpsStartTime=Date.now();
+
+  // Timer
   gpsTimerI=setInterval(()=>{
     const el=document.getElementById('gps-time');
     if(el)el.textContent=fmtTime(Math.floor((Date.now()-gpsStartTime)/1000));
   },1000);
-  gpsWatchId=navigator.geolocation.watchPosition(
-    pos=>{const s=document.getElementById('gps-status');if(s)s.textContent=`📡 Tracking — ${pos.coords.accuracy.toFixed(0)}m accuracy`;},
-    err=>{const s=document.getElementById('gps-status');if(s)s.textContent=`⚠️ GPS: ${err.message}`;},
-    {enableHighAccuracy:true,maximumAge:2000,timeout:10000}
-  );
-  toast('GPS tracking started 📍','📍');
+
+  // Position watcher — accumulates real distance
+  gpsWatchId=navigator.geolocation.watchPosition(pos=>{
+    const {latitude:lat,longitude:lng,accuracy}=pos.coords;
+    const s=document.getElementById('gps-status');
+
+    // Skip very inaccurate readings (>40m accuracy)
+    if(accuracy>40){
+      if(s)s.textContent=`⏳ Getting GPS lock… (${accuracy.toFixed(0)}m accuracy)`;
+      return;
+    }
+
+    if(gpsLastPos){
+      const seg=haversineDist(gpsLastPos,{lat,lng});
+      // Ignore tiny jitter (<2m) and huge jumps (>100m in one reading = GPS glitch)
+      if(seg>=2 && seg<100){
+        gpsDistCovered+=seg;
+        updateGpsProgress();
+      }
+    }
+    gpsLastPos={lat,lng};
+    if(s)s.textContent=`📡 Tracking — ${accuracy.toFixed(0)}m accuracy`;
+  },
+  err=>{
+    const s=document.getElementById('gps-status');
+    if(s)s.textContent=`⚠️ GPS error: ${err.message}`;
+  },
+  {enableHighAccuracy:true,maximumAge:0,timeout:15000});
+
+  toast('GPS tracking started — start moving! 📍','📍');
+}
+
+function updateGpsProgress(){
+  if(!gpsRequiredDist)return;
+  const pct    = Math.min(100,Math.round(gpsDistCovered/gpsRequiredDist*100));
+  const filled = pct>=90;
+  const fill   = document.getElementById('gps-prog-fill');
+  const pctEl  = document.getElementById('gps-prog-pct');
+  const covEl  = document.getElementById('gps-dist-covered');
+  const btn    = document.getElementById('gps-start-btn');
+
+  if(fill){fill.style.width=pct+'%';if(filled)fill.classList.add('done');else fill.classList.remove('done');}
+  if(pctEl)pctEl.textContent=pct+'%';
+  if(covEl)covEl.textContent=gpsDistCovered>1000?`${(gpsDistCovered/1000).toFixed(2)} km`:`${Math.round(gpsDistCovered)} m`;
+
+  // Unlock the stop button once 90% of distance is covered
+  if(filled&&btn){btn.disabled=false;btn.style.opacity='1';}
 }
 
 function stopGPS(){
   if(gpsWatchId!==null){navigator.geolocation.clearWatch(gpsWatchId);gpsWatchId=null;}
   if(gpsTimerI){clearInterval(gpsTimerI);gpsTimerI=null;}
-  const tracker=document.getElementById('gps-tracker');if(tracker)tracker.classList.remove('on');
+  const tracker=document.getElementById('gps-tracker');
+  if(tracker)tracker.classList.remove('on');
   if(!gpsStartTime)return;
+
   const totalSecs=Math.floor((Date.now()-gpsStartTime)/1000);
   gpsStartTime=null;
-  if(totalSecs<10){toast('Too short to record','⚠️');return;}
-  recordCompletion(CURRENT_ROUTE_ID,totalSecs);
+
+  // Guard: must have covered ≥90% of route distance
+  if(gpsRequiredDist>0 && gpsDistCovered<gpsRequiredDist*0.9){
+    toast(`Only covered ${Math.round(gpsDistCovered)}m of ${Math.round(gpsRequiredDist)}m — keep going!`,'⚠️');
+    return;
+  }
+
+  // Guard: minimum plausible time based on activity type
+  const minPace = MIN_PACE[gpsActivityType]||2.0;
+  const minSecs = Math.round(gpsRequiredDist * minPace);
+  if(gpsRequiredDist>0 && totalSecs < minSecs){
+    const minFmt = fmtTime(minSecs);
+    toast(`Time too fast to be valid (min ${minFmt} for this route) 🚫`,'🚫');
+    return;
+  }
+
+  recordCompletion(CURRENT_ROUTE_ID, totalSecs);
 }
 
 async function recordCompletion(routeId,secs){
-  const rt=ROUTES.find(r=>r.id===routeId);
   try{
     const d=await api('addCompletion',{routeId,username:CU,secs,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})});
     if(d.skipped){toast('Not your best time — not saved','ℹ️');return;}
     toast(`Time recorded: ${fmtTime(secs)} 🏁`,'🏁');
-    // Refresh route sheet with fresh data
     setTimeout(async()=>{
       await openRoute(routeId);
       const freshRt=ROUTES.find(r=>r.id===routeId);
-      if(freshRt&&d.isFirst){showWinnerCard(freshRt,secs);}
+      // Only show winner card if #1 AND at least one other person has also completed it
+      if(freshRt && d.isFirst && d.total>1){showWinnerCard(freshRt,secs);}
     },600);
   }catch(e){toast('Could not save time. Try again.','⚠️');}
 }
