@@ -507,10 +507,11 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     </div>
     <div><div class="sb-name">FITBOUNTY</div><div style="font-size:10px;color:var(--text3);letter-spacing:.5px">Earn Your Bounty.</div></div>
   </div>
-  <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic">🏆</span><span>Leaderboard</span><span class="ndot"></span></button>
+  <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic">🏠</span><span>Home</span><span class="ndot"></span></button>
   <button class="ni" id="ni-log" onclick="go('log')"><span class="nic">⚖️</span><span>Log Weight</span><span class="ndot"></span></button>
   <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic">🚪</span><span>Rooms</span><span class="ndot"></span></button>
   <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic">🗺️</span><span>Routes</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic">💡</span><span>About</span><span class="ndot"></span></button>
   <button class="ni admin-nav" id="ni-admin" style="display:none" onclick="go('admin')"><span class="nic">🛡️</span><span>Admin</span><span class="ndot"></span></button>
   <div class="sb-bot" style="display:none" id="sb-bot">
     <div style="width:28px;height:28px;border-radius:50%;background:var(--goldbg);border:1px solid rgba(245,200,66,.2);display:flex;align-items:center;justify-content:center;font-size:13px">👤</div>
@@ -521,12 +522,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 <div id="main" style="flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden">
 
-<!-- ═══ LEADERBOARD ═══ -->
+<!-- ═══ HOME (Leaderboard) ═══ -->
 <div id="view-lb" class="view on">
   <div class="tbar">
     <div class="tlogo">
       <div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>
-      FITBOUNTY
+      HOME
     </div>
     <div class="tright">
       <div class="uchip" id="top-chip">👤 <span id="tu">—</span></div>
@@ -579,6 +580,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <div class="tlogo" style="color:var(--purple)"><div class="tmark" style="border-color:rgba(167,139,250,.3)"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#a78bfa"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#a78bfa"/></svg></div>ADMIN</div>
   </div>
   <div class="pad" id="admin-scroll"></div>
+</div>
+
+<!-- ═══ ABOUT / FAQ ═══ -->
+<div id="view-faq" class="view">
+  <div class="tbar">
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg></div>ABOUT</div>
+  </div>
+  <div class="pad" id="faq-scroll"></div>
 </div>
 
 </div><!-- /main -->
@@ -736,6 +745,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   </div>
 </div>
 
+<!-- USER PROFILE SHEET -->
+<div id="ov-profile" class="ov" onclick="ovc(event,'ov-profile')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="profile-stit">Competitor</span><button class="bsx" onclick="cls('ov-profile')">×</button></div>
+    <div class="bsbody" id="profile-sbody"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"><span id="ti">✅</span><span id="tm">Done!</span></div>
 
@@ -880,6 +897,7 @@ function go(v){
   if(v==='rooms')renderRooms();
   if(v==='routes')renderRoutes();
   if(v==='admin')renderAdmin();
+  if(v==='faq')renderFAQ();
   window.scrollTo({top:0,behavior:'instant'});
 }
 
@@ -995,26 +1013,23 @@ function renderLB(area,lb){
     const wkCol=e.weekChange===null?'week-nil':e.weekChange>0?'week-up':'week-dn';
     const wkTxt=e.weekChange===null?'–':e.weekChange>0?`▼ ${e.weekChange.toFixed(2)} kg`:`▲ ${Math.abs(e.weekChange).toFixed(2)} kg`;
     const rankNum=i===0?'🥇':i===1?'🥈':(i+1).toString();
-    const safeId='rc-'+e.name.replace(/[^a-zA-Z0-9]/g,'_');
-    html+=`<div class="rc-wrap" id="${safeId}">
-    <div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s;cursor:pointer" onclick="toggleExpand('${safeId}')">
+    const safeName=e.name.replace(/'/g,"\\'");
+    html+=`<div class="${rankClass(i,e.name)}" style="animation-delay:${i*.05}s;cursor:pointer;border-radius:var(--rl)" onclick="openProfile('${safeName}')">
       <div class="rc-rank">${rankNum}</div>
       <div class="rc-av" style="background:${CLRS[i%CLRS.length]}">${e.name[0].toUpperCase()}${e.streak>=2?`<div class="streak">🔥${e.streak}</div>`:''}</div>
       <div class="rc-body">
         <div class="rc-name">${esc(e.name)}${isMe?'<span class="you">YOU</span>':''}</div>
         <div class="rc-meta">
           ${e.streak>=2?`<div class="rc-streak">🔥 ${e.streak}-week streak</div>`:''}
-          <div class="rc-status">${e.checkIns} weigh-ins</div>
+          <div class="rc-status">${e.checkIns} weigh-ins · tap to view</div>
         </div>
         ${i===0?`<div class="rc-prize">🥇 ₹6,500 — winner takes all</div>`:''}
       </div>
       <div class="rc-right">
         <div class="rc-pct">${e.total>0?e.total+'%':'0%'}</div>
         <div class="rc-week ${wkCol}">${wkTxt}</div>
-        <div class="rc-chevron">▼</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">›</div>
       </div>
-    </div>
-    <div class="rc-expand" id="${safeId}-exp"></div>
     </div>`;
   });
 
@@ -1025,33 +1040,123 @@ function renderLB(area,lb){
   clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
 }
 
-function toggleExpand(id){
-  const wrap=document.getElementById(id);if(!wrap)return;
-  const isOpen=wrap.classList.contains('open');
-  document.querySelectorAll('.rc-wrap.open').forEach(w=>{if(w.id!==id)w.classList.remove('open');});
-  if(isOpen){wrap.classList.remove('open');return;}
-  const entry=LB_DATA.find(e=>e.name.replace(/[^a-zA-Z0-9]/g,'_')===id.replace('rc-',''));
+function openProfile(name){
+  const entry=LB_DATA.find(e=>e.name.toLowerCase()===name.toLowerCase());
   if(!entry)return;
-  const expEl=document.getElementById(id+'-exp');if(!expEl)return;
+  const rank=LB_DATA.indexOf(entry)+1;
+  const color=CLRS[LB_DATA.indexOf(entry)%CLRS.length];
+  const isMe=entry.name.toLowerCase()===(CU||'').toLowerCase();
+  const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'#'+rank;
+
+  // Sort entries newest first
   const entries=(entry.entries||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
   const startW=entries.length?entries[entries.length-1].weight:null;
   const curW=entries.length?entries[0].weight:null;
   const totalLoss=startW&&curW?parseFloat((startW-curW).toFixed(2)):null;
-  let html=`<div class="rc-expand-hdr">
-    <div class="rc-expand-title">📊 ${esc(entry.name)}'s History</div>
-    <div class="rc-expand-stat">
-      <div class="rc-es"><span class="rc-esv" style="color:var(--gold)">${entry.total}%</span><div class="rc-esk">Lost</div></div>
-      ${totalLoss!==null?`<div class="rc-es"><span class="rc-esv" style="color:var(--green)">-${totalLoss}kg</span><div class="rc-esk">Total</div></div>`:''}
-      <div class="rc-es"><span class="rc-esv" style="color:var(--text2)">${entries.length}</span><div class="rc-esk">Weigh-ins</div></div>
+
+  // Week grouping for WoW table
+  function getMondayOf(d){const dt=new Date(d);const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
+  const weekMap={};
+  [...entries].reverse().forEach(w=>{
+    const mon=getMondayOf(new Date(w.date));
+    const key=mon.toISOString().split('T')[0];
+    if(!weekMap[key])weekMap[key]={mon,entries:[]};
+    weekMap[key].entries.push(w);
+  });
+  const weeks=Object.values(weekMap).sort((a,b)=>a.mon-b.mon).map(wk=>{
+    const sorted=wk.entries.sort((a,b)=>new Date(a.date)-new Date(b.date));
+    return{mon:wk.mon,weight:sorted[sorted.length-1].weight};
+  });
+
+  // Sparkline
+  function buildSparkline(wks){
+    if(wks.length<2)return'';
+    const vals=wks.map(w=>w.weight);
+    const min=Math.min(...vals),max=Math.max(...vals);
+    const range=max-min||1;
+    const W=280,H=56,pad=6;
+    const x=(i)=>pad+(i/(wks.length-1))*(W-pad*2);
+    const y=(v)=>H-pad-((v-min)/range)*(H-pad*2);
+    const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const areaD=`M${x(0).toFixed(1)},${H} `+vals.map((v,i)=>`L${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')+` L${x(vals.length-1).toFixed(1)},${H} Z`;
+    const trending=vals[vals.length-1]<vals[0];
+    const lineColor=trending?'#00e676':'#ff4b4b';
+    return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;display:block">
+      <defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${lineColor}" stop-opacity=".25"/><stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${areaD}" fill="url(#spg)"/>
+      <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i===vals.length-1?5:3}" fill="${i===vals.length-1?lineColor:'var(--surf2)'}" stroke="${lineColor}" stroke-width="1.5"/>`).join('')}
+    </svg>`;
+  }
+
+  document.getElementById('profile-stit').textContent=`${medal} ${entry.name}${isMe?' (You)':''}`;
+
+  let html=`
+    <!-- Hero -->
+    <div style="background:linear-gradient(135deg,rgba(245,200,66,.1),rgba(245,200,66,.02));border:1px solid rgba(245,200,66,.2);border-radius:var(--rl);padding:20px;margin-bottom:16px;display:flex;align-items:center;gap:16px">
+      <div style="width:60px;height:60px;border-radius:16px;background:${color};display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;flex-shrink:0;border:3px solid rgba(255,255,255,.15)">${entry.name[0].toUpperCase()}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-family:var(--fd);font-size:1.4rem;letter-spacing:.5px">${esc(entry.name)}${isMe?'<span style="font-size:10px;font-weight:700;color:var(--blue);background:var(--bluebg);border-radius:4px;padding:2px 6px;margin-left:8px;vertical-align:middle">YOU</span>':''}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:3px">${entry.checkIns||0} weigh-in${(entry.checkIns||0)!==1?'s':''}${entry.streak>=2?` · 🔥 ${entry.streak}-wk streak`:''}</div>
+      </div>
+      <div style="font-family:var(--fd);font-size:2rem;letter-spacing:1px;color:${rank===1?'var(--gold)':rank===2?'#b0bac6':'var(--text3)'}">${medal}</div>
     </div>
-  </div>`;
-  if(entries.length){
-    html+=`<table class="exp-table"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>`;
-    entries.forEach((w,idx)=>{const next=entries[idx+1];const chg=next?parseFloat((next.weight-w.weight).toFixed(2)):null;const cls=chg===null?'chg-nil':chg>0?'chg-dn':'chg-up';const arrow=chg===null?'—':chg>0?`▼ ${chg}kg`:`▲ ${Math.abs(chg)}kg`;html+=`<tr${idx===0?' class="latest"':''}><td style="color:var(--text2);font-family:var(--fb);font-size:11px">${new Date(w.date).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-weight:700;color:var(--text)">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;});
-    html+=`</tbody></table>`;
-  } else html+=`<div style="text-align:center;padding:14px;color:var(--text3);font-size:12px">No weigh-ins yet</div>`;
-  expEl.innerHTML=html;
-  wrap.classList.add('open');
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div class="d-stat"><span class="d-sv" style="color:var(--gold);font-size:.9rem">${entry.total>0?entry.total+'%':'0%'}</span><div class="d-sk">Lost</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--green);font-size:.9rem">${totalLoss!==null&&totalLoss>0?'-'+totalLoss+'kg':'—'}</span><div class="d-sk">kg Lost</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--text2);font-size:.9rem">${startW?startW+'kg':'—'}</span><div class="d-sk">Start</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--text);font-size:.9rem">${curW?curW+'kg':'—'}</span><div class="d-sk">Current</div></div>
+    </div>`;
+
+  // Sparkline
+  if(weeks.length>=2){
+    const trending=weeks[weeks.length-1].weight<weeks[0].weight;
+    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3)">WEIGHT TREND</div>
+        <div style="font-size:11px;font-weight:700;color:${trending?'var(--green)':'var(--red)'}">${trending?'▼ Trending down ✅':'▲ Trending up ⚠️'}</div>
+      </div>
+      <div style="width:100%;overflow:hidden">${buildSparkline(weeks)}</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:6px;font-weight:600">
+        <span>${weeks[0].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+        <span>Now</span>
+      </div>
+    </div>`;
+  }
+
+  // Week-on-week table
+  if(weeks.length){
+    html+=`<div style="background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd);margin-bottom:16px">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.85rem;letter-spacing:1px;color:var(--text2)">WEEK-ON-WEEK PROGRESS</div>
+      <table class="exp-table"><thead><tr><th>Week</th><th>Weight</th><th>Change</th><th>% Lost</th></tr></thead><tbody>`;
+    [...weeks].reverse().forEach((wk,i,arr)=>{
+      const prevWk=arr[i+1];
+      const chgKg=prevWk?parseFloat((prevWk.weight-wk.weight).toFixed(2)):null;
+      const chgPct=prevWk&&prevWk.weight?parseFloat(((prevWk.weight-wk.weight)/prevWk.weight*100).toFixed(2)):null;
+      const weekNum=weeks.length-i;
+      const isLatest=i===0;
+      let chgHtml,pctHtml;
+      if(chgKg===null){chgHtml=`<span style="color:var(--text3)">—</span>`;pctHtml=`<span style="color:var(--text3)">—</span>`;}
+      else if(chgKg>0){chgHtml=`<span class="chg-dn">▼ ${chgKg}kg</span>`;pctHtml=`<span class="chg-dn">▼ ${chgPct}%</span>`;}
+      else if(chgKg<0){chgHtml=`<span class="chg-up">▲ ${Math.abs(chgKg)}kg</span>`;pctHtml=`<span class="chg-up">▲ ${Math.abs(chgPct)}%</span>`;}
+      else{chgHtml=`<span style="color:var(--text3)">—</span>`;pctHtml=`<span style="color:var(--text3)">0%</span>`;}
+      html+=`<tr${isLatest?' class="latest"':''}>
+        <td style="font-family:var(--fb)"><div style="font-weight:700;color:${isLatest?'var(--gold)':'var(--text2)'}">W${weekNum}</div><div style="font-size:10px;color:var(--text3)">${wk.mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</div></td>
+        <td style="font-weight:700">${wk.weight} kg</td>
+        <td>${chgHtml}</td>
+        <td>${pctHtml}</td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div>`;
+  } else {
+    html+=`<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;background:var(--surf);border-radius:var(--rl)">No weigh-ins recorded yet</div>`;
+  }
+
+  html+=`<div style="height:8px"></div>`;
+  document.getElementById('profile-sbody').innerHTML=html;
+  openS('ov-profile');
 }
 
 function shameMsg(delta){const msgs=[`gained ${Math.abs(delta).toFixed(1)}kg this week 👀`,`up ${Math.abs(delta).toFixed(1)}kg — the group sees you 😬`,`+${Math.abs(delta).toFixed(1)}kg. Weekend was rough huh? 🍕`];return msgs[Math.floor(Math.random()*msgs.length)];}
@@ -2116,9 +2221,160 @@ function toast(msg,ic='✅'){
   tt=setTimeout(()=>t.classList.remove('on'),2800);
 }
 
+// ══════════════════════════════════════════════════════
+// FAQ / ABOUT
+// ══════════════════════════════════════════════════════
+function renderFAQ(){
+  const area=document.getElementById('faq-scroll');if(!area)return;
+
+  const faqs=[
+    {q:'What is FitBounty?',a:'FitBounty is a competitive fat-loss tracker. You put money in, lose the most body weight percentage, and take the prize. It keeps everyone accountable with weekly photo-proof weigh-ins and a live leaderboard.'},
+    {q:'How are standings calculated?',a:'Rankings are based on % of body weight lost since your first weigh-in — not raw kg. This makes it fair for everyone regardless of starting weight. Formula: (start weight − current weight) ÷ start weight × 100.'},
+    {q:'When do I weigh in?',a:'Official weigh-ins are every Monday. You\'ll need to log your weight and attach a photo as proof. Practice weights can be logged any day but only Monday entries count for the leaderboard.'},
+    {q:'What is a streak?',a:'A streak is consecutive weeks where you\'ve lost weight. Lose weight week 1, week 2, and week 3 in a row = 🔥 3-week streak. Gaining even 0.1kg resets it to zero.'},
+    {q:'What happens if I miss a weigh-in?',a:'Missing a Monday weigh-in breaks your streak and your weight stays frozen from the last entry. If your room has a miss penalty, the configured ₹ amount is deducted from your prize share.'},
+    {q:'What are Route Challenges?',a:'Route Challenges let you draw a GPS route on a map (a running trail, cycling loop, walking path etc.). Anyone can attempt the route on their phone using live GPS tracking. Times are validated — we check you actually covered the distance at a realistic pace.'},
+    {q:'How does the GPS validation work?',a:'When you start a route, your phone\'s GPS tracks how far you\'ve actually moved. The Stop button stays locked until you\'ve covered at least 90% of the route distance. We also reject times that are physically impossible — faster than world-record pace for the activity type.'},
+    {q:'What are private Rooms?',a:'Rooms let you run your own contest with custom rules — set the entry fee, prize split (1 winner or top 3), duration, miss penalty, and invite code. Share the link via WhatsApp and anyone with the link can join.'},
+    {q:'Is my data private?',a:'Your individual weight history is visible to all members of your contest room — that\'s intentional, it drives accountability. Route completion times are public. Profile photos are stored only on your device and never uploaded.'},
+    {q:'How is the prize paid out?',a:'Prize payouts are handled manually by the contest organiser at the end of the challenge. FitBounty tracks standings and calculates the split — the actual transfer is between participants directly (UPI, cash, etc.).'},
+  ];
+
+  const features=[
+    {icon:'🏆',title:'Live Leaderboard',desc:'Real-time % body weight rankings with weekly deltas, streaks, and prize pool tracking.'},
+    {icon:'📸',title:'Photo Proof',desc:'Monday weigh-ins require a camera photo as proof — no faking the scales.'},
+    {icon:'🗺️',title:'GPS Route Challenges',desc:'Draw a route, set the record, challenge anyone to beat your time. Validated with real GPS distance.'},
+    {icon:'🚪',title:'Private Rooms',desc:'Run your own contest with custom fees, split, duration and penalty rules. Invite via WhatsApp link.'},
+    {icon:'🔥',title:'Streak Tracking',desc:'Consecutive weeks of weight loss are rewarded with fire streaks — visible to the whole group.'},
+    {icon:'⚖️',title:'Fair Ranking',desc:'Standings use % of body weight lost — not raw kg — so heavier and lighter people compete equally.'},
+  ];
+
+  let html=`
+    <!-- Hero banner -->
+    <div style="margin:0 0 0;background:linear-gradient(160deg,rgba(245,200,66,.13) 0%,rgba(255,59,59,.06) 60%,transparent 100%);padding:32px 18px 28px;position:relative;overflow:hidden">
+      <div style="position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,200,66,.12),transparent 70%);pointer-events:none"></div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,200,66,.7);margin-bottom:10px">ABOUT FITBOUNTY</div>
+      <div style="font-family:var(--fd);font-size:clamp(1.8rem,8vw,2.6rem);line-height:.95;margin-bottom:14px">PUT MONEY<br>ON THE <span style="color:var(--gold)">LINE.</span><br>LOSE THE WEIGHT.</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7;max-width:340px">FitBounty turns fat loss into a high-stakes group competition. Weekly weigh-ins, photo proof, GPS challenges — and a real cash prize waiting at the finish line.</div>
+
+      <!-- Visual stat bar -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px">
+        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
+          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--gold)">₹6,500</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Active Pool</div>
+        </div>
+        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
+          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--red)" id="faq-days">—</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Days Left</div>
+        </div>
+        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
+          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--green)">13</div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Competitors</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works visual flow -->
+    <div style="padding:22px 18px 0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:14px">HOW IT WORKS</div>
+      <div style="display:flex;flex-direction:column;gap:0">
+        ${[
+          {n:'1',col:'var(--gold)',icon:'💰',t:'Pay the entry fee',d:'Everyone puts skin in the game. The pool grows with each participant.'},
+          {n:'2',col:'var(--blue)',icon:'📅',t:'Weigh in every Monday',d:'Log your weight + attach a photo as proof. No photo = no count.'},
+          {n:'3',col:'var(--orange)',icon:'📉',t:'Lose the most % body weight',d:'Rankings update live. Your % loss from start weight is what counts.'},
+          {n:'4',col:'var(--green)',icon:'🏆',t:'Top finisher wins the pool',d:'At the end of the challenge, the leaderboard determines the payout.'},
+        ].map((s,i,arr)=>`
+          <div style="display:flex;gap:14px;padding-bottom:${i<arr.length-1?'0':'0'}">
+            <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+              <div style="width:36px;height:36px;border-radius:50%;background:${s.col};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 0 16px ${s.col}44">${s.icon}</div>
+              ${i<arr.length-1?`<div style="width:2px;flex:1;background:linear-gradient(${s.col},${arr[i+1].col});min-height:28px;margin:4px 0"></div>`:''}
+            </div>
+            <div style="padding-bottom:${i<arr.length-1?'20':'0'}px;padding-top:6px">
+              <div style="font-weight:700;font-size:14px;margin-bottom:3px">${s.t}</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.6">${s.d}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Feature grid -->
+    <div style="padding:24px 18px 0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">FEATURES</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        ${features.map(f=>`
+          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px">
+            <div style="font-size:24px;margin-bottom:8px">${f.icon}</div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:5px">${f.title}</div>
+            <div style="font-size:11px;color:var(--text2);line-height:1.55">${f.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Visual: Activity type pace cards -->
+    <div style="padding:24px 18px 0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">SUPPORTED ACTIVITIES</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+        ${[
+          {icon:'🏃',label:'Running',col:'var(--red)',sub:'5–10 km/h'},
+          {icon:'🚴',label:'Cycling',col:'var(--blue)',sub:'15–30 km/h'},
+          {icon:'🚶',label:'Walking',col:'var(--green)',sub:'3–6 km/h'},
+          {icon:'⛰️',label:'Hiking',col:'var(--orange)',sub:'2–5 km/h'},
+        ].map(a=>`
+          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:12px 8px;text-align:center">
+            <div style="font-size:22px;margin-bottom:6px">${a.icon}</div>
+            <div style="font-weight:700;font-size:11px;color:${a.col}">${a.label}</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:3px">${a.sub}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- FAQ accordion -->
+    <div style="padding:24px 18px 0">
+      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">FREQUENTLY ASKED</div>
+      <div style="display:flex;flex-direction:column;gap:8px" id="faq-list">
+        ${faqs.map((f,i)=>`
+          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden">
+            <button onclick="toggleFaq(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;gap:12px">
+              <span style="font-weight:700;font-size:13px;color:var(--text);line-height:1.4">${f.q}</span>
+              <span id="faq-arrow-${i}" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .2s">▼</span>
+            </button>
+            <div id="faq-ans-${i}" style="display:none;padding:0 16px 14px;font-size:13px;color:var(--text2);line-height:1.7;border-top:1px solid var(--brd)">${f.a}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Footer credit -->
+    <div style="padding:24px 18px 8px;text-align:center">
+      <div style="display:inline-flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rf);padding:10px 18px">
+        <div style="width:28px;height:28px;background:#13131f;border:1.5px solid rgba(245,200,66,.3);border-radius:7px;display:flex;align-items:center;justify-content:center">
+          <svg width="17" height="17" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#080810"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#f5c842"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#f5c842"/></svg>
+        </div>
+        <div style="text-align:left">
+          <div style="font-family:var(--fd);font-size:.9rem;letter-spacing:1.5px">FITBOUNTY</div>
+          <div style="font-size:10px;color:var(--text3)">Earn Your Bounty.</div>
+        </div>
+      </div>
+    </div>
+    <div style="height:16px"></div>`;
+
+  area.innerHTML=html;
+  const dl=Math.max(0,Math.ceil((CEND-new Date())/86400000));
+  const el=document.getElementById('faq-days');if(el)el.textContent=dl;
+}
+
+function toggleFaq(i){
+  const ans=document.getElementById('faq-ans-'+i);
+  const arrow=document.getElementById('faq-arrow-'+i);
+  if(!ans||!arrow)return;
+  const open=ans.style.display==='block';
+  // Close all
+  document.querySelectorAll('[id^="faq-ans-"]').forEach(el=>{el.style.display='none';});
+  document.querySelectorAll('[id^="faq-arrow-"]').forEach(el=>{el.style.transform='';});
+  if(!open){ans.style.display='block';arrow.style.transform='rotate(180deg)';}
+}
+
 // ── UTILS ──
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
-
 
 </script>
 </body>
