@@ -1086,19 +1086,76 @@ function renderLog(area,weights){
   const streak=calcStreak(weights);
   const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
 
+  // ── Group entries into weeks (Mon–Sun) ──
+  function getMondayOf(d){const dt=new Date(d);const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
+  const weekMap={};
+  weights.forEach(w=>{
+    const mon=getMondayOf(w.date);
+    const key=mon.toISOString().split('T')[0];
+    if(!weekMap[key])weekMap[key]={mon,entries:[]};
+    weekMap[key].entries.push(w);
+  });
+  // Sort weeks oldest→newest, take last entry of each week as the "official" weight
+  const weeks=Object.values(weekMap).sort((a,b)=>a.mon-b.mon).map(wk=>{
+    const sorted=wk.entries.sort((a,b)=>a.date-b.date);
+    return{mon:wk.mon,weight:sorted[sorted.length-1].weight,entries:sorted};
+  });
+
+  // ── Sparkline SVG ──
+  function buildSparkline(wks){
+    if(wks.length<2)return'';
+    const vals=wks.map(w=>w.weight);
+    const min=Math.min(...vals),max=Math.max(...vals);
+    const range=max-min||1;
+    const W=260,H=52,pad=6;
+    const x=(i)=>pad+(i/(wks.length-1))*(W-pad*2);
+    const y=(v)=>H-pad-((v-min)/range)*(H-pad*2);
+    const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    // Area fill path
+    const areaD=`M${x(0).toFixed(1)},${H} `+vals.map((v,i)=>`L${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')+` L${x(vals.length-1).toFixed(1)},${H} Z`;
+    // Trend: last val vs first val
+    const trending=vals[vals.length-1]<vals[0];// lower weight = good
+    const lineColor=trending?'#00e676':'#ff4b4b';
+    const fillColor=trending?'rgba(0,230,118,0.08)':'rgba(255,75,75,0.08)';
+    return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible">
+      <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${lineColor}" stop-opacity=".3"/><stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/></linearGradient></defs>
+      <path d="${areaD}" fill="url(#sg)"/>
+      <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+      ${vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i===vals.length-1?4:2.5}" fill="${i===vals.length-1?lineColor:'var(--surf2)'}" stroke="${lineColor}" stroke-width="1.5"/>`).join('')}
+    </svg>`;
+  }
+
   let html=`<div style="padding:4px 0 16px">
     <div class="log-top">
       <div class="log-av" style="background:${color}">${(CU||'?')[0].toUpperCase()}</div>
       <div>
         <div class="log-name">${esc(CU||'Competitor')}</div>
-        <div class="log-sub">${weights.length} weigh-ins logged${streak>=2?` · 🔥 ${streak}-week streak`:''}</div>
+        <div class="log-sub">${weights.length} weigh-in${weights.length!==1?'s':''} · ${weeks.length} week${weeks.length!==1?'s':''}${streak>=2?` · 🔥 ${streak}-wk streak`:''}</div>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
       <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${totalPct!==null?totalPct+'%':'—'}</span><div class="d-sk">Total Loss</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'-'+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">This Week</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'▼ '+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">Last Change</div></div>
       <div class="d-stat"><span class="d-sv" style="color:var(--orange)">${streak>=2?'🔥'+streak:'—'}</span><div class="d-sk">Streak</div></div>
-    </div>
+    </div>`;
+
+  // Sparkline card
+  if(weeks.length>=2){
+    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-size:.8rem;letter-spacing:.8px;color:var(--text3)">WEIGHT TREND</div>
+        <div style="font-size:11px;font-weight:700;color:var(--text2)">${firstW} kg → ${lastW} kg</div>
+      </div>
+      <div style="width:100%;overflow:hidden">${buildSparkline(weeks)}</div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:6px;font-weight:600">
+        <span>${weeks[0].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+        <span>${weeks[weeks.length-1].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+      </div>
+    </div>`;
+  }
+
+  // Weigh-in input
+  html+=`
     ${isMonday?`<div class="log-status-ok">✅ It's Monday! Time to log your weight + photo proof.</div>`:`<div class="log-status-warn">⏰ Official weigh-ins are Mondays.<br>Today is ${days[now.getDay()]}. You can still log practice weight.</div>`}
     <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal">
     <div class="wi-unit">KILOGRAMS</div>
@@ -1113,13 +1170,56 @@ function renderLog(area,weights){
       ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
     </button>`;
 
-  if(weights.length){
+  // Week-on-week history table
+  if(weeks.length){
     html+=`<div style="margin-top:22px;background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd)">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEIGH-IN HISTORY</div>
+      <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEEK-ON-WEEK HISTORY</div>
       <div style="overflow-x:auto">
-      <table class="ht"><thead><tr><th>Date</th><th>Weight</th><th>Change</th></tr></thead><tbody>
-      ${[...weights].reverse().map((w,i,arr)=>{const prev=arr[i+1];const chg=prev?parseFloat((prev.weight-w.weight).toFixed(2)):null;const cls=chg===null?'flat':chg>0?'dn':'up';const arrow=chg===null?'—':chg>0?`▼ ${chg} kg`:`▲ ${Math.abs(chg)} kg`;return`<tr><td>${w.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</td><td style="font-family:var(--fm);font-weight:700">${w.weight} kg</td><td class="${cls}">${arrow}</td></tr>`;}).join('')}
-      </tbody></table></div></div>`;
+      <table class="ht">
+        <thead><tr><th>Week</th><th>Weight</th><th>Change</th><th>% Change</th></tr></thead>
+        <tbody>`;
+
+    // Render newest week first
+    [...weeks].reverse().forEach((wk,i,arr)=>{
+      const prevWk=arr[i+1];
+      const chgKg=prevWk?parseFloat((prevWk.weight-wk.weight).toFixed(2)):null;
+      const chgPct=prevWk?parseFloat(((prevWk.weight-wk.weight)/prevWk.weight*100).toFixed(2)):null;
+      const isLatest=i===0;
+      const weekLabel=`W${weeks.length-i}`;
+      const dateRange=wk.mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
+
+      let chgCell,pctCell;
+      if(chgKg===null){
+        chgCell=`<span style="color:var(--text3)">—</span>`;
+        pctCell=`<span style="color:var(--text3)">—</span>`;
+      } else if(chgKg>0){
+        chgCell=`<span class="dn">▼ ${chgKg} kg</span>`;
+        pctCell=`<span class="dn">▼ ${chgPct}%</span>`;
+      } else if(chgKg<0){
+        chgCell=`<span class="up">▲ ${Math.abs(chgKg)} kg</span>`;
+        pctCell=`<span class="up">▲ ${Math.abs(chgPct)}%</span>`;
+      } else {
+        chgCell=`<span style="color:var(--text3)">0 kg</span>`;
+        pctCell=`<span style="color:var(--text3)">0%</span>`;
+      }
+
+      // Show all individual entries for the week as sub-rows
+      const subRows=wk.entries.length>1?wk.entries.slice(0,-1).reverse().map(e=>`
+        <tr style="background:rgba(255,255,255,0.015)">
+          <td style="padding-left:24px;font-size:11px;color:var(--text3)">${e.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+          <td style="font-family:var(--fm);font-size:11px;color:var(--text3)">${e.weight} kg</td>
+          <td colspan="2" style="font-size:11px;color:var(--text3)">practice</td>
+        </tr>`).join(''):'';
+
+      html+=`<tr style="${isLatest?'background:rgba(245,200,66,0.04)':''}">
+        <td><div style="font-weight:700;font-size:12px;color:${isLatest?'var(--gold)':'var(--text2)'}">${weekLabel}</div><div style="font-size:10px;color:var(--text3);margin-top:1px">${dateRange}</div></td>
+        <td style="font-family:var(--fm);font-weight:700;font-size:14px">${wk.weight} kg</td>
+        <td>${chgCell}</td>
+        <td>${pctCell}</td>
+      </tr>${subRows}`;
+    });
+
+    html+=`</tbody></table></div></div>`;
   }
 
   if(proofs.length){
