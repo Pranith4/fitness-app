@@ -1040,7 +1040,7 @@ function renderLB(area,lb){
   clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
 }
 
-function openProfile(name){
+async function openProfile(name){
   const entry=LB_DATA.find(e=>e.name.toLowerCase()===name.toLowerCase());
   if(!entry)return;
   const rank=LB_DATA.indexOf(entry)+1;
@@ -1048,16 +1048,30 @@ function openProfile(name){
   const isMe=entry.name.toLowerCase()===(CU||'').toLowerCase();
   const medal=rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'#'+rank;
 
+  // Open sheet immediately with skeleton
+  document.getElementById('profile-stit').textContent=`${medal} ${entry.name}${isMe?' (You)':''}`;
+  document.getElementById('profile-sbody').innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:28px;height:28px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 12px"></div><p>Loading weigh-ins…</p></div>`;
+  openS('ov-profile');
+
+  // Fetch this user's weights from API
+  let rawWeights=[];
+  try{
+    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getUserWeights',username:entry.name})});
+    const raw=await r.json();
+    const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
+    rawWeights=rows.map(r=>({date:new Date(r[1]),weight:parseFloat(r[2])})).filter(r=>!isNaN(r.weight)&&!isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
+  }catch(e){}
+
   // Sort entries newest first
-  const entries=(entry.entries||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const startW=entries.length?entries[entries.length-1].weight:null;
-  const curW=entries.length?entries[0].weight:null;
+  const entries=rawWeights.slice().sort((a,b)=>b.date-a.date);
+  const startW=rawWeights.length?rawWeights[0].weight:null;
+  const curW=rawWeights.length?rawWeights[rawWeights.length-1].weight:null;
   const totalLoss=startW&&curW?parseFloat((startW-curW).toFixed(2)):null;
 
   // Week grouping for WoW table
   function getMondayOf(d){const dt=new Date(d);const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
   const weekMap={};
-  [...entries].reverse().forEach(w=>{
+  rawWeights.forEach(w=>{
     const mon=getMondayOf(new Date(w.date));
     const key=mon.toISOString().split('T')[0];
     if(!weekMap[key])weekMap[key]={mon,entries:[]};
@@ -1107,7 +1121,7 @@ function openProfile(name){
       <div class="d-stat"><span class="d-sv" style="color:var(--gold);font-size:.9rem">${entry.total>0?entry.total+'%':'0%'}</span><div class="d-sk">Lost</div></div>
       <div class="d-stat"><span class="d-sv" style="color:var(--green);font-size:.9rem">${totalLoss!==null&&totalLoss>0?'-'+totalLoss+'kg':'—'}</span><div class="d-sk">kg Lost</div></div>
       <div class="d-stat"><span class="d-sv" style="color:var(--text2);font-size:.9rem">${startW?startW+'kg':'—'}</span><div class="d-sk">Start</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:var(--text);font-size:.9rem">${curW?curW+'kg':'—'}</span><div class="d-sk">Current</div></div>
+      <div class="d-stat"><span class="d-sv" style="color:var(--text);font-size:.9rem">${curW?curW+'kg':'—'}</span><div class="d-sk">Now</div></div>
     </div>`;
 
   // Sparkline
@@ -1156,7 +1170,6 @@ function openProfile(name){
 
   html+=`<div style="height:8px"></div>`;
   document.getElementById('profile-sbody').innerHTML=html;
-  openS('ov-profile');
 }
 
 function shameMsg(delta){const msgs=[`gained ${Math.abs(delta).toFixed(1)}kg this week 👀`,`up ${Math.abs(delta).toFixed(1)}kg — the group sees you 😬`,`+${Math.abs(delta).toFixed(1)}kg. Weekend was rough huh? 🍕`];return msgs[Math.floor(Math.random()*msgs.length)];}
