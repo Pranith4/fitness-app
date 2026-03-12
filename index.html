@@ -9,8 +9,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 <style>
 :root{
   --bg:#080810;--bg2:#0f0f1c;--bg3:#141428;
@@ -748,14 +746,11 @@ const ADMIN_USER='pranith'; // single admin account
 // 5. Route challenges stored in fb_routes (shared)
 
 let CU=null, ROOMS=[], PUBLIC_CONTESTS=[], ROUTES=[], cdI=null, LB_DATA=[];
-let GMAPS_READY=false, crMap=null, crMarkers=[], crPolyline=null, crPath=[];
+let crMap=null, crMarkers=[], crPolyline=null, crPath=[];
 let gpsWatchId=null, gpsStartTime=null, gpsTimerI=null;
 let CURRENT_ROUTE_ID=null;
 
-// ── GOOGLE MAPS CALLBACK ──
-window.gmapsReady=function(){
-  GMAPS_READY=true;
-};
+
 
 function isAdmin(){return (CU||'').toLowerCase()===ADMIN_USER.toLowerCase();}
 
@@ -1514,93 +1509,82 @@ function openCreateRoute(){
   document.getElementById('cr-desc').value='';
   document.getElementById('cr-dist').textContent='0 m';
   openS('ov-create-route');
-  if(GMAPS_READY){
-    setTimeout(()=>initCreateMap(),300);
-  } else {
-    // Show helpful message if Maps not loaded
-    document.getElementById('cr-map-ph').style.display='flex';
-    document.getElementById('cr-map-ph').innerHTML=`
-      <div style="font-size:28px">⚠️</div>
-      <div style="font-size:12px;font-weight:700;color:var(--orange)">Google Maps not loaded</div>
-      <div style="font-size:11px;color:var(--text3);text-align:center;padding:0 16px;line-height:1.6">Add your Google Maps API key to enable map-based route creation. Route will still save with manual distance entry.</div>
-      <div class="sfg" style="width:100%;padding:0 12px;margin-top:8px">
-        <label class="sfl">Route Distance (meters)</label>
-        <input type="number" id="cr-manual-dist" class="sfi" placeholder="e.g. 5000 for 5km" min="100" inputmode="numeric">
-      </div>`;
-  }
+  setTimeout(()=>initCreateMap(),300);
 }
 
 function initCreateMap(){
   const mapEl=document.getElementById('cr-map');if(!mapEl)return;
   document.getElementById('cr-map-ph').style.display='none';
-  crMap=new google.maps.Map(mapEl,{
-    center:{lat:12.9716,lng:77.5946}, // Bangalore default
-    zoom:14,
-    mapTypeId:'roadmap',
-    styles:[{elementType:'geometry',stylers:[{color:'#1a1a2e'}]},{elementType:'labels.text.fill',stylers:[{color:'#8888aa'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2d2d50'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f0f1c'}]}],
-    disableDefaultUI:true,zoomControl:true,
-  });
-  crPolyline=new google.maps.Polyline({
-    path:[],strokeColor:'#4fc3f7',strokeWeight:3,strokeOpacity:.9,map:crMap
-  });
-  crMap.addListener('click',e=>addWaypoint(e.latLng));
-  // Try to center on user's location
+  // Destroy existing map instance if reinitialising
+  if(crMap){crMap.remove();crMap=null;}
+  crMap=L.map(mapEl,{zoomControl:true}).setView([12.9716,77.5946],14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom:19
+  }).addTo(crMap);
+  // Dark overlay to match app theme
+  crPolyline=L.polyline([],{color:'#4fc3f7',weight:4,opacity:.9}).addTo(crMap);
+  crMap.on('click',e=>addWaypoint(e.latlng));
+  // Centre on user location
   if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{crMap.setCenter({lat:pos.coords.latitude,lng:pos.coords.longitude});},()=>{});
+    navigator.geolocation.getCurrentPosition(pos=>{
+      crMap.setView([pos.coords.latitude,pos.coords.longitude],15);
+    },()=>{});
   }
 }
 
-function addWaypoint(latLng){
-  crPath.push(latLng);
-  const marker=new google.maps.Marker({position:latLng,map:crMap,
-    icon:{path:google.maps.SymbolPath.CIRCLE,scale:crPath.length===1?8:5,fillColor:crPath.length===1?'#f5c842':'#4fc3f7',fillOpacity:1,strokeColor:'#fff',strokeWeight:1.5},
-    title:`Point ${crPath.length}`});
+function addWaypoint(latlng){
+  crPath.push(latlng);
+  const isFirst=crPath.length===1;
+  const marker=L.circleMarker(latlng,{
+    radius:isFirst?8:5,
+    color:'#fff',weight:1.5,
+    fillColor:isFirst?'#f5c842':'#4fc3f7',fillOpacity:1
+  }).addTo(crMap);
   crMarkers.push(marker);
-  crPolyline.setPath(crPath);
+  crPolyline.setLatLngs(crPath);
   updateRouteDist();
 }
 
 function undoWaypoint(){
   if(!crPath.length)return;
   crPath.pop();
-  const m=crMarkers.pop();if(m)m.setMap(null);
-  if(crPolyline)crPolyline.setPath(crPath);
+  const m=crMarkers.pop();if(m)crMap.removeLayer(m);
+  crPolyline.setLatLngs(crPath);
   updateRouteDist();
 }
 
 function clearRoute(){
   crPath=[];
-  crMarkers.forEach(m=>m.setMap(null));crMarkers=[];
-  if(crPolyline)crPolyline.setPath([]);
+  crMarkers.forEach(m=>crMap.removeLayer(m));crMarkers=[];
+  if(crPolyline)crPolyline.setLatLngs([]);
   document.getElementById('cr-dist').textContent='0 m';
 }
 
+function haversineDist(a,b){
+  const R=6371000,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
+  const x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
 function updateRouteDist(){
-  if(!crPath.length||crPath.length<2){document.getElementById('cr-dist').textContent='0 m';return;}
+  if(crPath.length<2){document.getElementById('cr-dist').textContent='0 m';return;}
   let dist=0;
-  for(let i=1;i<crPath.length;i++){
-    dist+=google.maps.geometry.spherical.computeDistanceBetween(crPath[i-1],crPath[i]);
-  }
+  for(let i=1;i<crPath.length;i++)dist+=haversineDist(crPath[i-1],crPath[i]);
   document.getElementById('cr-dist').textContent=dist>1000?`${(dist/1000).toFixed(2)} km`:`${Math.round(dist)} m`;
 }
 
 function saveRoute(){
   const name=document.getElementById('cr-name').value.trim();
   if(!name){toast('Enter a route name','⚠️');return;}
-  if(crPath.length<2&&!document.getElementById('cr-manual-dist')){toast('Draw at least 2 points on the map','⚠️');return;}
+  if(crPath.length<2){toast('Draw at least 2 points on the map','⚠️');return;}
   let distM=0;
-  if(crPath.length>=2&&GMAPS_READY){
-    for(let i=1;i<crPath.length;i++)distM+=google.maps.geometry.spherical.computeDistanceBetween(crPath[i-1],crPath[i]);
-  } else {
-    const manualEl=document.getElementById('cr-manual-dist');
-    distM=manualEl?parseFloat(manualEl.value)||0:0;
-  }
+  for(let i=1;i<crPath.length;i++)distM+=haversineDist(crPath[i-1],crPath[i]);
   const rt={
     id:'rt'+Date.now(),
     name,
     desc:document.getElementById('cr-desc').value.trim(),
     type:document.getElementById('cr-type').value,
-    path:crPath.map(p=>({lat:p.lat(),lng:p.lng()})),
+    path:crPath.map(p=>({lat:p.lat,lng:p.lng})),
     distM,
     createdBy:CU,
     createdAt:new Date().toISOString(),
@@ -1633,8 +1617,8 @@ function openRoute(id){
       <div class="route-stat"><span class="rsv" style="color:var(--green)">${myBest?fmtTime(myBest.secs):'—'}</span><div class="rsk">My Best</div></div>
     </div>`;
 
-  // Show map if available
-  if(GMAPS_READY&&rt.path&&rt.path.length>1){
+  // Show map if path available
+  if(rt.path&&rt.path.length>1){
     html+=`<div id="route-detail-map" style="width:100%;height:180px;border-radius:var(--r);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:12px"></div>`;
   }
 
@@ -1670,20 +1654,19 @@ function openRoute(id){
 
   openS('ov-route');
 
-  // Init route preview map
-  if(GMAPS_READY&&rt.path&&rt.path.length>1){
+  // Init route preview map with Leaflet
+  if(rt.path&&rt.path.length>1){
     setTimeout(()=>{
       const mapEl=document.getElementById('route-detail-map');if(!mapEl)return;
-      const previewMap=new google.maps.Map(mapEl,{
-        zoom:14,mapTypeId:'roadmap',disableDefaultUI:true,
-        styles:[{elementType:'geometry',stylers:[{color:'#1a1a2e'}]},{elementType:'labels.text.fill',stylers:[{color:'#8888aa'}]},{featureType:'road',elementType:'geometry',stylers:[{color:'#2d2d50'}]},{featureType:'water',elementType:'geometry',stylers:[{color:'#0f0f1c'}]}],
-      });
-      const path=rt.path.map(p=>new google.maps.LatLng(p.lat,p.lng));
-      new google.maps.Polyline({path,strokeColor:'#4fc3f7',strokeWeight:3,strokeOpacity:.9,map:previewMap});
-      const bounds=new google.maps.LatLngBounds();path.forEach(p=>bounds.extend(p));previewMap.fitBounds(bounds);
-      // start/end markers
-      new google.maps.Marker({position:path[0],map:previewMap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#f5c842',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
-      new google.maps.Marker({position:path[path.length-1],map:previewMap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#00e676',fillOpacity:1,strokeColor:'#fff',strokeWeight:2}});
+      const previewMap=L.map(mapEl,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false});
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(previewMap);
+      const latlngs=rt.path.map(p=>L.latLng(p.lat,p.lng));
+      L.polyline(latlngs,{color:'#4fc3f7',weight:3,opacity:.9}).addTo(previewMap);
+      // Start marker (gold)
+      L.circleMarker(latlngs[0],{radius:8,color:'#fff',weight:2,fillColor:'#f5c842',fillOpacity:1}).addTo(previewMap);
+      // End marker (green)
+      L.circleMarker(latlngs[latlngs.length-1],{radius:8,color:'#fff',weight:2,fillColor:'#00e676',fillOpacity:1}).addTo(previewMap);
+      previewMap.fitBounds(L.latLngBounds(latlngs),{padding:[12,12]});
     },400);
   }
 }
@@ -1819,79 +1802,7 @@ function toast(msg,ic='✅'){
 // ── UTILS ──
 function esc(s){const d=document.createElement('div');d.textContent=s||'';return d.innerHTML;}
 
-/* =============================== OPEN MAP SYSTEM (Leaflet) ================================ */
-crMap = null;
-let routingControl = null;
-crPath = [];
 
-function initCreateMap() {
-    const mapEl = document.getElementById("cr-map");
-    if (!mapEl) return;
-
-    // 1. Initialize Map
-    crMap = L.map(mapEl).setView([12.9716, 77.5946], 13);
-
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap"
-    }).addTo(crMap);
-
-    // 2. Setup the Open Routing Engine (OSRM)
-    routingControl = L.Routing.control({
-        waypoints: [],
-        routeWhileDragging: false,
-        addWaypoints: false,
-        show: false, // Hide instruction panel
-        router: L.Routing.osrmv1({
-            serviceUrl: `https://router.project-osrm.org/route/v1`
-        }),
-        lineOptions: {
-            styles: [{ color: '#4fc3f7', weight: 5, opacity: 0.8 }]
-        }
-    }).addTo(crMap);
-
-    // 3. Listen for path calculation to update distance
-    routingControl.on('routesfound', function(e) {
-        const routes = e.routes;
-        const summary = routes[0].summary;
-        const dist = summary.totalDistance; // distance in meters
-        
-        const distEl = document.getElementById("cr-dist");
-        if (distEl) {
-            distEl.textContent = dist > 1000 
-                ? (dist / 1000).toFixed(2) + " km" 
-                : Math.round(dist) + " m";
-        }
-        
-        // Update the path coordinates for saving to your backend
-        crPath = routes[0].coordinates;
-    });
-
-    // 4. Handle clicks to add waypoints
-    crMap.on("click", function(e) {
-        addWaypoint(e.latlng);
-    });
-}
-
-function addWaypoint(latlng) {
-    const currentWaypoints = routingControl.getWaypoints();
-    // Filter to get only points that have coordinates
-    const newWaypoints = currentWaypoints
-        .filter(wp => wp.latLng)
-        .map(wp => wp.latLng);
-    
-    newWaypoints.push(latlng);
-    routingControl.setWaypoints(newWaypoints);
-}
-
-// Update your clear button logic to use this
-function clearRoute() {
-    if (routingControl) {
-        routingControl.setWaypoints([]);
-        crPath = [];
-        const distEl = document.getElementById("cr-dist");
-        if (distEl) distEl.textContent = "0 m";
-    }
-}
 </script>
 </body>
 </html>
