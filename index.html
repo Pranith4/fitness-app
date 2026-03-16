@@ -181,6 +181,17 @@ body::after{
 
 .view{display:none;flex-direction:column;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
 .view.on{display:flex}
+/* Territory view needs fixed height so map fills correctly */
+#view-routes{overflow:hidden!important}
+#view-routes.on{
+  height:calc(100dvh - var(--nh) - var(--sb));
+  max-height:calc(100dvh - var(--nh) - var(--sb));
+  overflow:hidden!important;
+  flex-direction:column;
+}
+#terr-map-wrap{position:relative;flex:1;min-height:0;overflow:hidden}
+#terr-map{width:100%!important;height:100%!important}
+#routes-scroll{overflow-y:auto;flex-shrink:0;max-height:36vh;border-top:1px solid var(--brd)}
 .pad{padding-bottom:calc(var(--nh) + var(--sb) + 28px)}
 @media(min-width:768px){.pad{padding-bottom:36px;max-width:700px;margin:0 auto;width:100%}}
 
@@ -1192,7 +1203,7 @@ body::after{
 </div>
 
 <!-- ═══ TERRITORY ═══ -->
-<div id="view-routes" class="view" style="overflow:hidden;display:flex;flex-direction:column">
+<div id="view-routes" class="view">
   <!-- Territory header bar -->
   <div class="tbar" style="flex-shrink:0">
     <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>TERRITORY</div>
@@ -1201,7 +1212,7 @@ body::after{
     </div>
   </div>
   <!-- Full map - takes remaining height -->
-  <div id="terr-map-wrap" style="position:relative;flex:1;min-height:0">
+  <div id="terr-map-wrap">
     <div id="terr-map" style="width:100%;height:100%"></div>
     <!-- Live run HUD overlay -->
     <div id="terr-run-hud" style="display:none;position:absolute;top:12px;left:12px;right:12px;z-index:1000;pointer-events:none">
@@ -1244,7 +1255,7 @@ body::after{
     </div>
   </div>
   <!-- Scrollable territory stats below -->
-  <div id="routes-scroll" class="pad" style="overflow-y:auto;flex-shrink:0;max-height:35vh;border-top:1px solid var(--brd)"></div>
+  <div id="routes-scroll" class="pad"></div>
 </div>
 
 <!-- ═══ ADMIN ═══ -->
@@ -1625,7 +1636,7 @@ function go(v){
   if(v==='lb')loadLB();
   if(v==='log')loadLog();
   if(v==='rooms')renderRooms();
-  if(v==='routes')renderRoutes();
+  if(v==='routes'){renderRoutes();setTimeout(()=>{if(terrMap)terrMap.invalidateSize();},120);}
   if(v==='admin')renderAdmin();
   if(v==='faq')renderFAQ();
   window.scrollTo({top:0,behavior:'instant'});
@@ -2092,22 +2103,38 @@ async function submitW(){
   const isMonday=new Date().getDay()===1;
   if(isMonday&&!photoData){toast('Photo proof required for official weigh-in 📷','⚠️');return;}
   const btn=document.getElementById('logbtn');
-  btn.disabled=true;btn.textContent='SUBMITTING…';
+  if(btn){btn.disabled=true;btn.textContent='SUBMITTING…';}
   try{
+    // Apps Script sometimes returns a non-JSON redirect on first deploy hit —
+    // use text() first then try to parse, so a bad response body never hides a successful write
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'addWeight',username:CU,weight:w})});
-    const d=await r.json();
-    if(d.success||true){
+    let d={success:false};
+    try{d=await r.json();}catch(_){
+      // If JSON parsing fails but the request went through, treat as success
+      // (Apps Script server already wrote the row before sending its response)
+      if(r.ok||r.status===0||r.type==='opaque')d={success:true};
+    }
+    if(d.success){
       if(photoData){
         const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
         proofs.unshift({src:photoData,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}),weight:w});
         if(proofs.length>12)proofs.pop();
         localStorage.setItem('fb_proofs_'+(CU||''),JSON.stringify(proofs));
+        removePhoto();
       }
       toast(isMonday?`✅ ${w} kg logged + proof saved!`:`✅ ${w} kg logged (practice)`,'✅');
       photoData=null;
-      setTimeout(()=>{loadLog();loadLB();},800);
+      const wiEl=document.getElementById('wi');if(wiEl)wiEl.value='';
+      cls('ov-log');
+      setTimeout(()=>{loadLog();loadLB();},600);
+    } else {
+      toast(d.error||'Could not save weight. Try again.','⚠️');
     }
-  }catch(e){toast('Connection error. Try again.','⚠️');}
+  }catch(e){
+    // Network error — weight likely saved server-side already; refresh to confirm
+    toast('Network hiccup — refreshing to confirm…','⚠️');
+    setTimeout(()=>{loadLog();},1200);
+  }
   if(btn){btn.disabled=false;btn.textContent=new Date().getDay()===1?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT';}
 }
 
