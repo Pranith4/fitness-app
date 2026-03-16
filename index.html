@@ -1558,8 +1558,11 @@ body::after{
   <div class="bs" style="max-height:94dvh"><div class="bsh"></div>
     <div class="bshdr"><span class="bstit" style="color:var(--lime)">🍽️ AI CALORIE COUNTER</span><button class="bsx" onclick="cls('ov-calories')">×</button></div>
     <div class="bsbody">
-      <div style="text-align:center;padding:4px 0 14px">
-        <div style="font-size:13px;color:var(--text2);line-height:1.7">Snap a photo of your food.<br>AI estimates calories and macros instantly.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 0 12px">
+        <div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.6">Snap a photo after each meal.<br>Calories add up through the day.</div>
+        </div>
+        <div id="cal-meal-count" style="font-family:var(--fd);font-size:.85rem;color:var(--lime);text-align:right;flex-shrink:0;margin-left:12px"></div>
       </div>
       <div id="food-img-wrap" style="display:none" class="food-img-preview">
         <img id="food-img" src="" alt="food">
@@ -1593,13 +1596,7 @@ body::after{
   </div>
 </div>
 
-<!-- HEALTH STAT DETAIL SHEET -->
-<div id="ov-hstat" class="ov" onclick="ovc(event,'ov-hstat')">
-  <div class="bs"><div class="bsh"></div>
-    <div class="bshdr"><span class="bstit" id="hstat-title">Stat</span><button class="bsx" onclick="cls('ov-hstat')">×</button></div>
-    <div class="bsbody" id="hstat-body"></div>
-  </div>
-</div>
+
 
 <!-- TOAST -->
 <div id="toast"><span id="ti">✅</span><span id="tm">Done!</span></div>
@@ -1786,12 +1783,12 @@ function parseLBFromRaw(raw){
 // HEALTH DASHBOARD (Home tab)
 // ══════════════════════════════════════════════════════
 function getHealthData(){
-  return JSON.parse(localStorage.getItem('fb_health_'+CU)||'{"steps":0,"water":0,"sleep":0,"calIn":0,"calBurned":0,"date":""}');
+  return JSON.parse(localStorage.getItem('fb_health_'+CU)||'{"steps":0,"km":0,"activeMinutes":0,"calIn":0,"calBurned":0,"date":""}');
 }
 function saveHealthData(d){localStorage.setItem('fb_health_'+CU,JSON.stringify({...d,date:new Date().toDateString()}));}
 function todayHealthData(){
   const d=getHealthData();
-  if(d.date!==new Date().toDateString())return{steps:0,water:0,sleep:0,calIn:0,calBurned:0,date:new Date().toDateString()};
+  if(d.date!==new Date().toDateString())return{steps:0,km:0,activeMinutes:0,calIn:0,calBurned:0,date:new Date().toDateString()};
   return d;
 }
 
@@ -1802,12 +1799,11 @@ function renderHealthDash(){
   const myRank=myLBEntry?LB_DATA.indexOf(myLBEntry)+1:null;
 
   // Step goal: 10000, cal goal: 500 burn, water goal: 8 glasses, sleep goal: 8h
-  const stepPct=Math.min(100,Math.round(h.steps/10000*100));
-  const burnPct=Math.min(100,Math.round(h.calBurned/500*100));
-  const waterPct=Math.min(100,Math.round(h.water/8*100));
-  const calNetBalance=h.calIn-h.calBurned;
+  const stepPct=Math.min(100,Math.round((h.steps||0)/10000*100));
+  const burnPct=Math.min(100,Math.round((h.calBurned||0)/500*100));
+  const calNetBalance=(h.calIn||0)-(h.calBurned||0);
   const calGoal=1800;
-  const calPct=Math.min(100,Math.round(h.calIn/calGoal*100));
+  const calPct=Math.min(100,Math.round((h.calIn||0)/calGoal*100));
 
   // Calorie ring SVG (72px)
   const R=28,C=36,circ=2*Math.PI*R;
@@ -1831,49 +1827,61 @@ function renderHealthDash(){
     ${myRank?`<div style="margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.18);border-radius:var(--rf);padding:5px 12px"><span style="font-family:var(--fd);font-size:11px;color:var(--gold)" id="hd-rank">#${myRank}</span><span style="font-size:11px;color:var(--text2)">in contest</span></div>`:''}
   </div>
 
-  <!-- Calorie card -->
-  <div class="cal-ring-card">
-    <div class="cal-ring-svg">${calRing}</div>
-    <div class="cal-ring-info">
-      <div class="cal-ring-label">CALORIES TODAY</div>
-      <div class="cal-ring-val">${h.calIn} <span style="font-size:1rem;font-weight:400;color:var(--text3)">kcal</span></div>
-      <div class="cal-ring-goal">Goal ${calGoal} kcal · Balance: <span style="color:${calNetBalance>0?'var(--red)':'var(--lime)'}">${calNetBalance>0?'+':''}${calNetBalance}</span></div>
-      <div class="cal-ring-btns">
-        <div class="cal-mini-btn img" onclick="openS('ov-calories')">📸 Scan Food</div>
-        <div class="cal-mini-btn" onclick="openHStatEdit('calIn')">+ Log Manually</div>
+  <!-- GPS toggle strip -->
+  <div style="margin:14px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-family:var(--fd);font-size:.85rem;letter-spacing:1px;margin-bottom:2px" id="gps-toggle-label">${gpsActivityOn?'<span style="color:var(--lime)">● GPS TRACKING ON</span>':'GPS ACTIVITY TRACKER'}</div>
+      <div style="font-size:11px;color:var(--text3)" id="gps-toggle-sub">${gpsActivityOn?'Tracking steps, distance & calories burned…':'Turn on to track steps, km walked & calories burned'}</div>
+    </div>
+    <div id="gps-toggle-wrap" onclick="toggleGpsActivity()" style="cursor:pointer;flex-shrink:0;margin-left:12px">
+      <div style="width:48px;height:26px;border-radius:13px;background:${gpsActivityOn?'var(--lime)':'var(--surf2)'};border:1px solid ${gpsActivityOn?'var(--lime)':'var(--brd2)'};position:relative;transition:background .2s">
+        <div style="position:absolute;top:3px;left:${gpsActivityOn?'23px':'3px'};width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>
       </div>
     </div>
   </div>
 
-  <!-- Stats grid -->
+  <!-- Calorie card -->
+  <div class="cal-ring-card" style="margin-top:10px">
+    <div class="cal-ring-svg">${calRing}</div>
+    <div class="cal-ring-info">
+      <div class="cal-ring-label">CALORIES TODAY</div>
+      <div class="cal-ring-val">${h.calIn} <span style="font-size:1rem;font-weight:400;color:var(--text3)">kcal</span></div>
+      <div class="cal-ring-goal">Eaten today · Burned: <span style="color:var(--heat)">${h.calBurned} kcal</span></div>
+      <div class="cal-ring-btns">
+        <div class="cal-mini-btn img" style="width:100%" onclick="openFoodScanner()">📸 Scan Food to Log Calories</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats grid — all GPS-derived, read-only -->
   <div class="health-grid">
-    <div class="hstat steps" onclick="openHStatEdit('steps')">
+    <div class="hstat steps">
       <div class="hstat-icon">👟</div>
-      <div class="hstat-val">${h.steps.toLocaleString('en-IN')}</div>
+      <div class="hstat-val" id="hd-steps">${h.steps.toLocaleString('en-IN')}</div>
       <div class="hstat-label">Steps</div>
-      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${stepPct}%"></div></div>
-      <div class="hstat-goal">${stepPct}% of 10,000 goal</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" id="hd-steps-bar" style="width:${stepPct}%"></div></div>
+      <div class="hstat-goal" id="hd-steps-goal">${stepPct}% of 10,000</div>
     </div>
-    <div class="hstat burn" onclick="openHStatEdit('calBurned')">
+    <div class="hstat burn">
       <div class="hstat-icon">🔥</div>
-      <div class="hstat-val">${h.calBurned}</div>
+      <div class="hstat-val" id="hd-burn">${h.calBurned}</div>
       <div class="hstat-label">Cal Burned</div>
-      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${burnPct}%"></div></div>
-      <div class="hstat-goal">${burnPct}% of 500 goal</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" id="hd-burn-bar" style="width:${burnPct}%"></div></div>
+      <div class="hstat-goal" id="hd-burn-goal">${burnPct}% of 500 goal</div>
     </div>
-    <div class="hstat water" onclick="openHStatEdit('water')">
-      <div class="hstat-icon">💧</div>
-      <div class="hstat-val">${h.water}<span style="font-size:1rem;font-weight:400"> gl</span></div>
-      <div class="hstat-label">Water</div>
-      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${waterPct}%"></div></div>
-      <div class="hstat-goal">${waterPct}% of 8 glasses</div>
+    <div class="hstat" style="--c:var(--blue)">
+      <div class="hstat-icon">📍</div>
+      <div class="hstat-val" style="color:var(--blue)" id="hd-km">${(h.km||0).toFixed(2)}</div>
+      <div class="hstat-label">KM Walked</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${Math.min(100,(h.km||0)/5*100)}%;background:var(--blue)" id="hd-km-bar"></div></div>
+      <div class="hstat-goal" id="hd-km-goal">${((h.km||0)/5*100).toFixed(0)}% of 5 km</div>
     </div>
-    <div class="hstat sleep" onclick="openHStatEdit('sleep')">
-      <div class="hstat-icon">😴</div>
-      <div class="hstat-val">${h.sleep}<span style="font-size:1rem;font-weight:400">h</span></div>
-      <div class="hstat-label">Sleep</div>
-      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${Math.min(100,h.sleep/8*100)}%"></div></div>
-      <div class="hstat-goal">${h.sleep>=8?'✓ Goal met':'Goal: 8h'}</div>
+    <div class="hstat" style="--c:var(--purple)">
+      <div class="hstat-icon">⏱️</div>
+      <div class="hstat-val" style="color:var(--purple)" id="hd-mins">${h.activeMinutes||0}<span style="font-size:1rem;font-weight:400"> min</span></div>
+      <div class="hstat-label">Active Mins</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${Math.min(100,(h.activeMinutes||0)/30*100)}%;background:var(--purple)" id="hd-mins-bar"></div></div>
+      <div class="hstat-goal" id="hd-mins-goal">${(h.activeMinutes||0)>=30?'✓ Goal met':'Goal: 30 min'}</div>
     </div>
   </div>
 
@@ -1911,30 +1919,102 @@ function renderHealthDash(){
   clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
 }
 
-// ── Health stat quick-edit sheet ──
-function openHStatEdit(stat){
-  const labels={steps:'Steps',water:'Glasses of Water',sleep:'Hours Slept',calIn:'Calories Eaten',calBurned:'Calories Burned'};
-  const units={steps:'steps',water:'glasses',sleep:'hours',calIn:'kcal',calBurned:'kcal'};
-  const icons={steps:'👟',water:'💧',sleep:'😴',calIn:'🍽️',calBurned:'🔥'};
-  const h=todayHealthData();
-  document.getElementById('hstat-title').textContent=icons[stat]+' '+labels[stat];
-  document.getElementById('hstat-body').innerHTML=`
-    <div style="text-align:center;padding:16px 0 20px">
-      <div style="font-size:48px;margin-bottom:8px">${icons[stat]}</div>
-      <div style="font-family:var(--fd);font-size:1.3rem;letter-spacing:1px;margin-bottom:6px">${labels[stat]}</div>
-      <div style="font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--lime);margin-bottom:4px">${h[stat]}</div>
-      <div style="font-size:12px;color:var(--text3)">${units[stat]} logged today</div>
-    </div>
-    <input type="number" id="hstat-val-input" class="sfi" placeholder="Enter ${labels[stat].toLowerCase()}" value="${h[stat]||''}" inputmode="decimal" min="0" style="margin-bottom:12px">
-    <button class="bs-btn" style="background:var(--lime);color:#020208" onclick="saveHStat('${stat}')">SAVE</button>
-    <div style="height:8px">`;
-  openS('ov-hstat');
+// ── GPS Activity Tracker ──
+// Steps estimated: 1 m ≈ 1.31 steps (avg stride 0.762 m)
+// Calories: ~0.04 kcal per step (avg 70 kg person walking)
+const GPS_STEPS_PER_M = 1.31;
+const GPS_CAL_PER_STEP = 0.04;
+
+function toggleGpsActivity(){
+  if(gpsActivityOn) stopGpsActivity();
+  else startGpsActivity();
 }
-function saveHStat(stat){
-  const val=parseFloat(document.getElementById('hstat-val-input')?.value)||0;
-  const h=todayHealthData();h[stat]=val;saveHealthData(h);
-  cls('ov-hstat');renderHealthDash();
-  toast(`${stat==='steps'?'👟':stat==='water'?'💧':stat==='sleep'?'😴':'🔥'} Updated!`,'✅');
+
+function startGpsActivity(){
+  if(!navigator.geolocation){toast('GPS not available on this device','⚠️');return;}
+  gpsActivityOn=true;
+  gpsActivityLastPos=null;
+  gpsActivityStartTime=Date.now();
+  // Restore today's accumulated values
+  const h=todayHealthData();
+  gpsActivityKm=h.km||0;
+  gpsActivitySteps=h.steps||0;
+  gpsActivityMinutes=h.activeMinutes||0;
+
+  gpsActivityWatch=navigator.geolocation.watchPosition(pos=>{
+    const{latitude:lat,longitude:lng,accuracy}=pos.coords;
+    if(accuracy>45)return; // ignore inaccurate readings
+    if(gpsActivityLastPos){
+      const dist=haversineDist(gpsActivityLastPos,{lat,lng});
+      if(dist>=2&&dist<100){ // filter jitter (<2m) and GPS jumps (>100m)
+        gpsActivityKm+=dist/1000;
+        gpsActivitySteps+=Math.round(dist*GPS_STEPS_PER_M);
+        // Save accumulated to health data
+        const h2=todayHealthData();
+        h2.km=parseFloat(gpsActivityKm.toFixed(3));
+        h2.steps=gpsActivitySteps;
+        h2.calBurned=Math.round(gpsActivitySteps*GPS_CAL_PER_STEP);
+        saveHealthData(h2);
+        // Live-update dashboard tiles without full re-render
+        updateGpsHudTiles(h2);
+      }
+    }
+    gpsActivityLastPos={lat,lng};
+  },
+  err=>{toast('GPS: '+err.message,'⚠️');stopGpsActivity();},
+  {enableHighAccuracy:true,maximumAge:0,timeout:20000});
+
+  // Minute counter
+  gpsActivityTimer=setInterval(()=>{
+    gpsActivityMinutes++;
+    const h2=todayHealthData();
+    h2.activeMinutes=gpsActivityMinutes;
+    saveHealthData(h2);
+    updateGpsHudTiles(h2);
+  },60000);
+
+  renderHealthDash();
+  toast('GPS tracking started 📍','📍');
+}
+
+function stopGpsActivity(){
+  if(gpsActivityWatch!==null){navigator.geolocation.clearWatch(gpsActivityWatch);gpsActivityWatch=null;}
+  if(gpsActivityTimer){clearInterval(gpsActivityTimer);gpsActivityTimer=null;}
+  gpsActivityOn=false;
+  renderHealthDash();
+  toast('GPS tracking stopped','⏹');
+}
+
+function updateGpsHudTiles(h){
+  const stepPct=Math.min(100,Math.round((h.steps||0)/10000*100));
+  const burnPct=Math.min(100,Math.round((h.calBurned||0)/500*100));
+  const kmPct=Math.min(100,Math.round((h.km||0)/5*100));
+  const minPct=Math.min(100,Math.round((h.activeMinutes||0)/30*100));
+  function upd(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+  upd('hd-steps',(h.steps||0).toLocaleString('en-IN'));
+  upd('hd-burn',h.calBurned||0);
+  upd('hd-km',(h.km||0).toFixed(2));
+  upd('hd-mins',(h.activeMinutes||0)+' min');
+  upd('hd-steps-goal',stepPct+'% of 10,000');
+  upd('hd-burn-goal',burnPct+'% of 500 goal');
+  upd('hd-km-goal',kmPct.toFixed(0)+'% of 5 km');
+  upd('hd-mins-goal',(h.activeMinutes||0)>=30?'✓ Goal met':'Goal: 30 min');
+  function updBar(id,pct){const el=document.getElementById(id);if(el)el.style.width=pct+'%';}
+  updBar('hd-steps-bar',stepPct);
+  updBar('hd-burn-bar',burnPct);
+  updBar('hd-km-bar',kmPct);
+  updBar('hd-mins-bar',minPct);
+  // Update calorie ring
+  const calPct=Math.min(100,Math.round((h.calIn||0)/1800*100));
+  const calNetBalance=(h.calIn||0)-(h.calBurned||0);
+  const goalEl=document.querySelector('.cal-ring-goal');
+  if(goalEl)goalEl.innerHTML=`Eaten today · Burned: <span style="color:var(--heat)">${h.calBurned||0} kcal</span>`;
+}
+
+// ── Food scanner ── (opens calorie sheet, shows today's log too)
+function openFoodScanner(){
+  openS('ov-calories');
+  renderFoodHistory();
 }
 
 // ── Food log helpers ──
@@ -1945,14 +2025,14 @@ function getFoodLogToday(){
 }
 function addFoodEntry(name,cal,protein,carbs,fat){
   const logs=JSON.parse(localStorage.getItem('fb_food_'+CU)||'[]');
-  const entry={name,cal,protein,carbs,fat,date:new Date().toDateString(),time:Date.now()};
+  const entry={name,cal,protein:protein||0,carbs:carbs||0,fat:fat||0,date:new Date().toDateString(),time:Date.now()};
   logs.unshift(entry);
-  if(logs.length>100)logs.pop();
+  if(logs.length>200)logs.pop();
   localStorage.setItem('fb_food_'+CU,JSON.stringify(logs));
-  // Update calIn for today
-  const h=todayHealthData();
-  const todayTotal=getFoodLogToday().reduce((s,l)=>s+(l.cal||0),0)+cal;
-  h.calIn=todayTotal;saveHealthData(h);
+  // Recalculate calIn from all today's entries (including new one)
+  const today=new Date().toDateString();
+  const todayTotal=logs.filter(l=>l.date===today).reduce((s,l)=>s+(l.cal||0),0);
+  const h=todayHealthData();h.calIn=todayTotal;saveHealthData(h);
 }
 
 // ── AI Calorie Analyser ──
@@ -2044,28 +2124,65 @@ async function analyseFoodPhoto(){
 
 function logFoodEntry(food){
   addFoodEntry(food.name,food.calories,food.protein_g,food.carbs_g,food.fat_g);
-  cls('ov-calories');renderHealthDash();
-  toast(food.name+' logged — '+food.calories+' kcal','🍽️');
+  // Don't close — reset for next photo so user can log the whole day
+  clearFoodImg();
+  document.getElementById('food-result').style.display='none';
+  renderFoodHistory();
+  // Update health dash calorie ring in background
+  renderHealthDash();
+  toast(food.name+' logged — '+food.calories+' kcal 🍽️','🍽️');
 }
 function renderFoodHistory(){
   const list=document.getElementById('food-log-list');
   const total=document.getElementById('food-daily-total');
   const entries=getFoodLogToday();
+  // Update meal count badge in sheet header
+  const countEl=document.getElementById('cal-meal-count');
+  if(countEl&&entries.length){countEl.textContent=entries.length+' meal'+(entries.length!==1?'s':'')+' logged';}
+  else if(countEl){countEl.textContent='';}
   if(!list||!total)return;
-  if(!entries.length){list.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px">No food logged today yet</div>`;total.style.display='none';return;}
-  list.innerHTML=entries.map(f=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--brd);margin-bottom:6px">
-      <div><div style="font-size:13px;font-weight:600">${esc(f.name)}</div><div style="font-size:10px;color:var(--text3)">${f.protein_g}g P · ${f.carbs_g}g C · ${f.fat_g}g F</div></div>
-      <div style="font-family:var(--fm);color:var(--lime);font-size:13px">${f.cal} kcal</div>
+  if(!entries.length){
+    list.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0">No meals logged yet today.<br>Take a photo of your food to start.</div>`;
+    total.style.display='none';
+    return;
+  }
+  list.innerHTML=entries.map((f,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--brd);margin-bottom:7px">
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;margin-bottom:2px">${esc(f.name)}</div>
+        <div style="font-size:10px;color:var(--text3)">${f.protein_g}g protein · ${f.carbs_g}g carbs · ${f.fat_g}g fat</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:1px">${new Date(f.time).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-family:var(--fm);color:var(--lime);font-size:14px;font-weight:700">${f.cal}</div>
+        <div style="font-size:9px;color:var(--text3)">kcal</div>
+      </div>
+      <button onclick="removeFoodEntry(${f.time})" style="background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.15);border-radius:var(--r);padding:6px 8px;cursor:pointer;color:var(--red);font-size:12px;flex-shrink:0">✕</button>
     </div>`).join('');
   const totalCal=entries.reduce((s,f)=>s+(f.cal||0),0);
   const totalP=entries.reduce((s,f)=>s+(f.protein_g||0),0);
   const totalC=entries.reduce((s,f)=>s+(f.carbs_g||0),0);
   const totalF=entries.reduce((s,f)=>s+(f.fat_g||0),0);
   total.style.display='block';
-  total.innerHTML=`<div style="font-family:var(--fd);font-size:.85rem;color:var(--text3);letter-spacing:1px;margin-bottom:6px">DAILY TOTAL</div>
-    <div style="font-family:var(--fd);font-size:1.5rem;color:var(--lime)">${totalCal} kcal</div>
-    <div style="font-size:11px;color:var(--text3);margin-top:4px">${totalP}g protein · ${totalC}g carbs · ${totalF}g fat</div>`;
+  total.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div style="font-family:var(--fd);font-size:.85rem;color:var(--text3);letter-spacing:1px">DAILY TOTAL · ${entries.length} meal${entries.length!==1?'s':''}</div>
+      <div style="font-family:var(--fd);font-size:1.2rem;color:var(--lime)">${totalCal} kcal</div>
+    </div>
+    <div style="font-size:11px;color:var(--text3)">${totalP}g protein · ${totalC}g carbs · ${totalF}g fat</div>`;
+}
+
+function removeFoodEntry(time){
+  const logs=JSON.parse(localStorage.getItem('fb_food_'+CU)||'[]');
+  const filtered=logs.filter(l=>l.time!==time);
+  localStorage.setItem('fb_food_'+CU,JSON.stringify(filtered));
+  // Recalculate calIn for today
+  const today=new Date().toDateString();
+  const todayTotal=filtered.filter(l=>l.date===today).reduce((s,l)=>s+(l.cal||0),0);
+  const h=todayHealthData();h.calIn=todayTotal;saveHealthData(h);
+  renderFoodHistory();
+  renderHealthDash();
+  toast('Meal removed','🗑');
 }
 
 function renderLB(area,lb){
@@ -3002,6 +3119,16 @@ async function deletePublicContest(id){
 // ══════════════════════════════════════════════════════
 
 // ─── Globals ───
+// ── GPS Activity Tracker globals ──
+let gpsActivityWatch = null;
+let gpsActivityTimer = null;
+let gpsActivityLastPos = null;
+let gpsActivityStartTime = null;
+let gpsActivityKm = 0;
+let gpsActivitySteps = 0;
+let gpsActivityMinutes = 0;
+let gpsActivityOn = false;
+
 let terrMap = null;
 let terrLayers = [];            // Leaflet polygon layers per territory
 let terrPlayerLayer = null;     // Current user's live path layer
