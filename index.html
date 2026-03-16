@@ -179,9 +179,8 @@ body::after{
 #app{display:flex;flex-direction:column;min-height:100dvh;max-width:480px;margin:0 auto;background:var(--bg);position:relative}
 @media(min-width:768px){body{background:#010105}#app{max-width:100%;flex-direction:row;height:100dvh;overflow:hidden}}
 
-.view{display:none;flex-direction:column;flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
-.view.on{display:flex}
-/* Territory view needs fixed height so map fills correctly */
+/* .view rules moved to Wallet CSS block below for scroll fix */
+/* Territory view */
 #view-routes{overflow:hidden!important}
 #view-routes.on{
   height:calc(100dvh - var(--nh) - var(--sb));
@@ -1151,6 +1150,59 @@ body::after{
 .contest-section-hdr{font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);padding:18px 0 10px;text-transform:uppercase;border-top:1px solid var(--brd);margin-top:6px}
 .contest-section-hdr:first-of-type{border-top:none;padding-top:8px}
 .wi-form-inline{background:linear-gradient(135deg,rgba(240,165,0,.07),rgba(240,165,0,.02));border:1px solid rgba(240,165,0,.2);border-radius:var(--rl);padding:16px;margin-bottom:4px}
+
+/* ═══════════════════════════
+   WALLET & COINS SYSTEM
+═══════════════════════════ */
+/* Coin badge */
+.coin-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.25);border-radius:var(--rf);padding:3px 10px;font-family:var(--fd);font-size:10px;font-weight:700;color:var(--gold);letter-spacing:.5px}
+.coin-icon{display:inline-block;width:14px;height:14px;background:radial-gradient(circle at 35% 35%,#FFD700,#F0A500 55%,#C87800);border-radius:50%;box-shadow:0 1px 3px rgba(240,165,0,.4);flex-shrink:0}
+.coin-big{font-family:var(--fd);font-size:2.2rem;font-weight:800;color:var(--gold);letter-spacing:1px;line-height:1}
+
+/* Coin pack cards */
+.coin-pack{border-radius:var(--rl);padding:18px;border:1px solid var(--brd);background:var(--surf);position:relative;overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s}
+.coin-pack:active{transform:scale(.96)}
+.coin-pack.popular{border-color:rgba(240,165,0,.4);background:linear-gradient(135deg,rgba(240,165,0,.1),rgba(240,165,0,.02));box-shadow:0 8px 28px rgba(240,165,0,.1)}
+.coin-pack.popular::before{content:'BEST VALUE';position:absolute;top:10px;right:10px;font-family:var(--fd);font-size:8px;letter-spacing:1.5px;color:var(--gold);background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.25);border-radius:3px;padding:2px 7px}
+.coin-pack-price{font-family:var(--fd);font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:.5px;line-height:1;margin-bottom:4px}
+.coin-pack-coins{font-family:var(--fd);font-size:1.1rem;color:var(--gold);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.coin-pack-sub{font-size:11px;color:var(--text3)}
+.coin-pack-btn{width:100%;padding:11px;background:var(--gold);color:#020208;border:none;border-radius:var(--r);font-family:var(--fd);font-size:.9rem;letter-spacing:1.5px;font-weight:700;cursor:pointer;margin-top:12px;transition:all .18s}
+.coin-pack-btn:active{transform:scale(.97)}
+.coin-pack.popular .coin-pack-btn{box-shadow:0 4px 16px rgba(240,165,0,.3)}
+
+/* Spend coins modal styles */
+.spend-modal{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;margin-bottom:12px}
+.spend-cost{display:flex;align-items:center;gap:8px;padding:12px 14px;background:rgba(240,165,0,.07);border:1px solid rgba(240,165,0,.18);border-radius:var(--r);margin:12px 0;font-family:var(--fd);font-size:1rem;color:var(--gold)}
+.insufficient{background:rgba(255,48,48,.07);border-color:rgba(255,48,48,.2);color:var(--red)}
+
+/* Coin transaction list */
+.coin-tx{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--brd)}
+.coin-tx:last-child{border-bottom:none}
+.coin-tx-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.coin-tx-icon.earn{background:rgba(240,165,0,.12)}
+.coin-tx-icon.spend{background:rgba(255,48,48,.09)}
+.coin-tx-amt{font-family:var(--fd);font-size:1rem;font-weight:700;margin-left:auto}
+.coin-tx-amt.earn{color:var(--gold)}
+.coin-tx-amt.spend{color:var(--red)}
+
+/* Territory animations */
+@keyframes terr-claim-pop{0%{transform:scale(0) rotate(-10deg);opacity:0}60%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+@keyframes terr-flag-wave{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes terr-pulse-ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.5);opacity:0}}
+@keyframes coin-float{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(.5);opacity:0}}
+@keyframes terr-flash{0%{opacity:.8}100%{opacity:0}}
+@keyframes coin-burst{0%{transform:scale(0);opacity:1}80%{transform:scale(1.8);opacity:.6}100%{transform:scale(2.5);opacity:0}}
+.terr-flag-anim{animation:terr-flag-wave 1.5s ease-in-out infinite}
+.terr-pulse{position:absolute;border-radius:50%;pointer-events:none;border:2px solid var(--lime);animation:terr-pulse-ring 1.2s ease-out forwards}
+.coin-float-el{position:fixed;font-family:var(--fd);font-size:1.2rem;color:var(--gold);pointer-events:none;z-index:9999;animation:coin-float .9s ease-out forwards}
+
+/* Nav coin counter */
+.nav-coins{font-family:var(--fd);font-size:9px;color:var(--gold);letter-spacing:.5px;display:flex;align-items:center;gap:2px}
+
+/* Tab scroll fix — all views must scroll properly */
+.view{display:none;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;height:calc(100dvh - var(--nh) - var(--sb));position:relative}
+.view.on{display:flex}
 </style>
 </head>
 <body>
@@ -1208,7 +1260,7 @@ body::after{
   <button class="ni" id="ni-log" onclick="go('log')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Contest</span><span class="ndot"></span></button>
   <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Rooms</span><span class="ndot"></span></button>
   <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,3 10,3 10,10 3,10"/><polygon points="14,3 21,3 21,10 14,10"/><polygon points="14,14 21,14 21,21 14,21"/><polygon points="3,14 10,14 10,21 3,21"/></svg></span><span>Territory</span><span class="ndot"></span></button>
-  <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span id="pro-nav-label">Pro</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M9.5 9.5c.5-1 1.5-1.5 2.5-1.5s2 .5 2 1.5c0 2-2 2-2 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span><div class="nav-coins"><span style="font-size:8px">🪙</span><span id="nav-coins-val">—</span></div><span class="ndot"></span></button>
   <button class="ni admin-nav" id="ni-admin" style="display:none" onclick="go('admin')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Admin</span><span class="ndot"></span></button>
   <div class="sb-bot" style="display:none" id="sb-bot">
     <div style="width:28px;height:28px;border-radius:50%;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
@@ -1598,6 +1650,14 @@ body::after{
 
 
 
+<!-- WALLET PURCHASE SHEET -->
+<div id="ov-wallet-purchase" class="ov" onclick="ovc(event,'ov-wallet-purchase')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--gold)">🪙 GET COINS</span><button class="bsx" onclick="cls('ov-wallet-purchase')">×</button></div>
+    <div class="bsbody" id="wallet-purchase-body"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"><span id="ti">✅</span><span id="tm">Done!</span></div>
 
@@ -1720,6 +1780,7 @@ function showApp(){
   ['tu','sb-un'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=CU;});
   document.getElementById('sb-bot').style.display='flex';
   updateProBadge();
+  updateNavCoins();
   // Admin chip tint
   if(isAdmin()){
     const chip=document.getElementById('top-chip');
@@ -2866,13 +2927,17 @@ async function createRoom(){
     pp:[{n:CU,c:getUserTerrColor(CU)}],
     createdBy:CU,createdAt:new Date().toISOString()
   };
-  try{
-    toast('Creating room…','⏳');
-    await api('createRoom',{room:rm});
-    cls('ov-nr');await renderRooms();
-    toast(`Room "${name}" created!`,'🚪');
-    setTimeout(()=>openRoom(rm.id),600);
-  }catch(e){toast('Could not create room. Try again.','⚠️');}
+  // Spend coins to create room
+  requireCoins(COIN_COSTS.createPrivateRoom, 'createPrivateRoom', 'Create Private Room', async()=>{
+    try{
+      toast('Creating room…','⏳');
+      await api('createRoom',{room:rm});
+      cls('ov-nr');await renderRooms();
+      unlockAch('room_create');
+      toast(`Room "${name}" created! 🚪`,'🚪');
+      setTimeout(()=>openRoom(rm.id),600);
+    }catch(e){toast('Could not create room. Try again.','⚠️');}
+  });
 }
 
 async function openRoom(id){
@@ -3596,6 +3661,15 @@ async function claimTerritoryConfirm(){
   const name=nameInput?nameInput.value.trim():'';
   if(name)terrClaimPending.name=name;
 
+  // Spend coins to claim territory
+  const claimCost = COIN_COSTS.claimTerritory;
+  if(getCoins() < claimCost){
+    toast(`Need ${claimCost} coins to claim territory. Get coins in Wallet tab.`,'⚠️');
+    cls('ov-terr-claim');cleanupTerritoryRun();
+    return;
+  }
+  spendCoins(claimCost, `Claimed territory ${terrClaimPending.name||''}`);
+
   const btn=document.querySelector('#ov-terr-claim .bs-btn');
   if(btn){btn.textContent='Claiming…';btn.disabled=true;}
 
@@ -3607,11 +3681,12 @@ async function claimTerritoryConfirm(){
     cls('ov-terr-claim');
     cleanupTerritoryRun();
     if(terrPlayerLayer){terrMap.removeLayer(terrPlayerLayer);terrPlayerLayer=null;}
-    toast(`Territory claimed! ${terrClaimPending.area.toFixed(4)} km² is yours 🏴`,'🏴');
-    // Show share card
-    setTimeout(()=>showTerritoryShareCard(terrClaimPending),700);
+    // Territory claim animation
+    showTerritoryCelebration(terrClaimPending);
+    unlockAch('route_1');
+    const tc=TERRITORIES.filter(t=>t.username===CU).length;
+    if(tc>=5)unlockAch('route_5');
     terrClaimPending=null;
-    unlockAch('route_1'); // Reuse route achievement
   }catch(e){
     toast('Could not save. Try again.','⚠️');
     if(btn){btn.textContent='🏴 CLAIM THIS TERRITORY';btn.disabled=false;}
@@ -3619,6 +3694,35 @@ async function claimTerritoryConfirm(){
 }
 
 // ─── Territory share card ───
+// ── Territory celebration animation ──
+function showTerritoryCelebration(terr){
+  // Full-screen flash overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,232,122,.12);z-index:9990;pointer-events:none;animation:terr-flash .6s ease-out forwards';
+  document.body.appendChild(overlay);
+  setTimeout(()=>overlay.remove(), 700);
+
+  // Floating flag + area text
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:30%;left:50%;transform:translateX(-50%);z-index:9995;text-align:center;pointer-events:none;animation:terr-claim-pop .5s cubic-bezier(.34,1.56,.64,1) forwards';
+  banner.innerHTML = `
+    <div style="font-size:72px;animation:terr-flag-wave 1s ease-in-out 2">🏴</div>
+    <div style="font-family:var(--fd);font-size:1.6rem;font-weight:800;color:var(--lime);letter-spacing:2px;text-shadow:0 0 20px rgba(0,232,122,.5)">TERRITORY CLAIMED!</div>
+    <div style="font-family:var(--fm);font-size:1.1rem;color:var(--gold);margin-top:6px">${terr.area.toFixed(4)} km²</div>
+  `;
+  document.body.appendChild(banner);
+  setTimeout(()=>banner.remove(), 2200);
+
+  // Coin burst
+  showCoinBurst(COIN_COSTS.claimTerritory);
+
+  // Toast + share
+  setTimeout(()=>{
+    toast(`${terr.area.toFixed(4)} km² is yours! 🏴`,'🏴');
+    setTimeout(()=>showTerritoryShareCard(terr), 800);
+  }, 500);
+}
+
 function showTerritoryShareCard(terr){
   const canvas=document.getElementById('terr-canvas');
   if(!canvas)return;
@@ -3793,48 +3897,148 @@ function toast(msg,ic='✅'){
 // PRO / MONETIZATION TAB
 // ══════════════════════════════════════════════════════
 
-// ─── Plan config ───
-const PLANS={
-  free:{id:'free',name:'FREE',price:0,label:'Free Forever',cta:'Current Plan',color:'var(--text3)',features:[
-    {y:true,t:'1 active contest room'},
-    {y:true,t:'Weekly weigh-in tracking'},
-    {y:true,t:'Photo proof system'},
-    {y:true,t:'GPS route challenges'},
-    {y:true,t:'Live leaderboard'},
-    {y:false,t:'Unlimited rooms'},
-    {y:false,t:'Smart scale sync'},
-    {y:false,t:'AI weekly insights'},
-    {y:false,t:'Priority support'},
-  ]},
-  pro:{id:'pro',name:'PRO',price:299,label:'per month',cta:'Upgrade to Pro',color:'var(--gold)',features:[
-    {y:true,t:'Unlimited contest rooms'},
-    {y:true,t:'Weekly weigh-in tracking'},
-    {y:true,t:'Photo proof system'},
-    {y:true,t:'GPS route challenges'},
-    {y:true,t:'Live leaderboard'},
-    {y:true,t:'Smart scale sync (coming soon)'},
-    {y:true,t:'AI weekly insights (coming soon)'},
-    {y:true,t:'Priority support'},
-  ]},
-  team:{id:'team',name:'TEAM',price:999,label:'per month · up to 20',cta:'Start Team Trial',color:'var(--purple)',features:[
-    {y:true,t:'Everything in Pro'},
-    {y:true,t:'Admin dashboard'},
-    {y:true,t:'Team vs team challenges'},
-    {y:true,t:'White-label branding'},
-    {y:true,t:'CSV export / reporting'},
-    {y:true,t:'Dedicated onboarding'},
-    {y:true,t:'Insurance integration (coming soon)'},
-    {y:true,t:'Custom challenge rules'},
-  ]},
+// ════════════════════════════════════════════
+// WALLET & COINS SYSTEM
+// ════════════════════════════════════════════
+
+// ─── Coin packs ───
+const COIN_PACKS = [
+  { id:'starter', price:49,  coins:4000,  label:'Starter',  color:'var(--blue)',   bonus:'' },
+  { id:'popular', price:79,  coins:7000,  label:'Popular',  color:'var(--gold)',   bonus:'750 bonus coins', popular:true },
+  { id:'pro',     price:99,  coins:10000, label:'Pro',      color:'var(--purple)', bonus:'1000 bonus coins' },
+];
+
+// ─── Feature costs ───
+const COIN_COSTS = {
+  createPrivateRoom:  500,
+  createPublicContest:2000,
+  joinPaidContest:    1000,   // per ₹100 entry fee
+  claimTerritory:     100,
+  extendContest:      300,
+  boostProfile:       200,
 };
 
-// ─── Subscription state (localStorage) ───
-function getPlan(){return localStorage.getItem('fb_plan')||'free';}
-function setPlan(p){localStorage.setItem('fb_plan',p);updateProBadge();}
+// ─── Wallet state ───
+function getWallet(){ return JSON.parse(localStorage.getItem('fb_wallet_'+CU)||'{"coins":200,"txns":[]}'); }
+function saveWallet(w){ localStorage.setItem('fb_wallet_'+CU, JSON.stringify(w)); updateNavCoins(); }
+function getCoins(){ return getWallet().coins; }
+
+function addCoins(amount, reason){
+  const w = getWallet();
+  w.coins += amount;
+  w.txns = [{type:'earn', amount, reason, ts:Date.now()}, ...w.txns].slice(0,50);
+  saveWallet(w);
+  showCoinBurst(amount);
+}
+
+function spendCoins(amount, reason){
+  const w = getWallet();
+  if(w.coins < amount) return false;
+  w.coins -= amount;
+  w.txns = [{type:'spend', amount, reason, ts:Date.now()}, ...w.txns].slice(0,50);
+  saveWallet(w);
+  return true;
+}
+
+function updateNavCoins(){
+  const el = document.getElementById('nav-coins-val');
+  if(el) el.textContent = getCoins().toLocaleString('en-IN');
+}
+
+// ─── Coin burst animation ───
+function showCoinBurst(amount){
+  const coins = ['🪙','💰','✨'];
+  for(let i=0;i<6;i++){
+    setTimeout(()=>{
+      const el = document.createElement('div');
+      el.className = 'coin-float-el';
+      el.textContent = coins[i%coins.length];
+      el.style.left = (30+Math.random()*40)+'vw';
+      el.style.top = '60vh';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 1000);
+    }, i*80);
+  }
+  toast('+'+amount.toLocaleString('en-IN')+' coins added! 🪙','🪙');
+}
+
+// ─── Purchase flow (simulated — integrate Razorpay here) ───
+function purchasePack(packId){
+  const pack = COIN_PACKS.find(p=>p.id===packId);
+  if(!pack) return;
+  const body = document.getElementById('wallet-purchase-body');
+  if(body){
+    body.innerHTML = `
+      <div style="text-align:center;padding:20px 0">
+        <div style="font-size:48px;margin-bottom:10px">🔒</div>
+        <div style="font-family:var(--fd);font-size:1.2rem;letter-spacing:1px;margin-bottom:8px">PAYMENT GATEWAY</div>
+        <div style="font-size:13px;color:var(--text2);margin-bottom:20px">Razorpay integration coming soon.<br>For now, coins are credited as a demo.</div>
+        <div style="background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.2);border-radius:var(--rl);padding:16px;margin-bottom:16px">
+          <div style="font-family:var(--fd);font-size:1rem;color:var(--gold);margin-bottom:4px">${pack.label} Pack</div>
+          <div class="coin-big">${pack.coins.toLocaleString('en-IN')} <span style="font-size:1rem;color:var(--text3)">coins</span></div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">${pack.bonus||'Standard pack'}</div>
+        </div>
+        <button class="plan-cta gold" onclick="creditPackCoins('${packId}')">DEMO: CREDIT ₹${pack.price} PACK</button>
+        <div style="font-size:10px;color:var(--text3);margin-top:10px">In production: Razorpay UPI / Card / Netbanking</div>
+      </div>`;
+  }
+  openS('ov-wallet-purchase');
+}
+
+function creditPackCoins(packId){
+  const pack = COIN_PACKS.find(p=>p.id===packId);
+  if(!pack) return;
+  addCoins(pack.coins, `Purchased ${pack.label} pack (₹${pack.price})`);
+  cls('ov-wallet-purchase');
+  renderFAQ(); // refresh wallet tab
+}
+
+// ─── Check + prompt coin spend ───
+function requireCoins(cost, action, label, onConfirm){
+  const bal = getCoins();
+  const enough = bal >= cost;
+  const body = document.getElementById('hstat-body');
+  const title = document.getElementById('hstat-title');
+  if(!body||!title) return enough ? onConfirm() : openWallet();
+  title.textContent = '🪙 Confirm Spend';
+  body.innerHTML = `
+    <div style="text-align:center;padding:12px 0 18px">
+      <div style="font-size:40px;margin-bottom:8px">${enough?'🪙':'😔'}</div>
+      <div style="font-family:var(--fd);font-size:1.1rem;letter-spacing:1px;margin-bottom:6px">${label}</div>
+      <div class="spend-cost${enough?'':' insufficient'}">
+        <div class="coin-icon"></div>
+        <span>${cost.toLocaleString('en-IN')} coins</span>
+        <span style="margin-left:auto;font-size:11px;color:${enough?'var(--lime)':'var(--red)'}">${enough?'Balance: '+bal.toLocaleString('en-IN'):'Insufficient — have '+bal.toLocaleString('en-IN')}</span>
+      </div>
+    </div>
+    ${enough?`
+    <button class="bs-btn" style="background:var(--gold);color:#020208" onclick="confirmCoinSpend(${cost},'${action.replace(/'/g,"\\'")}')">CONFIRM SPEND</button>
+    `:`
+    <button class="bs-btn" style="background:var(--gold);color:#020208" onclick="cls('ov-hstat');go('faq')">GET MORE COINS →</button>
+    `}
+    <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd);margin-top:8px" onclick="cls('ov-hstat')">Cancel</button>
+    <div style="height:8px">`;
+
+  // Store callback
+  window._coinSpendCallback = onConfirm;
+  openS('ov-hstat');
+}
+
+function confirmCoinSpend(cost, action){
+  spendCoins(cost, action);
+  cls('ov-hstat');
+  if(window._coinSpendCallback){ window._coinSpendCallback(); window._coinSpendCallback=null; }
+}
+
+function openWallet(){ go('faq'); }
+
+// ─── Legacy plan stubs ───
+function getPlan(){ return localStorage.getItem('fb_plan')||'free'; }
+function setPlan(p){ localStorage.setItem('fb_plan',p); updateProBadge(); }
 function updateProBadge(){
   const lbl=document.getElementById('pro-nav-label');
-  const plan=getPlan();
-  if(lbl) lbl.textContent=plan==='free'?'Pro':plan.toUpperCase();
+  if(lbl){ const c=getCoins(); lbl.textContent=c>=1000?'Wallet':'Wallet'; }
+  updateNavCoins();
 }
 
 // ─── Referral ───
@@ -3855,37 +4059,39 @@ const ACHIEVEMENTS=[
   {id:'pct_3',icon:'🎯',name:'On Target',desc:'Lose 3% body weight',cat:'loss'},
   {id:'pct_5',icon:'🏋️',name:'Serious Lifter',desc:'Lose 5% body weight',cat:'loss'},
   {id:'pct_10',icon:'🏆',name:'Transformation',desc:'Lose 10% body weight',cat:'loss'},
-  {id:'route_1',icon:'🗺️',name:'Explorer',desc:'Complete your first route',cat:'routes'},
-  {id:'route_5',icon:'🚀',name:'Route Warrior',desc:'Complete 5 routes',cat:'routes'},
-  {id:'route_pb',icon:'⚡',name:'PB Crusher',desc:'Set a new personal best',cat:'routes'},
+  {id:'route_1',icon:'🗺️',name:'Explorer',desc:'Claim first territory',cat:'routes'},
+  {id:'route_5',icon:'🚀',name:'Route Warrior',desc:'Claim 5 territories',cat:'routes'},
   {id:'room_create',icon:'🏠',name:'Host',desc:'Create a contest room',cat:'social'},
   {id:'refer_1',icon:'🤝',name:'Recruiter',desc:'Refer 1 friend',cat:'social'},
-  {id:'refer_5',icon:'👑',name:'Ambassador',desc:'Refer 5 friends',cat:'social'},
-  {id:'pro_sub',icon:'⭐',name:'Pro Member',desc:'Subscribed to Pro',cat:'milestone'},
-  {id:'streak_1',icon:'📅',name:'Consistent',desc:'7-day login streak',cat:'milestone'},
+  {id:'coins_1000',icon:'🪙',name:'Coin Collector',desc:'Accumulate 1,000 coins',cat:'milestone'},
+  {id:'coins_5000',icon:'💰',name:'High Roller',desc:'Accumulate 5,000 coins',cat:'milestone'},
+  {id:'pro_sub',icon:'⭐',name:'Pro Member',desc:'Purchased a coin pack',cat:'milestone'},
 ];
 
 function getUnlockedAchs(){return JSON.parse(localStorage.getItem('fb_ach')||'[]');}
 function unlockAch(id){
   const u=getUnlockedAchs();
-  if(!u.includes(id)){u.push(id);localStorage.setItem('fb_ach',JSON.stringify(u));showToast('🏅 Achievement unlocked: '+ACHIEVEMENTS.find(a=>a.id===id)?.name,'var(--gold)');}
+  if(!u.includes(id)){u.push(id);localStorage.setItem('fb_ach',JSON.stringify(u));showToast('🏅 Achievement: '+ACHIEVEMENTS.find(a=>a.id===id)?.name,'var(--gold)');}
 }
 function checkAchievements(lbData){
-  // Called after LB loads with user's data
   const user=localStorage.getItem('fb_u')||'';
   const me=lbData&&lbData.find?lbData.find(e=>e.name&&e.name.toLowerCase()===user.toLowerCase()):null;
-  if(!me)return;
-  if(me.checkIns>=1)unlockAch('first_weigh');
-  if(me.streak>=3)unlockAch('week_streak_3');
-  if(me.streak>=5)unlockAch('week_streak_5');
-  if(me.streak>=10)unlockAch('week_streak_10');
-  if(me.pctLost>=1)unlockAch('pct_1');
-  if(me.pctLost>=3)unlockAch('pct_3');
-  if(me.pctLost>=5)unlockAch('pct_5');
-  if(me.pctLost>=10)unlockAch('pct_10');
+  if(me){
+    if(me.checkIns>=1)unlockAch('first_weigh');
+    if(me.streak>=3)unlockAch('week_streak_3');
+    if(me.streak>=5)unlockAch('week_streak_5');
+    if(me.streak>=10)unlockAch('week_streak_10');
+    if(me.pctLost>=1)unlockAch('pct_1');
+    if(me.pctLost>=3)unlockAch('pct_3');
+    if(me.pctLost>=5)unlockAch('pct_5');
+    if(me.pctLost>=10)unlockAch('pct_10');
+  }
+  const coins = getCoins();
+  if(coins>=1000)unlockAch('coins_1000');
+  if(coins>=5000)unlockAch('coins_5000');
 }
 
-// ─── Corporate lead submit ───
+// ─── Corporate ───
 async function submitCorpLead(){
   const nm=document.getElementById('corp-name')?.value?.trim();
   const co=document.getElementById('corp-company')?.value?.trim();
@@ -3894,74 +4100,18 @@ async function submitCorpLead(){
   if(!nm||!co||!em){showToast('Please fill all fields','var(--red)');return;}
   const btn=document.getElementById('corp-submit-btn');
   if(btn){btn.textContent='Sending…';btn.disabled=true;}
-  // Store locally and show success (backend integration coming soon)
   const leads=JSON.parse(localStorage.getItem('fb_corp_leads')||'[]');
   leads.push({nm,co,em,sz,ts:Date.now()});
   localStorage.setItem('fb_corp_leads',JSON.stringify(leads));
   await new Promise(r=>setTimeout(r,900));
   if(btn){btn.textContent='Request Sent ✓';btn.style.background='var(--lime)';btn.style.color='#020208';}
-  showToast("✅ We'll contact you within 24 hours");
-}
-
-// ─── Plan upgrade ───
-function upgradePlan(plan){
-  if(plan==='free')return;
-  // Payment gateway coming soon — show coming soon toast, set plan for demo
-  const p=PLANS[plan];
-  showToast('💳 Payment gateway coming soon — demo activated','var(--gold)');
-  setPlan(plan);
-  if(plan==='pro')unlockAch('pro_sub');
-  cls('ov-upgrade');
-  renderPro();
-}
-
-// ─── Open upgrade sheet ───
-function openUpgrade(){
-  const body=document.getElementById('upgrade-body');
-  if(!body)return;
-  const cur=getPlan();
-  let h=`<div style="padding:4px 0 18px">`;
-  // Plan cards
-  ['free','pro','team'].forEach(pid=>{
-    const p=PLANS[pid];
-    const isCur=cur===pid;
-    const isFeat=pid==='pro';
-    h+=`<div class="plan-card${isFeat?' featured':''}" style="margin-bottom:12px">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div class="plan-name" style="color:${p.color}">${p.name}</div>
-          <div class="plan-price" style="color:${p.color}">₹${p.price}<span style="font-size:1rem;font-weight:400">${p.price?'':' '}</span></div>
-          <div class="plan-period">${p.label}</div>
-        </div>
-        ${isCur?`<span class="plan-chip ${pid}">ACTIVE</span>`:''}
-      </div>
-      <div style="margin-bottom:4px">
-        ${p.features.map(f=>`<div class="plan-feature${f.y?' yes':''}">
-          <span class="chk">${f.y?'✓':'—'}</span>
-          <span>${f.t}</span>
-        </div>`).join('')}
-      </div>
-      <button class="plan-cta ${isCur?'current':pid==='pro'?'gold':'outline'}"
-        onclick="${isCur?'':'upgradePlan(\''+pid+'\')'}"
-        ${isCur?'disabled':''}>
-        ${isCur?'Current Plan':p.cta}
-      </button>
-    </div>`;
-  });
-  // Legal note
-  h+=`<div style="background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.15);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--text2);line-height:1.7;margin-top:4px">
-    <strong style="color:var(--lime)">🔒 100% Legal in India</strong><br>
-    FitBounty uses the Commitment Contract model — you escrow your own money, lose it to charity (not other players) if you miss goals. Prizes are funded by brand sponsors. 
-    <span style="color:var(--lime);cursor:pointer" onclick="cls('ov-upgrade');openCommit()">Learn more →</span>
-  </div>
-  </div>`;
-  body.innerHTML=h;
-  openS('ov-upgrade');
+  showToast('✅ We\'ll contact you within 24 hours');
+  addCoins(50,'Referred a company 🏢');
 }
 
 function openCommit(){openS('ov-commit');}
 
-// ─── Open referral sheet ───
+// ─── Referral ───
 function openReferral(){
   const body=document.getElementById('referral-body');
   if(!body)return;
@@ -3972,109 +4122,70 @@ function openReferral(){
     <div style="text-align:center;padding:8px 0 16px">
       <div style="font-size:42px;margin-bottom:8px">🎁</div>
       <div style="font-family:var(--fd);font-size:1.5rem;letter-spacing:1px;margin-bottom:6px">Refer &amp; Earn</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.7">Invite friends. Both of you get<br><strong style="color:var(--lime)">1 month Pro free</strong> when they join.</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">Invite friends — both get <strong style="color:var(--gold)">500 coins free</strong>.</div>
     </div>
     <div class="referral-box">
-      <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--lime);margin-bottom:4px">YOUR REFERRAL CODE</div>
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--lime);margin-bottom:4px">YOUR CODE</div>
       <div class="ref-code" onclick="copyRef('${code}')">${code}</div>
       <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:14px">Tap to copy</div>
       <div style="display:flex;gap:8px">
         <div class="ref-stat"><div class="ref-stat-v">${stats.invited}</div><div class="ref-stat-k">Invited</div></div>
         <div class="ref-stat"><div class="ref-stat-v">${stats.joined}</div><div class="ref-stat-k">Joined</div></div>
-        <div class="ref-stat"><div class="ref-stat-v" style="color:var(--gold)">${stats.earned}</div><div class="ref-stat-k">Months Earned</div></div>
+        <div class="ref-stat"><div class="ref-stat-v" style="color:var(--gold)">${stats.earned}</div><div class="ref-stat-k">Coins Earned</div></div>
       </div>
     </div>
     <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
       <button class="bs-btn" style="background:var(--lime);color:#020208" onclick="shareRefWA('${link}')">💬 Share on WhatsApp</button>
       <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd)" onclick="copyRef('${link}')">📋 Copy Link</button>
     </div>
-    <div style="margin-top:18px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--r);padding:12px 14px">
-      <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px">HOW IT WORKS</div>
-      ${[['Share your code','Your friend signs up with your link'],['They join a challenge','They complete their first weigh-in'],['You both get Pro','1 month free credited to both accounts']].map((s,i)=>`
-        <div style="display:flex;gap:10px;align-items:center;padding:6px 0${i<2?';border-bottom:1px solid var(--brd)':''}">
-          <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.25);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:10px;color:var(--lime);flex-shrink:0">${i+1}</div>
-          <div><div style="font-weight:700;font-size:12px">${s[0]}</div><div style="font-size:11px;color:var(--text2)">${s[1]}</div></div>
-        </div>`).join('')}
-    </div>
     <div style="height:16px">`;
   openS('ov-referral');
 }
-
-function copyRef(text){
-  navigator.clipboard?.writeText(text).then(()=>showToast('📋 Copied!')).catch(()=>{});
-}
+function copyRef(text){ navigator.clipboard?.writeText(text).then(()=>toast('📋 Copied!','📋')).catch(()=>{}); }
 function shareRefWA(link){
-  const msg=encodeURIComponent(`Join me on FitBounty — the fat loss challenge app with real stakes. Use my link to get 1 month Pro free:\n${link}`);
-  window.open(`https://wa.me/?text=${msg}`,'_blank');
+  window.open('https://wa.me/?text='+encodeURIComponent(`Join FitBounty — we both get 500 free coins!\n${link}`),'_blank');
 }
 
-// ─── Open achievements sheet ───
+// ─── Achievements sheet ───
 function openAchievements(){
-  const body=document.getElementById('ach-body');
-  if(!body)return;
+  const body=document.getElementById('ach-body');if(!body)return;
   const unlocked=getUnlockedAchs();
-  const cats={milestone:'🎯 Milestones',streak:'🔥 Streaks',loss:'📉 Weight Loss',routes:'🗺️ Routes',social:'🤝 Social'};
+  const cats={milestone:'🎯 Milestones',streak:'🔥 Streaks',loss:'📉 Weight Loss',routes:'🗺️ Territory',social:'🤝 Social'};
   let h=`<div style="padding:4px 0 6px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div style="font-size:13px;color:var(--text2)">${unlocked.length} of ${ACHIEVEMENTS.length} unlocked</div>
       <div style="background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:var(--rf);padding:3px 10px;font-family:var(--fd);font-size:9px;color:var(--gold);letter-spacing:1px">${Math.round(unlocked.length/ACHIEVEMENTS.length*100)}% COMPLETE</div>
     </div>
     <div style="background:rgba(255,255,255,.05);border-radius:var(--r);height:6px;margin-bottom:20px;overflow:hidden">
-      <div style="background:var(--gold);height:100%;width:${Math.round(unlocked.length/ACHIEVEMENTS.length*100)}%;border-radius:var(--r);transition:width .5s"></div>
+      <div style="background:var(--gold);height:100%;width:${Math.round(unlocked.length/ACHIEVEMENTS.length*100)}%;border-radius:var(--r)"></div>
     </div>`;
   Object.entries(cats).forEach(([cat,label])=>{
-    const catAchs=ACHIEVEMENTS.filter(a=>a.cat===cat);
+    const ca=ACHIEVEMENTS.filter(a=>a.cat===cat);
     h+=`<div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:10px;margin-top:4px">${label}</div>
     <div class="badge-grid" style="margin-bottom:18px">
-      ${catAchs.map(a=>{
-        const got=unlocked.includes(a.id);
-        return `<div class="badge-item ${got?'unlocked':'locked'}" title="${a.desc}">
-          <div class="badge-icon-wrap">${a.icon}</div>
-          <div class="badge-name">${a.name}</div>
-        </div>`;
-      }).join('')}
+      ${ca.map(a=>{const got=unlocked.includes(a.id);return `<div class="badge-item ${got?'unlocked':'locked'}" title="${a.desc}"><div class="badge-icon-wrap">${a.icon}</div><div class="badge-name">${a.name}</div></div>`;}).join('')}
     </div>`;
   });
-  h+=`</div>`;
-  body.innerHTML=h;
+  body.innerHTML=h+'</div>';
   openS('ov-achievements');
 }
 
-// ─── Open corporate sheet ───
+// ─── Corporate sheet ───
 function openCorp(){
-  const body=document.getElementById('corp-body');
-  if(!body)return;
+  const body=document.getElementById('corp-body');if(!body)return;
   body.innerHTML=`
     <div class="corp-banner" style="margin-bottom:18px">
       <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--blue);margin-bottom:8px">FITBOUNTY FOR BUSINESS</div>
       <div style="font-family:var(--fd);font-size:1.6rem;letter-spacing:1px;margin-bottom:10px;line-height:1.1">Corporate<br>Wellness Program</div>
-      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px">Reduce absenteeism, cut insurance premiums, and build a healthier workforce — with real accountability and measurable results.</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px">Reduce absenteeism, cut insurance premiums, build a healthier workforce with real accountability.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        ${[['₹5k–50k','per employee / year'],['90 days','free pilot'],['30%','avg absenteeism reduction'],['Tax deduct.','under Sec 17(2)']].map(([v,k])=>`
+        ${[['₹5k–50k','per employee / year'],['90 days','free pilot'],['30%','avg absenteeism ↓'],['Tax deduct.','under Sec 17(2)']].map(([v,k])=>`
         <div style="background:rgba(0,0,0,.25);border-radius:var(--r);padding:10px 12px;text-align:center">
           <div style="font-family:var(--fd);font-size:1.1rem;color:var(--blue)">${v}</div>
           <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:2px">${k}</div>
         </div>`).join('')}
       </div>
     </div>
-
-    <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">WHAT YOU GET</div>
-    ${[
-      {icon:'📊',t:'Admin Dashboard',d:'Track company-wide health metrics, participation, and ROI in one place.'},
-      {icon:'🏷️',t:'White-Label Branding',d:'Your company logo, colours, and domain. Your team sees your brand.'},
-      {icon:'🏆',t:'Team vs Team Challenges',d:'Run department-vs-department challenges for engagement.'},
-      {icon:'📋',t:'Compliance Reports',d:'Export participation and outcome data for HR and insurance.'},
-      {icon:'🛡️',t:'Insurance Integration',d:'Partner discounts from Niva Bupa and Star Health. Coming soon.',cs:true},
-      {icon:'💬',t:'Dedicated Support',d:'Slack channel + dedicated account manager for setup.'},
-    ].map(f=>`<div class="cs-card${f.cs?' ':''}" style="margin-bottom:10px${f.cs?'':''}">
-      ${f.cs?'':''}
-      <div style="display:flex;gap:12px;align-items:flex-start">
-        <div style="font-size:24px;flex-shrink:0">${f.icon}</div>
-        <div><div style="font-weight:700;font-size:13px;margin-bottom:3px">${f.t}${f.cs?` <span class="cs-badge">Coming Soon</span>`:''}</div><div style="font-size:12px;color:var(--text2);line-height:1.5">${f.d}</div></div>
-      </div>
-    </div>`).join('')}
-
-    <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin:20px 0 12px">REQUEST A FREE PILOT</div>
     <input type="text" id="corp-name" class="corp-field" placeholder="Your name" autocomplete="name">
     <input type="text" id="corp-company" class="corp-field" placeholder="Company name">
     <input type="email" id="corp-email" class="corp-field" placeholder="Work email" autocomplete="email">
@@ -4085,284 +4196,159 @@ function openCorp(){
       <option value="200-1000">200–1,000 employees</option>
       <option value="1000+">1,000+ employees</option>
     </select>
-    <button id="corp-submit-btn" class="bs-btn" style="background:var(--blue);color:#020208" onclick="submitCorpLead()">🏢 REQUEST 90-DAY FREE PILOT</button>
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.6">We'll get back within 24 hours. No sales pressure, just a demo.</div>
+    <button id="corp-submit-btn" class="bs-btn" style="background:var(--blue);color:#020208" onclick="submitCorpLead()">🏢 REQUEST FREE PILOT</button>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">We'll respond within 24 hours. +50 coins for your enquiry.</div>
     <div style="height:20px">`;
   openS('ov-corp');
 }
+
+// ─── Upgrade stub (redirects to wallet) ───
+function upgradePlan(plan){ go('faq'); }
+function openUpgrade(){ go('faq'); }
+
 
 // ═══════════════════════════════════════════════════════════
 // MAIN PRO TAB RENDERER
 // ═══════════════════════════════════════════════════════════
 function renderFAQ(){
   const area=document.getElementById('faq-scroll');if(!area)return;
-  const plan=getPlan();
+  const coins=getCoins();
   const unlocked=getUnlockedAchs();
-  const code=getRefCode();
-  const refStats=getRefStats();
+  const w=getWallet();
+  const txns=w.txns||[];
 
-  const faqs=[
-    {q:'What is FitBounty?',a:'FitBounty is a competitive fat-loss tracker with real stakes. Log weekly weigh-ins, compete on % body weight lost, and earn rewards through sponsor-backed prize pools.'},
-    {q:'Is this legal in India?',a:'Yes. FitBounty uses the Commitment Contract model — you can only lose your own money to a charity of your choice, never to other players. Prize pools are funded entirely by brand sponsors. The Supreme Court has upheld skill-based competitions as legal.'},
-    {q:'How are standings calculated?',a:'Rankings use % of body weight lost — not raw kg. Formula: (start weight − current weight) ÷ start weight × 100. This makes it fair regardless of starting weight.'},
-    {q:'When do I weigh in?',a:'Official weigh-ins are every Monday. Log your weight + attach a photo as proof. Practice weights can be logged any day but only Monday entries count for the leaderboard.'},
-    {q:'What is a streak?',a:'Consecutive weeks of weight loss. Lose weight week 1, week 2, and week 3 in a row = 🔥 3-week streak. Gaining even 0.1kg resets it to zero.'},
-    {q:'What happens if I miss a weigh-in?',a:'Missing a Monday breaks your streak and freezes your weight. If your room has a miss penalty, the configured ₹ amount is deducted from your prize share.'},
-    {q:'What are Route Challenges?',a:'Draw a GPS route on the map — a running trail, cycling loop, walking path. Anyone can attempt to beat your time. Times are validated: you must cover 90% of the distance and pace must be physically realistic.'},
-    {q:'What are private Rooms?',a:'Run your own contest with custom rules — entry fee, prize split, duration, miss penalty, and invite code. Share via WhatsApp and anyone with the link can join.'},
-    {q:'How does the prize get paid?',a:'Prizes are settled manually by the contest organiser at the end. FitBounty calculates the split; the actual transfer is between participants (UPI, cash, etc.). Automated escrow is coming soon.'},
-    {q:'What is the Commitment Contract model?',a:'You escrow your own money. Hit your goal → get it back + bonus from sponsors. Miss your goal → your stake goes to a charity of your choice — never to another player. Modelled on globally-proven platforms like Stickk.com.'},
-  ];
+  // Coin ring
+  const maxDisplay=10000;
+  const ringPct=Math.min(100,Math.round(coins/maxDisplay*100));
+  const R=32,C=40,circ=2*Math.PI*R;
+  const offset=circ*(1-ringPct/100);
+  const ring=`<svg width="80" height="80" viewBox="0 0 80 80">
+    <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+    <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="var(--gold)" stroke-width="8"
+      stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}" stroke-linecap="round"
+      transform="rotate(-90 ${C} ${C})" style="transition:stroke-dashoffset 1s ease"/>
+    <text x="${C}" y="${C-6}" text-anchor="middle" dominant-baseline="central" font-family="var(--fm)" font-size="13" font-weight="700" fill="var(--gold)">${coins>=1000?(coins/1000).toFixed(1)+'k':coins}</text>
+    <text x="${C}" y="${C+10}" text-anchor="middle" dominant-baseline="central" font-family="var(--fd)" font-size="9" fill="rgba(240,165,0,.6)" letter-spacing="1">COINS</text>
+  </svg>`;
 
-  const brandChallenges=[
-    {name:'DECATHLON 5K CHALLENGE',sponsor:'Decathlon India',prize:'₹10,000',prizeLabel:'in gear vouchers',activity:'🏃 Running',duration:'4 weeks',desc:'Run 5km under 35 minutes. Top 10 finishers win Decathlon gift cards.',deadline:'Registration closes Apr 1',cs:false},
-    {name:'MYPROTEIN FAT LOSS LEAGUE',sponsor:'MyProtein India',prize:'₹25,000',prizeLabel:'supplement bundle',activity:'⚖️ Weight Loss',duration:'8 weeks',desc:'Lose the highest % body weight. Winner gets a year of supplements.',deadline:'Launching soon',cs:true},
-    {name:'PUMA CITY RUNNERS',sponsor:'Puma India',prize:'₹15,000',prizeLabel:'in Puma gear',activity:'🚴 Multi-sport',duration:'6 weeks',desc:'Track runs, cycles, and walks. Most km covered wins a full Puma kit.',deadline:'Launching soon',cs:true},
-  ];
-
-  const marketplace=[
-    {icon:'🧪',name:'HealthifyMe Lab Test',brand:'Thyrocare',desc:'Full body health checkup — thyroid, lipid, glucose panel.',price:'₹799',original:'₹2,200',commission:'10% off for Pro',cs:false},
-    {icon:'⚖️',name:'Mi Body Comp Scale',brand:'Xiaomi',desc:'Smart scale with BMI, body fat %, muscle mass sync.',price:'₹1,999',original:'₹2,999',commission:'Auto-sync coming soon',cs:true},
-    {icon:'🏋️',name:'Book a Coach',brand:'Cult.fit',desc:'1-on-1 certified personal trainer session — in-gym or online.',price:'₹499',original:'₹999',commission:'25% commission',cs:false},
-    {icon:'💊',name:'Whey Protein 1kg',brand:'Optimum Nutrition',desc:'Gold Standard 100% Whey — 24g protein per serving.',price:'₹2,499',original:'₹3,200',commission:'10% off for Pro',cs:false},
-    {icon:'❤️',name:'Niva Bupa Wellness',brand:'Niva Bupa',desc:'Health insurance with fitness discounts for active FitBounty users.',price:'Custom',original:'',commission:'Coming soon',cs:true},
-    {icon:'🩺',name:'Nutrition Consult',brand:'Practo',desc:'30-min online session with a certified dietitian.',price:'₹399',original:'₹699',commission:'20% commission',cs:false},
-  ];
-
-  let h=`
-  <!-- ── HERO ── -->
-  <div style="padding:26px 18px 22px;background:linear-gradient(160deg,rgba(240,165,0,.11) 0%,rgba(155,127,255,.06) 60%,transparent 100%);position:relative;overflow:hidden">
-    <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(240,165,0,.1),transparent 65%);pointer-events:none"></div>
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+  let html=`
+  <!-- Wallet hero -->
+  <div style="padding:20px 18px 0;background:linear-gradient(160deg,rgba(240,165,0,.1),rgba(240,165,0,.02));margin-bottom:0">
+    <div style="font-size:9px;font-weight:700;letter-spacing:2.5px;color:rgba(240,165,0,.7);font-family:var(--fd);margin-bottom:10px">🪙 YOUR WALLET</div>
+    <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
+      ${ring}
       <div>
-        <div style="font-size:9px;font-weight:700;letter-spacing:2.5px;color:rgba(240,165,0,.7);font-family:var(--fd);margin-bottom:6px">YOUR PLAN</div>
-        <span class="plan-chip ${plan}">${plan.toUpperCase()}</span>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-bottom:4px">ACHIEVEMENTS</div>
-        <div style="font-family:var(--fd);font-size:1.4rem;color:var(--gold)">${unlocked.length}/${ACHIEVEMENTS.length}</div>
+        <div class="coin-big">${coins.toLocaleString('en-IN')}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px">FitBounty Coins</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text2);line-height:1.5">Spend on contests, territory claims,<br>and exclusive features.</div>
       </div>
     </div>
-    <div style="font-family:var(--fd);font-size:clamp(1.7rem,7vw,2.4rem);line-height:.95;margin-bottom:12px">EARN YOUR<br><span style="color:var(--gold)">BOUNTY.</span></div>
-    ${plan==='free'?`
-    <button class="plan-cta gold" style="max-width:240px;margin-top:6px" onclick="openUpgrade()">
-      ⚡ Upgrade to Pro — ₹299/mo
-    </button>`:`
-    <div style="background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--gold);display:inline-flex;align-items:center;gap:8px;margin-top:6px">
-      ⭐ ${plan.toUpperCase()} member — all features unlocked
-    </div>`}
-  </div>
 
-  <!-- ── QUICK ACTIONS ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">Quick Actions</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      ${[
-        {icon:'⭐',label:'Plans & Pricing',sub:'Upgrade your plan',col:'var(--gold)',fn:'openUpgrade()'},
-        {icon:'🏅',label:'Achievements',sub:`${unlocked.length} unlocked`,col:'var(--gold)',fn:'openAchievements()'},
-        {icon:'🔗',label:'Refer & Earn',sub:'1 month Pro free',col:'var(--lime)',fn:'openReferral()'},
-        {icon:'🏢',label:'For Teams',sub:'Corporate wellness',col:'var(--blue)',fn:'openCorp()'},
-        {icon:'📜',label:'Commitment Model',sub:'How prizes work',col:'rgba(240,165,0,.7)',fn:'openCommit()'},
-        {icon:'🗺️',label:'Route Challenges',sub:'Race your friends',col:'var(--blue)',fn:"go('routes')"},
-      ].map(a=>`
-        <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;cursor:pointer;transition:transform .18s;-webkit-tap-highlight-color:transparent;active:transform:scale(.96)" onclick="${a.fn}" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
-          <div style="font-size:26px;margin-bottom:7px">${a.icon}</div>
-          <div style="font-weight:700;font-size:13px;color:${a.col};margin-bottom:2px">${a.label}</div>
-          <div style="font-size:11px;color:var(--text3)">${a.sub}</div>
-        </div>`).join('')}
-    </div>
-  </div>
-
-  <!-- ── PLAN COMPARISON ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">
-      <span>Plan Comparison</span>
-      <span style="font-size:10px;color:var(--gold);cursor:pointer" onclick="openUpgrade()">See all →</span>
-    </div>
-    <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:4px 14px 10px;margin-bottom:4px">
-      <div style="display:flex;align-items:center;padding:8px 0 6px;border-bottom:1px solid var(--brd)">
-        <div style="flex:1;font-family:var(--fd);font-size:8px;letter-spacing:1px;color:var(--text3)">FEATURE</div>
-        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--text3)">FREE</div>
-        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--gold)">PRO</div>
-        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--purple)">TEAM</div>
-      </div>
-      ${[
-        ['Contest rooms','1','∞','∞'],
-        ['GPS routes','✓','✓','✓'],
-        ['Leaderboard','✓','✓','✓'],
-        ['Smart scale sync','—','Soon','✓'],
-        ['AI insights','—','Soon','✓'],
-        ['Admin dashboard','—','—','✓'],
-        ['Insurance discount','—','—','Soon'],
-      ].map(([f,fr,pr,tm])=>`
-        <div class="plan-compare-row">
-          <div class="feat">${f}</div>
-          <div class="val" style="color:var(--text3)">${fr}</div>
-          <div class="val" style="color:var(--gold)">${pr}</div>
-          <div class="val" style="color:var(--purple)">${tm}</div>
-        </div>`).join('')}
-    </div>
-  </div>
-
-  <!-- ── BRAND CHALLENGES ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">
-      <span>Brand Challenges</span>
-      <span class="cs-badge">New</span>
-    </div>
-    ${brandChallenges.map(c=>`
-    <div class="brand-card${c.cs?'':' sponsored'}">
-      ${!c.cs?`<div class="brand-logo"><span class="brand-sponsor-pill">🏷️ SPONSORED · ${c.sponsor}</span></div>`:`<div class="brand-logo"><span class="brand-sponsor-pill" style="background:rgba(155,127,255,.1);border-color:rgba(155,127,255,.2);color:var(--purple)">🔜 COMING SOON</span></div>`}
-      <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1.5px;margin-bottom:6px">${c.name}</div>
-      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">${c.desc}</div>
-      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <!-- Feature costs quick reference -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:18px;border-bottom:1px solid var(--brd)">
+      ${Object.entries(COIN_COSTS).slice(0,4).map(([k,v])=>`
+      <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:8px 10px;display:flex;align-items:center;gap:6px">
+        <div class="coin-icon" style="width:10px;height:10px"></div>
         <div>
-          <div class="brand-prize-big" style="${c.cs?'color:var(--purple);text-shadow:0 0 24px rgba(155,127,255,.3)':''}">
-            ${c.prize}
-          </div>
-          <div style="font-size:10px;color:var(--text3);margin-top:2px">${c.prizeLabel}</div>
+          <div style="font-family:var(--fd);font-size:10px;color:var(--gold)">${v.toLocaleString('en-IN')}</div>
+          <div style="font-size:9px;color:var(--text3)">${k.replace(/([A-Z])/g,' $1').replace('create','').replace('join','Join').trim()}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Coin packs -->
+  <div style="padding:18px 18px 0">
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:12px">BUY COINS</div>
+    ${COIN_PACKS.map(p=>`
+    <div class="coin-pack${p.popular?' popular':''}" onclick="purchasePack('${p.id}')" style="margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <div style="font-family:var(--fd);font-size:.85rem;letter-spacing:1px;color:${p.color};margin-bottom:4px">${p.label.toUpperCase()}</div>
+          <div class="coin-pack-price">₹${p.price}</div>
         </div>
         <div style="text-align:right">
-          <div style="font-size:11px;color:var(--text2)">${c.activity} · ${c.duration}</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:3px">${c.deadline}</div>
+          <div class="coin-pack-coins"><div class="coin-icon"></div>${p.coins.toLocaleString('en-IN')} coins</div>
+          ${p.bonus?`<div style="font-size:10px;color:var(--lime)">+${p.bonus}</div>`:''}
         </div>
       </div>
-      ${c.cs?'':`<button class="bs-btn" style="margin-top:12px;background:var(--lime);color:#020208;padding:11px" onclick="showToast('Joining challenge — coming soon!','var(--lime)')">JOIN THIS CHALLENGE →</button>`}
+      <button class="coin-pack-btn" style="background:${p.popular?'var(--gold)':'var(--surf2)'};color:${p.popular?'#020208':'var(--text2)'};border:${p.popular?'none':'1px solid var(--brd)'}">BUY FOR ₹${p.price}</button>
     </div>`).join('')}
   </div>
 
-  <!-- ── MARKETPLACE ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">
-      <span>Marketplace</span>
-      <span class="cs-badge">Beta</span>
+  <!-- Achievements quick row -->
+  <div style="padding:18px 18px 0">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3)">ACHIEVEMENTS</div>
+      <button style="background:none;border:none;font-family:var(--fd);font-size:9px;letter-spacing:1px;color:var(--gold);cursor:pointer" onclick="openAchievements()">${unlocked.length}/${ACHIEVEMENTS.length} →</button>
     </div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Products and services to support your fitness journey. Pro members get exclusive discounts.</div>
-    ${marketplace.map(m=>`
-    <div class="mkt-card" style="margin-bottom:10px">
-      <div class="mkt-icon">${m.icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap">
-          <div>
-            <div style="font-weight:700;font-size:13px;margin-bottom:2px">${m.name}</div>
-            <div style="font-size:10px;color:var(--text3);font-family:var(--fd);letter-spacing:.5px">${m.brand}</div>
-          </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:var(--fd);font-size:1rem;color:var(--lime)">${m.price}</div>
-            ${m.original?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">${m.original}</div>`:''}
-          </div>
-        </div>
-        <div style="font-size:12px;color:var(--text2);margin:6px 0">${m.desc}</div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          ${m.cs?`<span class="cs-badge">Coming Soon</span>`:`<span style="font-size:11px;color:var(--lime)">${m.commission}</span>`}
-          ${m.cs?'':`<button style="padding:6px 14px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--rf);font-family:var(--fd);font-size:9px;letter-spacing:1px;color:var(--text2);cursor:pointer" onclick="showToast('Opening partner store…','var(--lime)')">VIEW DEAL →</button>`}
-        </div>
-      </div>
-    </div>`).join('')}
-  </div>
-
-  <!-- ── COMMITMENT CONTRACT ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">How Prizes Work</div>
-    <div class="commit-box" onclick="openCommit()" style="cursor:pointer">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
-        <div>
-          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:6px">🤝 Commitment Contract<br>Model</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.6">The legally watertight way to run fitness challenges with real stakes. Your money, your charity, your choice.</div>
-        </div>
-        <div style="font-size:20px;flex-shrink:0;color:var(--gold)">›</div>
-      </div>
-      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:7px">
-        ${['✓ Legal in India','✓ Backed by precedent','✓ Your money only','✓ Charity donation'].map(t=>`<span style="background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:3px;padding:3px 9px;font-size:10px;color:var(--gold);font-family:var(--fd);letter-spacing:.5px">${t}</span>`).join('')}
-      </div>
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px">
+      ${ACHIEVEMENTS.slice(0,8).map(a=>{const got=unlocked.includes(a.id);return`<div class="badge-item ${got?'unlocked':'locked'}" style="min-width:64px" title="${a.desc}"><div class="badge-icon-wrap">${a.icon}</div><div class="badge-name">${a.name}</div></div>`;}).join('')}
     </div>
   </div>
 
-  <!-- ── COMING SOON FEATURES ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">On the Roadmap</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
-      ${[
-        {icon:'⚖️',t:'Smart Scale Sync',d:'Auto-sync from Mi, Withings, Garmin scales',eta:'Q2 2026'},
-        {icon:'🤖',t:'AI Coach',d:'Weekly personalised nutrition and training insights',eta:'Q2 2026'},
-        {icon:'🏦',t:'Automated Escrow',d:'UPI-based prize pool with verified payouts',eta:'Q3 2026'},
-        {icon:'❤️',t:'Insurance Discounts',d:'Lower premiums for active FitBounty members',eta:'Q3 2026'},
-        {icon:'📊',t:'Body Composition',d:'Track fat %, muscle mass alongside weight',eta:'Q4 2026'},
-        {icon:'🎥',t:'Video Weigh-in',d:'Live timestamped video proof for public contests',eta:'Q4 2026'},
-      ].map(f=>`
-        <div class="cs-card">
-          <div class="cs-icon">${f.icon}</div>
-          <div class="cs-title">${f.t}</div>
-          <div class="cs-desc">${f.d}</div>
-          <div class="cs-eta">ETA ${f.eta}</div>
-        </div>`).join('')}
+  <!-- Transaction history -->
+  ${txns.length?`
+  <div style="padding:18px 18px 0">
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:12px">RECENT TRANSACTIONS</div>
+    <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:4px 14px">
+      ${txns.slice(0,10).map(t=>`
+      <div class="coin-tx">
+        <div class="coin-tx-icon ${t.type}">${t.type==='earn'?'🪙':'💸'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(t.reason)}</div>
+          <div style="font-size:10px;color:var(--text3)">${new Date(t.ts).toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div>
+        </div>
+        <div class="coin-tx-amt ${t.type}">${t.type==='earn'?'+':'-'}${t.amount.toLocaleString('en-IN')}</div>
+      </div>`).join('')}
     </div>
-  </div>
+  </div>`:''}
 
-  <!-- ── REFER BANNER ── -->
-  <div class="pro-section">
+  <!-- Refer & Earn banner -->
+  <div style="padding:18px 18px 0">
     <div class="referral-box" onclick="openReferral()" style="cursor:pointer">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="font-size:36px">🎁</div>
         <div style="flex:1">
-          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--lime)">Refer &amp; Earn</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">Invite friends to FitBounty. Both of you get <strong style="color:var(--lime)">1 month Pro free</strong> when they join.</div>
-          <div style="margin-top:8px;font-family:var(--fm);font-size:11px;color:var(--lime);letter-spacing:2px">${code} →</div>
+          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--lime)">Refer &amp; Earn Coins</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Invite friends — both get <strong style="color:var(--lime)">500 coins</strong> free when they join.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── CORPORATE BANNER ── -->
-  <div class="pro-section">
+  <!-- Corporate -->
+  <div style="padding:18px 18px 0">
     <div class="corp-banner" onclick="openCorp()" style="cursor:pointer">
       <div style="display:flex;align-items:center;gap:14px">
         <div style="font-size:36px">🏢</div>
         <div style="flex:1">
-          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--blue)">FitBounty for Teams</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">Run company-wide challenges. Get insurance discounts. Reduce absenteeism by up to 30%.</div>
-          <div style="margin-top:8px;font-size:11px;color:var(--blue);font-family:var(--fd);letter-spacing:1px">90-DAY FREE PILOT →</div>
+          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--blue)">Teams &amp; Corporate</div>
+          <div style="font-size:12px;color:var(--text2)">Bulk coins for your team. 90-day free pilot.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ── FAQ ── -->
-  <div class="pro-section">
-    <div class="pro-section-hdr">Frequently Asked</div>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:4px" id="faq-list">
-      ${faqs.map((f,i)=>`
-        <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden">
-          <button onclick="toggleFaq(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;gap:12px">
-            <span style="font-weight:700;font-size:13px;color:var(--text);line-height:1.4">${f.q}</span>
-            <span id="faq-arrow-${i}" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .2s">▼</span>
-          </button>
-          <div id="faq-ans-${i}" style="display:none;padding:0 16px 14px;font-size:13px;color:var(--text2);line-height:1.7;border-top:1px solid var(--brd)">${f.a}</div>
-        </div>`).join('')}
+  <!-- Commitment model -->
+  <div style="padding:18px 18px 0">
+    <div class="commit-box" onclick="openCommit()" style="cursor:pointer">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px">📜 How Prize Money Works</div>
+        <div style="font-size:20px;color:var(--gold);margin-left:auto">›</div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${['✓ Legal in India','✓ Commitment contract','✓ No gambling','✓ Charity model'].map(t=>`<span style="background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:3px;padding:3px 9px;font-size:10px;color:var(--gold);font-family:var(--fd)">${t}</span>`).join('')}
+      </div>
     </div>
   </div>
 
-  <!-- ── FOOTER ── -->
-  <div style="padding:18px 18px 8px;text-align:center">
-    <div style="display:inline-flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rf);padding:10px 18px">
-      <div style="width:28px;height:28px;background:#0a0a18;border:1.5px solid rgba(245,200,66,.3);border-radius:7px;display:flex;align-items:center;justify-content:center">
-        <svg width="17" height="17" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg>
-      </div>
-      <div style="text-align:left">
-        <div style="font-family:var(--fd);font-size:.9rem;letter-spacing:1.5px">FITBOUNTY</div>
-        <div style="font-size:10px;color:var(--text3)">Earn Your Bounty.</div>
-      </div>
-    </div>
-  </div>
   <div style="height:20px">`;
 
-  area.innerHTML=h;
-  // Update days left if present
-  const dl=Math.max(0,Math.ceil((CEND-new Date())/86400000));
-  const el=document.getElementById('faq-days');if(el)el.textContent=dl;
+  area.innerHTML=html;
 }
 
-// placeholder sentinel - do not remove
+
 function toggleFaq(i){
   const ans=document.getElementById('faq-ans-'+i);
   const arrow=document.getElementById('faq-arrow-'+i);
