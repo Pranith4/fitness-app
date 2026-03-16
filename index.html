@@ -1565,11 +1565,22 @@ body::after{
         <img id="food-img" src="" alt="food">
         <button style="position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.7);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center" onclick="clearFoodImg()">×</button>
       </div>
-      <div id="food-upload-zone" class="photo-zone" style="margin-bottom:12px">
-        <input type="file" accept="image/*" capture="environment" onchange="handleFoodPhoto(this)">
-        <span class="pz-icon">📸</span>
-        <div class="pz-label">Take or Upload Food Photo</div>
-        <div class="pz-sub">Works with any meal, snack, or drink</div>
+      <div id="food-upload-zone" style="margin-bottom:12px">
+        <!-- Hidden inputs — camera and gallery separately -->
+        <input type="file" id="food-camera-inp" accept="image/*" capture="environment" onchange="handleFoodPhoto(this)" style="display:none">
+        <input type="file" id="food-gallery-inp" accept="image/*" onchange="handleFoodPhoto(this)" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="photo-zone" style="margin:0;cursor:pointer" onclick="document.getElementById('food-camera-inp').click()">
+            <span class="pz-icon">📷</span>
+            <div class="pz-label">Take Photo</div>
+            <div class="pz-sub">Open camera</div>
+          </div>
+          <div class="photo-zone" style="margin:0;cursor:pointer" onclick="document.getElementById('food-gallery-inp').click()">
+            <span class="pz-icon">🖼️</span>
+            <div class="pz-label">Upload Photo</div>
+            <div class="pz-sub">From gallery</div>
+          </div>
+        </div>
       </div>
       <div id="food-result" style="display:none"></div>
       <div id="food-history-section" style="margin-top:16px">
@@ -1951,11 +1962,26 @@ function handleFoodPhoto(inp){
   const f=inp.files[0];if(!f)return;
   const reader=new FileReader();
   reader.onload=e=>{
-    foodImgData=e.target.result;
-    document.getElementById('food-img').src=foodImgData;
-    document.getElementById('food-img-wrap').style.display='block';
-    document.getElementById('food-upload-zone').style.display='none';
-    analyseFoodPhoto();
+    // Resize + compress before storing — mobile photos are 3-8MB raw,
+    // which blows past Apps Script POST limits. Target: max 900px, JPEG 0.82 (~80-120KB)
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=900;
+      let w=img.width,h=img.height;
+      if(w>MAX||h>MAX){
+        if(w>h){h=Math.round(h*MAX/w);w=MAX;}
+        else{w=Math.round(w*MAX/h);h=MAX;}
+      }
+      const canvas=document.createElement('canvas');
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      foodImgData=canvas.toDataURL('image/jpeg',0.82);
+      document.getElementById('food-img').src=foodImgData;
+      document.getElementById('food-img-wrap').style.display='block';
+      document.getElementById('food-upload-zone').style.display='none';
+      analyseFoodPhoto();
+    };
+    img.src=e.target.result;
   };
   reader.readAsDataURL(f);
 }
@@ -1965,6 +1991,9 @@ function clearFoodImg(){
   document.getElementById('food-img-wrap').style.display='none';
   document.getElementById('food-upload-zone').style.display='block';
   document.getElementById('food-result').style.display='none';
+  // Reset both file inputs so the same file can be re-selected
+  const c=document.getElementById('food-camera-inp');if(c)c.value='';
+  const g=document.getElementById('food-gallery-inp');if(g)g.value='';
 }
 
 async function analyseFoodPhoto(){
