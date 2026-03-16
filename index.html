@@ -1237,9 +1237,9 @@ body::after{
       <button class="bsub" id="breg" onclick="doReg()">ENTER THE ARENA</button>
     </div>
     <div class="lpanel">
-      <div class="lpstat"><div class="lpv">₹6,500</div><div class="lpk">Reward Pool</div></div>
-      <div class="lpstat"><div class="lpv">13</div><div class="lpk">Competitors</div></div>
-      <div class="lpstat"><div class="lpv" id="l-days">—</div><div class="lpk">Days Left</div></div>
+      <div class="lpstat"><div class="lpv">🏃</div><div class="lpk">GPS Tracking</div></div>
+      <div class="lpstat"><div class="lpv">🍽️</div><div class="lpk">AI Calories</div></div>
+      <div class="lpstat"><div class="lpv">🏴</div><div class="lpk">Territory</div></div>
     </div>
   </div>
 </div>
@@ -1885,7 +1885,7 @@ function renderHealthDash(){
   <div class="health-greeting">
     <div class="health-date-pill">📅 ${dateStr}</div>
     <div class="health-greeting-name" style="margin-top:12px">${greeting},<br><span style="color:var(--gold)">${esc(CU||'Athlete')}</span></div>
-    ${myRank?`<div style="margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.18);border-radius:var(--rf);padding:5px 12px"><span style="font-family:var(--fd);font-size:11px;color:var(--gold)" id="hd-rank">#${myRank}</span><span style="font-size:11px;color:var(--text2)">in contest</span></div>`:''}
+    ${(()=>{const cm=['pranith','vitzy','kishen','anush','shreyas','ram'];const ok=cm.includes((CU||'').toLowerCase())||isAdmin();return ok&&myRank?`<div style="margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.18);border-radius:var(--rf);padding:5px 12px"><span style="font-family:var(--fd);font-size:11px;color:var(--gold)" id="hd-rank">#${myRank}</span><span style="font-size:11px;color:var(--text2)">in contest</span></div>`:''})()}
   </div>
 
   <!-- GPS toggle strip -->
@@ -1946,8 +1946,11 @@ function renderHealthDash(){
     </div>
   </div>
 
-  <!-- Contest quick-peek -->
-  ${myLBEntry?`
+  <!-- Contest quick-peek — members only -->
+  ${(()=>{
+    const cm=['pranith','vitzy','kishen','anush','shreyas','ram'];
+    const isMem=cm.includes((CU||'').toLowerCase())||isAdmin();
+    if(isMem&&myLBEntry) return `
   <div style="margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;cursor:pointer" onclick="go('log')">
     <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">YOUR CONTEST STATS</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
@@ -1956,12 +1959,14 @@ function renderHealthDash(){
       <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--blue)">${myLBEntry.checkIns||0}</div><div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">WEIGH-INS</div></div>
     </div>
     <div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">Tap to open contest hub →</div>
-  </div>`:`
+  </div>`;
+    return `
   <div style="margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;text-align:center;cursor:pointer" onclick="go('log')">
     <div style="font-size:28px;margin-bottom:8px">⚖️</div>
-    <div style="font-family:var(--fd);font-size:.95rem;letter-spacing:1px;margin-bottom:4px">JOIN THE CONTEST</div>
-    <div style="font-size:12px;color:var(--text2)">Log your first weigh-in to appear on the leaderboard</div>
-  </div>`}
+    <div style="font-family:var(--fd);font-size:.95rem;letter-spacing:1px;margin-bottom:4px">TRACK YOUR WEIGHT</div>
+    <div style="font-size:12px;color:var(--text2)">Log weigh-ins, track your progress and create contests.</div>
+  </div>`;
+  })()}
 
   <!-- Food log history -->
   ${getFoodLogToday().length?`
@@ -2249,6 +2254,28 @@ function removeFoodEntry(time){
 function renderLB(area,lb){
   lb=lb.map(e=>({...e,total:e.totalLossPct??e.total??0}));
   LB_DATA=lb;
+  // Private contest gate: only show full details to participants
+  const CONTEST_MEMBERS=['pranith','vitzy','kishen','Anush','Shreyas','Ram'];
+  const isParticipant=CONTEST_MEMBERS.some(m=>m.toLowerCase()===(CU||'').toLowerCase())||isAdmin();
+  if(!isParticipant){
+    // Non-member sees a teaser — no names, no amounts, no specifics
+    area.innerHTML=`
+      <div style="margin:24px 18px 0;background:linear-gradient(135deg,rgba(240,165,0,.08),rgba(240,165,0,.02));border:1px solid rgba(240,165,0,.18);border-radius:var(--rl);padding:24px 20px;text-align:center">
+        <div style="font-size:40px;margin-bottom:12px">🔒</div>
+        <div style="font-family:var(--fd);font-size:1.4rem;letter-spacing:1.5px;margin-bottom:8px">PRIVATE CONTEST</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px">A private fat-loss contest is running.<br>You are not a member of this contest.</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="bs-btn" style="background:var(--gold);color:#020208" onclick="go('rooms')">🚪 Create Your Own Contest</button>
+          <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd)" onclick="go('faq')">🪙 View Wallet</button>
+        </div>
+      </div>
+      <div style="margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;text-align:center">
+        <div style="font-family:var(--fd);font-size:.9rem;letter-spacing:1px;margin-bottom:8px;color:var(--text2)">HOW IT WORKS</div>
+        <div style="font-size:12px;color:var(--text3);line-height:1.8">Weekly weigh-ins · Photo proof · GPS territory · Coin rewards<br>Create a room to run your own challenge.</div>
+      </div>
+      <div style="height:20px">`;
+    return;
+  }
   const shamers=lb.filter(x=>x.weekChange!==null&&x.weekChange<0).sort((a,b)=>a.weekChange-b.weekChange);
   const myEntry=lb.find(x=>x.name.toLowerCase()===(CU||'').toLowerCase());
   const myRank=myEntry?lb.indexOf(myEntry)+1:null;
@@ -2515,6 +2542,84 @@ async function loadLog(){
   renderContestHub(area,myWeights,lbData);
 }
 
+
+// ── Personal-only view for non-contest members ──
+function renderPersonalOnly(weights){
+  const now=new Date(),isMonday=now.getDay()===1;
+  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const nextMon=nextMonday();
+  const firstW=weights.length?weights[0].weight:null;
+  const lastW=weights.length?weights[weights.length-1].weight:null;
+  const totalPct=firstW&&lastW?((firstW-lastW)/firstW*100).toFixed(2):null;
+  const streak=calcStreak(weights);
+  let h='';
+
+  // Personal stats if any weigh-ins exist
+  if(weights.length){
+    h+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="background:linear-gradient(135deg,rgba(0,232,122,.07),rgba(0,232,122,.02));border:1px solid rgba(0,232,122,.2);border-radius:var(--rl);padding:16px">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:var(--lime)">${totalPct!==null?totalPct+'%':'—'}</div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">TOTAL LOST</div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:var(--gold)">${lastW||'—'}<span style="font-size:.7rem"> kg</span></div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">CURRENT</div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:var(--heat)">${streak>=2?'🔥'+streak:'—'}</div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">STREAK</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  // Weigh-in form
+  h+=`<div style="padding:0 18px;margin-top:14px">
+    <div class="wi-form-inline">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:10px">${isMonday?'✅ OFFICIAL WEIGH-IN DAY':'⏰ LOG WEIGHT'}</div>
+      ${!isMonday?`<div style="font-size:11px;color:var(--text3);margin-bottom:10px">Next official: <strong style="color:var(--text2)">${nextMon}</strong></div>`:''}
+      <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal" style="margin-bottom:8px">
+      <div class="wi-unit" style="margin-bottom:10px">KILOGRAMS</div>
+      <div class="photo-preview" id="photo-prev"><img id="photo-img" src="" alt="proof"><button class="rm" onclick="removePhoto()">×</button></div>
+      <div class="photo-zone" id="photo-zone">
+        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+        <span class="pz-icon">📷</span>
+        <div class="pz-label">Add Photo Proof</div>
+        <div class="pz-sub">Required for official Monday weigh-in</div>
+      </div>
+      <button class="blog" id="logbtn" onclick="submitW()" style="margin-top:8px">${isMonday?'⚖️ SUBMIT WEIGH-IN':'LOG WEIGHT'}</button>
+    </div>
+  </div>`;
+
+  // Recent weights table
+  if(weights.length){
+    const recent=weights.slice(-6).reverse();
+    h+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:8px">RECENT WEIGH-INS</div>
+      <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden">
+        ${recent.map((w,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;${i>0?'border-top:1px solid var(--brd)':''}">
+          <div style="font-size:12px;color:var(--text3)">${w.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})}</div>
+          <div style="font-family:var(--fm);font-weight:700;font-size:14px">${w.weight} kg</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  // CTA to create own room
+  h+=`<div style="padding:0 18px;margin-top:14px">
+    <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;text-align:center;cursor:pointer" onclick="go('rooms')">
+      <div style="font-family:var(--fd);font-size:.95rem;letter-spacing:1px;margin-bottom:4px">CREATE YOUR OWN CONTEST</div>
+      <div style="font-size:12px;color:var(--text2)">Set your own rules, invite your friends, run your own challenge.</div>
+      <div style="margin-top:10px;font-size:11px;color:var(--gold);font-family:var(--fd);letter-spacing:1px">COSTS 500 COINS →</div>
+    </div>
+  </div>`;
+
+  return h;
+}
+
 function renderContestHub(area,weights,lb){
   const now=new Date(),isMonday=now.getDay()===1;
   const color=CLRS[Math.floor(Math.abs((CU||'a').charCodeAt(0))%CLRS.length)];
@@ -2542,7 +2647,25 @@ function renderContestHub(area,weights,lb){
 
   let html=`<div style="padding:4px 0">`;
 
-  // ── Contest banner ──
+  // ── Contest access gate ──
+  const CONTEST_MEMBERS_CT=['pranith','vitzy','kishen','anush','shreyas','ram'];
+  const isMemberCT=CONTEST_MEMBERS_CT.includes((CU||'').toLowerCase())||isAdmin();
+
+  if(!isMemberCT){
+    // Non-member: show weigh-in form and their own public stats only
+    html+=`<div style="margin:20px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;text-align:center">
+      <div style="font-size:32px;margin-bottom:8px">🏋️</div>
+      <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:6px">TRACK YOUR FITNESS</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px">Log your weight, track your progress, and create your own contests with friends.</div>
+    </div>`;
+    // Show weigh-in form and their personal stats only
+    html+=renderPersonalOnly(weights);
+    html+=`</div>`;
+    area.innerHTML=html;
+    return;
+  }
+
+  // ── Contest banner (members only) ──
   html+=`<div style="padding:18px 0 0">
     <div style="margin:0 0 0;background:linear-gradient(160deg,rgba(240,165,0,.1),rgba(240,165,0,.03));border-bottom:1px solid rgba(240,165,0,.15);padding:16px 18px">
       <div style="font-family:var(--fd);font-size:9px;letter-spacing:2.5px;color:rgba(240,165,0,.7);margin-bottom:6px"><span class="live-dot" style="background:var(--lime);box-shadow:0 0 6px var(--lime)"></span> LIVE · 12-WEEK FAT LOSS LEAGUE</div>
@@ -2794,29 +2917,27 @@ async function renderRooms(){
   const now=Date.now();
   let html='';
 
-  // ── Main live contest banner (hardcoded main-2026) ──
+  // ── Main live contest banner — members only ──
+  const CONTEST_MEMBERS_RM=['pranith','vitzy','kishen','anush','shreyas','ram'];
+  const isMemberRM=CONTEST_MEMBERS_RM.includes((CU||'').toLowerCase())||isAdmin();
   const mainRoom=ROOMS.find(r=>r.id==='main-2026');
-  if(mainRoom){
+  html+=`<div class="rooms-hdr"><h2>ROOMS</h2><p>Create or join fat-loss contests</p></div>`;
+  if(mainRoom && isMemberRM){
     const pp=mainRoom.pp||[];
     const poolAmt=(mainRoom.fee||0)*pp.length;
     const endDate=mainRoom.end?new Date(mainRoom.end):null;
     const daysLeft=endDate?Math.max(0,Math.ceil((endDate-new Date())/86400000)):0;
-    const standings=mainRoom.standings||[];
-    html+=`<div class="rooms-hdr"><h2>ROOMS</h2><p>Compete in private or public fat-loss contests</p></div>`;
     html+=`<div class="section-banner private-main" onclick="openRoom('${mainRoom.id}')">
-      <div class="pl-l">🔒 LIVE PRIVATE CONTEST</div>
+      <div class="pl-l">🔒 YOUR LIVE CONTEST</div>
       <div class="pl-name">${esc(mainRoom.name)}</div>
       <div class="pl-meta">
         <span class="pl-tag">₹${poolAmt.toLocaleString('en-IN')} POOL</span>
-        <span class="pl-tag">${pp.length} COMPETITORS</span>
-        <span class="pl-tag">${daysLeft} DAYS LEFT</span>
-        ${mainRoom.priv?'<span class="pl-tag">🔒 PRIVATE</span>':''}
+        <span class="pl-tag">${pp.length} MEMBERS</span>
+        <span class="pl-tag">${daysLeft}d LEFT</span>
+        <span class="pl-tag">🔒 PRIVATE</span>
       </div>
     </div>`;
-  } else {
-    html+=`<div class="rooms-hdr"><h2>ROOMS</h2><p>Compete in private or public fat-loss contests</p></div>`;
   }
-
   // ── Private rooms section ──
   const privateRooms=ROOMS.filter(r=>r.id!=='main-2026');
   html+=`<div class="rooms-sec">
