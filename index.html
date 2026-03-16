@@ -2160,7 +2160,397 @@ async function loadPublicContests(){
   catch(e){PUBLIC_CONTESTS=[];}
 }
 
-// Routes — Google Sheets backed
+// ══════════════════════════════════════════════════════
+// ROOMS
+// ══════════════════════════════════════════════════════
+async function renderRooms(){
+  const area=document.getElementById('rooms-scroll');if(!area)return;
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading rooms…</p></div>`;
+  await loadRooms();await loadPublicContests();
+
+  const now=Date.now();
+  let html='';
+
+  // ── Main live contest banner (hardcoded main-2026) ──
+  const mainRoom=ROOMS.find(r=>r.id==='main-2026');
+  if(mainRoom){
+    const pp=mainRoom.pp||[];
+    const poolAmt=(mainRoom.fee||0)*pp.length;
+    const endDate=mainRoom.end?new Date(mainRoom.end):null;
+    const daysLeft=endDate?Math.max(0,Math.ceil((endDate-new Date())/86400000)):0;
+    const standings=mainRoom.standings||[];
+    html+=`<div class="rooms-hdr"><h2>ROOMS</h2><p>Compete in private or public fat-loss contests</p></div>`;
+    html+=`<div class="section-banner private-main" onclick="openRoom('${mainRoom.id}')">
+      <div class="pl-l">🔒 LIVE PRIVATE CONTEST</div>
+      <div class="pl-name">${esc(mainRoom.name)}</div>
+      <div class="pl-meta">
+        <span class="pl-tag">₹${poolAmt.toLocaleString('en-IN')} POOL</span>
+        <span class="pl-tag">${pp.length} COMPETITORS</span>
+        <span class="pl-tag">${daysLeft} DAYS LEFT</span>
+        ${mainRoom.priv?'<span class="pl-tag">🔒 PRIVATE</span>':''}
+      </div>
+    </div>`;
+  } else {
+    html+=`<div class="rooms-hdr"><h2>ROOMS</h2><p>Compete in private or public fat-loss contests</p></div>`;
+  }
+
+  // ── Private rooms section ──
+  const privateRooms=ROOMS.filter(r=>r.id!=='main-2026');
+  html+=`<div class="rooms-sec">
+    <div class="sec-hdr">
+      <span>PRIVATE ROOMS</span>
+      <button class="btn-new" onclick="openNewRoom()">+ NEW ROOM</button>
+    </div>`;
+  if(!privateRooms.length){
+    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:28px 16px;text-align:center;color:var(--text3);margin-bottom:12px">
+      <div style="font-size:36px;margin-bottom:8px">🚪</div>
+      <div style="font-weight:700;font-size:13px;color:var(--text2);margin-bottom:4px">No private rooms yet</div>
+      <div style="font-size:12px;line-height:1.6">Create one for your friend group.<br>Set your own rules, fees, and prize split.</div>
+    </div>`;
+  } else {
+    privateRooms.forEach(rm=>{
+      const pp=rm.pp||[];
+      const pool=(rm.fee||0)*pp.length;
+      const endDate=rm.end?new Date(rm.end):null;
+      const daysLeft=endDate?Math.max(0,Math.ceil((endDate-new Date())/86400000)):null;
+      const isActive=!endDate||endDate>new Date();
+      html+=`<div class="room-card" onclick="openRoom('${rm.id}')">
+        <div class="rc2-top">
+          <div class="rc2-name">${esc(rm.name)}</div>
+          <div class="rc2-badge ${isActive?'active':''}">${isActive?'LIVE':'ENDED'}</div>
+        </div>
+        <div class="rc2-desc">${esc(rm.desc||'Private contest room')}</div>
+        <div class="rc2-foot">
+          <div class="rc2-peeps">
+            <div class="rc2-avs">${pp.slice(0,5).map((p,i)=>`<div class="rc2-av" style="background:${CLRS[i%CLRS.length]}">${(p.n||'?')[0].toUpperCase()}</div>`).join('')}</div>
+            <div class="rc2-cnt">${pp.length} members</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            ${pool?`<div class="rc2-pool">₹${pool.toLocaleString('en-IN')}</div>`:''}
+            ${daysLeft!==null?`<div style="font-size:11px;color:var(--text3)">${daysLeft}d left</div>`:''}
+          </div>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── Public contests section ──
+  html+=`<div class="rooms-sec">
+    <div class="sec-hdr"><span>PUBLIC CONTESTS</span></div>`;
+  if(!PUBLIC_CONTESTS.length){
+    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:24px 16px;text-align:center;color:var(--text3);margin-bottom:12px">
+      <div style="font-size:12px;line-height:1.6">No public contests running.<br>Admins can create one from the Admin tab.</div>
+    </div>`;
+  } else {
+    PUBLIC_CONTESTS.forEach(c=>{
+      const endDate=c.end?new Date(c.end):null;
+      const daysLeft=endDate?Math.max(0,Math.ceil((endDate-new Date())/86400000)):null;
+      const isActive=!endDate||endDate>new Date();
+      html+=`<div class="pub-contest-card ${isActive?'live':''}" onclick="openRoom('${c.id}')">
+        <div class="pcc-top">
+          <div class="pcc-name">${esc(c.name)}</div>
+          <div class="rc2-badge ${isActive?'active':''}">${isActive?'LIVE':'ENDED'}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${esc(c.desc||'')}</div>
+        <div class="pl-meta">
+          ${c.fee?`<span class="pl-tag">₹${c.fee} entry</span>`:'<span class="pl-tag">FREE</span>'}
+          ${daysLeft!==null?`<span class="pl-tag">${daysLeft}d left</span>`:''}
+          ${c.maxP?`<span class="pl-tag">Max ${c.maxP}</span>`:''}
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div><div style="height:16px"></div>`;
+
+  area.innerHTML=html;
+}
+
+function openNewRoom(){
+  // Reset form
+  ['nr-name','nr-desc','nr-fee','nr-pen'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('nr-dur').value='12';
+  document.getElementById('nr-max').value='';
+  document.getElementById('tw-pen').classList.add('on');
+  document.getElementById('tw-priv').classList.add('on');
+  document.getElementById('tw-split').classList.remove('on');
+  document.getElementById('pen-f').style.display='block';
+  document.getElementById('split-f').style.display='none';
+  openS('ov-nr');
+}
+
+function penv(btn){document.getElementById('pen-f').style.display=btn.classList.contains('on')?'block':'none';}
+function splitToggle(btn){document.getElementById('split-f').style.display=btn.classList.contains('on')?'block':'none';}
+
+async function createRoom(){
+  const name=document.getElementById('nr-name').value.trim();
+  if(!name){toast('Enter a room name','⚠️');return;}
+  const fee=parseInt(document.getElementById('nr-fee').value)||0;
+  const dur=parseInt(document.getElementById('nr-dur').value)||12;
+  const maxP=parseInt(document.getElementById('nr-max').value)||null;
+  const pen=document.getElementById('tw-pen').classList.contains('on')?(parseInt(document.getElementById('nr-pen').value)||0):0;
+  const priv=document.getElementById('tw-priv').classList.contains('on');
+  const splitOn=document.getElementById('tw-split').classList.contains('on');
+  const p1=splitOn?(parseInt(document.getElementById('nr-p1').value)||100):100;
+  const p2=splitOn?(parseInt(document.getElementById('nr-p2').value)||0):0;
+  const p3=splitOn?(parseInt(document.getElementById('nr-p3').value)||0):0;
+  const start=new Date().toISOString().slice(0,10);
+  const endDate=new Date();endDate.setDate(endDate.getDate()+dur*7);
+  const end=endDate.toISOString().slice(0,10);
+  const rm={
+    id:'rm'+Date.now(),name,
+    desc:document.getElementById('nr-desc').value.trim(),
+    fee,penalty:pen,priv,p1,p2,p3,maxP,start,end,
+    pp:[{n:CU,c:getUserTerrColor(CU)}],
+    createdBy:CU,createdAt:new Date().toISOString()
+  };
+  try{
+    toast('Creating room…','⏳');
+    await api('createRoom',{room:rm});
+    cls('ov-nr');await renderRooms();
+    toast(`Room "${name}" created!`,'🚪');
+    setTimeout(()=>openRoom(rm.id),600);
+  }catch(e){toast('Could not create room. Try again.','⚠️');}
+}
+
+async function openRoom(id){
+  // Try to load fresh data
+  let rm=null;
+  try{const d=await api('getRoom',{id});if(d&&d.id)rm=d;}catch(e){}
+  if(!rm)rm=ROOMS.find(r=>r.id===id)||PUBLIC_CONTESTS.find(c=>c.id===id);
+  if(!rm){toast('Room not found','⚠️');return;}
+  const pp=rm.pp||[];
+  const pool=(rm.fee||0)*pp.length;
+  const standings=rm.standings||[];
+  const endDate=rm.end?new Date(rm.end):null;
+  const daysLeft=endDate?Math.max(0,Math.ceil((endDate-new Date())/86400000)):null;
+  const isActive=!endDate||endDate>new Date();
+
+  let html=`<div class="d-hero">
+    <div class="d-em">🏆</div>
+    <div class="d-inf"><h2>${esc(rm.name)}</h2><p>${esc(rm.desc||'Private contest')}</p></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px">
+    <div style="background:var(--surf2);border-radius:var(--r);padding:12px;text-align:center;border:1px solid var(--brd)">
+      <div style="font-family:var(--fd);font-size:1.2rem;color:var(--gold)">₹${pool.toLocaleString('en-IN')}</div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">PRIZE POOL</div>
+    </div>
+    <div style="background:var(--surf2);border-radius:var(--r);padding:12px;text-align:center;border:1px solid var(--brd)">
+      <div style="font-family:var(--fd);font-size:1.2rem;color:var(--blue)">${pp.length}</div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">COMPETITORS</div>
+    </div>
+    <div style="background:var(--surf2);border-radius:var(--r);padding:12px;text-align:center;border:1px solid var(--brd)">
+      <div style="font-family:var(--fd);font-size:1.2rem;color:${isActive?'var(--lime)':'var(--text3)'}">${daysLeft!==null?daysLeft+'d':'∞'}</div>
+      <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">DAYS LEFT</div>
+    </div>
+  </div>`;
+
+  // Standings
+  if(standings.length){
+    html+=`<div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">CURRENT STANDINGS</div>`;
+    standings.forEach((s,i)=>{
+      const isMe=s.name&&s.name.toLowerCase()===CU.toLowerCase();
+      html+=`<div style="display:flex;align-items:center;gap:12px;padding:10px 14px;background:${isMe?'rgba(240,165,0,.07)':'var(--surf)'};border:1px solid ${isMe?'rgba(240,165,0,.2)':'var(--brd)'};border-radius:var(--r);margin-bottom:7px;cursor:pointer" onclick="openProfile('${esc(s.name)}')">
+        <div style="font-family:var(--fd);font-size:1rem;min-width:28px;color:var(--text3)">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+        <div style="width:28px;height:28px;border-radius:50%;background:${CLRS[i%CLRS.length]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${(s.name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px">${esc(s.name||'?')}${isMe?' 👈':''}</div>
+          <div style="font-size:11px;color:var(--text3)">${s.checkIns||0} weigh-ins · ${s.streak||0}🔥 streak</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--fm);font-weight:700;font-size:14px;color:${(s.pctLost||0)>0?'var(--lime)':'var(--text3)'}">${(s.pctLost||0)>0?'-':'+'}${Math.abs(s.pctLost||0).toFixed(2)}%</div>
+          <div style="font-size:10px;color:var(--text3)">${s.kgLost?'-'+s.kgLost.toFixed(1)+'kg':''}</div>
+        </div>
+      </div>`;
+    });
+  } else if(pp.length){
+    html+=`<div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">COMPETITORS</div>`;
+    pp.forEach((p,i)=>{
+      html+=`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:7px">
+        <div style="width:28px;height:28px;border-radius:50%;background:${p.c||CLRS[i%CLRS.length]};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${(p.n||'?')[0].toUpperCase()}</div>
+        <div style="font-weight:700;font-size:13px">${esc(p.n||'?')}</div>
+      </div>`;
+    });
+  }
+
+  // Invite link
+  const link=`${location.origin}${location.pathname}?join=${rm.id}`;
+  html+=`<div style="margin-top:14px">
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;color:var(--text3);font-family:var(--fd);margin-bottom:6px">INVITE LINK</div>
+    <div class="link-box" style="font-family:var(--fm);font-size:11px;word-break:break-all;padding:10px 12px;background:var(--surf2);border-radius:var(--r);border:1px solid var(--brd)">${link}</div>
+  </div>`;
+
+  document.getElementById('rm-sbody').innerHTML=html;
+  document.getElementById('rm-stit').textContent=rm.name;
+
+  const adminActions=isAdmin()?`<button class="join-chip danger" onclick="deleteRoom('${rm.id}')">🗑 Delete</button>`:'';
+  document.getElementById('rm-sfoot').innerHTML=`
+    <button class="bs-btn" onclick="shareRoomWA('${rm.id}')">💬 Invite on WhatsApp</button>
+    <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd);margin-top:8px" onclick="navigator.clipboard.writeText('${link}').then(()=>toast('Link copied!','📋'))">📋 Copy Invite Link</button>
+    ${adminActions}`;
+  openS('ov-room');
+}
+
+function shareRoomWA(id){
+  const rm=ROOMS.find(r=>r.id===id)||PUBLIC_CONTESTS.find(c=>c.id===id);
+  const link=`${location.origin}${location.pathname}?join=${id}`;
+  const msg=rm?`Join my FitBounty contest: *${rm.name}*\n\nEntry fee: ₹${rm.fee||0}\nLose the most body weight % to win the prize pool!\n\n🔗 ${link}`:`Join my FitBounty contest!\n\n🔗 ${link}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+
+async function deleteRoom(id){
+  if(!confirm('Delete this room? This cannot be undone.'))return;
+  try{
+    await api('deleteRoom',{id});
+    cls('ov-room');await renderRooms();
+    toast('Room deleted','🗑');
+  }catch(e){toast('Could not delete room','⚠️');}
+}
+
+async function shareRouteWhatsApp(id){}// stub — routes replaced by territory
+
+async function deleteRoute(id){
+  try{
+    await api('deleteRoute',{id});
+    toast('Deleted','🗑');
+  }catch(e){toast('Could not delete','⚠️');}
+}
+
+// ══════════════════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════════════════
+async function renderAdmin(){
+  const area=document.getElementById('admin-scroll');if(!area)return;
+  if(!isAdmin()){area.innerHTML=`<div style="padding:40px 18px;text-align:center;color:var(--text3)">Admin access only</div>`;return;}
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--purple);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading…</p></div>`;
+
+  await loadRooms();await loadPublicContests();
+
+  let html=`<div class="admin-header"><h2>ADMIN</h2><p>FitBounty control panel</p></div>
+  <div class="admin-badge-row">
+    <span class="admin-badge">🛡️ ${esc(CU)}</span>
+    <span class="admin-badge" style="background:rgba(0,232,122,.08);border-color:rgba(0,232,122,.2);color:var(--lime)">ADMIN ACCESS</span>
+  </div>`;
+
+  // ── Weights overview ──
+  html+=`<div class="admin-sec">
+    <h3>ALL ROOMS (${ROOMS.length})</h3>`;
+  if(!ROOMS.length){
+    html+=`<div style="color:var(--text3);font-size:13px;padding:8px 0">No rooms yet.</div>`;
+  } else {
+    ROOMS.forEach(rm=>{
+      const pp=rm.pp||[];
+      const pool=(rm.fee||0)*pp.length;
+      html+=`<div class="pub-contest-card live" style="margin-bottom:8px">
+        <div class="pcc-top">
+          <div class="pcc-name">${esc(rm.name)}</div>
+          <div class="rc2-badge active">${pp.length} members</div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Pool: ₹${pool.toLocaleString('en-IN')} · Fee: ₹${rm.fee||0} · End: ${rm.end||'—'}</div>
+        <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="openRoom('${rm.id}')">View</button>
+          <button class="pcc-btn danger" onclick="deleteRoom('${rm.id}')">Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── Public contests ──
+  html+=`<div class="admin-sec">
+    <h3>PUBLIC CONTESTS (${PUBLIC_CONTESTS.length})</h3>
+    <button class="btn-new purple" onclick="openS('ov-pub')" style="width:100%;padding:12px;font-size:.95rem;border-radius:var(--r);margin-bottom:14px">🛡️ + CREATE PUBLIC CONTEST</button>`;
+  if(!PUBLIC_CONTESTS.length){
+    html+=`<div style="color:var(--text3);font-size:13px;padding:8px 0">No public contests yet.</div>`;
+  } else {
+    PUBLIC_CONTESTS.forEach(c=>{
+      html+=`<div class="pub-contest-card live" style="margin-bottom:8px">
+        <div class="pcc-top">
+          <div class="pcc-name">${esc(c.name)}</div>
+          <div class="rc2-badge active">PUBLIC</div>
+        </div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px">${esc(c.desc||'')} · Fee: ₹${c.fee||0} · End: ${c.end||'—'}</div>
+        <div class="pcc-actions">
+          <button class="pcc-btn primary" onclick="openRoom('${c.id}')">View</button>
+          <button class="pcc-btn danger" onclick="deletePublicContest('${c.id}')">Delete</button>
+        </div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── Territory overview ──
+  html+=`<div class="admin-sec">
+    <h3>TERRITORIES (${TERRITORIES.length})</h3>`;
+  if(!TERRITORIES.length){
+    html+=`<div style="color:var(--text3);font-size:13px;padding:8px 0">No territories claimed yet.</div>`;
+  } else {
+    const byUser={};
+    TERRITORIES.forEach(t=>{
+      if(!byUser[t.username])byUser[t.username]={count:0,area:0};
+      byUser[t.username].count++;byUser[t.username].area+=(t.area||0);
+    });
+    Object.entries(byUser).sort((a,b)=>b[1].area-a[1].area).forEach(([u,d])=>{
+      html+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);margin-bottom:6px">
+        <div style="font-weight:700;font-size:13px">${esc(u)}</div>
+        <div style="font-size:12px;color:var(--lime);font-family:var(--fm)">${d.area.toFixed(3)} km² · ${d.count} zone${d.count!==1?'s':''}</div>
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── Corp leads ──
+  const leads=JSON.parse(localStorage.getItem('fb_corp_leads')||'[]');
+  html+=`<div class="admin-sec">
+    <h3>CORPORATE LEADS (${leads.length})</h3>`;
+  if(!leads.length){
+    html+=`<div style="color:var(--text3);font-size:13px;padding:8px 0">No corporate leads yet.</div>`;
+  } else {
+    leads.forEach(l=>{
+      html+=`<div style="padding:10px 12px;background:var(--surf);border:1px solid rgba(56,191,248,.2);border-radius:var(--r);margin-bottom:6px">
+        <div style="font-weight:700;font-size:13px">${esc(l.nm)} — ${esc(l.co)}</div>
+        <div style="font-size:11px;color:var(--blue);margin-top:3px">${esc(l.em)} · ${esc(l.sz||'—')} employees</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">${new Date(l.ts).toLocaleString()}</div>
+      </div>`;
+    });
+  }
+  html+=`</div><div style="height:16px"></div>`;
+
+  area.innerHTML=html;
+}
+
+async function createPublicContest(){
+  const name=document.getElementById('pub-name').value.trim();
+  if(!name){toast('Enter a contest name','⚠️');return;}
+  const c={
+    id:'pub'+Date.now(),name,
+    desc:document.getElementById('pub-desc').value.trim(),
+    start:document.getElementById('pub-start').value,
+    end:document.getElementById('pub-end').value,
+    fee:parseInt(document.getElementById('pub-fee').value)||0,
+    penalty:parseInt(document.getElementById('pub-pen').value)||0,
+    maxP:parseInt(document.getElementById('pub-max').value)||null,
+    p1:parseInt(document.getElementById('pub-p1').value)||60,
+    p2:parseInt(document.getElementById('pub-p2').value)||25,
+    p3:parseInt(document.getElementById('pub-p3').value)||15,
+    createdBy:CU,createdAt:new Date().toISOString()
+  };
+  try{
+    toast('Publishing…','⏳');
+    await api('createPublicContest',{contest:c});
+    cls('ov-pub');await renderAdmin();
+    toast(`Contest "${name}" published!`,'🛡️');
+  }catch(e){toast('Could not publish. Try again.','⚠️');}
+}
+
+async function deletePublicContest(id){
+  if(!confirm('Delete this public contest?'))return;
+  try{
+    await api('deletePublicContest',{id});
+    await renderAdmin();
+    toast('Contest deleted','🗑');
+  }catch(e){toast('Could not delete','⚠️');}
+}
 
 // ══════════════════════════════════════════════════════
 // TERRITORY MODE  (replaces Route Challenges)
