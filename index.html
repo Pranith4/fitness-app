@@ -953,6 +953,133 @@ body::after{
 
 /* section headers in views */
 .view-section-title{font-family:var(--fd);font-size:.8rem;letter-spacing:3px;font-weight:700;color:var(--text3);text-transform:uppercase;padding:16px 16px 8px;border-top:1px solid var(--brd);margin-top:4px}
+
+/* ═══════════════════════════
+   PRO / MONETIZATION SYSTEM
+═══════════════════════════ */
+/* Plan chips */
+.plan-chip{display:inline-flex;align-items:center;gap:5px;border-radius:var(--rf);padding:4px 11px;font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.plan-chip.free{background:var(--surf2);color:var(--text3);border:1px solid var(--brd)}
+.plan-chip.pro{background:rgba(240,165,0,.12);color:var(--gold);border:1px solid rgba(240,165,0,.28)}
+.plan-chip.team{background:var(--purplebg);color:var(--purple);border:1px solid rgba(155,127,255,.28)}
+
+/* Plan cards */
+.plan-card{border-radius:var(--rl);padding:20px 18px;border:1px solid var(--brd);background:var(--surf);position:relative;overflow:hidden;transition:transform .18s}
+.plan-card.featured{border-color:rgba(240,165,0,.4);border-top-color:rgba(240,165,0,.6);background:linear-gradient(135deg,rgba(240,165,0,.12),rgba(240,165,0,.03));box-shadow:0 8px 28px rgba(240,165,0,.1),inset 0 1px 0 rgba(240,165,0,.2)}
+.plan-card.featured::before{content:'MOST POPULAR';position:absolute;top:12px;right:12px;font-family:var(--fd);font-size:8px;letter-spacing:1.5px;color:var(--gold);background:rgba(240,165,0,.12);border:1px solid rgba(240,165,0,.25);border-radius:3px;padding:2px 7px}
+.plan-price{font-family:var(--fd);font-size:2.4rem;font-weight:800;line-height:1;letter-spacing:1px}
+.plan-period{font-size:11px;color:var(--text3);margin-top:2px;font-weight:400}
+.plan-name{font-family:var(--fd);font-size:1.1rem;font-weight:700;letter-spacing:2px;margin-bottom:4px}
+.plan-cta{width:100%;padding:13px;border:none;border-radius:var(--r);font-family:var(--fd);font-size:.95rem;letter-spacing:2px;font-weight:700;cursor:pointer;transition:all .18s;margin-top:14px;min-height:46px;display:flex;align-items:center;justify-content:center;gap:8px}
+.plan-cta.gold{background:var(--gold);color:#020208;box-shadow:0 4px 16px rgba(240,165,0,.25)}
+.plan-cta.gold:active{transform:scale(.97)}
+.plan-cta.outline{background:transparent;color:var(--text2);border:1.5px solid var(--brd2)}
+.plan-cta.current{background:var(--surf2);color:var(--text3);cursor:default;border:1px solid var(--brd)}
+.plan-feature{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-weight:400;line-height:1.4}
+.plan-feature:last-child{border-bottom:none}
+.plan-feature.yes{color:var(--text)}
+.plan-feature .chk{font-size:12px;flex-shrink:0;width:16px;text-align:center;margin-top:1px}
+
+/* Coming soon */
+.cs-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(155,127,255,.1);border:1px solid rgba(155,127,255,.2);color:var(--purple);border-radius:var(--rf);padding:2px 9px;font-size:9px;font-weight:700;letter-spacing:1.5px;font-family:var(--fd);text-transform:uppercase}
+.cs-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;position:relative;overflow:hidden}
+.cs-card::after{content:'COMING SOON';position:absolute;top:14px;right:12px;font-family:var(--fd);font-size:8px;letter-spacing:1.5px;color:var(--purple);background:rgba(155,127,255,.1);border:1px solid rgba(155,127,255,.2);border-radius:3px;padding:2px 7px}
+.cs-icon{font-size:26px;margin-bottom:9px}
+.cs-title{font-family:var(--fd);font-size:1rem;letter-spacing:1px;font-weight:700;margin-bottom:4px}
+.cs-desc{font-size:12px;color:var(--text2);line-height:1.6;font-weight:400}
+.cs-eta{font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-top:8px}
+
+/* Achievements */
+.badge-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+.badge-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 6px;background:var(--surf);border-radius:var(--r);border:1px solid var(--brd);text-align:center;cursor:pointer;transition:transform .18s}
+.badge-item:active{transform:scale(.94)}
+.badge-item.locked{opacity:.32;filter:grayscale(.8)}
+.badge-item.unlocked{border-color:rgba(240,165,0,.3);background:linear-gradient(135deg,rgba(240,165,0,.08),rgba(240,165,0,.02));box-shadow:0 2px 10px rgba(240,165,0,.1)}
+.badge-icon-wrap{font-size:26px;line-height:1;margin-bottom:2px}
+.badge-name{font-family:var(--fd);font-size:8px;letter-spacing:.8px;color:var(--text2);text-transform:uppercase;font-weight:700;line-height:1.3}
+.badge-item.unlocked .badge-name{color:var(--gold)}
+
+/* Referral */
+.referral-box{background:linear-gradient(135deg,rgba(0,232,122,.07),rgba(0,232,122,.02));border:1px solid rgba(0,232,122,.18);border-radius:var(--rl);padding:20px}
+.ref-code{background:rgba(0,232,122,.07);border:1.5px dashed rgba(0,232,122,.35);border-radius:var(--r);padding:14px 18px;font-family:var(--fm);font-size:1.4rem;font-weight:700;color:var(--lime);text-align:center;letter-spacing:4px;margin:12px 0;cursor:pointer;transition:all .18s}
+.ref-code:active{background:rgba(0,232,122,.12)}
+.ref-stat{text-align:center;padding:10px;background:rgba(0,0,0,.2);border-radius:var(--r);flex:1}
+.ref-stat-v{font-family:var(--fd);font-size:1.4rem;color:var(--lime)}
+.ref-stat-k{font-size:9px;color:var(--text3);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-top:3px;font-family:var(--fd)}
+
+/* Corporate */
+.corp-banner{background:linear-gradient(135deg,rgba(56,191,248,.09),rgba(56,191,248,.02));border:1px solid rgba(56,191,248,.2);border-top-color:rgba(56,191,248,.35);border-radius:var(--rl);padding:22px;position:relative;overflow:hidden}
+.corp-banner::after{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(56,191,248,.15),transparent 70%)}
+
+/* Commitment contract */
+.commit-box{background:linear-gradient(135deg,rgba(240,165,0,.08),rgba(240,165,0,.02));border:1px solid rgba(240,165,0,.2);border-radius:var(--rl);padding:20px}
+.commit-step{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
+.commit-step-num{width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(240,165,0,.4);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:11px;color:var(--gold);flex-shrink:0;font-weight:700}
+
+/* Marketplace */
+.mkt-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;display:flex;align-items:flex-start;gap:14px;position:relative;overflow:hidden}
+.mkt-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid var(--brd)}
+
+/* Brand challenges */
+.brand-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;position:relative;overflow:hidden;margin-bottom:10px}
+.brand-card.sponsored{border-color:rgba(0,232,122,.22);background:linear-gradient(135deg,rgba(0,232,122,.06),rgba(0,232,122,.01))}
+.brand-logo{height:26px;display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.brand-sponsor-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(0,232,122,.1);border:1px solid rgba(0,232,122,.2);color:var(--lime);border-radius:var(--rf);padding:2px 9px;font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:1px}
+.brand-prize-big{font-family:var(--fd);font-size:2rem;font-weight:800;color:var(--lime);letter-spacing:1px;line-height:1;text-shadow:0 0 24px rgba(0,232,122,.3)}
+
+/* Section wrapper */
+.pro-section{padding:0 16px;margin-bottom:6px}
+.pro-section-hdr{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px;padding-top:22px;display:flex;align-items:center;justify-content:space-between}
+
+/* Corp lead form */
+.corp-field{width:100%;padding:12px 14px;background:rgba(56,191,248,.05);color:var(--text);border:1.5px solid rgba(56,191,248,.18);border-radius:var(--r);font-family:var(--fb);font-size:14px;font-weight:400;transition:all .18s;-webkit-appearance:none;margin-bottom:10px}
+.corp-field:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,191,248,.1)}
+.corp-field::placeholder{color:var(--text3)}
+.plan-compare-row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px}
+.plan-compare-row:last-child{border-bottom:none}
+.plan-compare-row .feat{flex:1;color:var(--text2)}
+.plan-compare-row .val{width:52px;text-align:center;font-size:13px}
+
+/* ═══════════════════════════
+   TERRITORY SYSTEM
+═══════════════════════════ */
+/* Leaflet dark tiles override */
+.leaflet-container{background:#030306!important}
+.leaflet-tile{filter:brightness(.88) saturate(.7)}
+.leaflet-control-attribution{font-size:9px!important;background:rgba(3,3,6,.7)!important;color:rgba(255,255,255,.25)!important}
+.leaflet-control-attribution a{color:rgba(255,255,255,.25)!important}
+.leaflet-control-zoom{border:1px solid var(--brd)!important}
+.leaflet-control-zoom a{background:rgba(7,7,16,.95)!important;color:var(--text2)!important;border-bottom-color:var(--brd)!important}
+.leaflet-control-zoom a:hover{background:var(--surf2)!important;color:var(--text)!important}
+
+/* Territory run button states */
+#terr-run-btn.running{background:var(--red)!important;color:#fff!important;animation:btn-pulse 2s ease-in-out infinite}
+#terr-run-btn.claim-ready{background:var(--gold)!important;color:#020208!important;box-shadow:0 0 20px rgba(240,165,0,.4)!important}
+@keyframes btn-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,48,48,.4)}50%{box-shadow:0 0 0 8px rgba(255,48,48,0)}}
+
+/* Territory leaderboard */
+.terr-leader-card{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);margin-bottom:8px;cursor:pointer;transition:transform .18s}
+.terr-leader-card:active{transform:scale(.97)}
+.terr-color-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.terr-km-big{font-family:var(--fd);font-size:1.2rem;color:var(--lime);letter-spacing:.5px}
+.terr-zone-count-sm{font-size:10px;color:var(--text3);font-family:var(--fd);letter-spacing:.5px}
+.terr-rank{font-family:var(--fd);font-size:1.1rem;min-width:28px;color:var(--text3)}
+
+/* Territory claim sheet */
+.terr-polygon-preview{width:100%;border-radius:var(--r);overflow:hidden;border:1px solid var(--brd);margin:12px 0}
+.terr-stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0}
+.terr-stat{background:var(--surf2);border-radius:var(--r);padding:12px;text-align:center;border:1px solid var(--brd)}
+.terr-stat-v{font-family:var(--fd);font-size:1.1rem;color:var(--lime)}
+.terr-stat-k{font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:3px;text-transform:uppercase}
+
+/* Territory detail sheet */
+.terr-detail-map{height:200px;border-radius:var(--r);overflow:hidden;border:1px solid var(--brd);margin:12px 0}
+.contested-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(255,48,48,.12);border:1px solid rgba(255,48,48,.3);color:var(--red);border-radius:var(--rf);padding:3px 10px;font-family:var(--fd);font-size:9px;letter-spacing:1px;animation:flash-contest 1.5s ease-in-out infinite}
+@keyframes flash-contest{0%,100%{opacity:1}50%{opacity:.5}}
+
+/* Live GPS pulse dot */
+@keyframes gps-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
+.gps-live-dot::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;border-radius:50%;background:inherit;animation:gps-pulse 1.5s ease-out infinite}
 </style>
 </head>
 <body>
@@ -1009,8 +1136,8 @@ body::after{
   <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span><span class="ndot"></span></button>
   <button class="ni" id="ni-log" onclick="go('log')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span><span>Log</span><span class="ndot"></span></button>
   <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Rooms</span><span class="ndot"></span></button>
-  <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><span>Routes</span><span class="ndot"></span></button>
-  <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span><span>About</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,3 10,3 10,10 3,10"/><polygon points="14,3 21,3 21,10 14,10"/><polygon points="14,14 21,14 21,21 14,21"/><polygon points="3,14 10,14 10,21 3,21"/></svg></span><span>Territory</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span id="pro-nav-label">Pro</span><span class="ndot"></span></button>
   <button class="ni admin-nav" id="ni-admin" style="display:none" onclick="go('admin')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span><span>Admin</span><span class="ndot"></span></button>
   <div class="sb-bot" style="display:none" id="sb-bot">
     <div style="width:28px;height:28px;border-radius:50%;background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
@@ -1064,13 +1191,60 @@ body::after{
   <div class="pad" id="rooms-scroll"></div>
 </div>
 
-<!-- ═══ ROUTES ═══ -->
-<div id="view-routes" class="view">
-  <div class="tbar">
-    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>ROUTE CHALLENGES</div>
-    <div class="tright"><button class="ib" onclick="openCreateRoute()" style="font-size:20px;font-weight:900;color:var(--blue)">+</button></div>
+<!-- ═══ TERRITORY ═══ -->
+<div id="view-routes" class="view" style="overflow:hidden;display:flex;flex-direction:column">
+  <!-- Territory header bar -->
+  <div class="tbar" style="flex-shrink:0">
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>TERRITORY</div>
+    <div class="tright">
+      <div id="terr-km-hdr" style="font-family:var(--fd);font-size:.85rem;color:var(--lime);letter-spacing:1px">0 km²</div>
+    </div>
   </div>
-  <div class="pad" id="routes-scroll"></div>
+  <!-- Full map - takes remaining height -->
+  <div id="terr-map-wrap" style="position:relative;flex:1;min-height:0">
+    <div id="terr-map" style="width:100%;height:100%"></div>
+    <!-- Live run HUD overlay -->
+    <div id="terr-run-hud" style="display:none;position:absolute;top:12px;left:12px;right:12px;z-index:1000;pointer-events:none">
+      <div style="background:rgba(3,3,6,.88);backdrop-filter:blur(10px);border:1px solid rgba(0,232,122,.25);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:14px">
+        <div style="text-align:center">
+          <div style="font-family:var(--fm);font-size:1.4rem;color:var(--lime)" id="terr-hud-time">00:00</div>
+          <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px">TIME</div>
+        </div>
+        <div style="width:1px;height:32px;background:rgba(255,255,255,.1)"></div>
+        <div style="text-align:center">
+          <div style="font-family:var(--fm);font-size:1.4rem;color:var(--blue)" id="terr-hud-dist">0 m</div>
+          <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px">DISTANCE</div>
+        </div>
+        <div style="width:1px;height:32px;background:rgba(255,255,255,.1)"></div>
+        <div style="text-align:center;flex:1">
+          <div style="font-family:var(--fm);font-size:1.4rem" id="terr-hud-area" style="color:var(--text3)">— km²</div>
+          <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px">LOOP AREA</div>
+        </div>
+      </div>
+      <div id="terr-close-hint" style="display:none;margin-top:8px;background:rgba(240,165,0,.15);border:1px solid rgba(240,165,0,.35);border-radius:8px;padding:8px 14px;text-align:center;font-family:var(--fd);font-size:11px;color:var(--gold);letter-spacing:1px;pointer-events:auto">
+        📍 RETURN TO START TO CLOSE THE LOOP
+      </div>
+    </div>
+    <!-- Map loading indicator -->
+    <div id="terr-map-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);z-index:999">
+      <div style="text-align:center">
+        <div style="width:36px;height:36px;border:3px solid var(--surf2);border-top-color:var(--lime);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div>
+        <div style="font-family:var(--fd);font-size:11px;letter-spacing:2px;color:var(--text3)">LOADING MAP…</div>
+      </div>
+    </div>
+  </div>
+  <!-- Bottom control strip (always visible) -->
+  <div id="terr-controls" style="flex-shrink:0;background:rgba(3,3,6,.95);backdrop-filter:blur(12px);border-top:1px solid var(--brd);padding:12px 16px;display:flex;flex-direction:column;gap:8px;z-index:500">
+    <button id="terr-run-btn" class="bs-btn" style="background:var(--lime);color:#020208;font-family:var(--fd);font-size:.95rem;letter-spacing:2px;padding:14px;border-radius:var(--r)" onclick="startTerritoryRun()">
+      📍 START TERRITORY RUN
+    </button>
+    <div style="display:flex;justify-content:space-between;padding:0 2px">
+      <div style="font-size:11px;color:var(--text3)">Tap Stats &amp; Leaderboard ↓</div>
+      <div style="font-size:11px;color:var(--text3)" id="terr-zone-count">0 zones claimed</div>
+    </div>
+  </div>
+  <!-- Scrollable territory stats below -->
+  <div id="routes-scroll" class="pad" style="overflow-y:auto;flex-shrink:0;max-height:35vh;border-top:1px solid var(--brd)"></div>
 </div>
 
 <!-- ═══ ADMIN ═══ -->
@@ -1180,15 +1354,6 @@ body::after{
 </div>
 
 <!-- ROUTE DETAIL / ATTEMPT -->
-<div id="ov-route" class="ov" onclick="ovc(event,'ov-route')">
-  <div class="bs"><div class="bsh"></div>
-    <div class="bshdr"><span class="bstit" id="route-stit">Route</span><button class="bsx" onclick="cls('ov-route');stopGPS()">×</button></div>
-    <div class="bsbody" id="route-sbody"></div>
-    <div class="bsfoot" id="route-sfoot"></div>
-    <div style="height:8px;flex-shrink:0"></div>
-  </div>
-</div>
-
 <!-- SHARE -->
 <div id="ov-share" class="ov" onclick="ovc(event,'ov-share')">
   <div class="bs"><div class="bsh"></div>
@@ -1206,49 +1371,114 @@ body::after{
   </div>
 </div>
 
-<!-- CREATE ROUTE SHEET -->
-<div id="ov-create-route" class="ov" onclick="ovc(event,'ov-create-route')">
-  <div class="bs" style="max-height:96dvh"><div class="bsh"></div>
-    <div class="bshdr"><span class="bstit" style="color:var(--blue)">🗺️ CREATE ROUTE CHALLENGE</span><button class="bsx" onclick="cls('ov-create-route')">×</button></div>
-    <div class="bsbody">
-      <div style="background:var(--bluebg);border:1px solid rgba(56,191,248,.2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:14px">
-        📍 Draw your route on the map by tapping points. Route challenges are public — anyone can attempt to beat your time.
-      </div>
-      <div class="sfg"><label class="sfl">Route Name</label><input type="text" id="cr-name" class="sfi" placeholder="e.g. Indiranagar 5K Loop" maxlength="60" autocomplete="off"></div>
-      <div class="sfg"><label class="sfl">Description</label><textarea id="cr-desc" class="sfta" placeholder="Surface type, difficulty, landmarks…" style="min-height:60px"></textarea></div>
-      <div class="sfg"><label class="sfl">Activity Type</label>
-        <select id="cr-type" class="sfsel">
-          <option value="run">🏃 Running</option>
-          <option value="cycle">🚴 Cycling</option>
-          <option value="walk">🚶 Walking</option>
-          <option value="hike">⛰️ Hiking</option>
-        </select>
-      </div>
-      <!-- Embedded map for route drawing -->
-      <div id="cr-map-container" style="width:100%;height:240px;border-radius:var(--r);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:10px">
-        <div id="cr-map" style="width:100%;height:100%"></div>
-        <div id="cr-map-ph" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3)">
-          <div style="font-size:32px">🗺️</div>
-          <div style="font-size:12px;font-weight:700">Map loading…</div>
-          <div style="font-size:11px;color:var(--text3)">Tap to place route waypoints</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="map-btn secondary" onclick="undoWaypoint()" style="flex:1">↩ Undo</button>
-        <button class="map-btn danger" onclick="clearRoute()" style="flex:1">🗑 Clear</button>
-        <div style="flex:1;text-align:center;background:var(--surf);border-radius:var(--rf);padding:8px;font-family:var(--fm);font-size:11px;color:var(--text2);border:1px solid var(--brd)"><span id="cr-dist">0 m</span></div>
-      </div>
-      <button class="bs-btn" style="background:var(--blue);color:#020208" onclick="saveRoute()">📍 PUBLISH ROUTE CHALLENGE</button>
-      <div style="height:12px"></div>
-    </div>
-  </div>
-</div>
+
 
 <!-- USER PROFILE SHEET -->
 <div id="ov-profile" class="ov" onclick="ovc(event,'ov-profile')">
   <div class="bs"><div class="bsh"></div>
     <div class="bshdr"><span class="bstit" id="profile-stit">Competitor</span><button class="bsx" onclick="cls('ov-profile')">×</button></div>
     <div class="bsbody" id="profile-sbody"></div>
+  </div>
+</div>
+
+<!-- PRO UPGRADE SHEET -->
+<div id="ov-upgrade" class="ov" onclick="ovc(event,'ov-upgrade')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--gold)">⚡ UPGRADE PLAN</span><button class="bsx" onclick="cls('ov-upgrade')">×</button></div>
+    <div class="bsbody" id="upgrade-body"></div>
+  </div>
+</div>
+
+<!-- REFERRAL SHEET -->
+<div id="ov-referral" class="ov" onclick="ovc(event,'ov-referral')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--lime)">🔗 REFER &amp; EARN</span><button class="bsx" onclick="cls('ov-referral')">×</button></div>
+    <div class="bsbody" id="referral-body"></div>
+  </div>
+</div>
+
+<!-- ACHIEVEMENTS SHEET -->
+<div id="ov-achievements" class="ov" onclick="ovc(event,'ov-achievements')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--gold)">🏅 ACHIEVEMENTS</span><button class="bsx" onclick="cls('ov-achievements')">×</button></div>
+    <div class="bsbody" id="ach-body"></div>
+  </div>
+</div>
+
+<!-- CORPORATE LEAD SHEET -->
+<div id="ov-corp" class="ov" onclick="ovc(event,'ov-corp')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--blue)">🏢 CORPORATE WELLNESS</span><button class="bsx" onclick="cls('ov-corp')">×</button></div>
+    <div class="bsbody" id="corp-body"></div>
+  </div>
+</div>
+
+<!-- COMMITMENT CONTRACT INFO SHEET -->
+<div id="ov-commit" class="ov" onclick="ovc(event,'ov-commit')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--gold)">📜 COMMITMENT CONTRACT</span><button class="bsx" onclick="cls('ov-commit')">×</button></div>
+    <div class="bsbody">
+      <div style="text-align:center;padding:8px 0 20px">
+        <div style="font-size:48px;margin-bottom:10px">🤝</div>
+        <div style="font-family:var(--fd);font-size:1.6rem;letter-spacing:1px;margin-bottom:8px">Commitment Contract<br>Model</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">The legally sound way to run a<br>fitness challenge with real stakes</div>
+      </div>
+      <div class="commit-box" style="margin-bottom:14px">
+        <div style="font-family:var(--fd);font-size:.85rem;letter-spacing:1.5px;color:var(--gold);margin-bottom:14px">HOW IT WORKS</div>
+        <div class="commit-step">
+          <div class="commit-step-num">1</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px">You escrow your own money</div><div style="font-size:12px;color:var(--text2)">₹1,000 stays in your account — you never pay it to other players</div></div>
+        </div>
+        <div class="commit-step">
+          <div class="commit-step-num">2</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px">Hit your goal → keep it all back</div><div style="font-size:12px;color:var(--text2)">Lose your target % of body weight → full refund + bonus from sponsor pool</div></div>
+        </div>
+        <div class="commit-step">
+          <div class="commit-step-num">3</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px">Miss your goal → donate to charity</div><div style="font-size:12px;color:var(--text2)">Your stake goes to a charity of YOUR choice — not to other players</div></div>
+        </div>
+        <div class="commit-step">
+          <div class="commit-step-num">4</div>
+          <div><div style="font-weight:700;font-size:13px;margin-bottom:2px">Sponsor pool rewards winners</div><div style="font-size:12px;color:var(--text2)">Brand sponsors fund a bonus prize pool — making it a win-win</div></div>
+        </div>
+      </div>
+      <div style="background:rgba(0,232,122,.07);border:1px solid rgba(0,232,122,.18);border-radius:var(--r);padding:12px 14px;font-size:12px;color:var(--lime);line-height:1.7;margin-bottom:14px">
+        ✓ <strong>Legally watertight</strong> — no gambling because you can only lose your own money to charity, not to other players. Based on global models by Stickk.com and Beeminder that have operated for 15+ years.
+      </div>
+      <div style="background:var(--surf2);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--text3);line-height:1.6;border:1px solid var(--brd)">
+        📋 Supported charities include CRY India, Akshaya Patra, and Give India. Full implementation with verified transfers coming soon.
+      </div>
+      <div style="height:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TERRITORY CLAIM SHEET -->
+<div id="ov-terr-claim" class="ov" onclick="ovc(event,'ov-terr-claim')">
+  <div class="bs" style="max-height:94dvh"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--lime)">🏴 CLAIM TERRITORY</span><button class="bsx" onclick="cls('ov-terr-claim')">×</button></div>
+    <div class="bsbody" id="terr-claim-body"></div>
+  </div>
+</div>
+
+<!-- TERRITORY DETAIL SHEET -->
+<div id="ov-terr-detail" class="ov" onclick="ovc(event,'ov-terr-detail')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="terr-detail-title">Territory</span><button class="bsx" onclick="cls('ov-terr-detail')">×</button></div>
+    <div class="bsbody" id="terr-detail-body"></div>
+  </div>
+</div>
+
+<!-- TERRITORY SHARE SHEET -->
+<div id="ov-terr-share" class="ov" onclick="ovc(event,'ov-terr-share')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--lime)">🏴 SHARE CONQUEST</span><button class="bsx" onclick="cls('ov-terr-share')">×</button></div>
+    <div class="bsbody">
+      <canvas id="terr-canvas" width="600" height="300" style="width:100%;border-radius:var(--r);display:block;margin:8px 0"></canvas>
+      <button class="bwa" id="terr-share-wa">💬 Challenge on WhatsApp</button>
+      <button class="bcp" id="terr-share-img" style="margin-top:8px;background:var(--surf2);color:var(--text2);border:1px solid var(--brd)">🖼️ Save Card</button>
+      <div style="height:8px"></div>
+    </div>
   </div>
 </div>
 
@@ -1363,7 +1593,7 @@ function setBtnL(id,on){
 function logout(){
   if(!confirm('Log out?'))return;
   ['fb_a','fb_t','fb_u'].forEach(k=>localStorage.removeItem(k));
-  CU=null;clearInterval(cdI);stopGPS();
+  CU=null;clearInterval(cdI);stopTerritoryRun();
   document.getElementById('s-app').classList.remove('on');
   document.getElementById('s-login').classList.add('on');
   document.getElementById('admin-hint').style.display='none';
@@ -1373,6 +1603,7 @@ function showApp(){
   document.getElementById('s-app').classList.add('on');
   ['tu','sb-un'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=CU;});
   document.getElementById('sb-bot').style.display='flex';
+  updateProBadge();
   // Admin chip tint
   if(isAdmin()){
     const chip=document.getElementById('top-chip');
@@ -1409,7 +1640,7 @@ async function loadLB(){
   try{
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getLeaderboard'})});
     const d=await r.json();
-    if(d.success&&Array.isArray(d.leaderboard)){renderLB(area,d.leaderboard);}
+    if(d.success&&Array.isArray(d.leaderboard)){renderLB(area,d.leaderboard);checkAchievements(d.leaderboard);}
     else{const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});const raw=await r2.json();renderLB(area,parseLBFromRaw(raw));}
   }catch(e){
     area.innerHTML=`<div style="padding:40px 18px;text-align:center;color:var(--text3)"><p style="margin-bottom:14px">⚠️ Could not load standings</p><button class="join-chip" onclick="loadLB()">↻ Retry</button></div>`;
@@ -1903,861 +2134,645 @@ async function loadPublicContests(){
 }
 
 // Routes — Google Sheets backed
-async function loadRoutes(){
-  try{const d=await api('getRoutes');ROUTES=Array.isArray(d)?d:[];}
-  catch(e){ROUTES=[];}
-}
-
-async function renderRooms(){
-  const area=document.getElementById('rooms-scroll');if(!area)return;
-  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading rooms…</p></div>`;
-  await loadRooms();await loadPublicContests();
-
-  // Live private contest (pranith's contest) — the main one
-  const mainContest={
-    id:'main-2026',
-    name:'12-WEEK FITNESS LEAGUE',
-    creator:'pranith',
-    isPrivate:true,
-    entry:'₹1,000',
-    prize:'₹6,500',
-    winner:'1 winner takes all',
-    end:CEND.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'}),
-  };
-
-  let html=`
-    <div class="rooms-hdr"><h2>ROOMS</h2><p>Private contests + public challenges</p></div>
-    <!-- Main private contest (pranith) -->
-    <div class="section-banner private-main" onclick="go('lb')">
-      <div class="pl-l"><span class="live-dot"></span>PRIVATE CONTEST — LIVE NOW</div>
-      <div class="pl-name">${mainContest.name}</div>
-      <div class="pl-meta">
-        <div class="pl-tag">🔒 Private · @pranith</div>
-        <div class="pl-tag">🏆 ${mainContest.prize}</div>
-        <div class="pl-tag blue">🥇 1 Winner</div>
-        <div class="pl-tag">⚖️ Ends ${mainContest.end}</div>
-      </div>
-    </div>`;
-
-  // Admin-created public contests
-  if(PUBLIC_CONTESTS.length){
-    html+=`<div class="rooms-sec"><div class="sec-hdr"><span>PUBLIC CONTESTS</span></div>`;
-    PUBLIC_CONTESTS.forEach(pc=>{
-      const now=new Date(),end=new Date(pc.end);
-      const dl=Math.max(0,Math.ceil((end-now)/86400000));
-      const isLive=now>=new Date(pc.start)&&dl>0;
-      const pool=(pc.fee||0)*(pc.participants||0);
-      html+=`<div class="room-card" style="${isLive?'border-color:rgba(240,165,0,.2);background:linear-gradient(135deg,rgba(240,165,0,.05),transparent)':''}">
-        <div class="rc2-top">
-          <div class="rc2-name">${esc(pc.name)}</div>
-          <div class="rc2-badge admin">🛡️ Admin</div>
-        </div>
-        <div class="rc2-desc">${esc(pc.desc||'')}</div>
-        <div class="rc2-foot">
-          <div style="font-size:11px;color:var(--text3)">${isLive?`⏳ ${dl}d left`:'Upcoming'}</div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="rc2-pool">${pool>0?'₹'+pool:'₹'+(pc.fee||0)+' entry'}</span>
-            <button class="join-chip" onclick="event.stopPropagation();sharePublicContestWhatsApp('${esc(pc.id)}')">💬 Invite</button>
-            <button class="join-chip" onclick="event.stopPropagation();openSharePub('${esc(pc.id)}')">Share</button>
-          </div>
-        </div>
-      </div>`;
-    });
-    html+=`</div>`;
-  }
-
-  // My private rooms
-  html+=`<div class="rooms-sec"><div class="sec-hdr"><span>MY PRIVATE ROOMS</span><button class="btn-new" onclick="openNewRoom()">+ CREATE</button></div>`;
-  if(!ROOMS.length){
-    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:28px 20px;text-align:center;color:var(--text3)">
-      <div style="font-size:36px;margin-bottom:10px">🚪</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2)">No private rooms yet</div>
-      <div style="font-size:12px;line-height:1.6">Challenge friends, colleagues, or family on your own terms.</div>
-      <button class="btn-new" style="margin-top:14px;padding:10px 20px;font-size:.9rem" onclick="openNewRoom()">+ CREATE FIRST ROOM</button>
-    </div>`;
-  } else {
-    ROOMS.forEach(rm=>{
-      const now=new Date(),end=new Date(rm.end);
-      const dl=Math.max(0,Math.ceil((end-now)/86400000));
-      const status=now<new Date(rm.start)?'upcoming':dl>0?'active':'ended';
-      const pool=rm.fee*(rm.pp||[]).length;
-      const avs=(rm.pp||[]).slice(0,4).map(p=>`<div class="rc2-av" style="background:${p.c||'#6B5CE7'}">${(p.n||'?')[0]}</div>`).join('');
-      const hasSplit=rm.p2>0||rm.p3>0;
-      html+=`<div class="room-card" onclick="openRoom('${esc(rm.id)}')">
-        <div class="rc2-top">
-          <div class="rc2-name">${esc(rm.name)}</div>
-          <div class="rc2-badge ${status}">${status==='active'?'LIVE':status==='upcoming'?'SOON':'ENDED'}</div>
-        </div>
-        <div class="rc2-desc">${esc(rm.desc||'')}</div>
-        <div class="rc2-foot">
-          <div class="rc2-peeps"><div class="rc2-avs">${avs}</div><span class="rc2-cnt">${(rm.pp||[]).length}${rm.maxP?' / '+rm.maxP:''}</span></div>
-          <div style="display:flex;align-items:center;gap:8px">
-            <span class="rc2-pool">${pool>0?'₹'+pool:'Free'} · ${hasSplit?'Top 3':'1 winner'}</span>
-            <button class="join-chip" onclick="event.stopPropagation();shareRoomWhatsApp('${esc(rm.id)}')">💬 Invite</button>
-            <button class="join-chip" onclick="event.stopPropagation();openShare2('${esc(rm.id)}')">Share</button>
-          </div>
-        </div>
-      </div>`;
-    });
-  }
-  html+=`</div><div style="height:16px"></div>`;
-  area.innerHTML=html;
-}
-
-function openNewRoom(){
-  ['nr-name','nr-desc','nr-fee','nr-pen'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
-  document.getElementById('nr-dur').value=12;
-  document.getElementById('nr-max').value='';
-  document.getElementById('nr-p1').value=60;
-  document.getElementById('nr-p2').value=30;
-  document.getElementById('nr-p3').value=10;
-  document.getElementById('tw-pen').classList.add('on');
-  document.getElementById('pen-f').style.display='block';
-  document.getElementById('tw-priv').classList.add('on');
-  document.getElementById('tw-split').classList.remove('on');
-  document.getElementById('split-f').style.display='none';
-  openS('ov-nr');
-}
-
-function penv(el){document.getElementById('pen-f').style.display=el.classList.contains('on')?'block':'none';}
-function splitToggle(el){document.getElementById('split-f').style.display=el.classList.contains('on')?'block':'none';}
-
-async function createRoom(){
-  const name=document.getElementById('nr-name').value.trim();
-  if(!name){toast('Enter a room name','⚠️');return;}
-  const dur=parseInt(document.getElementById('nr-dur').value)||12;
-  const start=new Date();
-  const end=new Date(start);end.setDate(end.getDate()+dur*7);
-  const fmt=d=>d.toISOString().split('T')[0];
-  const fee=parseFloat(document.getElementById('nr-fee').value)||0;
-  const hasSplit=document.getElementById('tw-split').classList.contains('on');
-  const rm={
-    id:'rm'+Date.now(),
-    name,
-    desc:document.getElementById('nr-desc').value.trim(),
-    start:fmt(start),end:fmt(end),fee,
-    penalty:document.getElementById('tw-pen').classList.contains('on')?(parseFloat(document.getElementById('nr-pen').value)||0):0,
-    priv:document.getElementById('tw-priv').classList.contains('on'),
-    p1:hasSplit?(parseInt(document.getElementById('nr-p1').value)||100):100,
-    p2:hasSplit?(parseInt(document.getElementById('nr-p2').value)||0):0,
-    p3:hasSplit?(parseInt(document.getElementById('nr-p3').value)||0):0,
-    maxP:parseInt(document.getElementById('nr-max').value)||null,
-    pp:[{n:CU,c:CLRS[Math.floor(Math.random()*CLRS.length)]}],
-    createdBy:CU,
-  };
-  try{
-    await api('createRoom',{room:rm});
-    cls('ov-nr');await renderRooms();
-    toast('Room created!','✅');
-    setTimeout(()=>openShare2(rm.id),500);
-  }catch(e){toast('Could not save room. Try again.','⚠️');}
-}
-
-async function openRoom(id){
-  // Fetch fresh from API so anyone with the link can see it
-  try{
-    const d=await api('getRoom',{id});
-    if(d&&d.id)ROOMS=[d,...ROOMS.filter(r=>r.id!==d.id)];
-  }catch(e){}
-  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
-  document.getElementById('rm-stit').textContent=rm.name;
-  const now=new Date(),end=new Date(rm.end);
-  const dl=Math.max(0,Math.ceil((end-now)/86400000));
-  const pool=rm.fee*(rm.pp||[]).length;
-  const sorted=[...(rm.pp||[])].sort((a,b)=>(b.v||0)-(a.v||0));
-  const hasSplit=rm.p2>0||rm.p3>0;
-  document.getElementById('rm-sbody').innerHTML=`
-    <div class="d-hero"><div class="d-em">⚔️</div><div class="d-inf"><h2>${esc(rm.name)}</h2><p>${esc(rm.desc||'')||'Private challenge.'}</p></div></div>
-    <div class="d-stats">
-      <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${pool>0?'₹'+pool:'Free'}</span><div class="d-sk">Prize</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:var(--green)">${dl}d</span><div class="d-sk">Left</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:var(--text2)">${(rm.pp||[]).length}</span><div class="d-sk">In</div></div>
-    </div>
-    <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">${hasSplit?'PRIZE SPLIT':'WINNER'}</div>
-    <div style="background:var(--surf);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:13px;color:var(--text2)">
-      ${hasSplit?`🥇 ${rm.p1}%  🥈 ${rm.p2}%  🥉 ${rm.p3}%`:`🥇 100% — winner takes all`}
-    </div>
-    ${sorted.length?`<div class="d-rank-list">${sorted.map((p,i)=>{const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1);const isMe=p.n===CU;return`<div class="d-ri${isMe?' me':''}"><div class="d-rnk">${medal}</div><div class="d-rav" style="background:${p.c||'#6B5CE7'}">${(p.n||'?')[0]}</div><div class="d-rname">${esc(p.n||'?')}${isMe?' 👈':''}</div><div class="d-rpct">${(p.v||0)>0?(p.v||0).toFixed(1)+'%':'—'}</div></div>`}).join('')}</div>`:
-    `<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px 0">No participants yet — share the invite link!</p>`}
-    <div style="height:8px"></div>`;
-  document.getElementById('rm-sfoot').innerHTML=`<button class="bs-btn" style="flex:1" onclick="cls('ov-room');openShare2('${esc(id)}')">📤 SHARE INVITE</button>`;
-  openS('ov-room');
-}
-
-function openShare2(id){
-  let nm,desc,fee,pool;
-  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
-  nm=rm.name;desc=rm.desc||'';fee=rm.fee;pool=rm.fee*(rm.pp||[]).length;
-  const link=`${location.origin}${location.pathname}?join=${id}`;
-  document.getElementById('sh-nm').textContent=nm;
-  document.getElementById('sh-sub').textContent=desc;
-  document.getElementById('sh-link').textContent=link;
-  document.getElementById('sh-img').style.display='none';
-  const wa=`⚔️ *FitBounty — ${nm}*
-
-${desc}
-
-${fee>0?`💰 Entry: ₹${fee}
-`:''}🏆 Reward Pool: ${pool>0?'₹'+pool:'Free'}
-📅 Monday weigh-ins · Photo proof required
-
-🔗 Join: ${link}`;
-  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
-  document.getElementById('sh-cp').onclick=()=>{navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋')).catch(()=>{const t=document.createElement('textarea');t.value=link;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t);toast('Copied!','📋');});};
-  openS('ov-share');
-}
-
-function openSharePub(id){
-  const pc=PUBLIC_CONTESTS.find(c=>c.id===id);if(!pc)return;
-  const link=`${location.origin}${location.pathname}?contest=${id}`;
-  document.getElementById('sh-nm').textContent=pc.name;
-  document.getElementById('sh-sub').textContent=pc.desc||'';
-  document.getElementById('sh-link').textContent=link;
-  document.getElementById('sh-img').style.display='none';
-  const wa=`🏆 *FitBounty Public Contest — ${pc.name}*
-
-${pc.desc||''}
-
-💰 Entry: ₹${pc.fee||0}
-📅 Ends: ${new Date(pc.end).toLocaleDateString()}
-
-🔗 Join: ${link}`;
-  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
-  document.getElementById('sh-cp').onclick=()=>navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋'));
-  openS('ov-share');
-}
-
-// ── WHATSAPP SHARE HELPERS ──
-function shareRoomWhatsApp(id){
-  const rm=ROOMS.find(r=>r.id===id);if(!rm)return;
-  const link=`${location.origin}${location.pathname}?join=${id}`;
-  const pool=rm.fee*(rm.pp||[]).length;
-  const msg=`⚔️ *FitBounty — ${rm.name}*
-
-${rm.desc||''}
-
-${rm.fee>0?`💰 Entry: ₹${rm.fee}
-`:''}🏆 ${pool>0?'Pool: ₹'+pool:'Free'}
-📅 Monday weigh-ins · Photo proof required
-
-Join here 👇
-${link}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-
-function sharePublicContestWhatsApp(id){
-  const pc=PUBLIC_CONTESTS.find(c=>c.id===id);if(!pc)return;
-  const link=`${location.origin}${location.pathname}?contest=${id}`;
-  const msg=`🏆 *FitBounty Public Contest — ${pc.name}*
-
-${pc.desc||''}
-
-💰 Entry: ₹${pc.fee||0}
-📅 Ends: ${new Date(pc.end).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
-
-Sign up 👇
-${link}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-
-async function shareRouteWhatsApp(id){
-  await loadRoutes();
-  const rt=ROUTES.find(r=>r.id===id);if(!rt)return;
-  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
-  const link=`${location.origin}${location.pathname}?route=${id}`;
-  const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
-  const best=completions[0];
-  const dist=rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`;
-  const msg=`${typeIcon} *FitBounty Route Challenge — ${rt.name}*
-
-${rt.desc||''}
-
-📍 Distance: ${dist}${best?`
-🥇 Record: ${fmtTime(best.secs)} by ${best.name}`:''}
-
-Think you can beat it? 💪
-${link}`;
-  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
-}
-
-async function deleteRoute(id){
-  if(!confirm('Delete this route challenge? All completions will be lost.'))return;
-  try{
-    await api('deleteRoute',{id});
-    await renderRoutes();
-    if(isAdmin())await renderAdmin();
-    toast('Route deleted','🗑');
-  }catch(e){toast('Could not delete. Try again.','⚠️');}
-}
-
-async function deleteRoom(id){
-  if(!confirm('Delete this private room?'))return;
-  try{
-    await api('deleteRoom',{id});
-    await renderRooms();
-    if(isAdmin())await renderAdmin();
-    toast('Room deleted','🗑');
-  }catch(e){toast('Could not delete. Try again.','⚠️');}
-}
-async function renderAdmin(){
-  if(!isAdmin()){document.getElementById('admin-scroll').innerHTML=`<div style="padding:60px 18px;text-align:center;color:var(--text3)"><div style="font-size:48px;margin-bottom:12px">🔒</div><p>Admin access only</p></div>`;return;}
-  const area=document.getElementById('admin-scroll');
-  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--purple);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading admin data…</p></div>`;
-  await loadPublicContests();await loadRoutes();await loadRooms();
-  let html=`
-    <div class="admin-header"><h2>🛡️ ADMIN</h2><p>Manage FitBounty contests and platform</p></div>
-    <div class="admin-badge-row"><div class="admin-badge">👑 Logged in as ${esc(CU)}</div></div>
-
-    <!-- PUBLIC CONTESTS -->
-    <div class="admin-sec">
-      <h3>PUBLIC CONTESTS</h3>
-      <button class="btn-new purple" onclick="openS('ov-pub')" style="width:100%;padding:12px;font-size:.95rem;border-radius:var(--r);margin-bottom:14px">🛡️ + CREATE PUBLIC CONTEST</button>`;
-
-  if(!PUBLIC_CONTESTS.length){
-    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No public contests yet. Create one above.</div>`;
-  } else {
-    PUBLIC_CONTESTS.forEach(pc=>{
-      const now=new Date(),isLive=now>=new Date(pc.start)&&now<=new Date(pc.end);
-      html+=`<div class="pub-contest-card${isLive?' live':''}">
-        <div class="pcc-top">
-          <div class="pcc-name">${esc(pc.name)}</div>
-          <div class="rc2-badge${isLive?' active':''}">${isLive?'LIVE':'UPCOMING'}</div>
-        </div>
-        <div style="font-size:12px;color:var(--text2);margin-bottom:4px">${esc(pc.desc||'')}</div>
-        <div style="font-size:11px;color:var(--text3)">${new Date(pc.start).toLocaleDateString()} → ${new Date(pc.end).toLocaleDateString()} · ₹${pc.fee||0} entry</div>
-        <div class="pcc-actions">
-          <button class="pcc-btn primary" onclick="sharePublicContestWhatsApp('${pc.id}')">💬 WhatsApp</button>
-          <button class="pcc-btn primary" onclick="openSharePub('${pc.id}')">📤 Share</button>
-          <button class="pcc-btn danger" onclick="deletePubContest('${pc.id}')">🗑 Delete</button>
-        </div>
-      </div>`;
-    });
-  }
-  html+=`</div>`;
-
-  // ROUTE CHALLENGES
-  html+=`<div class="admin-sec"><h3>ROUTE CHALLENGES</h3>`;
-  if(!ROUTES.length){
-    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No routes yet.</div>`;
-  } else {
-    ROUTES.forEach(rt=>{
-      const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
-      const dist=rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`;
-      html+=`<div class="pub-contest-card">
-        <div class="pcc-top">
-          <div class="pcc-name">${typeIcon} ${esc(rt.name)}</div>
-          <div class="rc2-badge">${(rt.completions||[]).length} attempts</div>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">📍 ${dist} · by ${esc(rt.createdBy||'?')} · ${new Date(rt.createdAt||0).toLocaleDateString()}</div>
-        <div class="pcc-actions">
-          <button class="pcc-btn primary" onclick="shareRouteWhatsApp('${rt.id}')">💬 WhatsApp</button>
-          <button class="pcc-btn danger" onclick="deleteRoute('${rt.id}')">🗑 Delete</button>
-        </div>
-      </div>`;
-    });
-  }
-  html+=`</div>`;
-
-  // PRIVATE ROOMS
-  html+=`<div class="admin-sec"><h3>MY PRIVATE ROOMS</h3>`;
-  if(!ROOMS.length){
-    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px">No private rooms.</div>`;
-  } else {
-    ROOMS.forEach(rm=>{
-      const now=new Date(),end=new Date(rm.end);
-      const dl=Math.max(0,Math.ceil((end-now)/86400000));
-      const status=now<new Date(rm.start)?'upcoming':dl>0?'active':'ended';
-      const pool=rm.fee*(rm.pp||[]).length;
-      html+=`<div class="pub-contest-card${status==='active'?' live':''}">
-        <div class="pcc-top">
-          <div class="pcc-name">${esc(rm.name)}</div>
-          <div class="rc2-badge${status==='active'?' active':''}">${status==='active'?'LIVE':status==='upcoming'?'SOON':'ENDED'}</div>
-        </div>
-        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${(rm.pp||[]).length} participants · ${pool>0?'₹'+pool+' pool':'Free'} · ${dl}d left</div>
-        <div class="pcc-actions">
-          <button class="pcc-btn primary" onclick="shareRoomWhatsApp('${rm.id}')">💬 WhatsApp</button>
-          <button class="pcc-btn primary" onclick="openShare2('${rm.id}')">📤 Share</button>
-          <button class="pcc-btn danger" onclick="deleteRoom('${rm.id}')">🗑 Delete</button>
-        </div>
-      </div>`;
-    });
-  }
-  html+=`</div>`;
-
-  // LIVE CONTEST STATS
-  html+=`<div class="admin-sec">
-      <h3>LIVE CONTEST STATS</h3>
-      <div style="background:var(--surf);border-radius:var(--r);padding:14px;border:1px solid var(--brd)">
-        <div style="font-size:13px;color:var(--text2);margin-bottom:8px">12-Week Fitness League (Private · Pranith)</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-          <div class="d-stat"><span class="d-sv" style="color:var(--gold)">₹6,500</span><div class="d-sk">Prize Pool</div></div>
-          <div class="d-stat"><span class="d-sv" style="color:var(--text2)">13</span><div class="d-sk">Participants</div></div>
-          <div class="d-stat"><span class="d-sv" style="color:var(--green)">1</span><div class="d-sk">Winner</div></div>
-          <div class="d-stat"><span class="d-sv" style="color:var(--orange)" id="admin-daysLeft">—</span><div class="d-sk">Days Left</div></div>
-        </div>
-      </div>
-    </div>
-    <div style="height:16px"></div>`;
-
-  area.innerHTML=html;
-  const dl=document.getElementById('admin-daysLeft');
-  if(dl)dl.textContent=Math.max(0,Math.ceil((CEND-new Date())/86400000))+'d';
-}
-
-async function createPublicContest(){
-  const name=document.getElementById('pub-name').value.trim();
-  if(!name){toast('Enter contest name','⚠️');return;}
-  const start=document.getElementById('pub-start').value;
-  const end=document.getElementById('pub-end').value;
-  if(!start||!end){toast('Enter start and end dates','⚠️');return;}
-  const pc={
-    id:'pub'+Date.now(),
-    name,
-    desc:document.getElementById('pub-desc').value.trim(),
-    start,end,
-    fee:parseFloat(document.getElementById('pub-fee').value)||0,
-    penalty:parseFloat(document.getElementById('pub-pen').value)||0,
-    maxP:parseInt(document.getElementById('pub-max').value)||null,
-    p1:parseInt(document.getElementById('pub-p1').value)||60,
-    p2:parseInt(document.getElementById('pub-p2').value)||25,
-    p3:parseInt(document.getElementById('pub-p3').value)||15,
-    participants:0,
-    createdBy:CU,
-  };
-  try{
-    await api('createPublicContest',{contest:pc});
-    cls('ov-pub');await renderAdmin();await renderRooms();
-    toast('Public contest published!','🛡️');
-  }catch(e){toast('Could not publish. Try again.','⚠️');}
-}
-
-async function deletePubContest(id){
-  if(!confirm('Delete this public contest?'))return;
-  try{
-    await api('deletePublicContest',{id});
-    await renderAdmin();await renderRooms();toast('Deleted','🗑');
-  }catch(e){toast('Could not delete. Try again.','⚠️');}
-}
 
 // ══════════════════════════════════════════════════════
-// ROUTE CHALLENGES — Map-based public challenges
+// TERRITORY MODE  (replaces Route Challenges)
 // ══════════════════════════════════════════════════════
-async function renderRoutes(){
-  const area=document.getElementById('routes-scroll');if(!area)return;
-  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading routes…</p></div>`;
-  await loadRoutes();
-  let html=`
-    <div class="rooms-hdr" style="padding-bottom:12px">
-      <h2 style="color:var(--blue)">ROUTE CHALLENGES</h2>
-      <p>Draw a route, track your time, challenge anyone to beat it</p>
-    </div>
-    <div style="padding:0 18px;margin-bottom:16px">
-      <button class="map-btn primary" style="width:100%;padding:14px;border-radius:var(--r);font-size:.95rem;justify-content:center" onclick="openCreateRoute()">
-        📍 CREATE NEW ROUTE CHALLENGE
-      </button>
-    </div>`;
 
-  if(!ROUTES.length){
-    html+=`<div style="margin:0 18px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:32px 20px;text-align:center;color:var(--text3)">
-      <div style="font-size:48px;margin-bottom:12px">🗺️</div>
-      <div style="font-weight:700;font-size:14px;margin-bottom:6px;color:var(--text2)">No routes yet</div>
-      <div style="font-size:12px;line-height:1.6">Draw a running or cycling route.<br>Anyone can attempt to beat your time.<br>Winner gets a shareable victory card.</div>
-    </div>`;
-  } else {
-    html+=`<div style="padding:0 18px;display:flex;flex-direction:column;gap:10px">`;
-    ROUTES.forEach(rt=>{
-      const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
-      const best=completions[0];
-      const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
-      const isMyRoute=rt.createdBy===CU;
-      html+=`<div class="room-card route-card" onclick="openRoute('${rt.id}')">
-        <div class="rc2-top">
-          <div class="rc2-name">${typeIcon} ${esc(rt.name)}</div>
-          <div class="rc2-badge route">${(rt.completions||[]).length} attempts</div>
-        </div>
-        <div class="rc2-desc">${esc(rt.desc||'')||'Public route challenge'}</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="font-size:11px;color:var(--text3)">📍 ${rt.distM?Math.round(rt.distM)+'m':'—'}</div>
-          <div style="font-size:11px;color:var(--text3)">👤 by ${esc(rt.createdBy||'?')}</div>
-          ${isMyRoute?`<div style="font-size:10px;font-weight:700;color:var(--gold);background:var(--goldbg);border-radius:var(--rf);padding:2px 7px">YOURS</div>`:''}
-        </div>
-        <div class="rc2-foot">
-          <div style="font-size:12px;color:var(--text2)">${best?`🥇 Best: <span style="font-family:var(--fm);color:var(--blue)">${fmtTime(best.secs)}</span> — ${esc(best.name)}`:' No completions yet'}</div>
-          <div style="display:flex;gap:6px">
-            <button class="join-chip" onclick="event.stopPropagation();shareRouteWhatsApp('${rt.id}')">💬 Share</button>
-            <button class="join-chip blue" onclick="event.stopPropagation();openRoute('${rt.id}')">Attempt</button>
-            ${isMyRoute||isAdmin()?`<button class="join-chip danger" onclick="event.stopPropagation();deleteRoute('${rt.id}')">🗑</button>`:''}
-          </div>
-        </div>
-      </div>`;
-    });
-    html+=`</div>`;
+// ─── Globals ───
+let terrMap = null;
+let terrLayers = [];            // Leaflet polygon layers per territory
+let terrPlayerLayer = null;     // Current user's live path layer
+let terrPosMarker = null;       // Live position dot
+let terrPredictLayer = null;    // Preview polygon during active run
+let TERRITORIES = [];           // All claimed territories
+
+let terrRunActive = false;
+let terrRunPath = [];           // [{lat,lng}] GPS trace
+let terrRunDist = 0;
+let terrRunStart = null;
+let terrRunTimer = null;
+let terrGpsWatch = null;
+let terrLastPos = null;
+let terrClaimPending = null;    // Polygon to be claimed
+
+const TERR_MIN_AREA_KM2 = 0.001;  // ~1000m² min — one city block is ~0.01 km²
+const TERR_MIN_DIST_M   = 200;    // Must run at least 200m
+const TERR_CLOSE_DIST_M = 80;     // Within 80m of start = loop closed
+const TERR_COLORS = ['#F0A500','#FF3030','#38BFF8','#00E87A','#9B7FFF','#FF6B1A','#FF2D78','#4fc3f7'];
+
+function getUserTerrColor(username){
+  if(!username) return TERR_COLORS[0];
+  const h = hashStr(username);
+  return TERR_COLORS[Math.abs(h) % TERR_COLORS.length];
+}
+
+// ─── Polygon area (Shoelace / spherical approximation) ───
+function polygonAreaKm2(coords){
+  if(!coords||coords.length<3)return 0;
+  let area=0;
+  const n=coords.length;
+  const R=6371;
+  for(let i=0;i<n;i++){
+    const j=(i+1)%n;
+    const xi=coords[i].lng*Math.PI/180;
+    const yi=coords[i].lat*Math.PI/180;
+    const xj=coords[j].lng*Math.PI/180;
+    const yj=coords[j].lat*Math.PI/180;
+    area+=xi*yj;
+    area-=xj*yi;
   }
-  html+=`<div style="height:16px"></div>`;
-  area.innerHTML=html;
+  return Math.abs(area/2)*R*R;
 }
 
-function openCreateRoute(){
-  // Reset state
-  crPath=[];crMarkers=[];crPolyline=null;
-  document.getElementById('cr-name').value='';
-  document.getElementById('cr-desc').value='';
-  document.getElementById('cr-dist').textContent='0 m';
-  openS('ov-create-route');
-  setTimeout(()=>initCreateMap(),300);
-}
-
-function initCreateMap(){
-  const mapEl=document.getElementById('cr-map');if(!mapEl)return;
-  document.getElementById('cr-map-ph').style.display='none';
-  // Destroy existing map instance if reinitialising
-  if(crMap){crMap.remove();crMap=null;}
-  crMap=L.map(mapEl,{zoomControl:true}).setView([12.9716,77.5946],14);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom:19
-  }).addTo(crMap);
-  // Dark overlay to match app theme
-  crPolyline=L.polyline([],{color:'#38BFF8',weight:4,opacity:.9}).addTo(crMap);
-  crMap.on('click',e=>addWaypoint(e.latlng));
-  // Centre on user location
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(pos=>{
-      crMap.setView([pos.coords.latitude,pos.coords.longitude],15);
-    },()=>{});
+// ─── Simplify GPS path (Douglas-Peucker-lite) ───
+function simplifyPath(pts, toleranceM=15){
+  if(pts.length<=4)return pts;
+  const result=[pts[0]];
+  for(let i=1;i<pts.length-1;i++){
+    const d=haversineDist(result[result.length-1],pts[i]);
+    if(d>toleranceM)result.push(pts[i]);
   }
+  result.push(pts[pts.length-1]);
+  return result;
 }
 
-function addWaypoint(latlng){
-  crPath.push(latlng);
-  const isFirst=crPath.length===1;
-  const marker=L.circleMarker(latlng,{
-    radius:isFirst?8:5,
-    color:'#fff',weight:1.5,
-    fillColor:isFirst?'#F0A500':'#38BFF8',fillOpacity:1
-  }).addTo(crMap);
-  crMarkers.push(marker);
-  crPolyline.setLatLngs(crPath);
-  updateRouteDist();
-}
-
-function undoWaypoint(){
-  if(!crPath.length)return;
-  crPath.pop();
-  const m=crMarkers.pop();if(m)crMap.removeLayer(m);
-  crPolyline.setLatLngs(crPath);
-  updateRouteDist();
-}
-
-function clearRoute(){
-  crPath=[];
-  crMarkers.forEach(m=>crMap.removeLayer(m));crMarkers=[];
-  if(crPolyline)crPolyline.setLatLngs([]);
-  document.getElementById('cr-dist').textContent='0 m';
-}
-
+// ─── haversine (kept, shared) ───
 function haversineDist(a,b){
   const R=6371000,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180;
   const x=Math.sin(dLat/2)**2+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)**2;
   return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
 }
-function updateRouteDist(){
-  if(crPath.length<2){document.getElementById('cr-dist').textContent='0 m';return;}
-  let dist=0;
-  for(let i=1;i<crPath.length;i++)dist+=haversineDist(crPath[i-1],crPath[i]);
-  document.getElementById('cr-dist').textContent=dist>1000?`${(dist/1000).toFixed(2)} km`:`${Math.round(dist)} m`;
-}
 
-async function saveRoute(){
-  const name=document.getElementById('cr-name').value.trim();
-  if(!name){toast('Enter a route name','⚠️');return;}
-  if(crPath.length<2){toast('Draw at least 2 points on the map','⚠️');return;}
-  let distM=0;
-  for(let i=1;i<crPath.length;i++)distM+=haversineDist(crPath[i-1],crPath[i]);
-  const rt={
-    id:'rt'+Date.now(),
-    name,
-    desc:document.getElementById('cr-desc').value.trim(),
-    type:document.getElementById('cr-type').value,
-    path:crPath.map(p=>({lat:p.lat,lng:p.lng})),
-    distM,
-    createdBy:CU,
-    createdAt:new Date().toISOString(),
-  };
+// ─── Load territories from API ───
+async function loadTerritories(){
   try{
-    toast('Publishing route…','⏳');
-    await api('createRoute',{route:rt});
-    cls('ov-create-route');await renderRoutes();
-    toast(`Route "${name}" published!`,'📍');
-  }catch(e){toast('Could not publish route. Try again.','⚠️');}
+    const d=await api('getTerritories');
+    TERRITORIES=Array.isArray(d.territories)?d.territories:[];
+  }catch(e){TERRITORIES=[];}
 }
 
-async function openRoute(id){
-  CURRENT_ROUTE_ID=id;
-  // Fetch fresh route + completions from API so shared links always work
-  let rt=null;
-  try{const d=await api('getRoute',{id});if(d&&d.id){rt=d;ROUTES=[d,...ROUTES.filter(r=>r.id!==d.id)];}}catch(e){}
-  if(!rt)rt=ROUTES.find(r=>r.id===id);
-  if(!rt)return;
-  const completions=(rt.completions||[]).sort((a,b)=>a.secs-b.secs);
-  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
-  const myBest=completions.find(c=>c.name===CU);
-  let html=`
-    <div class="d-hero">
-      <div class="d-em">${typeIcon}</div>
-      <div class="d-inf">
-        <h2>${esc(rt.name)}</h2>
-        <p>${esc(rt.desc||'Public route challenge')}</p>
-      </div>
-    </div>
-    <div class="route-stats">
-      <div class="route-stat"><span class="rsv" style="color:var(--blue)">${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}</span><div class="rsk">Distance</div></div>
-      <div class="route-stat"><span class="rsv" style="color:var(--gold)">${completions.length}</span><div class="rsk">Attempts</div></div>
-      <div class="route-stat"><span class="rsv" style="color:var(--green)">${myBest?fmtTime(myBest.secs):'—'}</span><div class="rsk">My Best</div></div>
-    </div>`;
+// ─── Compute user's total km² ───
+function getUserTerritoryKm2(username){
+  return TERRITORIES
+    .filter(t=>t.username===username)
+    .reduce((sum,t)=>sum+(t.area||0),0);
+}
 
-  // Show map if path available
-  if(rt.path&&rt.path.length>1){
-    html+=`<div id="route-detail-map" style="width:100%;height:180px;border-radius:var(--r);overflow:hidden;background:var(--surf);border:1px solid var(--brd);margin-bottom:12px"></div>`;
+// ─── Render the territory tab ───
+async function renderRoutes(){
+  // Init map if not already
+  if(!terrMap){
+    await initTerritoryMap();
+  } else {
+    // Refresh territories on re-visit
+    drawTerritoriesOnMap();
+  }
+  renderTerritoryStats();
+}
+
+async function initTerritoryMap(){
+  const mapEl=document.getElementById('terr-map');
+  if(!mapEl)return;
+
+  // Small delay to let the view render
+  await new Promise(r=>setTimeout(r,80));
+
+  const loading=document.getElementById('terr-map-loading');
+
+  if(terrMap){terrMap.remove();terrMap=null;}
+
+  terrMap=L.map(mapEl,{
+    zoomControl:true,
+    attributionControl:true,
+  }).setView([12.9716,77.5946],14);
+
+  // CartoDB Dark Matter tiles — matches app theme perfectly
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains:'abcd',
+    maxZoom:19
+  }).addTo(terrMap);
+
+  // Center on user's location
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      terrMap.setView([pos.coords.latitude,pos.coords.longitude],15);
+      if(loading)loading.style.display='none';
+    },()=>{
+      if(loading)loading.style.display='none';
+    },{timeout:6000});
+  } else {
+    setTimeout(()=>{if(loading)loading.style.display='none';},1200);
   }
 
-  // GPS Tracker
-  html+=`
-    <div class="gps-tracker" id="gps-tracker">
-      <div class="gps-hdr"><div class="gps-dot"></div><div class="gps-title">GPS TRACKING</div></div>
-      <div class="gps-time" id="gps-time">00:00</div>
-      <div class="gps-prog-wrap">
-        <div class="gps-prog-row">
-          <span>DISTANCE COVERED</span>
-          <span id="gps-prog-pct">0%</span>
-        </div>
-        <div class="gps-prog-bar"><div class="gps-prog-fill" id="gps-prog-fill"></div></div>
-      </div>
-      <div class="gps-dist-row">
-        <div class="gps-dst"><div class="gps-dst-v" id="gps-dist-covered">0 m</div><div class="gps-dst-k">Covered</div></div>
-        <div class="gps-dst" style="color:var(--text3)"><div class="gps-dst-v" style="color:var(--text3)">${rt.distM>1000?(rt.distM/1000).toFixed(1)+' km':Math.round(rt.distM||0)+' m'}</div><div class="gps-dst-k">Required</div></div>
-      </div>
-      <div style="font-size:11px;color:var(--green);text-align:center;margin-top:8px" id="gps-status">Waiting for GPS signal…</div>
-    </div>`;
+  // Load + draw existing territories
+  await loadTerritories();
+  drawTerritoriesOnMap();
+  setTimeout(()=>{if(loading)loading.style.display='none';},600);
+}
 
-  // Completions leaderboard
-  if(completions.length){
-    html+=`<div class="route-completions">
-      <div class="rc-list-hdr">🏆 FASTEST COMPLETIONS</div>
-      ${completions.slice(0,10).map((c,i)=>`
-        <div class="completion-row">
-          <div class="cr-rank${i===0?' gold':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)}</div>
-          <div class="cr-av" style="background:${CLRS[i%CLRS.length]}">${(c.name||'?')[0].toUpperCase()}</div>
-          <div class="cr-name">${esc(c.name||'?')}${c.name===CU?' 👈':''}</div>
-          <div class="cr-time">${fmtTime(c.secs)}</div>
-        </div>`).join('')}
+// ─── Draw all territories as colored polygons ───
+function drawTerritoriesOnMap(){
+  if(!terrMap)return;
+  // Clear existing territory layers
+  terrLayers.forEach(l=>terrMap.removeLayer(l));
+  terrLayers=[];
+
+  TERRITORIES.forEach(t=>{
+    if(!t.polygon||t.polygon.length<3)return;
+    const latlngs=t.polygon.map(p=>L.latLng(p.lat,p.lng));
+    const color=t.color||getUserTerrColor(t.username);
+    const isContested=!!t.contestedBy;
+    const isMe=t.username===CU;
+
+    const poly=L.polygon(latlngs,{
+      color: isContested?'#FF3030':color,
+      fillColor: color,
+      fillOpacity: isMe?0.35:0.22,
+      weight: isContested?2.5:1.5,
+      dashArray: isContested?'6,4':null,
+    });
+
+    // Tooltip with owner name + area
+    poly.bindTooltip(`
+      <div style="font-family:monospace;font-weight:700;color:${color}">${t.username}</div>
+      <div style="font-size:11px;color:#aaa">${(t.area||0).toFixed(3)} km²${isContested?' ⚔️':''}</div>
+    `,{permanent:false,direction:'center',className:'terr-tooltip'});
+
+    poly.on('click',()=>openTerritoryDetail(t.id));
+    poly.addTo(terrMap);
+    terrLayers.push(poly);
+  });
+
+  // Update header + zone count
+  updateTerritoryHUD();
+}
+
+function updateTerritoryHUD(){
+  const myKm=getUserTerritoryKm2(CU);
+  const myZones=TERRITORIES.filter(t=>t.username===CU).length;
+  const hdr=document.getElementById('terr-km-hdr');
+  const zoneEl=document.getElementById('terr-zone-count');
+  if(hdr)hdr.textContent=myKm.toFixed(3)+' km²';
+  if(zoneEl)zoneEl.textContent=myZones+' zone'+(myZones!==1?'s':'')+' claimed';
+}
+
+// ─── Territory leaderboard stats below map ───
+function renderTerritoryStats(){
+  const area=document.getElementById('routes-scroll');
+  if(!area)return;
+
+  // Group by user, sum area
+  const byUser={};
+  TERRITORIES.forEach(t=>{
+    if(!byUser[t.username])byUser[t.username]={username:t.username,area:0,zones:0,color:t.color||getUserTerrColor(t.username)};
+    byUser[t.username].area+=(t.area||0);
+    byUser[t.username].zones++;
+  });
+  const ranked=Object.values(byUser).sort((a,b)=>b.area-a.area);
+
+  let html=`
+  <div style="padding:16px 16px 8px;display:flex;align-items:center;justify-content:space-between">
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3)">TERRITORY LEADERBOARD</div>
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:1px;color:var(--lime)">${TERRITORIES.length} ZONES TOTAL</div>
+  </div>`;
+
+  if(!ranked.length){
+    html+=`<div style="padding:24px 16px;text-align:center">
+      <div style="font-size:36px;margin-bottom:10px">🗺️</div>
+      <div style="font-family:var(--fd);font-size:1.1rem;letter-spacing:1px;margin-bottom:6px">NO TERRITORY CLAIMED</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7">Run a loop through your neighbourhood to claim<br>your first zone. The bigger the loop, the more km² you own.</div>
     </div>`;
   } else {
-    html+=`<div style="background:var(--surf);border-radius:var(--r);padding:20px;text-align:center;color:var(--text3);font-size:13px;margin-bottom:12px">Be the first to complete this route! 🏃</div>`;
+    ranked.forEach((u,i)=>{
+      const isMe=u.username===CU;
+      html+=`<div class="terr-leader-card${isMe?' ':''}" style="${isMe?'border-color:rgba(0,232,122,.25);background:linear-gradient(135deg,rgba(0,232,122,.06),rgba(0,232,122,.01))':''}" onclick="filterTerritoriesByUser('${esc(u.username)}')">
+        <div class="terr-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</div>
+        <div class="terr-color-dot" style="background:${u.color}"></div>
+        <div style="flex:1">
+          <div style="font-weight:700;font-size:13px;margin-bottom:2px">${esc(u.username)}${isMe?' 👈':''}</div>
+          <div class="terr-zone-count-sm">${u.zones} zone${u.zones!==1?'s':''}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="terr-km-big">${u.area.toFixed(3)}</div>
+          <div style="font-size:9px;color:var(--text3);font-family:var(--fd)">km²</div>
+        </div>
+      </div>`;
+    });
   }
 
-  document.getElementById('route-sbody').innerHTML=html;
-  document.getElementById('route-stit').textContent=`${typeIcon} ${rt.name}`;
-  document.getElementById('route-sfoot').innerHTML=`
-    <button class="bs-btn" id="gps-start-btn" onclick="startGPS()" style="flex:1">📍 START GPS TRACKING</button>
-    <button class="bs-btn sec" onclick="cls('ov-route');stopGPS()">Close</button>`;
+  // How it works section
+  html+=`
+  <div style="padding:16px 16px 4px;font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3)">HOW TERRITORY WORKS</div>
+  <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:8px">
+    ${[
+      {icon:'🏃',t:'Run a loop',d:'Start a run. Trace any shape through your neighbourhood. Return within 80m of your start point.'},
+      {icon:'🏴',t:'Close & Claim',d:'When you close the loop, the area you ran becomes yours — shown on the map in your colour.'},
+      {icon:'⚔️',t:'Defend or Conquer',d:'Run through someone else\'s territory to contest it. They have 7 days to re-run the boundary or lose it. (Coming soon)'},
+      {icon:'🏆',t:'Monthly Prize',d:'The player with the most km² claimed each month wins the territory prize. Resets on the 1st.'},
+    ].map(s=>`
+      <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px;display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:22px;flex-shrink:0">${s.icon}</div>
+        <div><div style="font-weight:700;font-size:13px;margin-bottom:3px">${s.t}</div><div style="font-size:12px;color:var(--text2);line-height:1.5">${s.d}</div></div>
+      </div>`).join('')}
+  </div>
+  <div style="height:16px"></div>`;
 
-  openS('ov-route');
-
-  // Init route preview map with Leaflet
-  if(rt.path&&rt.path.length>1){
-    setTimeout(()=>{
-      const mapEl=document.getElementById('route-detail-map');if(!mapEl)return;
-      const previewMap=L.map(mapEl,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false});
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19}).addTo(previewMap);
-      const latlngs=rt.path.map(p=>L.latLng(p.lat,p.lng));
-      L.polyline(latlngs,{color:'#38BFF8',weight:3,opacity:.9}).addTo(previewMap);
-      // Start marker (gold)
-      L.circleMarker(latlngs[0],{radius:8,color:'#fff',weight:2,fillColor:'#F0A500',fillOpacity:1}).addTo(previewMap);
-      // End marker (green)
-      L.circleMarker(latlngs[latlngs.length-1],{radius:8,color:'#fff',weight:2,fillColor:'#00E87A',fillOpacity:1}).addTo(previewMap);
-      previewMap.fitBounds(L.latLngBounds(latlngs),{padding:[12,12]});
-    },400);
-  }
+  area.innerHTML=html;
 }
 
-// Minimum finish time — seconds per METRE, based on world record pace with buffer
-// run:   WR 1km ≈ 131s → 0.131s/m, use 0.10s/m (10% faster than WR = impossible)
-// cycle: WR 1km ≈ 56s  → 0.056s/m, use 0.045s/m
-// walk:  brisk ~720s/km → 0.72s/m,  use 0.40s/m
-// hike:  ~900s/km       → 0.90s/m,  use 0.55s/m
-const MIN_PACE = { run:0.10, cycle:0.045, walk:0.40, hike:0.55 };
-
-function startGPS(){
-  const tracker=document.getElementById('gps-tracker');
-  const btn=document.getElementById('gps-start-btn');
+// ─── Start Territory Run ───
+function startTerritoryRun(){
   if(!navigator.geolocation){toast('GPS not available on this device','⚠️');return;}
+  if(terrRunActive)return;
 
-  // Pull required distance and activity type from current route
-  const rt=ROUTES.find(r=>r.id===CURRENT_ROUTE_ID);
-  gpsRequiredDist = rt ? (rt.distM||0) : 0;
-  gpsActivityType = rt ? (rt.type||'run') : 'run';
-  gpsDistCovered  = 0;
-  gpsLastPos      = null;
+  terrRunActive=true;
+  terrRunPath=[];
+  terrRunDist=0;
+  terrRunStart=Date.now();
+  terrLastPos=null;
 
-  tracker.classList.add('on');
-  if(btn){btn.innerHTML='⏹ STOP & RECORD TIME';btn.disabled=true;btn.style.opacity='0.45';btn.onclick=stopGPS;}
-  gpsStartTime=Date.now();
+  // UI into running state
+  const btn=document.getElementById('terr-run-btn');
+  if(btn){btn.textContent='⏹ STOP RUN';btn.className='bs-btn running';btn.onclick=stopTerritoryRun;}
+  document.getElementById('terr-run-hud').style.display='block';
+  document.getElementById('terr-close-hint').style.display='none';
+
+  // Draw live path layer
+  if(terrPlayerLayer)terrMap.removeLayer(terrPlayerLayer);
+  const userColor=getUserTerrColor(CU);
+  terrPlayerLayer=L.polyline([],{color:userColor,weight:4,opacity:.9,dashArray:'8,5'}).addTo(terrMap);
+
+  // Live position dot
+  if(terrPosMarker)terrMap.removeLayer(terrPosMarker);
 
   // Timer
-  gpsTimerI=setInterval(()=>{
-    const el=document.getElementById('gps-time');
-    if(el)el.textContent=fmtTime(Math.floor((Date.now()-gpsStartTime)/1000));
+  terrRunTimer=setInterval(()=>{
+    const elapsed=Math.floor((Date.now()-terrRunStart)/1000);
+    const el=document.getElementById('terr-hud-time');
+    if(el)el.textContent=fmtTime(elapsed);
   },1000);
 
-  // Position watcher — accumulates real distance
-  gpsWatchId=navigator.geolocation.watchPosition(pos=>{
-    const {latitude:lat,longitude:lng,accuracy}=pos.coords;
-    const s=document.getElementById('gps-status');
+  // GPS watch
+  terrGpsWatch=navigator.geolocation.watchPosition(pos=>{
+    const{latitude:lat,longitude:lng,accuracy}=pos.coords;
+    if(accuracy>45)return;
 
-    // Skip very inaccurate readings (>40m accuracy)
-    if(accuracy>40){
-      if(s)s.textContent=`⏳ Getting GPS lock… (${accuracy.toFixed(0)}m accuracy)`;
-      return;
+    // Update position dot
+    const latlng=L.latLng(lat,lng);
+    if(!terrPosMarker){
+      terrPosMarker=L.circleMarker(latlng,{radius:9,color:'#fff',weight:2.5,fillColor:getUserTerrColor(CU),fillOpacity:1}).addTo(terrMap);
+    } else {
+      terrPosMarker.setLatLng(latlng);
     }
+    terrMap.panTo(latlng,{animate:true,duration:0.5});
 
-    if(gpsLastPos){
-      const seg=haversineDist(gpsLastPos,{lat,lng});
-      // Ignore tiny jitter (<2m) and huge jumps (>100m in one reading = GPS glitch)
-      if(seg>=2 && seg<100){
-        gpsDistCovered+=seg;
-        updateGpsProgress();
+    if(terrLastPos){
+      const seg=haversineDist(terrLastPos,{lat,lng});
+      if(seg>=3&&seg<120){
+        terrRunDist+=seg;
+        terrRunPath.push({lat,lng});
+        terrPlayerLayer.addLatLng(latlng);
+
+        // Update HUD
+        const distEl=document.getElementById('terr-hud-dist');
+        if(distEl)distEl.textContent=terrRunDist>1000?`${(terrRunDist/1000).toFixed(2)} km`:`${Math.round(terrRunDist)} m`;
+
+        // Draw preview polygon and calc area
+        if(terrRunPath.length>=4){
+          const simplified=simplifyPath(terrRunPath,20);
+          const areaPrev=polygonAreaKm2(simplified);
+          const areaEl=document.getElementById('terr-hud-area');
+          if(areaEl){
+            areaEl.textContent=areaPrev>0.001?`${areaPrev.toFixed(4)} km²`:'building…';
+            areaEl.style.color=areaPrev>=TERR_MIN_AREA_KM2?'var(--lime)':'var(--text3)';
+          }
+
+          // Update preview polygon
+          if(terrPredictLayer)terrMap.removeLayer(terrPredictLayer);
+          terrPredictLayer=L.polygon(simplified.map(p=>L.latLng(p.lat,p.lng)),{
+            color:'rgba(0,232,122,.4)',fillColor:getUserTerrColor(CU),fillOpacity:0.15,weight:1.5,dashArray:'4,4'
+          }).addTo(terrMap);
+        }
+
+        // Check loop closure — are we back near the start?
+        if(terrRunPath.length>=6&&terrRunDist>=TERR_MIN_DIST_M){
+          const distToStart=haversineDist({lat,lng},terrRunPath[0]);
+          const hint=document.getElementById('terr-close-hint');
+          const btn=document.getElementById('terr-run-btn');
+          if(distToStart<=TERR_CLOSE_DIST_M){
+            if(hint)hint.style.display='none';
+            if(btn){
+              btn.textContent='🏴 CLOSE LOOP & CLAIM';
+              btn.className='bs-btn claim-ready';
+              btn.onclick=()=>closeTerritoryLoop({lat,lng});
+            }
+          } else if(distToStart<=300){
+            if(hint)hint.style.display='block';
+            if(btn&&btn.textContent!=='🏴 CLOSE LOOP & CLAIM'){
+              btn.textContent='⏹ STOP RUN';
+              btn.className='bs-btn running';
+              btn.onclick=stopTerritoryRun;
+            }
+          } else {
+            if(hint)hint.style.display='none';
+          }
+        }
       }
     }
-    gpsLastPos={lat,lng};
-    if(s)s.textContent=`📡 Tracking — ${accuracy.toFixed(0)}m accuracy`;
+    terrLastPos={lat,lng};
   },
-  err=>{
-    const s=document.getElementById('gps-status');
-    if(s)s.textContent=`⚠️ GPS error: ${err.message}`;
-  },
-  {enableHighAccuracy:true,maximumAge:0,timeout:15000});
+  err=>toast(`GPS: ${err.message}`,'⚠️'),
+  {enableHighAccuracy:true,maximumAge:0,timeout:20000});
 
-  toast('GPS tracking started — start moving! 📍','📍');
+  toast('Territory run started — trace your loop! 🏃','📍');
 }
 
-function updateGpsProgress(){
-  if(!gpsRequiredDist)return;
-  const pct    = Math.min(100,Math.round(gpsDistCovered/gpsRequiredDist*100));
-  const filled = pct>=90;
-  const fill   = document.getElementById('gps-prog-fill');
-  const pctEl  = document.getElementById('gps-prog-pct');
-  const covEl  = document.getElementById('gps-dist-covered');
-  const btn    = document.getElementById('gps-start-btn');
-
-  if(fill){fill.style.width=pct+'%';if(filled)fill.classList.add('done');else fill.classList.remove('done');}
-  if(pctEl)pctEl.textContent=pct+'%';
-  if(covEl)covEl.textContent=gpsDistCovered>1000?`${(gpsDistCovered/1000).toFixed(2)} km`:`${Math.round(gpsDistCovered)} m`;
-
-  // Unlock the stop button once 90% of distance is covered
-  if(filled&&btn){btn.disabled=false;btn.style.opacity='1';}
+// ─── Stop run without claiming ───
+function stopTerritoryRun(){
+  cleanupTerritoryRun();
+  toast('Run stopped','⏹');
 }
 
-function stopGPS(){
-  if(gpsWatchId!==null){navigator.geolocation.clearWatch(gpsWatchId);gpsWatchId=null;}
-  if(gpsTimerI){clearInterval(gpsTimerI);gpsTimerI=null;}
-  const tracker=document.getElementById('gps-tracker');
-  if(tracker)tracker.classList.remove('on');
-  if(!gpsStartTime)return;
+function cleanupTerritoryRun(){
+  terrRunActive=false;
+  if(terrGpsWatch!==null){navigator.geolocation.clearWatch(terrGpsWatch);terrGpsWatch=null;}
+  if(terrRunTimer){clearInterval(terrRunTimer);terrRunTimer=null;}
+  if(terrPredictLayer){terrMap.removeLayer(terrPredictLayer);terrPredictLayer=null;}
+  document.getElementById('terr-run-hud').style.display='none';
+  document.getElementById('terr-close-hint').style.display='none';
+  const btn=document.getElementById('terr-run-btn');
+  if(btn){btn.textContent='📍 START TERRITORY RUN';btn.className='bs-btn';btn.style.background='var(--lime)';btn.style.color='#020208';btn.onclick=startTerritoryRun;}
+}
 
-  const totalSecs=Math.floor((Date.now()-gpsStartTime)/1000);
-  gpsStartTime=null;
+// ─── Close loop → show claim sheet ───
+function closeTerritoryLoop(closingPos){
+  // Stop GPS tracking
+  if(terrGpsWatch!==null){navigator.geolocation.clearWatch(terrGpsWatch);terrGpsWatch=null;}
+  if(terrRunTimer){clearInterval(terrRunTimer);terrRunTimer=null;}
+  terrRunActive=false;
+  document.getElementById('terr-run-hud').style.display='none';
 
-  // Guard: must have covered ≥90% of route distance
-  if(gpsRequiredDist>0 && gpsDistCovered<gpsRequiredDist*0.9){
-    toast(`Only covered ${Math.round(gpsDistCovered)}m of ${Math.round(gpsRequiredDist)}m — keep going!`,'⚠️');
+  // Finalise polygon
+  const path=[...terrRunPath,terrRunPath[0]]; // close the loop
+  const simplified=simplifyPath(path,15);
+  const area=polygonAreaKm2(simplified);
+  const elapsed=Math.floor((Date.now()-terrRunStart)/1000);
+
+  if(area<TERR_MIN_AREA_KM2){
+    cleanupTerritoryRun();
+    toast(`Loop too small (${(area*1000000).toFixed(0)} m²). Run a bigger loop!`,'⚠️');
     return;
   }
 
-  // Guard: minimum plausible time based on activity type
-  const minPace = MIN_PACE[gpsActivityType]||2.0;
-  const minSecs = Math.round(gpsRequiredDist * minPace);
-  if(gpsRequiredDist>0 && totalSecs < minSecs){
-    const minFmt = fmtTime(minSecs);
-    toast(`Time too fast to be valid (min ${minFmt} for this route) 🚫`,'🚫');
-    return;
-  }
-
-  recordCompletion(CURRENT_ROUTE_ID, totalSecs);
-}
-
-async function recordCompletion(routeId,secs){
-  try{
-    const d=await api('addCompletion',{routeId,username:CU,secs,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'2-digit'})});
-    if(d.skipped){toast('Not your best time — not saved','ℹ️');return;}
-    toast(`Time recorded: ${fmtTime(secs)} 🏁`,'🏁');
-    setTimeout(async()=>{
-      await openRoute(routeId);
-      const freshRt=ROUTES.find(r=>r.id===routeId);
-      // Only show winner card if #1 AND at least one other person has also completed it
-      if(freshRt && d.isFirst && d.total>1){showWinnerCard(freshRt,secs);}
-    },600);
-  }catch(e){toast('Could not save time. Try again.','⚠️');}
-}
-
-function showWinnerCard(rt,secs){
-  const typeIcon={run:'🏃',cycle:'🚴',walk:'🚶',hike:'⛰️'}[rt.type||'run']||'🏃';
-  // Build winner card with Canvas
-  const canvas=document.getElementById('winner-canvas');
-  const ctx=canvas.getContext('2d');
-  canvas.width=600;canvas.height=280;
-  canvas.style.display='block';
-  // dark bg
-  const bg=ctx.createLinearGradient(0,0,600,280);
-  bg.addColorStop(0,'#030306');bg.addColorStop(1,'#070710');
-  ctx.fillStyle=bg;ctx.fillRect(0,0,600,280);
-  // gold accent
-  ctx.fillStyle='rgba(240,165,0,.08)';ctx.beginPath();ctx.arc(550,50,120,0,Math.PI*2);ctx.fill();
-  // border
-  ctx.strokeStyle='rgba(56,191,248,.35)';ctx.lineWidth=1.5;ctx.strokeRect(1,1,598,278);
-  // FITBOUNTY
-  ctx.font='bold 13px Arial';ctx.fillStyle='rgba(79,195,247,0.7)';ctx.letterSpacing='3px';ctx.fillText('FITBOUNTY  ·  ROUTE CHALLENGE',24,32);
-  // trophy
-  ctx.font='52px serif';ctx.fillText('🏆',24,100);
-  // Winner name
-  ctx.font='bold 42px Arial';ctx.fillStyle='#38BFF8';ctx.fillText(CU.toUpperCase(),90,96);
-  // route name
-  ctx.font='18px Arial';ctx.fillStyle='rgba(245,240,255,0.6)';ctx.fillText(`${typeIcon} ${rt.name}`,90,122);
-  // time
-  ctx.font='bold 28px monospace';ctx.fillStyle='#F0A500';ctx.fillText(fmtTime(secs),24,168);
-  ctx.font='12px Arial';ctx.fillStyle='rgba(245,240,255,0.4)';ctx.fillText('WINNING TIME',24,186);
-  // distance
-  ctx.font='bold 20px monospace';ctx.fillStyle='rgba(0,230,118,0.9)';ctx.fillText(rt.distM>1000?`${(rt.distM/1000).toFixed(1)} km`:`${Math.round(rt.distM||0)} m`,200,168);
-  ctx.font='12px Arial';ctx.fillStyle='rgba(245,240,255,0.4)';ctx.fillText('DISTANCE',200,186);
-  // date
-  const dateStr=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-  ctx.font='13px Arial';ctx.fillStyle='rgba(245,240,255,0.35)';ctx.fillText(dateStr,24,240);
-  // tagline
-  ctx.font='bold 14px Arial';ctx.fillStyle='rgba(79,195,247,0.5)';ctx.fillText('BEAT MY TIME ON FITBOUNTY',24,260);
-
-  // Setup share
-  document.getElementById('sh-nm').textContent=`🏆 ${CU} wins "${rt.name}"!`;
-  document.getElementById('sh-sub').textContent=`Time: ${fmtTime(secs)} · ${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}`;
-  const link=`${location.origin}${location.pathname}?route=${rt.id}`;
-  document.getElementById('sh-link').textContent=link;
-  document.getElementById('sh-img').style.display='flex';
-  document.getElementById('sh-img').onclick=()=>{
-    const a=document.createElement('a');a.download=`fitbounty-winner-${CU}.png`;a.href=canvas.toDataURL();a.click();
-    toast('Winner card saved!','🖼️');
+  terrClaimPending={
+    id:'terr_'+Date.now(),
+    username:CU,
+    color:getUserTerrColor(CU),
+    polygon:simplified,
+    area,
+    distM:terrRunDist,
+    secs:elapsed,
+    claimedAt:new Date().toISOString(),
   };
-  const wa=`🏆 *${CU} just set the fastest time!*
 
-${typeIcon} Route: ${rt.name}
-⏱️ Time: ${fmtTime(secs)}
-📍 Distance: ${rt.distM>1000?`${(rt.distM/1000).toFixed(1)}km`:`${Math.round(rt.distM||0)}m`}
-📅 ${dateStr}
-
-Think you can beat it? 💪
-🔗 ${link}`;
-  document.getElementById('sh-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
-  document.getElementById('sh-cp').onclick=()=>navigator.clipboard.writeText(link).then(()=>toast('Copied!','📋'));
-  openS('ov-share');
+  showTerritoryClaimSheet(terrClaimPending);
 }
+
+// ─── Territory claim sheet ───
+function showTerritoryClaimSheet(terr){
+  const body=document.getElementById('terr-claim-body');
+  if(!body)return;
+
+  // Mini map preview of the polygon
+  const areaStr=terr.area.toFixed(4)+' km²';
+  const m2str=Math.round(terr.area*1000000)+' m²';
+
+  body.innerHTML=`
+  <div style="text-align:center;padding:8px 0 18px">
+    <div style="font-size:48px;margin-bottom:8px">🏴</div>
+    <div style="font-family:var(--fd);font-size:1.6rem;letter-spacing:1px;margin-bottom:6px;color:var(--lime)">${areaStr}</div>
+    <div style="font-size:13px;color:var(--text2)">New territory — ${m2str}</div>
+  </div>
+
+  <!-- Polygon mini-map -->
+  <div id="claim-mini-map" class="terr-polygon-preview" style="height:200px"></div>
+
+  <!-- Stats -->
+  <div class="terr-stat-grid">
+    <div class="terr-stat">
+      <div class="terr-stat-v">${fmtTime(terr.secs)}</div>
+      <div class="terr-stat-k">Run Time</div>
+    </div>
+    <div class="terr-stat">
+      <div class="terr-stat-v">${terr.distM>1000?(terr.distM/1000).toFixed(2)+'km':Math.round(terr.distM)+'m'}</div>
+      <div class="terr-stat-k">Distance</div>
+    </div>
+    <div class="terr-stat">
+      <div class="terr-stat-v" style="color:var(--lime)">${terr.polygon.length}</div>
+      <div class="terr-stat-k">Waypoints</div>
+    </div>
+  </div>
+
+  <!-- Name the territory -->
+  <div class="sfg" style="margin-bottom:12px">
+    <label class="sfl">Name your territory (optional)</label>
+    <input type="text" id="terr-name-input" class="sfi" placeholder="e.g. Indiranagar Sector 7" maxlength="50" autocomplete="off">
+  </div>
+
+  <button class="bs-btn" style="background:var(--lime);color:#020208;margin-bottom:8px" onclick="claimTerritoryConfirm()">🏴 CLAIM THIS TERRITORY</button>
+  <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd)" onclick="cls('ov-terr-claim');cleanupTerritoryRun()">✗ Cancel</button>
+  <div style="height:16px">`;
+
+  openS('ov-terr-claim');
+
+  // Init mini-map after sheet animates in
+  setTimeout(()=>{
+    const mapEl=document.getElementById('claim-mini-map');
+    if(!mapEl)return;
+    const miniMap=L.map(mapEl,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(miniMap);
+    const lls=terr.polygon.map(p=>L.latLng(p.lat,p.lng));
+    const poly=L.polygon(lls,{color:terr.color,fillColor:terr.color,fillOpacity:0.35,weight:2});
+    poly.addTo(miniMap);
+    miniMap.fitBounds(poly.getBounds(),{padding:[20,20]});
+  },380);
+}
+
+// ─── Confirm & save territory ───
+async function claimTerritoryConfirm(){
+  if(!terrClaimPending)return;
+  const nameInput=document.getElementById('terr-name-input');
+  const name=nameInput?nameInput.value.trim():'';
+  if(name)terrClaimPending.name=name;
+
+  const btn=document.querySelector('#ov-terr-claim .bs-btn');
+  if(btn){btn.textContent='Claiming…';btn.disabled=true;}
+
+  try{
+    await api('saveTerritory',{territory:terrClaimPending});
+    TERRITORIES.push(terrClaimPending);
+    drawTerritoriesOnMap();
+    renderTerritoryStats();
+    cls('ov-terr-claim');
+    cleanupTerritoryRun();
+    if(terrPlayerLayer){terrMap.removeLayer(terrPlayerLayer);terrPlayerLayer=null;}
+    toast(`Territory claimed! ${terrClaimPending.area.toFixed(4)} km² is yours 🏴`,'🏴');
+    // Show share card
+    setTimeout(()=>showTerritoryShareCard(terrClaimPending),700);
+    terrClaimPending=null;
+    unlockAch('route_1'); // Reuse route achievement
+  }catch(e){
+    toast('Could not save. Try again.','⚠️');
+    if(btn){btn.textContent='🏴 CLAIM THIS TERRITORY';btn.disabled=false;}
+  }
+}
+
+// ─── Territory share card ───
+function showTerritoryShareCard(terr){
+  const canvas=document.getElementById('terr-canvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  canvas.width=600;canvas.height=300;
+
+  // Background
+  ctx.fillStyle='#030306';ctx.fillRect(0,0,600,300);
+  // Glow
+  const grd=ctx.createRadialGradient(300,0,0,300,0,280);
+  grd.addColorStop(0,'rgba(0,232,122,.12)');grd.addColorStop(1,'rgba(0,232,122,0)');
+  ctx.fillStyle=grd;ctx.fillRect(0,0,600,300);
+  // Border
+  ctx.strokeStyle='rgba(0,232,122,.3)';ctx.lineWidth=1.5;ctx.strokeRect(1,1,598,298);
+
+  // Header
+  ctx.font='bold 11px Arial';ctx.fillStyle='rgba(0,232,122,.65)';ctx.fillText('FITBOUNTY  ·  TERRITORY CAPTURE',24,30);
+
+  // Big flag + username
+  ctx.font='52px serif';ctx.fillText('🏴',24,100);
+  ctx.font='bold 40px Arial';ctx.fillStyle=terr.color;ctx.fillText(CU.toUpperCase(),90,92);
+  ctx.font='18px Arial';ctx.fillStyle='rgba(255,255,255,.55)';ctx.fillText(terr.name||'New Territory Claimed',90,118);
+
+  // Stats
+  ctx.font='bold 28px monospace';ctx.fillStyle='#00E87A';ctx.fillText(terr.area.toFixed(4)+' km²',24,168);
+  ctx.font='12px Arial';ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillText('AREA CLAIMED',24,186);
+
+  ctx.font='bold 20px monospace';ctx.fillStyle='#F0A500';ctx.fillText(fmtTime(terr.secs),220,168);
+  ctx.font='12px Arial';ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillText('RUN TIME',220,186);
+
+  const date=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  ctx.font='13px Arial';ctx.fillStyle='rgba(255,255,255,.3)';ctx.fillText(date,24,250);
+  ctx.font='bold 14px Arial';ctx.fillStyle='rgba(0,232,122,.5)';ctx.fillText('CAN YOU TAKE MY TERRITORY?',24,272);
+
+  const wa=`🏴 *${CU} just claimed ${terr.area.toFixed(4)} km² of territory on FitBounty!*\n\n📍 Zone: ${terr.name||'New territory'}\n⏱️ Run time: ${fmtTime(terr.secs)}\n📐 Area: ${terr.area.toFixed(4)} km²\n\nCan you beat it? Challenge me on FitBounty 💪`;
+  document.getElementById('terr-share-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(wa),'_blank');
+  document.getElementById('terr-share-img').onclick=()=>{
+    const a=document.createElement('a');a.download=`fitbounty-territory-${CU}.png`;a.href=canvas.toDataURL();a.click();
+    toast('Conquest card saved!','🖼️');
+  };
+  openS('ov-terr-share');
+}
+
+// ─── Open territory detail ───
+function openTerritoryDetail(id){
+  const t=TERRITORIES.find(t=>t.id===id);
+  if(!t)return;
+  const isMe=t.username===CU;
+  const area=document.getElementById('terr-detail-body');
+  const title=document.getElementById('terr-detail-title');
+  if(!area||!title)return;
+
+  title.textContent=(t.name||(t.username+"'s Territory"));
+  const areaKm2=(t.area||0).toFixed(4);
+  const date=t.claimedAt?new Date(t.claimedAt).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}):'—';
+
+  area.innerHTML=`
+  <div style="display:flex;align-items:center;gap:12px;padding:8px 0 16px">
+    <div style="width:44px;height:44px;border-radius:12px;background:${t.color||'var(--gold)'};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🏴</div>
+    <div>
+      <div style="font-family:var(--fd);font-size:1.1rem;letter-spacing:1px">${esc(t.name||(t.username+"'s Zone"))}</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:2px">Owned by <strong style="color:${t.color||'var(--gold)'}">${esc(t.username)}</strong></div>
+    </div>
+    ${t.contestedBy?`<span class="contested-badge">⚔️ CONTESTED</span>`:''}
+  </div>
+
+  <!-- Mini map of territory -->
+  <div id="detail-mini-map" class="terr-detail-map"></div>
+
+  <!-- Stats -->
+  <div class="terr-stat-grid">
+    <div class="terr-stat">
+      <div class="terr-stat-v">${areaKm2}</div>
+      <div class="terr-stat-k">km²</div>
+    </div>
+    <div class="terr-stat">
+      <div class="terr-stat-v">${t.polygon.length}</div>
+      <div class="terr-stat-k">Points</div>
+    </div>
+    <div class="terr-stat">
+      <div class="terr-stat-v" style="font-size:.9rem">${date}</div>
+      <div class="terr-stat-k">Claimed</div>
+    </div>
+  </div>
+
+  ${t.contestedBy?`
+  <div style="background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--red)">
+    ⚔️ <strong>${esc(t.contestedBy)}</strong> has run through this territory and is contesting ownership. Re-run the boundary to defend it!
+  </div>`:isMe?`
+  <div style="background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.18);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--lime)">
+    ✓ This territory belongs to you. Run the boundary again to reinforce it.
+  </div>`:`
+  <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--text2)">
+    💡 Run through this territory to contest it. If ${esc(t.username)} doesn't defend within 7 days, it becomes yours. <span class="cs-badge">Coming Soon</span>
+  </div>`}
+
+  ${isMe?`<button class="bs-btn" style="background:var(--red);color:#fff;margin-bottom:8px" onclick="deleteTerritoryOwned('${t.id}')">🗑 Remove Territory</button>`:''}
+  <div style="height:8px">`;
+
+  openS('ov-terr-detail');
+
+  setTimeout(()=>{
+    const mapEl=document.getElementById('detail-mini-map');
+    if(!mapEl||!t.polygon.length)return;
+    const mini=L.map(mapEl,{zoomControl:false,attributionControl:false,dragging:false,scrollWheelZoom:false,doubleClickZoom:false});
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:19}).addTo(mini);
+    const poly=L.polygon(t.polygon.map(p=>L.latLng(p.lat,p.lng)),{color:t.color||'#F0A500',fillColor:t.color||'#F0A500',fillOpacity:0.35,weight:2});
+    poly.addTo(mini);
+    mini.fitBounds(poly.getBounds(),{padding:[18,18]});
+  },380);
+}
+
+// ─── Filter territories by user on map ───
+function filterTerritoriesByUser(username){
+  // Just pan to that user's zone
+  const userZones=TERRITORIES.filter(t=>t.username===username);
+  if(!userZones.length||!terrMap)return;
+  const allPolygons=userZones.filter(t=>t.polygon.length>2);
+  if(!allPolygons.length)return;
+  const allCoords=allPolygons.flatMap(t=>t.polygon.map(p=>L.latLng(p.lat,p.lng)));
+  const bounds=L.latLngBounds(allCoords);
+  terrMap.flyToBounds(bounds,{padding:[30,30],maxZoom:16,duration:0.8});
+}
+
+// ─── Delete own territory ───
+async function deleteTerritoryOwned(id){
+  try{
+    await api('deleteTerritory',{id});
+    TERRITORIES=TERRITORIES.filter(t=>t.id!==id);
+    drawTerritoriesOnMap();
+    renderTerritoryStats();
+    cls('ov-terr-detail');
+    toast('Territory removed','🗑');
+  }catch(e){toast('Could not delete. Try again.','⚠️');}
+}
+
+// ─── loadRoutes stub (no longer needed but kept for compatibility) ───
+async function loadRoutes(){
+  TERRITORIES=[];
+  try{const d=await api('getTerritories');TERRITORIES=Array.isArray(d.territories)?d.territories:[];}
+  catch(e){}
+}
+
 
 function fmtTime(secs){const m=Math.floor(secs/60),s=secs%60;return`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;}
 
@@ -2770,11 +2785,12 @@ function ovc(ev,id){if(ev.target.id===id)cls(id);}
 function checkLink(){
   const p=new URLSearchParams(location.search),jid=p.get('join'),rid=p.get('route');
   if(jid){go('rooms');setTimeout(()=>openRoom(jid),600);}
-  if(rid){go('routes');setTimeout(()=>openRoute(rid),600);}
+  if(rid){go('routes');setTimeout(()=>go('routes'),600);}
 }
 
 // ── TOAST ──
 let tt=null;
+function showToast(msg,col){toast(msg, col&&col.includes("#")||col&&col.includes("var")?"🔔":"✅");}
 function toast(msg,ic='✅'){
   document.getElementById('tm').textContent=msg;document.getElementById('ti').textContent=ic;
   const t=document.getElementById('toast');t.classList.add('on');clearTimeout(tt);
@@ -2784,144 +2800,580 @@ function toast(msg,ic='✅'){
 // ══════════════════════════════════════════════════════
 // FAQ / ABOUT
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// PRO / MONETIZATION TAB
+// ══════════════════════════════════════════════════════
+
+// ─── Plan config ───
+const PLANS={
+  free:{id:'free',name:'FREE',price:0,label:'Free Forever',cta:'Current Plan',color:'var(--text3)',features:[
+    {y:true,t:'1 active contest room'},
+    {y:true,t:'Weekly weigh-in tracking'},
+    {y:true,t:'Photo proof system'},
+    {y:true,t:'GPS route challenges'},
+    {y:true,t:'Live leaderboard'},
+    {y:false,t:'Unlimited rooms'},
+    {y:false,t:'Smart scale sync'},
+    {y:false,t:'AI weekly insights'},
+    {y:false,t:'Priority support'},
+  ]},
+  pro:{id:'pro',name:'PRO',price:299,label:'per month',cta:'Upgrade to Pro',color:'var(--gold)',features:[
+    {y:true,t:'Unlimited contest rooms'},
+    {y:true,t:'Weekly weigh-in tracking'},
+    {y:true,t:'Photo proof system'},
+    {y:true,t:'GPS route challenges'},
+    {y:true,t:'Live leaderboard'},
+    {y:true,t:'Smart scale sync (coming soon)'},
+    {y:true,t:'AI weekly insights (coming soon)'},
+    {y:true,t:'Priority support'},
+  ]},
+  team:{id:'team',name:'TEAM',price:999,label:'per month · up to 20',cta:'Start Team Trial',color:'var(--purple)',features:[
+    {y:true,t:'Everything in Pro'},
+    {y:true,t:'Admin dashboard'},
+    {y:true,t:'Team vs team challenges'},
+    {y:true,t:'White-label branding'},
+    {y:true,t:'CSV export / reporting'},
+    {y:true,t:'Dedicated onboarding'},
+    {y:true,t:'Insurance integration (coming soon)'},
+    {y:true,t:'Custom challenge rules'},
+  ]},
+};
+
+// ─── Subscription state (localStorage) ───
+function getPlan(){return localStorage.getItem('fb_plan')||'free';}
+function setPlan(p){localStorage.setItem('fb_plan',p);updateProBadge();}
+function updateProBadge(){
+  const lbl=document.getElementById('pro-nav-label');
+  const plan=getPlan();
+  if(lbl) lbl.textContent=plan==='free'?'Pro':plan.toUpperCase();
+}
+
+// ─── Referral ───
+function getRefCode(){
+  const u=(localStorage.getItem('fb_u')||'user').toLowerCase().replace(/[^a-z0-9]/g,'');
+  return ('FB'+u.slice(0,4).toUpperCase()+Math.abs(hashStr(u)%10000).toString().padStart(4,'0'));
+}
+function hashStr(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return h;}
+function getRefStats(){return JSON.parse(localStorage.getItem('fb_ref_stats')||'{"invited":0,"joined":0,"earned":0}');}
+
+// ─── Achievements ───
+const ACHIEVEMENTS=[
+  {id:'first_weigh',icon:'⚖️',name:'First Step',desc:'Log your first weigh-in',cat:'milestone'},
+  {id:'week_streak_3',icon:'🔥',name:'On Fire',desc:'3-week losing streak',cat:'streak'},
+  {id:'week_streak_5',icon:'🌋',name:'Volcanic',desc:'5-week losing streak',cat:'streak'},
+  {id:'week_streak_10',icon:'💥',name:'Unstoppable',desc:'10-week losing streak',cat:'streak'},
+  {id:'pct_1',icon:'📉',name:'First Blood',desc:'Lose 1% body weight',cat:'loss'},
+  {id:'pct_3',icon:'🎯',name:'On Target',desc:'Lose 3% body weight',cat:'loss'},
+  {id:'pct_5',icon:'🏋️',name:'Serious Lifter',desc:'Lose 5% body weight',cat:'loss'},
+  {id:'pct_10',icon:'🏆',name:'Transformation',desc:'Lose 10% body weight',cat:'loss'},
+  {id:'route_1',icon:'🗺️',name:'Explorer',desc:'Complete your first route',cat:'routes'},
+  {id:'route_5',icon:'🚀',name:'Route Warrior',desc:'Complete 5 routes',cat:'routes'},
+  {id:'route_pb',icon:'⚡',name:'PB Crusher',desc:'Set a new personal best',cat:'routes'},
+  {id:'room_create',icon:'🏠',name:'Host',desc:'Create a contest room',cat:'social'},
+  {id:'refer_1',icon:'🤝',name:'Recruiter',desc:'Refer 1 friend',cat:'social'},
+  {id:'refer_5',icon:'👑',name:'Ambassador',desc:'Refer 5 friends',cat:'social'},
+  {id:'pro_sub',icon:'⭐',name:'Pro Member',desc:'Subscribed to Pro',cat:'milestone'},
+  {id:'streak_1',icon:'📅',name:'Consistent',desc:'7-day login streak',cat:'milestone'},
+];
+
+function getUnlockedAchs(){return JSON.parse(localStorage.getItem('fb_ach')||'[]');}
+function unlockAch(id){
+  const u=getUnlockedAchs();
+  if(!u.includes(id)){u.push(id);localStorage.setItem('fb_ach',JSON.stringify(u));showToast('🏅 Achievement unlocked: '+ACHIEVEMENTS.find(a=>a.id===id)?.name,'var(--gold)');}
+}
+function checkAchievements(lbData){
+  // Called after LB loads with user's data
+  const user=localStorage.getItem('fb_u')||'';
+  const me=lbData&&lbData.find?lbData.find(e=>e.name&&e.name.toLowerCase()===user.toLowerCase()):null;
+  if(!me)return;
+  if(me.checkIns>=1)unlockAch('first_weigh');
+  if(me.streak>=3)unlockAch('week_streak_3');
+  if(me.streak>=5)unlockAch('week_streak_5');
+  if(me.streak>=10)unlockAch('week_streak_10');
+  if(me.pctLost>=1)unlockAch('pct_1');
+  if(me.pctLost>=3)unlockAch('pct_3');
+  if(me.pctLost>=5)unlockAch('pct_5');
+  if(me.pctLost>=10)unlockAch('pct_10');
+}
+
+// ─── Corporate lead submit ───
+async function submitCorpLead(){
+  const nm=document.getElementById('corp-name')?.value?.trim();
+  const co=document.getElementById('corp-company')?.value?.trim();
+  const em=document.getElementById('corp-email')?.value?.trim();
+  const sz=document.getElementById('corp-size')?.value;
+  if(!nm||!co||!em){showToast('Please fill all fields','var(--red)');return;}
+  const btn=document.getElementById('corp-submit-btn');
+  if(btn){btn.textContent='Sending…';btn.disabled=true;}
+  // Store locally and show success (backend integration coming soon)
+  const leads=JSON.parse(localStorage.getItem('fb_corp_leads')||'[]');
+  leads.push({nm,co,em,sz,ts:Date.now()});
+  localStorage.setItem('fb_corp_leads',JSON.stringify(leads));
+  await new Promise(r=>setTimeout(r,900));
+  if(btn){btn.textContent='Request Sent ✓';btn.style.background='var(--lime)';btn.style.color='#020208';}
+  showToast("✅ We'll contact you within 24 hours");
+}
+
+// ─── Plan upgrade ───
+function upgradePlan(plan){
+  if(plan==='free')return;
+  // Payment gateway coming soon — show coming soon toast, set plan for demo
+  const p=PLANS[plan];
+  showToast('💳 Payment gateway coming soon — demo activated','var(--gold)');
+  setPlan(plan);
+  if(plan==='pro')unlockAch('pro_sub');
+  cls('ov-upgrade');
+  renderPro();
+}
+
+// ─── Open upgrade sheet ───
+function openUpgrade(){
+  const body=document.getElementById('upgrade-body');
+  if(!body)return;
+  const cur=getPlan();
+  let h=`<div style="padding:4px 0 18px">`;
+  // Plan cards
+  ['free','pro','team'].forEach(pid=>{
+    const p=PLANS[pid];
+    const isCur=cur===pid;
+    const isFeat=pid==='pro';
+    h+=`<div class="plan-card${isFeat?' featured':''}" style="margin-bottom:12px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+        <div>
+          <div class="plan-name" style="color:${p.color}">${p.name}</div>
+          <div class="plan-price" style="color:${p.color}">₹${p.price}<span style="font-size:1rem;font-weight:400">${p.price?'':' '}</span></div>
+          <div class="plan-period">${p.label}</div>
+        </div>
+        ${isCur?`<span class="plan-chip ${pid}">ACTIVE</span>`:''}
+      </div>
+      <div style="margin-bottom:4px">
+        ${p.features.map(f=>`<div class="plan-feature${f.y?' yes':''}">
+          <span class="chk">${f.y?'✓':'—'}</span>
+          <span>${f.t}</span>
+        </div>`).join('')}
+      </div>
+      <button class="plan-cta ${isCur?'current':pid==='pro'?'gold':'outline'}"
+        onclick="${isCur?'':'upgradePlan(\''+pid+'\')'}"
+        ${isCur?'disabled':''}>
+        ${isCur?'Current Plan':p.cta}
+      </button>
+    </div>`;
+  });
+  // Legal note
+  h+=`<div style="background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.15);border-radius:var(--r);padding:12px 14px;font-size:11px;color:var(--text2);line-height:1.7;margin-top:4px">
+    <strong style="color:var(--lime)">🔒 100% Legal in India</strong><br>
+    FitBounty uses the Commitment Contract model — you escrow your own money, lose it to charity (not other players) if you miss goals. Prizes are funded by brand sponsors. 
+    <span style="color:var(--lime);cursor:pointer" onclick="cls('ov-upgrade');openCommit()">Learn more →</span>
+  </div>
+  </div>`;
+  body.innerHTML=h;
+  openS('ov-upgrade');
+}
+
+function openCommit(){openS('ov-commit');}
+
+// ─── Open referral sheet ───
+function openReferral(){
+  const body=document.getElementById('referral-body');
+  if(!body)return;
+  const code=getRefCode();
+  const stats=getRefStats();
+  const link=`https://fitbounty.app/join?ref=${code}`;
+  body.innerHTML=`
+    <div style="text-align:center;padding:8px 0 16px">
+      <div style="font-size:42px;margin-bottom:8px">🎁</div>
+      <div style="font-family:var(--fd);font-size:1.5rem;letter-spacing:1px;margin-bottom:6px">Refer &amp; Earn</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.7">Invite friends. Both of you get<br><strong style="color:var(--lime)">1 month Pro free</strong> when they join.</div>
+    </div>
+    <div class="referral-box">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--lime);margin-bottom:4px">YOUR REFERRAL CODE</div>
+      <div class="ref-code" onclick="copyRef('${code}')">${code}</div>
+      <div style="font-size:11px;color:var(--text3);text-align:center;margin-bottom:14px">Tap to copy</div>
+      <div style="display:flex;gap:8px">
+        <div class="ref-stat"><div class="ref-stat-v">${stats.invited}</div><div class="ref-stat-k">Invited</div></div>
+        <div class="ref-stat"><div class="ref-stat-v">${stats.joined}</div><div class="ref-stat-k">Joined</div></div>
+        <div class="ref-stat"><div class="ref-stat-v" style="color:var(--gold)">${stats.earned}</div><div class="ref-stat-k">Months Earned</div></div>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px">
+      <button class="bs-btn" style="background:var(--lime);color:#020208" onclick="shareRefWA('${link}')">💬 Share on WhatsApp</button>
+      <button class="bs-btn" style="background:var(--surf2);color:var(--text2);border:1px solid var(--brd)" onclick="copyRef('${link}')">📋 Copy Link</button>
+    </div>
+    <div style="margin-top:18px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--r);padding:12px 14px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:8px">HOW IT WORKS</div>
+      ${[['Share your code','Your friend signs up with your link'],['They join a challenge','They complete their first weigh-in'],['You both get Pro','1 month free credited to both accounts']].map((s,i)=>`
+        <div style="display:flex;gap:10px;align-items:center;padding:6px 0${i<2?';border-bottom:1px solid var(--brd)':''}">
+          <div style="width:22px;height:22px;border-radius:50%;background:rgba(0,232,122,.12);border:1px solid rgba(0,232,122,.25);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:10px;color:var(--lime);flex-shrink:0">${i+1}</div>
+          <div><div style="font-weight:700;font-size:12px">${s[0]}</div><div style="font-size:11px;color:var(--text2)">${s[1]}</div></div>
+        </div>`).join('')}
+    </div>
+    <div style="height:16px">`;
+  openS('ov-referral');
+}
+
+function copyRef(text){
+  navigator.clipboard?.writeText(text).then(()=>showToast('📋 Copied!')).catch(()=>{});
+}
+function shareRefWA(link){
+  const msg=encodeURIComponent(`Join me on FitBounty — the fat loss challenge app with real stakes. Use my link to get 1 month Pro free:\n${link}`);
+  window.open(`https://wa.me/?text=${msg}`,'_blank');
+}
+
+// ─── Open achievements sheet ───
+function openAchievements(){
+  const body=document.getElementById('ach-body');
+  if(!body)return;
+  const unlocked=getUnlockedAchs();
+  const cats={milestone:'🎯 Milestones',streak:'🔥 Streaks',loss:'📉 Weight Loss',routes:'🗺️ Routes',social:'🤝 Social'};
+  let h=`<div style="padding:4px 0 6px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div style="font-size:13px;color:var(--text2)">${unlocked.length} of ${ACHIEVEMENTS.length} unlocked</div>
+      <div style="background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:var(--rf);padding:3px 10px;font-family:var(--fd);font-size:9px;color:var(--gold);letter-spacing:1px">${Math.round(unlocked.length/ACHIEVEMENTS.length*100)}% COMPLETE</div>
+    </div>
+    <div style="background:rgba(255,255,255,.05);border-radius:var(--r);height:6px;margin-bottom:20px;overflow:hidden">
+      <div style="background:var(--gold);height:100%;width:${Math.round(unlocked.length/ACHIEVEMENTS.length*100)}%;border-radius:var(--r);transition:width .5s"></div>
+    </div>`;
+  Object.entries(cats).forEach(([cat,label])=>{
+    const catAchs=ACHIEVEMENTS.filter(a=>a.cat===cat);
+    h+=`<div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:10px;margin-top:4px">${label}</div>
+    <div class="badge-grid" style="margin-bottom:18px">
+      ${catAchs.map(a=>{
+        const got=unlocked.includes(a.id);
+        return `<div class="badge-item ${got?'unlocked':'locked'}" title="${a.desc}">
+          <div class="badge-icon-wrap">${a.icon}</div>
+          <div class="badge-name">${a.name}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  });
+  h+=`</div>`;
+  body.innerHTML=h;
+  openS('ov-achievements');
+}
+
+// ─── Open corporate sheet ───
+function openCorp(){
+  const body=document.getElementById('corp-body');
+  if(!body)return;
+  body.innerHTML=`
+    <div class="corp-banner" style="margin-bottom:18px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--blue);margin-bottom:8px">FITBOUNTY FOR BUSINESS</div>
+      <div style="font-family:var(--fd);font-size:1.6rem;letter-spacing:1px;margin-bottom:10px;line-height:1.1">Corporate<br>Wellness Program</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:14px">Reduce absenteeism, cut insurance premiums, and build a healthier workforce — with real accountability and measurable results.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        ${[['₹5k–50k','per employee / year'],['90 days','free pilot'],['30%','avg absenteeism reduction'],['Tax deduct.','under Sec 17(2)']].map(([v,k])=>`
+        <div style="background:rgba(0,0,0,.25);border-radius:var(--r);padding:10px 12px;text-align:center">
+          <div style="font-family:var(--fd);font-size:1.1rem;color:var(--blue)">${v}</div>
+          <div style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-top:2px">${k}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin-bottom:12px">WHAT YOU GET</div>
+    ${[
+      {icon:'📊',t:'Admin Dashboard',d:'Track company-wide health metrics, participation, and ROI in one place.'},
+      {icon:'🏷️',t:'White-Label Branding',d:'Your company logo, colours, and domain. Your team sees your brand.'},
+      {icon:'🏆',t:'Team vs Team Challenges',d:'Run department-vs-department challenges for engagement.'},
+      {icon:'📋',t:'Compliance Reports',d:'Export participation and outcome data for HR and insurance.'},
+      {icon:'🛡️',t:'Insurance Integration',d:'Partner discounts from Niva Bupa and Star Health. Coming soon.',cs:true},
+      {icon:'💬',t:'Dedicated Support',d:'Slack channel + dedicated account manager for setup.'},
+    ].map(f=>`<div class="cs-card${f.cs?' ':''}" style="margin-bottom:10px${f.cs?'':''}">
+      ${f.cs?'':''}
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div style="font-size:24px;flex-shrink:0">${f.icon}</div>
+        <div><div style="font-weight:700;font-size:13px;margin-bottom:3px">${f.t}${f.cs?` <span class="cs-badge">Coming Soon</span>`:''}</div><div style="font-size:12px;color:var(--text2);line-height:1.5">${f.d}</div></div>
+      </div>
+    </div>`).join('')}
+
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3);margin:20px 0 12px">REQUEST A FREE PILOT</div>
+    <input type="text" id="corp-name" class="corp-field" placeholder="Your name" autocomplete="name">
+    <input type="text" id="corp-company" class="corp-field" placeholder="Company name">
+    <input type="email" id="corp-email" class="corp-field" placeholder="Work email" autocomplete="email">
+    <select id="corp-size" class="corp-field" style="background:rgba(56,191,248,.05);border-color:rgba(56,191,248,.18)">
+      <option value="">Team size</option>
+      <option value="10-50">10–50 employees</option>
+      <option value="50-200">50–200 employees</option>
+      <option value="200-1000">200–1,000 employees</option>
+      <option value="1000+">1,000+ employees</option>
+    </select>
+    <button id="corp-submit-btn" class="bs-btn" style="background:var(--blue);color:#020208" onclick="submitCorpLead()">🏢 REQUEST 90-DAY FREE PILOT</button>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px;line-height:1.6">We'll get back within 24 hours. No sales pressure, just a demo.</div>
+    <div style="height:20px">`;
+  openS('ov-corp');
+}
+
+// ═══════════════════════════════════════════════════════════
+// MAIN PRO TAB RENDERER
+// ═══════════════════════════════════════════════════════════
 function renderFAQ(){
   const area=document.getElementById('faq-scroll');if(!area)return;
+  const plan=getPlan();
+  const unlocked=getUnlockedAchs();
+  const code=getRefCode();
+  const refStats=getRefStats();
 
   const faqs=[
-    {q:'What is FitBounty?',a:'FitBounty is a competitive fat-loss tracker. You put money in, lose the most body weight percentage, and take the prize. It keeps everyone accountable with weekly photo-proof weigh-ins and a live leaderboard.'},
-    {q:'How are standings calculated?',a:'Rankings are based on % of body weight lost since your first weigh-in — not raw kg. This makes it fair for everyone regardless of starting weight. Formula: (start weight − current weight) ÷ start weight × 100.'},
-    {q:'When do I weigh in?',a:'Official weigh-ins are every Monday. You\'ll need to log your weight and attach a photo as proof. Practice weights can be logged any day but only Monday entries count for the leaderboard.'},
-    {q:'What is a streak?',a:'A streak is consecutive weeks where you\'ve lost weight. Lose weight week 1, week 2, and week 3 in a row = 🔥 3-week streak. Gaining even 0.1kg resets it to zero.'},
-    {q:'What happens if I miss a weigh-in?',a:'Missing a Monday weigh-in breaks your streak and your weight stays frozen from the last entry. If your room has a miss penalty, the configured ₹ amount is deducted from your prize share.'},
-    {q:'What are Route Challenges?',a:'Route Challenges let you draw a GPS route on a map (a running trail, cycling loop, walking path etc.). Anyone can attempt the route on their phone using live GPS tracking. Times are validated — we check you actually covered the distance at a realistic pace.'},
-    {q:'How does the GPS validation work?',a:'When you start a route, your phone\'s GPS tracks how far you\'ve actually moved. The Stop button stays locked until you\'ve covered at least 90% of the route distance. We also reject times that are physically impossible — faster than world-record pace for the activity type.'},
-    {q:'What are private Rooms?',a:'Rooms let you run your own contest with custom rules — set the entry fee, prize split (1 winner or top 3), duration, miss penalty, and invite code. Share the link via WhatsApp and anyone with the link can join.'},
-    {q:'Is my data private?',a:'Your individual weight history is visible to all members of your contest room — that\'s intentional, it drives accountability. Route completion times are public. Profile photos are stored only on your device and never uploaded.'},
-    {q:'How is the prize paid out?',a:'Prize payouts are handled manually by the contest organiser at the end of the challenge. FitBounty tracks standings and calculates the split — the actual transfer is between participants directly (UPI, cash, etc.).'},
+    {q:'What is FitBounty?',a:'FitBounty is a competitive fat-loss tracker with real stakes. Log weekly weigh-ins, compete on % body weight lost, and earn rewards through sponsor-backed prize pools.'},
+    {q:'Is this legal in India?',a:'Yes. FitBounty uses the Commitment Contract model — you can only lose your own money to a charity of your choice, never to other players. Prize pools are funded entirely by brand sponsors. The Supreme Court has upheld skill-based competitions as legal.'},
+    {q:'How are standings calculated?',a:'Rankings use % of body weight lost — not raw kg. Formula: (start weight − current weight) ÷ start weight × 100. This makes it fair regardless of starting weight.'},
+    {q:'When do I weigh in?',a:'Official weigh-ins are every Monday. Log your weight + attach a photo as proof. Practice weights can be logged any day but only Monday entries count for the leaderboard.'},
+    {q:'What is a streak?',a:'Consecutive weeks of weight loss. Lose weight week 1, week 2, and week 3 in a row = 🔥 3-week streak. Gaining even 0.1kg resets it to zero.'},
+    {q:'What happens if I miss a weigh-in?',a:'Missing a Monday breaks your streak and freezes your weight. If your room has a miss penalty, the configured ₹ amount is deducted from your prize share.'},
+    {q:'What are Route Challenges?',a:'Draw a GPS route on the map — a running trail, cycling loop, walking path. Anyone can attempt to beat your time. Times are validated: you must cover 90% of the distance and pace must be physically realistic.'},
+    {q:'What are private Rooms?',a:'Run your own contest with custom rules — entry fee, prize split, duration, miss penalty, and invite code. Share via WhatsApp and anyone with the link can join.'},
+    {q:'How does the prize get paid?',a:'Prizes are settled manually by the contest organiser at the end. FitBounty calculates the split; the actual transfer is between participants (UPI, cash, etc.). Automated escrow is coming soon.'},
+    {q:'What is the Commitment Contract model?',a:'You escrow your own money. Hit your goal → get it back + bonus from sponsors. Miss your goal → your stake goes to a charity of your choice — never to another player. Modelled on globally-proven platforms like Stickk.com.'},
   ];
 
-  const features=[
-    {icon:'🏆',title:'Live Leaderboard',desc:'Real-time % body weight rankings with weekly deltas, streaks, and prize pool tracking.'},
-    {icon:'📸',title:'Photo Proof',desc:'Monday weigh-ins require a camera photo as proof — no faking the scales.'},
-    {icon:'🗺️',title:'GPS Route Challenges',desc:'Draw a route, set the record, challenge anyone to beat your time. Validated with real GPS distance.'},
-    {icon:'🚪',title:'Private Rooms',desc:'Run your own contest with custom fees, split, duration and penalty rules. Invite via WhatsApp link.'},
-    {icon:'🔥',title:'Streak Tracking',desc:'Consecutive weeks of weight loss are rewarded with fire streaks — visible to the whole group.'},
-    {icon:'⚖️',title:'Fair Ranking',desc:'Standings use % of body weight lost — not raw kg — so heavier and lighter people compete equally.'},
+  const brandChallenges=[
+    {name:'DECATHLON 5K CHALLENGE',sponsor:'Decathlon India',prize:'₹10,000',prizeLabel:'in gear vouchers',activity:'🏃 Running',duration:'4 weeks',desc:'Run 5km under 35 minutes. Top 10 finishers win Decathlon gift cards.',deadline:'Registration closes Apr 1',cs:false},
+    {name:'MYPROTEIN FAT LOSS LEAGUE',sponsor:'MyProtein India',prize:'₹25,000',prizeLabel:'supplement bundle',activity:'⚖️ Weight Loss',duration:'8 weeks',desc:'Lose the highest % body weight. Winner gets a year of supplements.',deadline:'Launching soon',cs:true},
+    {name:'PUMA CITY RUNNERS',sponsor:'Puma India',prize:'₹15,000',prizeLabel:'in Puma gear',activity:'🚴 Multi-sport',duration:'6 weeks',desc:'Track runs, cycles, and walks. Most km covered wins a full Puma kit.',deadline:'Launching soon',cs:true},
   ];
 
-  let html=`
-    <!-- Hero banner -->
-    <div style="margin:0 0 0;background:linear-gradient(160deg,rgba(245,200,66,.13) 0%,rgba(255,59,59,.06) 60%,transparent 100%);padding:32px 18px 28px;position:relative;overflow:hidden">
-      <div style="position:absolute;right:-30px;top:-30px;width:180px;height:180px;background:radial-gradient(circle,rgba(245,200,66,.12),transparent 70%);pointer-events:none"></div>
-      <div style="font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(245,200,66,.7);margin-bottom:10px">ABOUT FITBOUNTY</div>
-      <div style="font-family:var(--fd);font-size:clamp(1.8rem,8vw,2.6rem);line-height:.95;margin-bottom:14px">PUT MONEY<br>ON THE <span style="color:var(--gold)">LINE.</span><br>LOSE THE WEIGHT.</div>
-      <div style="font-size:13px;color:var(--text2);line-height:1.7;max-width:340px">FitBounty turns fat loss into a high-stakes group competition. Weekly weigh-ins, photo proof, GPS challenges — and a real cash prize waiting at the finish line.</div>
+  const marketplace=[
+    {icon:'🧪',name:'HealthifyMe Lab Test',brand:'Thyrocare',desc:'Full body health checkup — thyroid, lipid, glucose panel.',price:'₹799',original:'₹2,200',commission:'10% off for Pro',cs:false},
+    {icon:'⚖️',name:'Mi Body Comp Scale',brand:'Xiaomi',desc:'Smart scale with BMI, body fat %, muscle mass sync.',price:'₹1,999',original:'₹2,999',commission:'Auto-sync coming soon',cs:true},
+    {icon:'🏋️',name:'Book a Coach',brand:'Cult.fit',desc:'1-on-1 certified personal trainer session — in-gym or online.',price:'₹499',original:'₹999',commission:'25% commission',cs:false},
+    {icon:'💊',name:'Whey Protein 1kg',brand:'Optimum Nutrition',desc:'Gold Standard 100% Whey — 24g protein per serving.',price:'₹2,499',original:'₹3,200',commission:'10% off for Pro',cs:false},
+    {icon:'❤️',name:'Niva Bupa Wellness',brand:'Niva Bupa',desc:'Health insurance with fitness discounts for active FitBounty users.',price:'Custom',original:'',commission:'Coming soon',cs:true},
+    {icon:'🩺',name:'Nutrition Consult',brand:'Practo',desc:'30-min online session with a certified dietitian.',price:'₹399',original:'₹699',commission:'20% commission',cs:false},
+  ];
 
-      <!-- Visual stat bar -->
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px">
-        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
-          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--gold)">₹6,500</div>
-          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Active Pool</div>
+  let h=`
+  <!-- ── HERO ── -->
+  <div style="padding:26px 18px 22px;background:linear-gradient(160deg,rgba(240,165,0,.11) 0%,rgba(155,127,255,.06) 60%,transparent 100%);position:relative;overflow:hidden">
+    <div style="position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(240,165,0,.1),transparent 65%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+      <div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:2.5px;color:rgba(240,165,0,.7);font-family:var(--fd);margin-bottom:6px">YOUR PLAN</div>
+        <span class="plan-chip ${plan}">${plan.toUpperCase()}</span>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-bottom:4px">ACHIEVEMENTS</div>
+        <div style="font-family:var(--fd);font-size:1.4rem;color:var(--gold)">${unlocked.length}/${ACHIEVEMENTS.length}</div>
+      </div>
+    </div>
+    <div style="font-family:var(--fd);font-size:clamp(1.7rem,7vw,2.4rem);line-height:.95;margin-bottom:12px">EARN YOUR<br><span style="color:var(--gold)">BOUNTY.</span></div>
+    ${plan==='free'?`
+    <button class="plan-cta gold" style="max-width:240px;margin-top:6px" onclick="openUpgrade()">
+      ⚡ Upgrade to Pro — ₹299/mo
+    </button>`:`
+    <div style="background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.2);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--gold);display:inline-flex;align-items:center;gap:8px;margin-top:6px">
+      ⭐ ${plan.toUpperCase()} member — all features unlocked
+    </div>`}
+  </div>
+
+  <!-- ── QUICK ACTIONS ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">Quick Actions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${[
+        {icon:'⭐',label:'Plans & Pricing',sub:'Upgrade your plan',col:'var(--gold)',fn:'openUpgrade()'},
+        {icon:'🏅',label:'Achievements',sub:`${unlocked.length} unlocked`,col:'var(--gold)',fn:'openAchievements()'},
+        {icon:'🔗',label:'Refer & Earn',sub:'1 month Pro free',col:'var(--lime)',fn:'openReferral()'},
+        {icon:'🏢',label:'For Teams',sub:'Corporate wellness',col:'var(--blue)',fn:'openCorp()'},
+        {icon:'📜',label:'Commitment Model',sub:'How prizes work',col:'rgba(240,165,0,.7)',fn:'openCommit()'},
+        {icon:'🗺️',label:'Route Challenges',sub:'Race your friends',col:'var(--blue)',fn:"go('routes')"},
+      ].map(a=>`
+        <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;cursor:pointer;transition:transform .18s;-webkit-tap-highlight-color:transparent;active:transform:scale(.96)" onclick="${a.fn}" ontouchstart="this.style.transform='scale(.96)'" ontouchend="this.style.transform=''">
+          <div style="font-size:26px;margin-bottom:7px">${a.icon}</div>
+          <div style="font-weight:700;font-size:13px;color:${a.col};margin-bottom:2px">${a.label}</div>
+          <div style="font-size:11px;color:var(--text3)">${a.sub}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── PLAN COMPARISON ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">
+      <span>Plan Comparison</span>
+      <span style="font-size:10px;color:var(--gold);cursor:pointer" onclick="openUpgrade()">See all →</span>
+    </div>
+    <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:4px 14px 10px;margin-bottom:4px">
+      <div style="display:flex;align-items:center;padding:8px 0 6px;border-bottom:1px solid var(--brd)">
+        <div style="flex:1;font-family:var(--fd);font-size:8px;letter-spacing:1px;color:var(--text3)">FEATURE</div>
+        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--text3)">FREE</div>
+        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--gold)">PRO</div>
+        <div style="width:52px;text-align:center;font-family:var(--fd);font-size:8px;color:var(--purple)">TEAM</div>
+      </div>
+      ${[
+        ['Contest rooms','1','∞','∞'],
+        ['GPS routes','✓','✓','✓'],
+        ['Leaderboard','✓','✓','✓'],
+        ['Smart scale sync','—','Soon','✓'],
+        ['AI insights','—','Soon','✓'],
+        ['Admin dashboard','—','—','✓'],
+        ['Insurance discount','—','—','Soon'],
+      ].map(([f,fr,pr,tm])=>`
+        <div class="plan-compare-row">
+          <div class="feat">${f}</div>
+          <div class="val" style="color:var(--text3)">${fr}</div>
+          <div class="val" style="color:var(--gold)">${pr}</div>
+          <div class="val" style="color:var(--purple)">${tm}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── BRAND CHALLENGES ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">
+      <span>Brand Challenges</span>
+      <span class="cs-badge">New</span>
+    </div>
+    ${brandChallenges.map(c=>`
+    <div class="brand-card${c.cs?'':' sponsored'}">
+      ${!c.cs?`<div class="brand-logo"><span class="brand-sponsor-pill">🏷️ SPONSORED · ${c.sponsor}</span></div>`:`<div class="brand-logo"><span class="brand-sponsor-pill" style="background:rgba(155,127,255,.1);border-color:rgba(155,127,255,.2);color:var(--purple)">🔜 COMING SOON</span></div>`}
+      <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1.5px;margin-bottom:6px">${c.name}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.5">${c.desc}</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="brand-prize-big" style="${c.cs?'color:var(--purple);text-shadow:0 0 24px rgba(155,127,255,.3)':''}">
+            ${c.prize}
+          </div>
+          <div style="font-size:10px;color:var(--text3);margin-top:2px">${c.prizeLabel}</div>
         </div>
-        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
-          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--red)" id="faq-days">—</div>
-          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Days Left</div>
-        </div>
-        <div style="background:rgba(8,8,16,.6);border:1px solid var(--brd2);border-radius:var(--r);padding:12px;text-align:center;backdrop-filter:blur(8px)">
-          <div style="font-family:var(--fd);font-size:1.5rem;color:var(--green)">13</div>
-          <div style="font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-top:3px">Competitors</div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--text2)">${c.activity} · ${c.duration}</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">${c.deadline}</div>
         </div>
       </div>
-    </div>
+      ${c.cs?'':`<button class="bs-btn" style="margin-top:12px;background:var(--lime);color:#020208;padding:11px" onclick="showToast('Joining challenge — coming soon!','var(--lime)')">JOIN THIS CHALLENGE →</button>`}
+    </div>`).join('')}
+  </div>
 
-    <!-- How it works visual flow -->
-    <div style="padding:22px 18px 0">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:14px">HOW IT WORKS</div>
-      <div style="display:flex;flex-direction:column;gap:0">
-        ${[
-          {n:'1',col:'var(--gold)',icon:'💰',t:'Pay the entry fee',d:'Everyone puts skin in the game. The pool grows with each participant.'},
-          {n:'2',col:'var(--blue)',icon:'📅',t:'Weigh in every Monday',d:'Log your weight + attach a photo as proof. No photo = no count.'},
-          {n:'3',col:'var(--orange)',icon:'📉',t:'Lose the most % body weight',d:'Rankings update live. Your % loss from start weight is what counts.'},
-          {n:'4',col:'var(--green)',icon:'🏆',t:'Top finisher wins the pool',d:'At the end of the challenge, the leaderboard determines the payout.'},
-        ].map((s,i,arr)=>`
-          <div style="display:flex;gap:14px;padding-bottom:${i<arr.length-1?'0':'0'}">
-            <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-              <div style="width:36px;height:36px;border-radius:50%;background:${s.col};display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 0 16px ${s.col}44">${s.icon}</div>
-              ${i<arr.length-1?`<div style="width:2px;flex:1;background:linear-gradient(${s.col},${arr[i+1].col});min-height:28px;margin:4px 0"></div>`:''}
-            </div>
-            <div style="padding-bottom:${i<arr.length-1?'20':'0'}px;padding-top:6px">
-              <div style="font-weight:700;font-size:14px;margin-bottom:3px">${s.t}</div>
-              <div style="font-size:12px;color:var(--text2);line-height:1.6">${s.d}</div>
-            </div>
-          </div>`).join('')}
-      </div>
+  <!-- ── MARKETPLACE ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">
+      <span>Marketplace</span>
+      <span class="cs-badge">Beta</span>
     </div>
-
-    <!-- Feature grid -->
-    <div style="padding:24px 18px 0">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">FEATURES</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        ${features.map(f=>`
-          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px">
-            <div style="font-size:24px;margin-bottom:8px">${f.icon}</div>
-            <div style="font-weight:700;font-size:13px;margin-bottom:5px">${f.title}</div>
-            <div style="font-size:11px;color:var(--text2);line-height:1.55">${f.desc}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Visual: Activity type pace cards -->
-    <div style="padding:24px 18px 0">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">SUPPORTED ACTIVITIES</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
-        ${[
-          {icon:'🏃',label:'Running',col:'var(--red)',sub:'5–10 km/h'},
-          {icon:'🚴',label:'Cycling',col:'var(--blue)',sub:'15–30 km/h'},
-          {icon:'🚶',label:'Walking',col:'var(--green)',sub:'3–6 km/h'},
-          {icon:'⛰️',label:'Hiking',col:'var(--orange)',sub:'2–5 km/h'},
-        ].map(a=>`
-          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:12px 8px;text-align:center">
-            <div style="font-size:22px;margin-bottom:6px">${a.icon}</div>
-            <div style="font-weight:700;font-size:11px;color:${a.col}">${a.label}</div>
-            <div style="font-size:9px;color:var(--text3);margin-top:3px">${a.sub}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- FAQ accordion -->
-    <div style="padding:24px 18px 0">
-      <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">FREQUENTLY ASKED</div>
-      <div style="display:flex;flex-direction:column;gap:8px" id="faq-list">
-        ${faqs.map((f,i)=>`
-          <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden">
-            <button onclick="toggleFaq(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;gap:12px">
-              <span style="font-weight:700;font-size:13px;color:var(--text);line-height:1.4">${f.q}</span>
-              <span id="faq-arrow-${i}" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .2s">▼</span>
-            </button>
-            <div id="faq-ans-${i}" style="display:none;padding:0 16px 14px;font-size:13px;color:var(--text2);line-height:1.7;border-top:1px solid var(--brd)">${f.a}</div>
-          </div>`).join('')}
-      </div>
-    </div>
-
-    <!-- Footer credit -->
-    <div style="padding:24px 18px 8px;text-align:center">
-      <div style="display:inline-flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rf);padding:10px 18px">
-        <div style="width:28px;height:28px;background:#0a0a18;border:1.5px solid rgba(245,200,66,.3);border-radius:7px;display:flex;align-items:center;justify-content:center">
-          <svg width="17" height="17" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Products and services to support your fitness journey. Pro members get exclusive discounts.</div>
+    ${marketplace.map(m=>`
+    <div class="mkt-card" style="margin-bottom:10px">
+      <div class="mkt-icon">${m.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:700;font-size:13px;margin-bottom:2px">${m.name}</div>
+            <div style="font-size:10px;color:var(--text3);font-family:var(--fd);letter-spacing:.5px">${m.brand}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:var(--fd);font-size:1rem;color:var(--lime)">${m.price}</div>
+            ${m.original?`<div style="font-size:10px;color:var(--text3);text-decoration:line-through">${m.original}</div>`:''}
+          </div>
         </div>
-        <div style="text-align:left">
-          <div style="font-family:var(--fd);font-size:.9rem;letter-spacing:1.5px">FITBOUNTY</div>
-          <div style="font-size:10px;color:var(--text3)">Earn Your Bounty.</div>
+        <div style="font-size:12px;color:var(--text2);margin:6px 0">${m.desc}</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          ${m.cs?`<span class="cs-badge">Coming Soon</span>`:`<span style="font-size:11px;color:var(--lime)">${m.commission}</span>`}
+          ${m.cs?'':`<button style="padding:6px 14px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--rf);font-family:var(--fd);font-size:9px;letter-spacing:1px;color:var(--text2);cursor:pointer" onclick="showToast('Opening partner store…','var(--lime)')">VIEW DEAL →</button>`}
+        </div>
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <!-- ── COMMITMENT CONTRACT ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">How Prizes Work</div>
+    <div class="commit-box" onclick="openCommit()" style="cursor:pointer">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+        <div>
+          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:6px">🤝 Commitment Contract<br>Model</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.6">The legally watertight way to run fitness challenges with real stakes. Your money, your charity, your choice.</div>
+        </div>
+        <div style="font-size:20px;flex-shrink:0;color:var(--gold)">›</div>
+      </div>
+      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:7px">
+        ${['✓ Legal in India','✓ Backed by precedent','✓ Your money only','✓ Charity donation'].map(t=>`<span style="background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.2);border-radius:3px;padding:3px 9px;font-size:10px;color:var(--gold);font-family:var(--fd);letter-spacing:.5px">${t}</span>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <!-- ── COMING SOON FEATURES ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">On the Roadmap</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px">
+      ${[
+        {icon:'⚖️',t:'Smart Scale Sync',d:'Auto-sync from Mi, Withings, Garmin scales',eta:'Q2 2026'},
+        {icon:'🤖',t:'AI Coach',d:'Weekly personalised nutrition and training insights',eta:'Q2 2026'},
+        {icon:'🏦',t:'Automated Escrow',d:'UPI-based prize pool with verified payouts',eta:'Q3 2026'},
+        {icon:'❤️',t:'Insurance Discounts',d:'Lower premiums for active FitBounty members',eta:'Q3 2026'},
+        {icon:'📊',t:'Body Composition',d:'Track fat %, muscle mass alongside weight',eta:'Q4 2026'},
+        {icon:'🎥',t:'Video Weigh-in',d:'Live timestamped video proof for public contests',eta:'Q4 2026'},
+      ].map(f=>`
+        <div class="cs-card">
+          <div class="cs-icon">${f.icon}</div>
+          <div class="cs-title">${f.t}</div>
+          <div class="cs-desc">${f.d}</div>
+          <div class="cs-eta">ETA ${f.eta}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── REFER BANNER ── -->
+  <div class="pro-section">
+    <div class="referral-box" onclick="openReferral()" style="cursor:pointer">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:36px">🎁</div>
+        <div style="flex:1">
+          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--lime)">Refer &amp; Earn</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Invite friends to FitBounty. Both of you get <strong style="color:var(--lime)">1 month Pro free</strong> when they join.</div>
+          <div style="margin-top:8px;font-family:var(--fm);font-size:11px;color:var(--lime);letter-spacing:2px">${code} →</div>
         </div>
       </div>
     </div>
-    <div style="height:16px"></div>`;
+  </div>
 
-  area.innerHTML=html;
+  <!-- ── CORPORATE BANNER ── -->
+  <div class="pro-section">
+    <div class="corp-banner" onclick="openCorp()" style="cursor:pointer">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="font-size:36px">🏢</div>
+        <div style="flex:1">
+          <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px;margin-bottom:4px;color:var(--blue)">FitBounty for Teams</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Run company-wide challenges. Get insurance discounts. Reduce absenteeism by up to 30%.</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--blue);font-family:var(--fd);letter-spacing:1px">90-DAY FREE PILOT →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FAQ ── -->
+  <div class="pro-section">
+    <div class="pro-section-hdr">Frequently Asked</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:4px" id="faq-list">
+      ${faqs.map((f,i)=>`
+        <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);overflow:hidden">
+          <button onclick="toggleFaq(${i})" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:none;border:none;cursor:pointer;text-align:left;gap:12px">
+            <span style="font-weight:700;font-size:13px;color:var(--text);line-height:1.4">${f.q}</span>
+            <span id="faq-arrow-${i}" style="font-size:14px;color:var(--text3);flex-shrink:0;transition:transform .2s">▼</span>
+          </button>
+          <div id="faq-ans-${i}" style="display:none;padding:0 16px 14px;font-size:13px;color:var(--text2);line-height:1.7;border-top:1px solid var(--brd)">${f.a}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <div style="padding:18px 18px 8px;text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:10px;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rf);padding:10px 18px">
+      <div style="width:28px;height:28px;background:#0a0a18;border:1.5px solid rgba(245,200,66,.3);border-radius:7px;display:flex;align-items:center;justify-content:center">
+        <svg width="17" height="17" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg>
+      </div>
+      <div style="text-align:left">
+        <div style="font-family:var(--fd);font-size:.9rem;letter-spacing:1.5px">FITBOUNTY</div>
+        <div style="font-size:10px;color:var(--text3)">Earn Your Bounty.</div>
+      </div>
+    </div>
+  </div>
+  <div style="height:20px">`;
+
+  area.innerHTML=h;
+  // Update days left if present
   const dl=Math.max(0,Math.ceil((CEND-new Date())/86400000));
   const el=document.getElementById('faq-days');if(el)el.textContent=dl;
 }
 
+// placeholder sentinel - do not remove
 function toggleFaq(i){
   const ans=document.getElementById('faq-ans-'+i);
   const arrow=document.getElementById('faq-arrow-'+i);
