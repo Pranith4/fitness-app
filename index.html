@@ -1091,6 +1091,66 @@ body::after{
 /* Live GPS pulse dot */
 @keyframes gps-pulse{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}
 .gps-live-dot::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:100%;border-radius:50%;background:inherit;animation:gps-pulse 1.5s ease-out infinite}
+
+/* ═══════════════════════════
+   HEALTH DASHBOARD (Home tab)
+═══════════════════════════ */
+.health-greeting{padding:20px 18px 0;position:relative}
+.health-greeting-name{font-family:var(--fd);font-size:2rem;letter-spacing:1px;line-height:1.1;margin-bottom:4px}
+.health-greeting-sub{font-size:13px;color:var(--text2);font-weight:400}
+.health-date-pill{display:inline-flex;align-items:center;gap:6px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--rf);padding:4px 12px;font-family:var(--fd);font-size:9px;letter-spacing:1px;color:var(--text3);margin-top:10px}
+
+/* Big metric ring card */
+.cal-ring-card{margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:20px;display:flex;align-items:center;gap:18px;overflow:hidden;position:relative}
+.cal-ring-card::before{content:'';position:absolute;right:-30px;top:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,232,122,.1),transparent 70%);pointer-events:none}
+.cal-ring-svg{flex-shrink:0}
+.cal-ring-info{flex:1}
+.cal-ring-label{font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:4px}
+.cal-ring-val{font-family:var(--fd);font-size:2rem;font-weight:800;color:var(--lime);letter-spacing:1px;line-height:1}
+.cal-ring-goal{font-size:11px;color:var(--text3);margin-top:4px}
+.cal-ring-btns{display:flex;gap:8px;margin-top:12px}
+.cal-mini-btn{flex:1;padding:9px;background:rgba(0,232,122,.08);border:1px solid rgba(0,232,122,.18);border-radius:var(--r);font-family:var(--fd);font-size:10px;letter-spacing:1px;color:var(--lime);cursor:pointer;transition:all .18s;text-align:center}
+.cal-mini-btn:active{transform:scale(.95);background:rgba(0,232,122,.14)}
+.cal-mini-btn.img{background:rgba(240,165,0,.08);border-color:rgba(240,165,0,.18);color:var(--gold)}
+
+/* Stat grid */
+.health-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px 18px 0}
+.hstat{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;position:relative;overflow:hidden;cursor:pointer;transition:transform .18s}
+.hstat:active{transform:scale(.96)}
+.hstat-icon{font-size:24px;margin-bottom:8px}
+.hstat-val{font-family:var(--fd);font-size:1.5rem;font-weight:800;letter-spacing:.5px;line-height:1;margin-bottom:4px}
+.hstat-label{font-size:10px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;text-transform:uppercase}
+.hstat-bar{height:3px;background:var(--surf2);border-radius:2px;margin-top:8px;overflow:hidden}
+.hstat-bar-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.hstat-goal{font-size:10px;color:var(--text3);margin-top:5px}
+.hstat.steps .hstat-val{color:var(--blue)}
+.hstat.steps .hstat-bar-fill{background:var(--blue)}
+.hstat.burn .hstat-val{color:var(--heat)}
+.hstat.burn .hstat-bar-fill{background:var(--heat)}
+.hstat.water .hstat-val{color:#38BFF8}
+.hstat.water .hstat-bar-fill{background:#38BFF8}
+.hstat.weight .hstat-val{color:var(--gold)}
+.hstat.weight .hstat-bar-fill{background:var(--gold)}
+.hstat.bmi .hstat-val{color:var(--lime)}
+.hstat.bmi .hstat-bar-fill{background:var(--lime)}
+.hstat.sleep .hstat-val{color:var(--purple)}
+.hstat.sleep .hstat-bar-fill{background:var(--purple)}
+
+/* AI calorie analyser sheet */
+.food-img-preview{width:100%;border-radius:var(--r);overflow:hidden;margin:10px 0;position:relative}
+.food-img-preview img{width:100%;display:block;border-radius:var(--r)}
+.food-result-card{background:linear-gradient(135deg,rgba(0,232,122,.08),rgba(0,232,122,.02));border:1px solid rgba(0,232,122,.2);border-radius:var(--rl);padding:16px;margin-top:12px}
+.food-cal-big{font-family:var(--fd);font-size:2rem;font-weight:800;color:var(--lime);letter-spacing:1px}
+.food-macro-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.food-macro{flex:1;min-width:60px;background:rgba(255,255,255,.04);border-radius:var(--r);padding:8px;text-align:center;border:1px solid var(--brd)}
+.food-macro-v{font-family:var(--fd);font-size:.95rem;font-weight:700}
+.food-macro-k{font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px}
+.food-loading{display:flex;align-items:center;gap:10px;padding:14px;background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.15);border-radius:var(--r);font-size:13px;color:var(--lime)}
+
+/* Contest hub sheet enhancements */
+.contest-section-hdr{font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);padding:18px 0 10px;text-transform:uppercase;border-top:1px solid var(--brd);margin-top:6px}
+.contest-section-hdr:first-of-type{border-top:none;padding-top:8px}
+.wi-form-inline{background:linear-gradient(135deg,rgba(240,165,0,.07),rgba(240,165,0,.02));border:1px solid rgba(240,165,0,.2);border-radius:var(--rl);padding:16px;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -1144,8 +1204,8 @@ body::after{
     </div>
     <div><div class="sb-name">FITBOUNTY</div><div style="font-size:10px;color:var(--text3);letter-spacing:.5px">Earn Your Bounty.</div></div>
   </div>
-  <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span><span>Home</span><span class="ndot"></span></button>
-  <button class="ni" id="ni-log" onclick="go('log')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></span><span>Log</span><span class="ndot"></span></button>
+  <button class="ni on" id="ni-lb" onclick="go('lb')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span>Health</span><span class="ndot"></span></button>
+  <button class="ni" id="ni-log" onclick="go('log')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Contest</span><span class="ndot"></span></button>
   <button class="ni" id="ni-rooms" onclick="go('rooms')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><span>Rooms</span><span class="ndot"></span></button>
   <button class="ni" id="ni-routes" onclick="go('routes')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3,3 10,3 10,10 3,10"/><polygon points="14,3 21,3 21,10 14,10"/><polygon points="14,14 21,14 21,21 14,21"/><polygon points="3,14 10,14 10,21 3,21"/></svg></span><span>Territory</span><span class="ndot"></span></button>
   <button class="ni" id="ni-faq" onclick="go('faq')"><span class="nic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span><span id="pro-nav-label">Pro</span><span class="ndot"></span></button>
@@ -1164,7 +1224,7 @@ body::after{
   <div class="tbar">
     <div class="tlogo">
       <div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>
-      HOME
+      HEALTH
     </div>
     <div class="tright">
       <div class="uchip" id="top-chip"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="tu">—</span></div>
@@ -1182,7 +1242,7 @@ body::after{
 <!-- ═══ LOG WEIGHT ═══ -->
 <div id="view-log" class="view">
   <div class="tbar">
-    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>LOG WEIGHT</div>
+    <div class="tlogo"><div class="tmark"><svg width="16" height="16" viewBox="0 0 64 64" fill="none"><path d="M32 4 L56 14 L56 36 Q56 52 32 62 Q8 52 8 36 L8 14 Z" fill="#030306"/><path d="M16 38 L16 26 L23 32 L32 18 L41 32 L48 26 L48 38 Z" fill="#F0A500"/><rect x="15" y="38" width="34" height="5.5" rx="2.5" fill="#F0A500"/></svg></div>MY CONTEST</div>
     <div class="tright"><button class="ib" onclick="loadLog()" style="font-size:15px">↻</button></div>
   </div>
   <div class="pad" id="log-scroll">
@@ -1493,6 +1553,43 @@ body::after{
   </div>
 </div>
 
+<!-- CALORIE ANALYSER SHEET -->
+<div id="ov-calories" class="ov" onclick="ovc(event,'ov-calories')">
+  <div class="bs" style="max-height:94dvh"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" style="color:var(--lime)">🍽️ AI CALORIE COUNTER</span><button class="bsx" onclick="cls('ov-calories')">×</button></div>
+    <div class="bsbody">
+      <div style="text-align:center;padding:4px 0 14px">
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">Snap a photo of your food.<br>AI estimates calories and macros instantly.</div>
+      </div>
+      <div id="food-img-wrap" style="display:none" class="food-img-preview">
+        <img id="food-img" src="" alt="food">
+        <button style="position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.7);border-radius:50%;border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center" onclick="clearFoodImg()">×</button>
+      </div>
+      <div id="food-upload-zone" class="photo-zone" style="margin-bottom:12px">
+        <input type="file" accept="image/*" capture="environment" onchange="handleFoodPhoto(this)">
+        <span class="pz-icon">📸</span>
+        <div class="pz-label">Take or Upload Food Photo</div>
+        <div class="pz-sub">Works with any meal, snack, or drink</div>
+      </div>
+      <div id="food-result" style="display:none"></div>
+      <div id="food-history-section" style="margin-top:16px">
+        <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">TODAY'S LOG</div>
+        <div id="food-log-list"></div>
+        <div id="food-daily-total" style="display:none;background:var(--surf2);border-radius:var(--r);padding:10px 14px;text-align:center;border:1px solid var(--brd);margin-top:8px"></div>
+      </div>
+      <div style="height:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- HEALTH STAT DETAIL SHEET -->
+<div id="ov-hstat" class="ov" onclick="ovc(event,'ov-hstat')">
+  <div class="bs"><div class="bsh"></div>
+    <div class="bshdr"><span class="bstit" id="hstat-title">Stat</span><button class="bsx" onclick="cls('ov-hstat')">×</button></div>
+    <div class="bsbody" id="hstat-body"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div id="toast"><span id="ti">✅</span><span id="tm">Done!</span></div>
 
@@ -1646,16 +1743,17 @@ function go(v){
 // LEADERBOARD
 // ══════════════════════════════════════════════════════
 async function loadLB(){
-  const area=document.getElementById('lb-scroll');if(!area)return;
-  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading standings…</p></div>`;
+  // Render health dashboard immediately with local data, fetch LB in background
+  renderHealthDash();
   try{
     const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getLeaderboard'})});
     const d=await r.json();
-    if(d.success&&Array.isArray(d.leaderboard)){renderLB(area,d.leaderboard);checkAchievements(d.leaderboard);}
-    else{const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});const raw=await r2.json();renderLB(area,parseLBFromRaw(raw));}
-  }catch(e){
-    area.innerHTML=`<div style="padding:40px 18px;text-align:center;color:var(--text3)"><p style="margin-bottom:14px">⚠️ Could not load standings</p><button class="join-chip" onclick="loadLB()">↻ Retry</button></div>`;
-  }
+    if(d.success&&Array.isArray(d.leaderboard)){LB_DATA=d.leaderboard.map(e=>({...e,total:e.totalLossPct??e.total??0}));checkAchievements(d.leaderboard);}
+    else{const r2=await fetch(API,{method:'POST',body:JSON.stringify({action:'getAllWeights'})});const raw=await r2.json();LB_DATA=parseLBFromRaw(raw);}
+    // Update contest rank in health dash if visible
+    const myEntry=LB_DATA.find(e=>e.name.toLowerCase()===(CU||'').toLowerCase());
+    if(myEntry){const el=document.getElementById('hd-rank');if(el)el.textContent='#'+(LB_DATA.indexOf(myEntry)+1);}
+  }catch(e){}
 }
 
 function parseLBFromRaw(raw){
@@ -1670,6 +1768,344 @@ function parseLBFromRaw(raw){
     let streak=0;for(let i=entries.length-1;i>=1;i--){if(entries[i].weight<entries[i-1].weight)streak++;else break;}
     return{name:nm,totalLossPct:pct,weekChange:wc,streak,checkIns:entries.length};
   }).sort((a,b)=>b.totalLossPct-a.totalLossPct);
+}
+
+
+// ══════════════════════════════════════════════════════
+// HEALTH DASHBOARD (Home tab)
+// ══════════════════════════════════════════════════════
+function getHealthData(){
+  return JSON.parse(localStorage.getItem('fb_health_'+CU)||'{"steps":0,"water":0,"sleep":0,"calIn":0,"calBurned":0,"date":""}');
+}
+function saveHealthData(d){localStorage.setItem('fb_health_'+CU,JSON.stringify({...d,date:new Date().toDateString()}));}
+function todayHealthData(){
+  const d=getHealthData();
+  if(d.date!==new Date().toDateString())return{steps:0,water:0,sleep:0,calIn:0,calBurned:0,date:new Date().toDateString()};
+  return d;
+}
+
+function renderHealthDash(){
+  const area=document.getElementById('lb-scroll');if(!area)return;
+  const h=todayHealthData();
+  const myLBEntry=LB_DATA.find(e=>e.name&&e.name.toLowerCase()===(CU||'').toLowerCase());
+  const myRank=myLBEntry?LB_DATA.indexOf(myLBEntry)+1:null;
+
+  // Step goal: 10000, cal goal: 500 burn, water goal: 8 glasses, sleep goal: 8h
+  const stepPct=Math.min(100,Math.round(h.steps/10000*100));
+  const burnPct=Math.min(100,Math.round(h.calBurned/500*100));
+  const waterPct=Math.min(100,Math.round(h.water/8*100));
+  const calNetBalance=h.calIn-h.calBurned;
+  const calGoal=1800;
+  const calPct=Math.min(100,Math.round(h.calIn/calGoal*100));
+
+  // Calorie ring SVG (72px)
+  const R=28,C=36,circ=2*Math.PI*R;
+  const filled=circ*(1-calPct/100);
+  const calRing=`<svg width="72" height="72" viewBox="0 0 72 72">
+    <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="7"/>
+    <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${calPct>=100?'var(--red)':'var(--lime)'}" stroke-width="7"
+      stroke-dasharray="${circ}" stroke-dashoffset="${filled}" stroke-linecap="round"
+      transform="rotate(-90 ${C} ${C})" style="transition:stroke-dashoffset 1s ease"/>
+    <text x="${C}" y="${C+1}" text-anchor="middle" dominant-baseline="central" font-family="var(--fm)" font-size="12" font-weight="700" fill="${calPct>=100?'var(--red)':'var(--lime)'}">${calPct}%</text>
+  </svg>`;
+
+  const now=new Date();
+  const greeting=now.getHours()<12?'Good morning':now.getHours()<17?'Good afternoon':'Good evening';
+  const dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+
+  let html=`
+  <div class="health-greeting">
+    <div class="health-date-pill">📅 ${dateStr}</div>
+    <div class="health-greeting-name" style="margin-top:12px">${greeting},<br><span style="color:var(--gold)">${esc(CU||'Athlete')}</span></div>
+    ${myRank?`<div style="margin-top:8px;display:inline-flex;align-items:center;gap:8px;background:rgba(240,165,0,.08);border:1px solid rgba(240,165,0,.18);border-radius:var(--rf);padding:5px 12px"><span style="font-family:var(--fd);font-size:11px;color:var(--gold)" id="hd-rank">#${myRank}</span><span style="font-size:11px;color:var(--text2)">in contest</span></div>`:''}
+  </div>
+
+  <!-- Calorie card -->
+  <div class="cal-ring-card">
+    <div class="cal-ring-svg">${calRing}</div>
+    <div class="cal-ring-info">
+      <div class="cal-ring-label">CALORIES TODAY</div>
+      <div class="cal-ring-val">${h.calIn} <span style="font-size:1rem;font-weight:400;color:var(--text3)">kcal</span></div>
+      <div class="cal-ring-goal">Goal ${calGoal} kcal · Balance: <span style="color:${calNetBalance>0?'var(--red)':'var(--lime)'}">${calNetBalance>0?'+':''}${calNetBalance}</span></div>
+      <div class="cal-ring-btns">
+        <div class="cal-mini-btn img" onclick="openS('ov-calories')">📸 Scan Food</div>
+        <div class="cal-mini-btn" onclick="openHStatEdit('calIn')">+ Log Manually</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats grid -->
+  <div class="health-grid">
+    <div class="hstat steps" onclick="openHStatEdit('steps')">
+      <div class="hstat-icon">👟</div>
+      <div class="hstat-val">${h.steps.toLocaleString('en-IN')}</div>
+      <div class="hstat-label">Steps</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${stepPct}%"></div></div>
+      <div class="hstat-goal">${stepPct}% of 10,000 goal</div>
+    </div>
+    <div class="hstat burn" onclick="openHStatEdit('calBurned')">
+      <div class="hstat-icon">🔥</div>
+      <div class="hstat-val">${h.calBurned}</div>
+      <div class="hstat-label">Cal Burned</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${burnPct}%"></div></div>
+      <div class="hstat-goal">${burnPct}% of 500 goal</div>
+    </div>
+    <div class="hstat water" onclick="openHStatEdit('water')">
+      <div class="hstat-icon">💧</div>
+      <div class="hstat-val">${h.water}<span style="font-size:1rem;font-weight:400"> gl</span></div>
+      <div class="hstat-label">Water</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${waterPct}%"></div></div>
+      <div class="hstat-goal">${waterPct}% of 8 glasses</div>
+    </div>
+    <div class="hstat sleep" onclick="openHStatEdit('sleep')">
+      <div class="hstat-icon">😴</div>
+      <div class="hstat-val">${h.sleep}<span style="font-size:1rem;font-weight:400">h</span></div>
+      <div class="hstat-label">Sleep</div>
+      <div class="hstat-bar"><div class="hstat-bar-fill" style="width:${Math.min(100,h.sleep/8*100)}%"></div></div>
+      <div class="hstat-goal">${h.sleep>=8?'✓ Goal met':'Goal: 8h'}</div>
+    </div>
+  </div>
+
+  <!-- Contest quick-peek -->
+  ${myLBEntry?`
+  <div style="margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;cursor:pointer" onclick="go('log')">
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">YOUR CONTEST STATS</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--gold)">${myLBEntry.total||0}%</div><div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">LOST</div></div>
+      <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--lime)">${myLBEntry.streak||0}🔥</div><div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">STREAK</div></div>
+      <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--blue)">${myLBEntry.checkIns||0}</div><div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">WEIGH-INS</div></div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--text3);text-align:center">Tap to open contest hub →</div>
+  </div>`:`
+  <div style="margin:16px 18px 0;background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:16px;text-align:center;cursor:pointer" onclick="go('log')">
+    <div style="font-size:28px;margin-bottom:8px">⚖️</div>
+    <div style="font-family:var(--fd);font-size:.95rem;letter-spacing:1px;margin-bottom:4px">JOIN THE CONTEST</div>
+    <div style="font-size:12px;color:var(--text2)">Log your first weigh-in to appear on the leaderboard</div>
+  </div>`}
+
+  <!-- Food log history -->
+  ${getFoodLogToday().length?`
+  <div style="padding:16px 18px 0">
+    <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">TODAY'S FOOD LOG</div>
+    ${getFoodLogToday().map(f=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--brd);margin-bottom:6px">
+      <div style="font-size:13px;font-weight:600">${esc(f.name)}</div>
+      <div style="font-family:var(--fm);color:var(--lime);font-size:12px">${f.cal} kcal</div>
+    </div>`).join('')}
+  </div>`:''}
+
+  <div style="height:16px"></div>`;
+
+  area.innerHTML=html;
+  clearInterval(cdI);cdI=setInterval(updCD,1000);updCD();
+}
+
+// ── Health stat quick-edit sheet ──
+function openHStatEdit(stat){
+  const labels={steps:'Steps',water:'Glasses of Water',sleep:'Hours Slept',calIn:'Calories Eaten',calBurned:'Calories Burned'};
+  const units={steps:'steps',water:'glasses',sleep:'hours',calIn:'kcal',calBurned:'kcal'};
+  const icons={steps:'👟',water:'💧',sleep:'😴',calIn:'🍽️',calBurned:'🔥'};
+  const h=todayHealthData();
+  document.getElementById('hstat-title').textContent=icons[stat]+' '+labels[stat];
+  document.getElementById('hstat-body').innerHTML=`
+    <div style="text-align:center;padding:16px 0 20px">
+      <div style="font-size:48px;margin-bottom:8px">${icons[stat]}</div>
+      <div style="font-family:var(--fd);font-size:1.3rem;letter-spacing:1px;margin-bottom:6px">${labels[stat]}</div>
+      <div style="font-family:var(--fm);font-size:2rem;font-weight:700;color:var(--lime);margin-bottom:4px">${h[stat]}</div>
+      <div style="font-size:12px;color:var(--text3)">${units[stat]} logged today</div>
+    </div>
+    <input type="number" id="hstat-val-input" class="sfi" placeholder="Enter ${labels[stat].toLowerCase()}" value="${h[stat]||''}" inputmode="decimal" min="0" style="margin-bottom:12px">
+    <button class="bs-btn" style="background:var(--lime);color:#020208" onclick="saveHStat('${stat}')">SAVE</button>
+    <div style="height:8px">`;
+  openS('ov-hstat');
+}
+function saveHStat(stat){
+  const val=parseFloat(document.getElementById('hstat-val-input')?.value)||0;
+  const h=todayHealthData();h[stat]=val;saveHealthData(h);
+  cls('ov-hstat');renderHealthDash();
+  toast(`${stat==='steps'?'👟':stat==='water'?'💧':stat==='sleep'?'😴':'🔥'} Updated!`,'✅');
+}
+
+// ── Food log helpers ──
+function getFoodLogToday(){
+  const logs=JSON.parse(localStorage.getItem('fb_food_'+CU)||'[]');
+  const today=new Date().toDateString();
+  return logs.filter(l=>l.date===today);
+}
+function addFoodEntry(name,cal,protein,carbs,fat){
+  const logs=JSON.parse(localStorage.getItem('fb_food_'+CU)||'[]');
+  const entry={name,cal,protein,carbs,fat,date:new Date().toDateString(),time:Date.now()};
+  logs.unshift(entry);
+  if(logs.length>100)logs.pop();
+  localStorage.setItem('fb_food_'+CU,JSON.stringify(logs));
+  // Update calIn for today
+  const h=todayHealthData();
+  const todayTotal=getFoodLogToday().reduce((s,l)=>s+(l.cal||0),0)+cal;
+  h.calIn=todayTotal;saveHealthData(h);
+}
+
+// ── AI Calorie Analyser ──
+let foodImgData=null;
+// ── Groq API key management ──
+function getGroqKey(){return localStorage.getItem('fb_groq_key')||'';}
+function saveGroqKey(k){localStorage.setItem('fb_groq_key',k.trim());}
+function promptGroqKey(onSaved){
+  // Inline key prompt inside ov-calories
+  const result=document.getElementById('food-result');
+  if(!result)return;
+  result.style.display='block';
+  result.innerHTML=`
+    <div style="background:rgba(240,165,0,.07);border:1px solid rgba(240,165,0,.2);border-radius:var(--rl);padding:18px">
+      <div style="font-family:var(--fd);font-size:.95rem;letter-spacing:1px;margin-bottom:6px;color:var(--gold)">🔑 Enter Groq API Key</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+        Groq is <strong style="color:var(--lime)">free &amp; unlimited</strong> — no credit card needed.<br>
+        Get your key at <span style="color:var(--blue);cursor:pointer" onclick="window.open('https://console.groq.com/keys','_blank')">console.groq.com/keys</span>
+      </div>
+      <input type="text" id="groq-key-input" class="sfi" placeholder="gsk_..." autocomplete="off" style="margin-bottom:10px;font-family:var(--fm);letter-spacing:.5px">
+      <button class="bs-btn" style="background:var(--lime);color:#020208" onclick="
+        const k=document.getElementById('groq-key-input').value.trim();
+        if(!k||!k.startsWith('gsk_')){toast('Enter a valid Groq key (starts with gsk_)','⚠️');return;}
+        saveGroqKey(k);
+        document.getElementById('food-result').style.display='none';
+        if(window._groqKeySavedCallback)window._groqKeySavedCallback();
+      ">SAVE &amp; ANALYSE</button>
+    </div>`;
+  window._groqKeySavedCallback=onSaved||null;
+}
+
+function handleFoodPhoto(inp){
+  const f=inp.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    foodImgData=e.target.result;
+    document.getElementById('food-img').src=foodImgData;
+    document.getElementById('food-img-wrap').style.display='block';
+    document.getElementById('food-upload-zone').style.display='none';
+    // Check for key before analysing
+    if(!getGroqKey()){promptGroqKey(()=>analyseFoodPhoto());return;}
+    analyseFoodPhoto();
+  };
+  reader.readAsDataURL(f);
+}
+
+function clearFoodImg(){
+  foodImgData=null;
+  document.getElementById('food-img-wrap').style.display='none';
+  document.getElementById('food-upload-zone').style.display='block';
+  document.getElementById('food-result').style.display='none';
+}
+
+async function analyseFoodPhoto(){
+  const result=document.getElementById('food-result');
+  if(!result||!foodImgData)return;
+  const key=getGroqKey();
+  if(!key){promptGroqKey(()=>analyseFoodPhoto());return;}
+
+  result.style.display='block';
+  result.innerHTML=`<div class="food-loading"><div style="width:20px;height:20px;border:2px solid rgba(0,232,122,.3);border-top-color:var(--lime);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0"></div>Analysing with Groq Llama 4…</div>`;
+
+  try{
+    // Groq uses OpenAI-compatible API — image as data URL in image_url
+    const resp=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+key
+      },
+      body:JSON.stringify({
+        model:'meta-llama/llama-4-scout-17b-16e-instruct',
+        max_tokens:400,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image_url',image_url:{url:foodImgData}},
+            {type:'text',text:'Analyse this food image. Respond ONLY with a raw JSON object — no markdown fences, no explanation: {"name":"food name","calories":number,"protein_g":number,"carbs_g":number,"fat_g":number,"confidence":"high/medium/low","note":"brief note or empty string"}. If multiple items are visible, estimate the total. If no food is visible respond with {"name":"No food detected","calories":0,"protein_g":0,"carbs_g":0,"fat_g":0,"confidence":"low","note":""}'}
+          ]
+        }]
+      })
+    });
+
+    if(resp.status===401){
+      // Bad key — clear it and prompt again
+      localStorage.removeItem('fb_groq_key');
+      result.innerHTML=`<div style="padding:14px;background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.2);border-radius:var(--r);font-size:13px;color:var(--red);margin-bottom:10px">⚠️ Invalid API key. Please re-enter.</div>`;
+      setTimeout(()=>promptGroqKey(()=>analyseFoodPhoto()),400);
+      return;
+    }
+    if(resp.status===429){
+      result.innerHTML=`<div style="padding:14px;background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.2);border-radius:var(--r);font-size:13px;color:var(--heat)">⏱️ Rate limit hit — wait a moment and try again.</div>`;
+      return;
+    }
+
+    const data=await resp.json();
+    const text=(data.choices?.[0]?.message?.content||'{}').replace(/```json|```/g,'').trim();
+
+    let food;
+    try{food=JSON.parse(text);}
+    catch(e){
+      // Groq sometimes returns text before JSON — try to extract it
+      const match=text.match(/\{[\s\S]*\}/);
+      try{food=match?JSON.parse(match[0]):null;}catch(e2){food=null;}
+    }
+    if(!food){
+      result.innerHTML=`<div style="padding:14px;background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.2);border-radius:var(--r);font-size:13px;color:var(--red)">⚠️ Could not parse response. Try a clearer photo.</div>`;
+      return;
+    }
+
+    if(food.calories===0&&food.name==='No food detected'){
+      result.innerHTML=`<div style="padding:14px;background:rgba(255,107,26,.08);border:1px solid rgba(255,107,26,.2);border-radius:var(--r);font-size:13px;color:var(--heat)">🤔 No food detected. Try a closer or clearer photo.</div>`;
+      return;
+    }
+
+    const foodJson=JSON.stringify(food).replace(/"/g,'&quot;');
+    result.innerHTML=`<div class="food-result-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px">
+        <div style="font-family:var(--fd);font-size:1rem;letter-spacing:1px">${esc(food.name)}</div>
+        <div style="background:rgba(0,0,0,.25);border-radius:3px;padding:2px 8px;font-family:var(--fd);font-size:9px;letter-spacing:1px;color:${food.confidence==='high'?'var(--lime)':food.confidence==='medium'?'var(--gold)':'var(--heat)'};white-space:nowrap">${(food.confidence||'').toUpperCase()}</div>
+      </div>
+      ${food.note?`<div style="font-size:11px;color:var(--text3);margin-bottom:8px">ℹ️ ${esc(food.note)}</div>`:''}
+      <div class="food-cal-big">${food.calories} <span style="font-size:1rem;font-weight:400;color:var(--text2)">kcal</span></div>
+      <div class="food-macro-row">
+        <div class="food-macro"><div class="food-macro-v" style="color:#38BFF8">${food.protein_g}g</div><div class="food-macro-k">Protein</div></div>
+        <div class="food-macro"><div class="food-macro-v" style="color:var(--gold)">${food.carbs_g}g</div><div class="food-macro-k">Carbs</div></div>
+        <div class="food-macro"><div class="food-macro-v" style="color:var(--heat)">${food.fat_g}g</div><div class="food-macro-k">Fat</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="bs-btn" style="background:var(--lime);color:#020208;flex:1" onclick="logFoodEntry(${foodJson})">+ ADD TO LOG</button>
+        <button style="padding:10px 14px;background:var(--surf2);border:1px solid var(--brd);border-radius:var(--r);font-family:var(--fd);font-size:10px;letter-spacing:1px;color:var(--text3);cursor:pointer" onclick="clearFoodImg();document.getElementById('food-result').style.display='none'">RETRY</button>
+      </div>
+      <div style="margin-top:10px;font-size:10px;color:var(--text3);text-align:center">⚡ Powered by Groq · Llama 4 Scout · Free tier</div>
+    </div>`;
+    renderFoodHistory();
+  }catch(e){
+    result.innerHTML=`<div style="padding:14px;background:rgba(255,48,48,.08);border:1px solid rgba(255,48,48,.2);border-radius:var(--r);font-size:13px;color:var(--red)">⚠️ Network error. Check connection and try again.<br><span style="font-size:11px;color:var(--text3);margin-top:4px;display:block">${e.message}</span></div>`;
+  }
+}
+
+function logFoodEntry(food){
+  addFoodEntry(food.name,food.calories,food.protein_g,food.carbs_g,food.fat_g);
+  cls('ov-calories');renderHealthDash();
+  toast(food.name+' logged — '+food.calories+' kcal','🍽️');
+}
+function renderFoodHistory(){
+  const list=document.getElementById('food-log-list');
+  const total=document.getElementById('food-daily-total');
+  const entries=getFoodLogToday();
+  if(!list||!total)return;
+  if(!entries.length){list.innerHTML=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:12px">No food logged today yet</div>`;total.style.display='none';return;}
+  list.innerHTML=entries.map(f=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surf);border-radius:var(--r);border:1px solid var(--brd);margin-bottom:6px">
+      <div><div style="font-size:13px;font-weight:600">${esc(f.name)}</div><div style="font-size:10px;color:var(--text3)">${f.protein_g}g P · ${f.carbs_g}g C · ${f.fat_g}g F</div></div>
+      <div style="font-family:var(--fm);color:var(--lime);font-size:13px">${f.cal} kcal</div>
+    </div>`).join('');
+  const totalCal=entries.reduce((s,f)=>s+(f.cal||0),0);
+  const totalP=entries.reduce((s,f)=>s+(f.protein_g||0),0);
+  const totalC=entries.reduce((s,f)=>s+(f.carbs_g||0),0);
+  const totalF=entries.reduce((s,f)=>s+(f.fat_g||0),0);
+  total.style.display='block';
+  total.innerHTML=`<div style="font-family:var(--fd);font-size:.85rem;color:var(--text3);letter-spacing:1px;margin-bottom:6px">DAILY TOTAL</div>
+    <div style="font-family:var(--fd);font-size:1.5rem;color:var(--lime)">${totalCal} kcal</div>
+    <div style="font-size:11px;color:var(--text3);margin-top:4px">${totalP}g protein · ${totalC}g carbs · ${totalF}g fat</div>`;
 }
 
 function renderLB(area,lb){
@@ -1922,123 +2358,190 @@ function updCD(){const el=document.getElementById('cd');if(!el){clearInterval(cd
 // ══════════════════════════════════════════════════════
 async function loadLog(){
   const area=document.getElementById('log-scroll');if(!area)return;
-  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading your data...</p></div>`;
-  let myWeights=[];
+  area.innerHTML=`<div style="padding:48px 18px;text-align:center;color:var(--text3)"><div style="width:30px;height:30px;border:3px solid var(--surf2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 14px"></div><p>Loading contest data…</p></div>`;
+  // Fetch LB + personal weights in parallel
+  let lbData=[],myWeights=[];
   try{
-    const r=await fetch(API,{method:'POST',body:JSON.stringify({action:'getUserWeights',username:CU})});
-    const raw=await r.json();
-    const rows=Array.isArray(raw)&&raw.length>1?raw.slice(1):[];
+    const [lbRes,wRes]=await Promise.all([
+      fetch(API,{method:'POST',body:JSON.stringify({action:'getLeaderboard'})}),
+      fetch(API,{method:'POST',body:JSON.stringify({action:'getUserWeights',username:CU})})
+    ]);
+    const lbJson=await lbRes.json();
+    if(lbJson.success&&Array.isArray(lbJson.leaderboard))lbData=lbJson.leaderboard.map(e=>({...e,total:e.totalLossPct??e.total??0}));
+    const wRaw=await wRes.json();
+    const rows=Array.isArray(wRaw)&&wRaw.length>1?wRaw.slice(1):[];
     myWeights=rows.map(r=>({date:new Date(r[1]),weight:parseFloat(r[2])})).filter(r=>!isNaN(r.weight)&&!isNaN(r.date.getTime())).sort((a,b)=>a.date-b.date);
+    LB_DATA=lbData;
+    checkAchievements(lbData);
   }catch(e){}
-  renderLog(area,myWeights);
+  renderContestHub(area,myWeights,lbData);
 }
 
-function renderLog(area,weights){
+function renderContestHub(area,weights,lb){
   const now=new Date(),isMonday=now.getDay()===1;
-  const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const color=CLRS[Math.floor(Math.abs((CU||'a').charCodeAt(0))%CLRS.length)];
+  const myLBEntry=lb.find(e=>e.name&&e.name.toLowerCase()===(CU||'').toLowerCase());
+  const myRank=myLBEntry?lb.indexOf(myLBEntry)+1:null;
+  const dLeft=Math.max(0,Math.ceil((CEND-now)/86400000));
+  const totalDays=Math.ceil((CEND-CSTART)/86400000);
+  const elapsed=Math.max(0,Math.ceil((now-CSTART)/86400000));
+  const prog=Math.min(100,Math.round(elapsed/totalDays*100));
+  const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
+
+  // Personal stats
   const firstW=weights.length?weights[0].weight:null;
   const lastW=weights.length?weights[weights.length-1].weight:null;
   const totalLoss=firstW&&lastW?parseFloat((firstW-lastW).toFixed(2)):null;
   const totalPct=firstW&&lastW?parseFloat(((firstW-lastW)/firstW*100).toFixed(2)):null;
-  const weekChange=weights.length>=2?parseFloat((weights[weights.length-2].weight-lastW).toFixed(2)):null;
   const streak=calcStreak(weights);
-  const proofs=JSON.parse(localStorage.getItem('fb_proofs_'+(CU||''))||'[]');
 
-  // ── Group entries into weeks (Mon–Sun) ──
+  // Week grouping
   function getMondayOf(d){const dt=new Date(d);const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);dt.setHours(0,0,0,0);return dt;}
   const weekMap={};
-  weights.forEach(w=>{
-    const mon=getMondayOf(w.date);
-    const key=mon.toISOString().split('T')[0];
-    if(!weekMap[key])weekMap[key]={mon,entries:[]};
-    weekMap[key].entries.push(w);
-  });
-  // Sort weeks oldest→newest, take last entry of each week as the "official" weight
-  const weeks=Object.values(weekMap).sort((a,b)=>a.mon-b.mon).map(wk=>{
-    const sorted=wk.entries.sort((a,b)=>a.date-b.date);
-    return{mon:wk.mon,weight:sorted[sorted.length-1].weight,entries:sorted};
-  });
+  weights.forEach(w=>{const mon=getMondayOf(w.date);const key=mon.toISOString().split('T')[0];if(!weekMap[key])weekMap[key]={mon,entries:[]};weekMap[key].entries.push(w);});
+  const weeks=Object.values(weekMap).sort((a,b)=>a.mon-b.mon).map(wk=>{const sorted=wk.entries.sort((a,b)=>a.date-b.date);return{mon:wk.mon,weight:sorted[sorted.length-1].weight,entries:sorted};});
+  const weekChange=weeks.length>=2?parseFloat((weeks[weeks.length-2].weight-weeks[weeks.length-1].weight).toFixed(2)):null;
 
-  // ── Sparkline SVG ──
-  function buildSparkline(wks){
-    if(wks.length<2)return'';
-    const vals=wks.map(w=>w.weight);
-    const min=Math.min(...vals),max=Math.max(...vals);
-    const range=max-min||1;
-    const W=260,H=52,pad=6;
-    const x=(i)=>pad+(i/(wks.length-1))*(W-pad*2);
-    const y=(v)=>H-pad-((v-min)/range)*(H-pad*2);
-    const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
-    // Area fill path
-    const areaD=`M${x(0).toFixed(1)},${H} `+vals.map((v,i)=>`L${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')+` L${x(vals.length-1).toFixed(1)},${H} Z`;
-    // Trend: last val vs first val
-    const trending=vals[vals.length-1]<vals[0];// lower weight = good
-    const lineColor=trending?'#00E87A':'#ff4b4b';
-    const fillColor=trending?'rgba(0,232,122,.08)':'rgba(255,75,75,0.08)';
-    return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible">
-      <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${lineColor}" stop-opacity=".3"/><stop offset="100%" stop-color="${lineColor}" stop-opacity="0"/></linearGradient></defs>
-      <path d="${areaD}" fill="url(#sg)"/>
-      <polyline points="${pts}" fill="none" stroke="${lineColor}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-      ${vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i===vals.length-1?4:2.5}" fill="${i===vals.length-1?lineColor:'var(--surf2)'}" stroke="${lineColor}" stroke-width="1.5"/>`).join('')}
-    </svg>`;
+  let html=`<div style="padding:4px 0">`;
+
+  // ── Contest banner ──
+  html+=`<div style="padding:18px 0 0">
+    <div style="margin:0 0 0;background:linear-gradient(160deg,rgba(240,165,0,.1),rgba(240,165,0,.03));border-bottom:1px solid rgba(240,165,0,.15);padding:16px 18px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2.5px;color:rgba(240,165,0,.7);margin-bottom:6px"><span class="live-dot" style="background:var(--lime);box-shadow:0 0 6px var(--lime)"></span> LIVE · 12-WEEK FAT LOSS LEAGUE</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">
+        <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--gold)">₹6,500</div><div style="font-size:8px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">POOL</div></div>
+        <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--red)">${dLeft}d</div><div style="font-size:8px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">LEFT</div></div>
+        <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--blue)">${lb.length}</div><div style="font-size:8px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">PLAYERS</div></div>
+        <div style="text-align:center"><div style="font-family:var(--fd);font-size:1.1rem;color:var(--lime)">${prog}%</div><div style="font-size:8px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">DONE</div></div>
+      </div>
+      <div style="height:4px;background:var(--surf2);border-radius:2px;overflow:hidden"><div style="height:100%;width:${prog}%;background:linear-gradient(90deg,var(--gold2),var(--gold));border-radius:2px"></div></div>
+    </div>
+  </div>`;
+
+  // ── My position card ──
+  if(myLBEntry){
+    const medal=myRank===1?'🥇':myRank===2?'🥈':myRank===3?'🥉':'#'+myRank;
+    html+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="background:linear-gradient(135deg,rgba(0,232,122,.07),rgba(0,232,122,.02));border:1px solid rgba(0,232,122,.2);border-radius:var(--rl);padding:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <div style="width:40px;height:40px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0">${(CU||'?')[0].toUpperCase()}</div>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:14px">${esc(CU)}</div>
+            <div style="font-size:11px;color:var(--text3)">Rank ${medal} · ${myLBEntry.checkIns||0} weigh-ins</div>
+          </div>
+          ${streak>=2?`<div style="background:rgba(255,107,26,.1);border:1px solid rgba(255,107,26,.2);border-radius:var(--rf);padding:4px 10px;font-family:var(--fd);font-size:11px;color:var(--heat)">🔥 ${streak}-wk</div>`:''}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:var(--lime)">${totalPct!==null?totalPct+'%':'—'}</div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">TOTAL LOST</div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:${weekChange===null?'var(--text3)':weekChange>0?'var(--lime)':'var(--red)'}">${weekChange!==null?(weekChange>0?'▼'+weekChange:'▲'+Math.abs(weekChange))+'kg':'—'}</div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">THIS WEEK</div>
+          </div>
+          <div style="background:rgba(0,0,0,.2);border-radius:var(--r);padding:10px;text-align:center">
+            <div style="font-family:var(--fd);font-size:1.1rem;color:var(--gold)">${firstW||'—'}<span style="font-size:.7rem"> kg</span></div>
+            <div style="font-size:9px;color:var(--text3);font-family:var(--fd);letter-spacing:1px;margin-top:2px">START WT</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
   }
 
-  let html=`<div style="padding:4px 0 16px">
-    <div class="log-top">
-      <div class="log-av" style="background:${color}">${(CU||'?')[0].toUpperCase()}</div>
-      <div>
-        <div class="log-name">${esc(CU||'Competitor')}</div>
-        <div class="log-sub">${weights.length} weigh-in${weights.length!==1?'s':''} · ${weeks.length} week${weeks.length!==1?'s':''}${streak>=2?` · 🔥 ${streak}-wk streak`:''}</div>
+  // ── Weigh-in form ──
+  const nextMon=nextMonday();
+  html+=`<div style="padding:0 18px;margin-top:14px">
+    <div class="wi-form-inline">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--gold);margin-bottom:10px">
+        ${isMonday?'✅ OFFICIAL WEIGH-IN DAY':'⏰ LOG WEIGHT'}
       </div>
+      ${!isMonday?`<div style="font-size:11px;color:var(--text3);margin-bottom:10px">Next official weigh-in: <strong style="color:var(--text2)">${nextMon}</strong></div>`:''}
+      <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal" style="margin-bottom:8px">
+      <div class="wi-unit" style="margin-bottom:10px">KILOGRAMS</div>
+      <div class="photo-preview" id="photo-prev"><img id="photo-img" src="" alt="proof"><button class="rm" onclick="removePhoto()">×</button></div>
+      <div class="photo-zone" id="photo-zone">
+        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+        <span class="pz-icon">📷</span>
+        <div class="pz-label">Add Photo Proof</div>
+        <div class="pz-sub">Required for official Monday weigh-in</div>
+      </div>
+      <button class="blog" id="logbtn" onclick="submitW()" style="margin-top:8px">
+        ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
+      </button>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px">
-      <div class="d-stat"><span class="d-sv" style="color:var(--gold)">${totalPct!==null?totalPct+'%':'—'}</span><div class="d-sk">Total Loss</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:${weekChange===null?'var(--text3)':weekChange>0?'var(--green)':'var(--red)'}">${weekChange!==null?(weekChange>0?'▼ '+weekChange:'+'+Math.abs(weekChange))+' kg':'—'}</span><div class="d-sk">Last Change</div></div>
-      <div class="d-stat"><span class="d-sv" style="color:var(--orange)">${streak>=2?'🔥'+streak:'—'}</span><div class="d-sk">Streak</div></div>
-    </div>`;
+  </div>`;
 
-  // Sparkline card
+  // ── Sparkline ──
   if(weeks.length>=2){
-    html+=`<div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;margin-bottom:16px;overflow:hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-family:var(--fd);font-size:.8rem;letter-spacing:.8px;color:var(--text3)">WEIGHT TREND</div>
-        <div style="font-size:11px;font-weight:700;color:var(--text2)">${firstW} kg → ${lastW} kg</div>
-      </div>
-      <div style="width:100%;overflow:hidden">${buildSparkline(weeks)}</div>
-      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:6px;font-weight:600">
-        <span>${weeks[0].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
-        <span>${weeks[weeks.length-1].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+    const vals=weeks.map(w=>w.weight);
+    const min=Math.min(...vals),max=Math.max(...vals),range=max-min||1;
+    const W=260,H=52,pad=6;
+    const x=i=>pad+(i/(weeks.length-1))*(W-pad*2);
+    const y=v=>H-pad-((v-min)/range)*(H-pad*2);
+    const pts=vals.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+    const areaD=`M${x(0).toFixed(1)},${H} `+vals.map((v,i)=>`L${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')+` L${x(vals.length-1).toFixed(1)},${H} Z`;
+    const trending=vals[vals.length-1]<vals[0];
+    const lc=trending?'#00E87A':'#ff4b4b';
+    html+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:14px 16px;overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-family:var(--fd);font-size:9px;letter-spacing:1.5px;color:var(--text3)">WEIGHT TREND</div>
+          <div style="font-size:11px;font-weight:700;color:var(--text2)">${firstW} kg → ${lastW} kg</div>
+        </div>
+        <svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="overflow:visible;width:100%">
+          <defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="${lc}" stop-opacity=".3"/><stop offset="100%" stop-color="${lc}" stop-opacity="0"/></linearGradient></defs>
+          <path d="${areaD}" fill="url(#sg2)"/>
+          <polyline points="${pts}" fill="none" stroke="${lc}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          ${vals.map((v,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="${i===vals.length-1?4:2.5}" fill="${i===vals.length-1?lc:'var(--surf2)'}" stroke="${lc}" stroke-width="1.5"/>`).join('')}
+        </svg>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:4px">
+          <span>${weeks[0].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+          <span>${weeks[weeks.length-1].mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</span>
+        </div>
       </div>
     </div>`;
   }
 
-  // Weigh-in input
-  html+=`
-    ${isMonday?`<div class="log-status-ok">✅ It's Monday! Time to log your weight + photo proof.</div>`:`<div class="log-status-warn">⏰ Official weigh-ins are Mondays.<br>Today is ${days[now.getDay()]}. You can still log practice weight.</div>`}
-    <input type="number" id="wi" class="wi-big" placeholder="0.0" step="0.1" min="30" max="300" inputmode="decimal">
-    <div class="wi-unit">KILOGRAMS</div>
-    <div class="photo-preview" id="photo-prev"><img id="photo-img" src="" alt="proof"><button class="rm" onclick="removePhoto()">×</button></div>
-    <div class="photo-zone" id="photo-zone">
-      <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(this)">
-      <span class="pz-icon">📷</span>
-      <div class="pz-label">Add Photo Proof</div>
-      <div class="pz-sub">Required for official Monday weigh-in</div>
-    </div>
-    <button class="blog" id="logbtn" onclick="submitW()">
-      ${isMonday?'⚖️ SUBMIT OFFICIAL WEIGH-IN':'LOG PRACTICE WEIGHT'}
-    </button>`;
+  // ── Full leaderboard ──
+  if(lb.length){
+    html+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="font-family:var(--fd);font-size:9px;letter-spacing:2px;color:var(--text3);margin-bottom:10px">FULL STANDINGS</div>
+      <div class="lb-list">`;
+    lb.forEach((e,i)=>{
+      const isMe=e.name&&e.name.toLowerCase()===(CU||'').toLowerCase();
+      const wkCol=e.weekChange===null?'week-nil':e.weekChange>0?'week-dn':'week-up';
+      const wkTxt=e.weekChange===null?'–':e.weekChange>0?`▼ ${e.weekChange.toFixed(2)} kg`:`▲ ${Math.abs(e.weekChange).toFixed(2)} kg`;
+      const rankNum=i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1).toString();
+      const safeName=(e.name||'').replace(/'/g,"\'");
+      const rcClass=i===0?'rc r1'+(isMe?' rme':''):isMe?'rc rme':'rc rn';
+      html+=`<div class="${rcClass}" style="animation-delay:${i*.04}s;cursor:pointer;border-radius:var(--rl);margin-bottom:6px" onclick="openProfile('${safeName}')">
+        <div class="rc-rank">${rankNum}</div>
+        <div class="rc-av" style="background:${CLRS[i%CLRS.length]}">${(e.name||'?')[0].toUpperCase()}${e.streak>=2?`<div class="streak">🔥${e.streak}</div>`:''}</div>
+        <div class="rc-body">
+          <div class="rc-name">${esc(e.name||'?')}${isMe?'<span class="you">YOU</span>':''}</div>
+          <div class="rc-meta">
+            ${e.streak>=2?`<div class="rc-streak">🔥 ${e.streak}-week streak</div>`:''}
+            <div class="rc-status">${e.checkIns||0} weigh-ins · tap to view</div>
+          </div>
+        </div>
+        <div class="rc-right">
+          <div class="rc-pct">${(e.total||0)>0?(e.total)+'%':'0%'}</div>
+          <div class="rc-week ${wkCol}">${wkTxt}</div>
+        </div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  }
 
-  // Week-on-week history table
+  // ── Week-on-week table ──
   if(weeks.length){
-    html+=`<div style="margin-top:22px;background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd)">
-      <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEEK-ON-WEEK HISTORY</div>
-      <div style="overflow-x:auto">
-      <table class="ht">
-        <thead><tr><th>Week</th><th>Weight</th><th>Change</th><th>% Change</th></tr></thead>
-        <tbody>`;
-
-    // Render newest week first
+    html+=`<div style="padding:0 18px;margin-top:14px">
+      <div style="background:var(--surf);border-radius:var(--rl);overflow:hidden;border:1px solid var(--brd)">
+        <div style="padding:13px 16px;border-bottom:1px solid var(--brd);font-family:var(--fd);font-size:.9rem;letter-spacing:1px;color:var(--text2)">WEEK-ON-WEEK HISTORY</div>
+        <div style="overflow-x:auto"><table class="ht">
+          <thead><tr><th>Week</th><th>Weight</th><th>Change</th><th>% Change</th></tr></thead>
+          <tbody>`;
     [...weeks].reverse().forEach((wk,i,arr)=>{
       const prevWk=arr[i+1];
       const chgKg=prevWk?parseFloat((prevWk.weight-wk.weight).toFixed(2)):null;
@@ -2046,47 +2549,29 @@ function renderLog(area,weights){
       const isLatest=i===0;
       const weekLabel=`W${weeks.length-i}`;
       const dateRange=wk.mon.toLocaleDateString('en-GB',{day:'2-digit',month:'short'});
-
       let chgCell,pctCell;
-      if(chgKg===null){
-        chgCell=`<span style="color:var(--text3)">—</span>`;
-        pctCell=`<span style="color:var(--text3)">—</span>`;
-      } else if(chgKg>0){
-        chgCell=`<span class="dn">▼ ${chgKg} kg</span>`;
-        pctCell=`<span class="dn">▼ ${chgPct}%</span>`;
-      } else if(chgKg<0){
-        chgCell=`<span class="up">▲ ${Math.abs(chgKg)} kg</span>`;
-        pctCell=`<span class="up">▲ ${Math.abs(chgPct)}%</span>`;
-      } else {
-        chgCell=`<span style="color:var(--text3)">0 kg</span>`;
-        pctCell=`<span style="color:var(--text3)">0%</span>`;
-      }
-
-      // Show all individual entries for the week as sub-rows
-      const subRows=wk.entries.length>1?wk.entries.slice(0,-1).reverse().map(e=>`
-        <tr style="background:rgba(255,255,255,0.015)">
-          <td style="padding-left:24px;font-size:11px;color:var(--text3)">${e.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
-          <td style="font-family:var(--fm);font-size:11px;color:var(--text3)">${e.weight} kg</td>
-          <td colspan="2" style="font-size:11px;color:var(--text3)">practice</td>
-        </tr>`).join(''):'';
-
+      if(chgKg===null){chgCell=`<span style="color:var(--text3)">—</span>`;pctCell=`<span style="color:var(--text3)">—</span>`;}
+      else if(chgKg>0){chgCell=`<span class="dn">▼ ${chgKg} kg</span>`;pctCell=`<span class="dn">▼ ${chgPct}%</span>`;}
+      else if(chgKg<0){chgCell=`<span class="up">▲ ${Math.abs(chgKg)} kg</span>`;pctCell=`<span class="up">▲ ${Math.abs(chgPct)}%</span>`;}
+      else{chgCell=`<span style="color:var(--text3)">0 kg</span>`;pctCell=`<span style="color:var(--text3)">0%</span>`;}
+      const subRows=wk.entries.length>1?wk.entries.slice(0,-1).reverse().map(e=>`<tr style="background:rgba(255,255,255,.015)"><td style="padding-left:24px;font-size:11px;color:var(--text3)">${e.date.toLocaleDateString('en-GB',{day:'2-digit',month:'short'})}</td><td style="font-family:var(--fm);font-size:11px;color:var(--text3)">${e.weight} kg</td><td colspan="2" style="font-size:11px;color:var(--text3)">practice</td></tr>`).join(''):'';
       html+=`<tr style="${isLatest?'background:rgba(240,165,0,.04)':''}">
         <td><div style="font-weight:700;font-size:12px;color:${isLatest?'var(--gold)':'var(--text2)'}">${weekLabel}</div><div style="font-size:10px;color:var(--text3);margin-top:1px">${dateRange}</div></td>
         <td style="font-family:var(--fm);font-weight:700;font-size:14px">${wk.weight} kg</td>
-        <td>${chgCell}</td>
-        <td>${pctCell}</td>
+        <td>${chgCell}</td><td>${pctCell}</td>
       </tr>${subRows}`;
     });
-
-    html+=`</tbody></table></div></div>`;
+    html+=`</tbody></table></div></div></div>`;
   }
 
+  // ── Photo proof archive ──
   if(proofs.length){
-    html+=`<div class="proof-hdr">PHOTO PROOF ARCHIVE</div>
-    <div class="proof-grid">${proofs.map(p=>`<div class="proof-item"><img src="${p.src}" loading="lazy"><div class="proof-date">${p.date}</div></div>`).join('')}</div>`;
-  } else {
-    html+=`<div class="proof-hdr">PHOTO PROOF</div><div class="proof-grid"><div class="proof-empty">No photos yet — add one with your next weigh-in 📷</div></div>`;
+    html+=`<div style="padding:0 18px;margin-top:14px">
+      <div class="proof-hdr">PHOTO PROOF ARCHIVE</div>
+      <div class="proof-grid">${proofs.map(p=>`<div class="proof-item"><img src="${p.src}" loading="lazy"><div class="proof-date">${p.date}</div></div>`).join('')}</div>
+    </div>`;
   }
+
   html+=`</div>`;
   area.innerHTML=html;
 }
