@@ -262,9 +262,9 @@ const AV_COLORS   = ['#c47c3a','#3a8ec4','#3ac47c','#8e3ac4','#c43a6a','#3ac4b4'
 
 // ── Session ──────────────────────────────────────────────────
 const S = {
-  get user(){ return sessionStorage.getItem('fb_user') || null },
-  set(u){ sessionStorage.setItem('fb_user', u) },
-  clear(){ sessionStorage.removeItem('fb_user') }
+  get user(){ return localStorage.getItem('fb_user') || null },
+  set(u){ localStorage.setItem('fb_user', u) },
+  clear(){ localStorage.removeItem('fb_user'); localStorage.removeItem('fb_messages'); }
 };
 
 // ── State ────────────────────────────────────────────────────
@@ -536,6 +536,42 @@ function renderWeekCard(weights, username){
   return canvas.toDataURL('image/png');
 }
 
+// ── Message persistence ───────────────────────────────────────
+const MAX_STORED_MSGS = 60;
+
+function saveMessages(){
+  try{
+    const container = document.getElementById('messages');
+    const msgs = [];
+    container.querySelectorAll('.msg').forEach(el => {
+      if(el.querySelector('.typing-bubble')) return;
+      msgs.push({ type: el.classList.contains('user') ? 'user' : 'bot', html: el.innerHTML });
+    });
+    localStorage.setItem('fb_messages', JSON.stringify(msgs.slice(-MAX_STORED_MSGS)));
+  }catch(e){}
+}
+
+function restoreMessages(){
+  try{
+    const raw = localStorage.getItem('fb_messages');
+    if(!raw) return false;
+    const msgs = JSON.parse(raw);
+    if(!msgs || !msgs.length) return false;
+    const container = document.getElementById('messages');
+    container.innerHTML = '';
+    msgs.forEach(m => {
+      const div = document.createElement('div');
+      div.className = 'msg ' + m.type;
+      div.innerHTML = m.html;
+      // Disable stale action buttons
+      div.querySelectorAll('.mac').forEach(b => b.disabled = true);
+      container.appendChild(div);
+    });
+    scrollDown();
+    return true;
+  }catch(e){ return false; }
+}
+
 // ── Message rendering ─────────────────────────────────────────
 function scrollDown(){ const m=document.getElementById('messages'); m.scrollTop=m.scrollHeight; }
 
@@ -558,6 +594,7 @@ function addBotText(text, actions){
   div.innerHTML = html;
   document.getElementById('messages').appendChild(div);
   scrollDown();
+  saveMessages();
   return div;
 }
 
@@ -567,6 +604,7 @@ function addUserText(text){
   div.innerHTML = `<div class="bubble">${esc(text).replace(/\n/g,'<br>')}</div><div class="msg-time">${fmtTime()}</div>`;
   document.getElementById('messages').appendChild(div);
   scrollDown();
+  saveMessages();
 }
 
 // Social share icons SVGs
@@ -598,6 +636,7 @@ function addCardMsg(dataUrl, caption, username){
     <div class="msg-time">${fmtTime()}</div>`;
   document.getElementById('messages').appendChild(div);
   scrollDown();
+  saveMessages();
 }
 
 function downloadCard(el){
@@ -743,12 +782,19 @@ async function readScaleFromImage(dataUrl){
       role:'user',
       content:[
         { type:'image_url', image_url:{ url:dataUrl } },
-        { type:'text', text:`Look at this image of a weighing scale. Extract the weight number being displayed.
-Reply with ONLY the number in kg (e.g. "82.5" or "83"). 
-If you cannot clearly see a weight reading, reply with exactly the word "unclear".
-No units, no explanation, just the number or "unclear".` }
+        { type:'text', text:`You are reading a digital weighing scale display in this photo.
+
+Your ONLY job: read the exact digits shown on the display — do NOT estimate, round, or guess.
+
+Rules:
+- Read every digit carefully. A "9" is NOT an "8". A "7" is NOT a "1".
+- If the display shows "98.2", reply with exactly: 98.2
+- If the display shows "103", reply with exactly: 103
+- Do not convert units. Do not round. Do not approximate.
+- If the screen is genuinely unreadable (blurry, off, not a scale), reply with exactly: unclear
+- Reply with ONLY the number or the word "unclear". Nothing else. No units, no explanation.` }
       ]
-    }], { model:'gpt-4o-mini' });
+    }], { model:'gpt-4o' });
 
     const raw = typeof resp==='string' ? resp : (resp?.message?.content || '');
     const cleaned = raw.trim().replace(/[^0-9.]/g,'');
@@ -1038,6 +1084,21 @@ async function startChat(){
   document.getElementById('s-chat').classList.add('on');
   document.getElementById('messages').innerHTML = '';
 
+  // Try to restore previous conversation
+  const restored = restoreMessages();
+  if(restored){
+    // Just show a subtle "back online" note
+    setTimeout(()=>{
+      const note = document.createElement('div');
+      note.style.cssText = 'text-align:center;font-size:11px;color:var(--text3);padding:4px 0 8px;';
+      note.textContent = '↑ Previous conversation restored';
+      document.getElementById('messages').insertBefore(note, document.getElementById('messages').firstChild);
+      scrollDown();
+    }, 100);
+    return;
+  }
+
+  // Fresh start — show greeting
   const day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
   const isMonday = new Date().getDay()===1;
   showTyping();
