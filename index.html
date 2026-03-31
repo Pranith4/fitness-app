@@ -5,1286 +5,961 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0">
 <meta name="theme-color" content="#09090f">
 <title>FitBounty</title>
+<script src="https://js.puter.com/v2/"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#09090f;--bg2:#0f0f18;--bg3:#141420;--surf:#1a1a28;--surf2:#20202f;
+  --bg:#09090f;--bg2:#0f0f18;--surf:#1a1a28;--surf2:#20202f;
   --brd:rgba(255,255,255,.07);--brd2:rgba(255,255,255,.12);
   --gold:#d4a853;--gold2:#b88a3a;--goldfaint:rgba(212,168,83,.08);
   --green:#3ecf8e;--greenfaint:rgba(62,207,142,.07);
-  --red:#e05555;--redfaint:rgba(224,85,85,.07);
-  --blue:#5b8dee;--bluefaint:rgba(91,141,238,.07);
+  --red:#e05555;--blue:#5b8dee;
   --text:#e8e6f0;--text2:rgba(232,230,240,.5);--text3:rgba(232,230,240,.22);
   --fd:'Playfair Display',serif;--fb:'DM Sans',sans-serif;--fm:'DM Mono',monospace;
-  --r:10px;--rl:16px;--rxl:20px;
-  --nh:64px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
+  --r:10px;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{min-height:100%;overflow-x:hidden}
-body{font-family:var(--fb);background:var(--bg);color:var(--text);-webkit-text-size-adjust:100%;font-size:15px;line-height:1.6}
-::-webkit-scrollbar{width:2px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--surf2)}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 70% 40% at 50% -5%,rgba(212,168,83,.05),transparent),
-             radial-gradient(ellipse 50% 30% at 100% 100%,rgba(62,207,142,.03),transparent)}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px}
+::-webkit-scrollbar{width:2px}::-webkit-scrollbar-thumb{background:var(--surf2)}
 
-/* ────────── SCREENS ────────── */
-.scr{display:none;min-height:100dvh;position:relative;z-index:1}
-.scr.on{display:flex;flex-direction:column}
+/* ── SCREENS ── */
+.scr{display:none;height:100dvh;flex-direction:column}
+.scr.on{display:flex}
 
-/* ════════ LOGIN ════════ */
-#s-login{background:var(--bg);align-items:center;justify-content:center;padding:28px 20px calc(40px + var(--sb))}
-.lcard{width:100%;max-width:390px;background:var(--bg2);border:1px solid var(--brd2);border-radius:var(--rxl);padding:36px 28px;
+/* ── LOGIN ── */
+#s-login{align-items:center;justify-content:center;padding:28px 20px;background:var(--bg)}
+.lcard{width:100%;max-width:390px;background:var(--bg2);border:1px solid var(--brd2);border-radius:20px;padding:36px 28px;
   box-shadow:0 40px 80px rgba(0,0,0,.6);animation:rise .45s cubic-bezier(.22,1,.36,1) both}
 @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 .llogo{text-align:center;margin-bottom:32px}
 .lmark{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;
   background:var(--goldfaint);border:1px solid rgba(212,168,83,.25);border-radius:16px;margin-bottom:14px}
-.lbrand{font-family:var(--fd);font-size:2.2rem;font-weight:800;color:var(--gold);letter-spacing:1px;line-height:1}
+.lbrand{font-family:var(--fd);font-size:2.2rem;font-weight:800;color:var(--gold);line-height:1}
 .ltag{font-size:10px;color:var(--text3);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
 .ftgl{display:flex;background:rgba(255,255,255,.04);border:1px solid var(--brd);border-radius:8px;padding:3px;margin-bottom:24px}
-.ftb{flex:1;padding:10px 8px;border-radius:6px;border:none;background:transparent;color:var(--text2);
-  font-family:var(--fb);font-weight:600;font-size:13px;cursor:pointer;transition:all .2s}
+.ftb{flex:1;padding:10px 8px;border-radius:6px;border:none;background:transparent;color:var(--text2);font-family:var(--fb);font-weight:600;font-size:13px;cursor:pointer;transition:all .2s}
 .ftb.on{background:var(--gold);color:#09090f}
 .fg{margin-bottom:14px}
 .fl{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);margin-bottom:6px;text-transform:uppercase}
-.fi{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);color:var(--text);
-  border:1.5px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-size:14px;
-  transition:all .18s;-webkit-appearance:none}
+.fi{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);color:var(--text);border:1.5px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-size:14px;transition:all .18s;-webkit-appearance:none}
 .fi:focus{outline:none;border-color:var(--gold);background:rgba(212,168,83,.04)}
 .fi::placeholder{color:var(--text3)}
-.emsg{background:var(--redfaint);border:1px solid rgba(224,85,85,.2);border-radius:var(--r);
-  padding:10px 14px;font-size:13px;font-weight:500;color:var(--red);margin-bottom:14px;display:none}
-.omsg{background:var(--greenfaint);border:1px solid rgba(62,207,142,.2);border-radius:var(--r);
-  padding:10px 14px;font-size:13px;font-weight:500;color:var(--green);margin-bottom:14px;display:none}
-.bsub{width:100%;padding:15px;background:var(--gold);color:#09090f;border:none;border-radius:var(--r);
-  font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;
-  transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
+.emsg{background:rgba(224,85,85,.07);border:1px solid rgba(224,85,85,.2);border-radius:var(--r);padding:10px 14px;font-size:13px;font-weight:500;color:var(--red);margin-bottom:14px;display:none}
+.bsub{width:100%;padding:15px;background:var(--gold);color:#09090f;border:none;border-radius:var(--r);font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
 .bsub:hover{background:var(--gold2)}
 .bsub:disabled{background:var(--surf2);color:var(--text3);cursor:not-allowed}
 .spin{width:16px;height:16px;border:2px solid rgba(9,9,15,.2);border-top-color:#09090f;border-radius:50%;animation:sp .6s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.lpanel{margin-top:22px;padding-top:20px;border-top:1px solid var(--brd);
-  display:grid;grid-template-columns:1fr 1fr 1fr}
-.lpstat{text-align:center;padding:10px 0;position:relative}
-.lpstat:not(:last-child)::after{content:'';position:absolute;right:0;top:20%;height:60%;width:1px;background:var(--brd)}
-.lpv{font-family:var(--fm);font-size:1.3rem;font-weight:500;color:var(--gold);line-height:1}
-.lpk{font-size:9px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:5px}
 
-/* ════════ APP SHELL ════════ */
-#s-app{background:var(--bg)}
-#app{display:flex;flex-direction:column;min-height:100dvh;max-width:480px;margin:0 auto;background:var(--bg);position:relative;z-index:1}
-@media(min-width:768px){body{background:#050508}#app{max-width:100%;flex-direction:row;height:100dvh;overflow:hidden}}
+/* ── CHAT SCREEN ── */
+#s-chat{background:var(--bg);max-width:480px;margin:0 auto}
 
-/* VIEWS */
-.view{display:none;flex:1;overflow-y:auto;padding-bottom:calc(var(--nh) + var(--sb) + 24px)}
-.view.on{display:block}
-@media(min-width:768px){.view{padding-bottom:28px}}
-
-/* BOTTOM NAV */
-#bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);
-  width:100%;max-width:480px;height:calc(var(--nh) + var(--sb));
-  background:rgba(9,9,15,.97);backdrop-filter:blur(28px);
-  border-top:1px solid var(--brd);display:flex;align-items:flex-start;
-  padding-top:8px;padding-bottom:var(--sb);z-index:800}
-.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  background:none;border:none;cursor:pointer;color:var(--text3);
-  font-family:var(--fb);font-size:9px;font-weight:600;letter-spacing:.3px;
-  padding:4px 2px;transition:color .18s;min-height:52px}
-.ni.on{color:var(--gold)}
-.nic{font-size:21px;line-height:1;transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
-.ni.on .nic{transform:scale(1.15) translateY(-2px)}
-.ndot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0;transition:opacity .2s;margin-top:1px}
-.ni.on .ndot{opacity:1}
-.ni.admin-ni.on{color:var(--blue)}.ni.admin-ni.on .ndot{background:var(--blue)}
-@media(min-width:768px){
-  #bnav{position:static;transform:none;width:200px;min-width:200px;height:100dvh;flex-direction:column;align-items:stretch;padding:0;border-top:none;border-right:1px solid var(--brd);background:var(--bg2);padding-top:calc(var(--st)+16px)}
-  .ni{flex-direction:row;justify-content:flex-start;gap:13px;padding:13px 18px;font-size:12px;min-height:auto;border-radius:0;letter-spacing:.3px}
-  .nic{font-size:18px}.ndot{display:none}
-  .sb-top{display:flex;align-items:center;gap:10px;padding:16px 18px 22px;border-bottom:1px solid var(--brd);margin-bottom:8px}
-  .sb-brand{font-family:var(--fd);font-size:1.3rem;font-weight:800;color:var(--gold)}
-  .sb-bot{padding:12px 18px;margin-top:auto;border-top:1px solid var(--brd);display:flex;align-items:center;gap:10px}
-  .sb-uname{font-size:12px;font-weight:500;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .sb-lo{background:none;border:none;color:var(--text3);cursor:pointer;font-size:15px;padding:4px;transition:color .18s}
-  .sb-lo:hover{color:var(--red)}
+/* Header */
+#chat-header{
+  padding:calc(var(--st) + 14px) 18px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(9,9,15,.96);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--brd);flex-shrink:0;
 }
-.sb-top{display:none}
-@media(min-width:768px){.sb-top{display:flex}}
+.ch-left{display:flex;align-items:center;gap:10px}
+.ch-av{width:38px;height:38px;border-radius:10px;background:var(--goldfaint);border:1px solid rgba(212,168,83,.25);display:flex;align-items:center;justify-content:center;font-size:18px}
+.ch-name{font-family:var(--fd);font-size:1.15rem;font-weight:800;color:var(--gold)}
+.ch-status{font-size:11px;color:var(--green);margin-top:1px}
+.ch-actions{display:flex;gap:6px}
+.ch-btn{width:34px;height:34px;border-radius:8px;border:none;cursor:pointer;background:var(--surf);border:1px solid var(--brd);color:var(--text2);font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .18s}
+.ch-btn:active{transform:scale(.88)}
 
-/* TOP BAR (mobile) */
-.tbar{padding:calc(var(--st)+14px) 18px 12px;display:flex;align-items:center;justify-content:space-between;
-  position:sticky;top:0;z-index:100;background:linear-gradient(to bottom,rgba(9,9,15,1) 55%,transparent);
-  backdrop-filter:blur(20px);flex-shrink:0}
-.tlogo{font-family:var(--fd);font-size:1.1rem;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:8px}
-.tright{display:flex;align-items:center;gap:8px}
-.uchip{background:var(--surf);border:1px solid var(--brd);border-radius:8px;padding:5px 12px;
-  font-size:12px;font-weight:500;color:var(--text2);display:flex;align-items:center;gap:5px}
-.ib{width:34px;height:34px;background:var(--surf);border:1px solid var(--brd);border-radius:8px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .18s}
-.ib:active{transform:scale(.88)}
-@media(min-width:768px){.tbar{display:none}}
-
-/* ── PAD ── */
-.pad{padding:0 0 calc(var(--nh)+var(--sb)+24px)}
-@media(min-width:768px){.pad{padding:0 0 32px;max-width:660px;margin:0 auto;width:100%}}
-
-/* ═══════ SECTION HEADERS ═══════ */
-.sec-hdr{padding:20px 18px 12px;display:flex;align-items:center;justify-content:space-between}
-.sec-title{font-family:var(--fd);font-size:1.4rem;font-weight:800;color:var(--text);line-height:1.1}
-.sec-sub{font-size:12px;color:var(--text3);margin-top:3px;font-weight:400;font-family:var(--fb)}
-.sec-action{font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;background:none;border:none;letter-spacing:.3px}
-
-/* ═══════ CARDS ═══════ */
-.card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;margin:0 16px 12px}
-.card-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;font-family:var(--fb)}
-
-/* ═══════ BUTTONS ═══════ */
-.btn{padding:11px 18px;border-radius:var(--r);border:none;cursor:pointer;font-family:var(--fb);
-  font-size:13px;font-weight:600;transition:all .18s;display:inline-flex;align-items:center;gap:7px}
-.btn-gold{background:var(--gold);color:#09090f}.btn-gold:hover{background:var(--gold2)}
-.btn-ghost{background:transparent;border:1px solid var(--brd2);color:var(--text2)}.btn-ghost:hover{border-color:var(--gold);color:var(--gold)}
-.btn-danger{background:var(--redfaint);border:1px solid rgba(224,85,85,.2);color:var(--red)}
-.btn-sm{padding:7px 12px;font-size:12px}
-.btn-full{width:100%;justify-content:center}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-
-/* ═══════ STATUS PILLS ═══════ */
-.pill{display:inline-flex;align-items:center;gap:4px;border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600}
-.pill-green{background:var(--greenfaint);border:1px solid rgba(62,207,142,.15);color:var(--green)}
-.pill-red{background:var(--redfaint);border:1px solid rgba(224,85,85,.15);color:var(--red)}
-.pill-gold{background:var(--goldfaint);border:1px solid rgba(212,168,83,.15);color:var(--gold)}
-.pill-blue{background:var(--bluefaint);border:1px solid rgba(91,141,238,.15);color:var(--blue)}
-
-/* ═══════ INPUTS ═══════ */
-.inp{width:100%;padding:12px 14px;background:rgba(255,255,255,.04);color:var(--text);
-  border:1.5px solid var(--brd);border-radius:var(--r);font-family:var(--fb);font-size:14px;transition:all .18s}
-.inp:focus{outline:none;border-color:var(--gold);background:rgba(212,168,83,.03)}
-.inp::placeholder{color:var(--text3)}
-select.inp{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
-.inp-label{display:block;font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
-.inp-group{margin-bottom:14px}
-
-/* ═══════ MODAL ═══════ */
-.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:2000;align-items:flex-end;justify-content:center}
-.modal-backdrop.on{display:flex}
-@media(min-width:600px){.modal-backdrop{align-items:center}}
-.modal{background:var(--bg2);border:1px solid var(--brd2);border-radius:20px 20px 0 0;
-  width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;
-  animation:slideUp .3s cubic-bezier(.22,1,.36,1) both}
-@media(min-width:600px){.modal{border-radius:20px;max-height:85dvh}}
-@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-hdr{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.modal-title{font-family:var(--fd);font-size:1.3rem;font-weight:800;color:var(--text)}
-.modal-close{width:30px;height:30px;background:var(--surf);border:1px solid var(--brd);border-radius:8px;
-  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:16px;transition:all .18s}
-.modal-close:hover{border-color:var(--red);color:var(--red)}
-.modal-body{padding:0 20px 24px}
-
-/* ═══════ TOAST ═══════ */
-#toast{position:fixed;bottom:calc(var(--nh)+var(--sb)+16px);left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--surf2);border:1px solid var(--brd2);border-radius:10px;
-  padding:12px 18px;font-size:13px;font-weight:500;color:var(--text);
-  z-index:9999;opacity:0;transition:all .3s;white-space:nowrap;max-width:90vw}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-#toast.toast-ok{border-color:rgba(62,207,142,.3);color:var(--green)}
-#toast.toast-err{border-color:rgba(224,85,85,.3);color:var(--red)}
-
-/* ═══════ LOADER ═══════ */
-.loader-wrap{display:flex;align-items:center;justify-content:center;padding:40px 0;gap:10px;color:var(--text3);font-size:13px}
-.loader{width:20px;height:20px;border:2px solid var(--brd2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite}
-
-/* ═══════ EMPTY STATE ═══════ */
-.empty-state{text-align:center;padding:48px 24px;color:var(--text3)}
-.empty-state .es-icon{font-size:36px;margin-bottom:12px;display:block;opacity:.5}
-.empty-state h4{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}
-.empty-state p{font-size:13px;line-height:1.6}
-
-/* ═══════ CONTESTS TAB ═══════ */
-.ctab-bar{display:flex;gap:4px;background:rgba(255,255,255,.03);border:1px solid var(--brd);border-radius:10px;padding:3px;margin:0 16px 16px}
-.ctab-btn{flex:1;padding:9px 8px;border-radius:7px;border:none;background:transparent;color:var(--text2);
-  font-family:var(--fb);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
-.ctab-btn.on{background:var(--surf2);color:var(--text)}
-.ctab-pane{display:none}.ctab-pane.on{display:block}
-
-/* Contest cards */
-.contest-card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;margin:0 16px 12px;cursor:pointer;transition:all .2s}
-.contest-card:hover{border-color:var(--brd2);transform:translateY(-1px)}
-.cc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
-.cc-name{font-family:var(--fd);font-size:1.1rem;font-weight:800;color:var(--text);line-height:1.2}
-.cc-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-.cc-bar{height:4px;background:var(--brd);border-radius:2px;overflow:hidden;margin-top:12px}
-.cc-bar-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .6s ease}
-.cc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-.cc-prize{font-family:var(--fm);font-size:1.1rem;font-weight:500;color:var(--gold)}
-.cc-participants{font-size:12px;color:var(--text3)}
-
-/* Contest detail */
-.detail-back{display:flex;align-items:center;gap:8px;padding:16px 18px 0;cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:color .18s}
-.detail-back:hover{color:var(--gold)}
-.detail-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
-.ds-box{text-align:center;background:rgba(0,0,0,.15);border-radius:var(--r);padding:12px 8px}
-.ds-val{font-family:var(--fm);font-size:1.1rem;font-weight:500;color:var(--text)}
-.ds-key{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
-
-/* Leaderboard rows */
-.lb-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--brd);cursor:pointer;transition:background .15s}
-.lb-row:last-child{border-bottom:none}
-.lb-row:hover{background:rgba(255,255,255,.02);margin:0 -18px;padding:13px 18px;border-radius:var(--r)}
-.lb-rank{font-family:var(--fm);font-size:1rem;font-weight:500;width:28px;text-align:center;flex-shrink:0;color:var(--text3)}
-.lb-rank.r1{color:var(--gold)}
-.lb-av{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:14px;color:#fff;flex-shrink:0}
-.lb-info{flex:1;min-width:0}
-.lb-name{font-weight:600;font-size:14px;line-height:1.2}
-.lb-sub{font-size:11px;color:var(--text3);margin-top:2px}
-.lb-right{text-align:right;flex-shrink:0}
-.lb-pct{font-family:var(--fm);font-size:1rem;font-weight:500;color:var(--text)}
-.lb-pct.pos{color:var(--green)}
-.lb-week{font-size:10px;color:var(--text3);margin-top:2px}
-.lb-week.up{color:var(--green)}.lb-week.dn{color:var(--red)}
-
-/* Trend chart */
-.trend-wrap{background:var(--surf);border:1px solid var(--brd);border-radius:var(--rl);padding:18px;margin:0 16px 12px}
-.trend-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:16px}
-
-/* Weekly table */
-.week-table{width:100%;border-collapse:collapse}
-.week-table th{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);padding:8px 10px;text-align:left;border-bottom:1px solid var(--brd)}
-.week-table td{padding:11px 10px;border-bottom:1px solid var(--brd);font-size:13px;font-weight:500}
-.week-table tr:last-child td{border-bottom:none}
-.delta-pos{color:var(--green)}.delta-neg{color:var(--red)}.delta-nil{color:var(--text3)}
-
-/* ═══════ LOG WEIGHT ═══════ */
-.log-status{border-radius:var(--r);padding:11px 14px;font-size:13px;font-weight:500;margin-bottom:14px;line-height:1.55}
-.log-status.ok{background:var(--greenfaint);border:1px solid rgba(62,207,142,.18);color:var(--green)}
-.log-status.warn{background:var(--goldfaint);border:1px solid rgba(212,168,83,.18);color:var(--gold)}
-.log-status.info{background:var(--bluefaint);border:1px solid rgba(91,141,238,.18);color:var(--blue)}
-.wi-big{width:100%;padding:18px;background:rgba(255,255,255,.03);color:var(--text);
-  border:1.5px solid var(--brd2);border-radius:var(--r);
-  font-family:var(--fm);font-size:2.2rem;font-weight:500;
-  transition:all .18s;-webkit-appearance:none;text-align:center;margin-bottom:6px}
-.wi-big:focus{outline:none;border-color:var(--gold);background:rgba(212,168,83,.03)}
-.wi-big::placeholder{color:var(--text3);font-size:1rem;font-family:var(--fb);font-weight:400;letter-spacing:0}
-.wi-unit{text-align:center;font-size:10px;color:var(--text3);font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
-.blog{width:100%;padding:16px;background:var(--gold);color:#09090f;border:none;border-radius:var(--r);
-  font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;
-  transition:all .18s;display:flex;align-items:center;justify-content:center;gap:8px}
-.blog:active{transform:scale(.97)}
-.blog:disabled{background:var(--surf2);color:var(--text3);cursor:not-allowed;transform:none}
-.photo-zone{border:1.5px dashed var(--brd2);border-radius:var(--r);padding:20px;text-align:center;
-  cursor:pointer;transition:all .18s;margin-bottom:14px;background:rgba(255,255,255,.02);position:relative}
-.photo-zone:hover{border-color:var(--gold)}
-.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.pz-icon{font-size:26px;margin-bottom:6px;display:block;opacity:.6}
-.pz-label{font-size:13px;font-weight:500;color:var(--text2)}
-.pz-sub{font-size:11px;color:var(--text3);margin-top:3px}
-.photo-preview{width:100%;border-radius:var(--r);overflow:hidden;margin-bottom:14px;position:relative;display:none}
-.photo-preview img{width:100%;max-height:200px;object-fit:cover;border-radius:var(--r);display:block}
-.photo-preview .rm{position:absolute;top:8px;right:8px;width:28px;height:28px;background:rgba(0,0,0,.7);
-  border-radius:8px;border:none;cursor:pointer;color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center}
-.geo-info{background:var(--bluefaint);border:1px solid rgba(91,141,238,.15);border-radius:var(--r);
-  padding:10px 13px;margin-bottom:14px;font-size:11px;color:var(--blue);display:flex;align-items:flex-start;gap:8px}
-
-/* ═══════ ADMIN ═══════ */
-.admin-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--brd)}
-.admin-row:last-child{border-bottom:none}
-.ar-av{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:15px;color:#fff;flex-shrink:0}
-.ar-info{flex:1;min-width:0}
-.ar-name{font-weight:600;font-size:14px}
-.ar-meta{font-size:11px;color:var(--text3);margin-top:2px}
-.ar-actions{display:flex;gap:6px;flex-shrink:0}
-
-/* ═══════ CREATE CONTEST ═══════ */
-.rules-list{list-style:none}
-.rules-list li{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--brd);font-size:13px;font-weight:500}
-.rules-list li:last-child{border-bottom:none}
-.rule-icon{font-size:18px;flex-shrink:0}
-.wa-btn{width:100%;padding:14px;background:#25D366;color:#fff;border:none;border-radius:var(--r);
-  font-family:var(--fb);font-size:14px;font-weight:700;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;transition:all .18s}
-.wa-btn:hover{background:#1ebe5d}
-
-@media(min-width:768px){
-  .view{padding-bottom:28px}
-  #main-content{flex:1;overflow-y:auto}
+/* Messages */
+#messages{
+  flex:1;overflow-y:auto;padding:16px 14px;
+  display:flex;flex-direction:column;gap:10px;
+  -webkit-overflow-scrolling:touch;
 }
-.divider{height:1px;background:var(--brd);margin:0 16px}
+
+.msg{display:flex;flex-direction:column;max-width:88%}
+.msg.bot{align-self:flex-start}
+.msg.user{align-self:flex-end}
+
+.bubble{
+  padding:11px 14px;font-size:14px;line-height:1.55;word-break:break-word;
+}
+.bot .bubble{
+  background:var(--surf);border:1px solid var(--brd);
+  border-radius:18px 18px 18px 4px;color:var(--text);
+}
+.user .bubble{
+  background:var(--gold);color:#09090f;font-weight:500;
+  border-radius:18px 18px 4px 18px;
+}
+.msg-time{font-size:10px;color:var(--text3);margin-top:3px}
+.bot .msg-time{margin-left:4px}
+.user .msg-time{margin-right:4px;text-align:right}
+
+/* Card image bubble */
+.card-bubble{
+  width:100%;border-radius:14px;overflow:hidden;
+  border:1px solid var(--brd);margin-top:2px;cursor:pointer;
+  transition:transform .18s;
+}
+.card-bubble:active{transform:scale(.97)}
+.card-bubble img{width:100%;display:block}
+.card-caption{font-size:11px;color:var(--text3);margin-top:4px;margin-left:4px}
+
+/* User image bubble */
+.img-bubble{border-radius:14px;overflow:hidden;border:1px solid var(--brd);margin-top:2px;max-width:220px}
+.img-bubble img{width:100%;display:block}
+
+/* Typing indicator */
+.typing-bubble{background:var(--surf);border:1px solid var(--brd);border-radius:18px 18px 18px 4px;padding:13px 16px;display:flex;align-items:center;gap:5px}
+.tdot{width:7px;height:7px;background:var(--text3);border-radius:50%;animation:tdot 1s infinite}
+.tdot:nth-child(2){animation-delay:.15s}
+.tdot:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-8px);opacity:1}}
+
+/* Action buttons inside messages */
+.msg-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.mac{padding:7px 14px;border-radius:20px;border:1px solid var(--brd2);background:transparent;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--fb);transition:all .18s;white-space:nowrap}
+.mac:hover{background:var(--goldfaint)}
+.mac.confirm{background:var(--gold);color:#09090f;border-color:var(--gold)}
+.mac.cancel{color:var(--text2);border-color:var(--brd)}
+
+/* Chip bar */
+#chip-bar{
+  padding:10px 14px 6px;display:flex;gap:7px;overflow-x:auto;flex-shrink:0;
+  scrollbar-width:none;
+}
+#chip-bar::-webkit-scrollbar{display:none}
+.chip{
+  padding:8px 14px;border-radius:20px;border:1px solid var(--brd2);
+  background:var(--surf);color:var(--text);font-size:12px;font-weight:500;
+  cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0;font-family:var(--fb);
+}
+.chip:active{transform:scale(.94)}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Input bar */
+#input-bar{
+  padding:10px 14px calc(10px + var(--sb));
+  display:flex;align-items:flex-end;gap:8px;
+  border-top:1px solid var(--brd);flex-shrink:0;
+  background:rgba(9,9,15,.97);backdrop-filter:blur(20px);
+}
+#txt-input{
+  flex:1;background:var(--surf);border:1px solid var(--brd);border-radius:22px;
+  padding:11px 16px;color:var(--text);font-size:14px;resize:none;
+  max-height:100px;overflow-y:auto;font-family:var(--fb);line-height:1.4;
+}
+#txt-input:focus{outline:none;border-color:rgba(212,168,83,.4)}
+#txt-input::placeholder{color:var(--text3)}
+.ibt{
+  width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  transition:all .18s;flex-shrink:0;
+}
+.ibt:active{transform:scale(.88)}
+#cam-btn{background:var(--surf);border:1px solid var(--brd);color:var(--text2)}
+#send-btn{background:var(--gold);color:#09090f}
+#send-btn:disabled{background:var(--surf2);color:var(--text3)}
 </style>
 </head>
 <body>
 
-<!-- ═══ LOGIN SCREEN ═══ -->
+<!-- ── LOGIN ── -->
 <div id="s-login" class="scr on">
   <div class="lcard">
     <div class="llogo">
       <div class="lmark"><span style="font-size:28px">⚡</span></div>
       <div class="lbrand">FitBounty</div>
-      <div class="ltag">Earn Your Bounty</div>
+      <div class="ltag">Your AI Coach</div>
     </div>
     <div class="ftgl">
-      <button class="ftb on" id="t-sign" onclick="toggleAuthTab('sign')">Sign In</button>
-      <button class="ftb" id="t-join" onclick="toggleAuthTab('join')">Join</button>
+      <button class="ftb on" id="t-sign" onclick="authTab('sign')">Sign In</button>
+      <button class="ftb" id="t-join" onclick="authTab('join')">Join</button>
     </div>
-    <div id="auth-emsg" class="emsg"></div>
-    <div id="auth-omsg" class="omsg"></div>
+    <div id="auth-err" class="emsg"></div>
     <div id="form-sign">
-      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="li-user" placeholder="your_username" autocomplete="username" autocapitalize="none"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="li-u" type="text" placeholder="your_username" autocapitalize="none" autocomplete="username"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="li-p" type="password" placeholder="••••••••"></div>
       <button class="bsub" id="li-btn" onclick="doLogin()">Sign In</button>
     </div>
     <div id="form-join" style="display:none">
-      <div class="fg"><label class="fl">Full Name</label><input class="fi" type="text" id="rg-name" placeholder="Your Name" autocapitalize="words"></div>
-      <div class="fg"><label class="fl">Username</label><input class="fi" type="text" id="rg-user" placeholder="choose_username" autocapitalize="none"></div>
-      <div class="fg"><label class="fl">WhatsApp Number</label><input class="fi" type="tel" id="rg-phone" placeholder="+91 98765 43210"></div>
-      <div class="fg"><label class="fl">Password</label><input class="fi" type="password" id="rg-pass" placeholder="Create a password"></div>
+      <div class="fg"><label class="fl">Full Name</label><input class="fi" id="rg-n" type="text" placeholder="Your Name" autocapitalize="words"></div>
+      <div class="fg"><label class="fl">Username</label><input class="fi" id="rg-u" type="text" placeholder="choose_username" autocapitalize="none"></div>
+      <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="rg-ph" type="tel" placeholder="+91 98765 43210"></div>
+      <div class="fg"><label class="fl">Password</label><input class="fi" id="rg-p" type="password" placeholder="Create a password"></div>
       <button class="bsub" id="rg-btn" onclick="doRegister()">Create Account</button>
     </div>
-    <!-- FIX #7: Stats loaded dynamically from getStats API -->
-    <div class="lpanel">
-      <div class="lpstat"><div class="lpv" id="lp-members">—</div><div class="lpk">Members</div></div>
-      <div class="lpstat"><div class="lpv" id="lp-prize">—</div><div class="lpk">Prize Pool</div></div>
-      <div class="lpstat"><div class="lpv" id="lp-contests">—</div><div class="lpk">Contests</div></div>
-    </div>
   </div>
 </div>
 
-<!-- ═══ APP SCREEN ═══ -->
-<div id="s-app" class="scr">
-<div id="app">
-
-  <div id="bnav">
-    <div class="sb-top">
-      <span style="font-size:20px">⚡</span>
-      <span class="sb-brand">FitBounty</span>
+<!-- ── CHAT ── -->
+<div id="s-chat" class="scr">
+  <div id="chat-header">
+    <div class="ch-left">
+      <div class="ch-av">⚡</div>
+      <div>
+        <div class="ch-name">FitBounty Coach</div>
+        <div class="ch-status" id="coach-status">● Online</div>
+      </div>
     </div>
-    <button class="ni on" data-view="view-contests" onclick="nav(this)">
-      <span class="nic">🏆</span><span>Contests</span><span class="ndot"></span>
-    </button>
-    <button class="ni" data-view="view-log" onclick="nav(this)">
-      <span class="nic">⚖️</span><span>Log Weight</span><span class="ndot"></span>
-    </button>
-    <button class="ni admin-ni" data-view="view-admin" id="admin-nav-btn" onclick="nav(this)" style="display:none">
-      <span class="nic">🛡️</span><span>Admin</span><span class="ndot"></span>
-    </button>
-    <div class="sb-bot">
-      <div class="sb-uname" id="sb-uname">—</div>
-      <button class="sb-lo" onclick="doLogout()" title="Logout">⏏</button>
+    <div class="ch-actions">
+      <button class="ch-btn" onclick="refreshData()" title="Refresh data">↻</button>
+      <button class="ch-btn" onclick="doLogout()" title="Logout">⏏</button>
     </div>
   </div>
 
-  <div id="main-content" style="flex:1;overflow-y:auto;position:relative">
+  <div id="messages"></div>
 
-    <div class="tbar">
-      <div class="tlogo"><span>⚡</span> FitBounty</div>
-      <div class="tright">
-        <div class="uchip" id="tbar-user">—</div>
-        <div class="ib" onclick="doLogout()" title="Logout">⏏</div>
-      </div>
-    </div>
+  <div id="chip-bar">
+    <button class="chip" onclick="chipAction('leaderboard')">🏆 Leaderboard</button>
+    <button class="chip" onclick="chipAction('progress')">📊 My Progress</button>
+    <button class="chip" onclick="chipAction('week')">📅 This Week</button>
+    <button class="chip" onclick="chipAction('log')">⚖️ Log Weight</button>
+    <button class="chip" onclick="chipAction('contest')">🎯 Contest Info</button>
+    <button class="chip" onclick="chipAction('coach')">💬 Ask Coach</button>
+  </div>
 
-    <!-- ═══════════ CONTESTS VIEW ═══════════ -->
-    <div class="view on" id="view-contests">
-      <div class="sec-hdr">
-        <div>
-          <div class="sec-title">Contests</div>
-          <div class="sec-sub">Weight loss challenges</div>
-        </div>
-        <button class="btn btn-gold btn-sm" onclick="openCreateContest()">+ Create</button>
-      </div>
-      <div class="ctab-bar">
-        <button class="ctab-btn on" onclick="switchContestTab('mine',this)">My Contests</button>
-        <button class="ctab-btn" onclick="switchContestTab('public',this)">Public Contests</button>
-      </div>
-      <div class="ctab-pane on" id="pane-mine"></div>
-      <div class="ctab-pane" id="pane-public"></div>
-      <div id="contest-detail" style="display:none"></div>
-    </div>
-
-    <!-- ═══════════ LOG WEIGHT VIEW ═══════════ -->
-    <div class="view" id="view-log">
-      <div class="sec-hdr">
-        <div>
-          <div class="sec-title">Log Weight</div>
-          <div class="sec-sub">Weekly Monday weigh-in</div>
-        </div>
-      </div>
-      <div class="pad" style="padding-bottom:0">
-        <div class="card">
-          <!-- FIX #5: Status set by checkLogSchedule; button no longer locked on non-Monday -->
-          <div id="log-status" class="log-status warn">Checking schedule…</div>
-          <div id="geo-banner" class="geo-info" style="display:none">
-            <span>📍</span>
-            <span id="geo-text">Capturing location…</span>
-          </div>
-          <input class="wi-big" type="number" step="0.1" min="30" max="300" id="weight-input" placeholder="0.0">
-          <div class="wi-unit">kilograms</div>
-          <div class="photo-zone" id="photo-zone">
-            <input type="file" accept="image/*" capture="environment" onchange="onPhotoSelect(event)" id="photo-input">
-            <span class="pz-icon">📷</span>
-            <div class="pz-label">Attach weigh-in photo</div>
-            <div class="pz-sub">Optional · stamped with location & time on Mondays</div>
-          </div>
-          <div class="photo-preview" id="photo-preview">
-            <img id="preview-img" src="" alt="Preview">
-            <button class="rm" onclick="removePhoto()">✕</button>
-          </div>
-          <button class="blog" id="log-btn" onclick="submitWeight()">Submit Weigh-in</button>
-        </div>
-        <div class="card" style="margin-top:4px">
-          <div class="card-title">Your Recent Weigh-ins</div>
-          <div id="my-history">
-            <div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ═══════════ ADMIN VIEW ═══════════ -->
-    <div class="view" id="view-admin">
-      <div class="sec-hdr">
-        <div>
-          <div class="sec-title">Admin</div>
-          <div class="sec-sub">Manage users &amp; contests</div>
-        </div>
-        <button class="btn btn-sm btn-ghost" onclick="loadAdminData()">↻ Refresh</button>
-      </div>
-      <div class="pad" style="padding-bottom:0">
-        <div class="card">
-          <div class="card-title">Users</div>
-          <div id="admin-users">
-            <div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-title">All Contests</div>
-          <div id="admin-contests">
-            <div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
+  <div id="input-bar">
+    <label for="cam-input">
+      <button class="ibt" id="cam-btn" onclick="document.getElementById('cam-input').click()" title="Upload scale photo">📷</button>
+    </label>
+    <input type="file" id="cam-input" accept="image/*" capture="environment" style="display:none" onchange="handleImageUpload(event)">
+    <textarea id="txt-input" placeholder="Message or type a weight…" rows="1" oninput="autoGrow(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendText()}"></textarea>
+    <button class="ibt" id="send-btn" onclick="sendText()">➤</button>
   </div>
 </div>
-</div>
 
-<!-- ═══ TOAST ═══ -->
-<div id="toast"></div>
-
-<!-- ═══ CREATE CONTEST MODAL ═══ -->
-<div class="modal-backdrop" id="modal-create">
-  <div class="modal">
-    <div class="modal-hdr">
-      <div class="modal-title">Create Contest</div>
-      <div class="modal-close" onclick="closeModal('modal-create')">✕</div>
-    </div>
-    <div class="modal-body">
-      <div class="inp-group">
-        <label class="inp-label">Contest Name</label>
-        <input class="inp" type="text" id="cc-name" placeholder="e.g. Monsoon Slim Down 2026">
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Entry Fee (₹)</label>
-        <input class="inp" type="number" id="cc-fee" placeholder="e.g. 500" min="0">
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="inp-group">
-        <div>
-          <label class="inp-label">Start Date</label>
-          <input class="inp" type="date" id="cc-start">
-        </div>
-        <div>
-          <label class="inp-label">End Date</label>
-          <input class="inp" type="date" id="cc-end">
-        </div>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Penalty for missed weigh-in (₹)</label>
-        <input class="inp" type="number" id="cc-penalty" placeholder="e.g. 200" min="0">
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Visibility</label>
-        <select class="inp" id="cc-visibility">
-          <option value="private">Private (invite only)</option>
-          <option value="public">Public</option>
-        </select>
-      </div>
-      <div class="inp-group">
-        <label class="inp-label">Prize split (must total 100%)</label>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-          <div><label class="inp-label" style="font-size:10px">🥇 1st %</label><input class="inp" type="number" id="cc-p1" value="60" min="0" max="100"></div>
-          <div><label class="inp-label" style="font-size:10px">🥈 2nd %</label><input class="inp" type="number" id="cc-p2" value="30" min="0" max="100"></div>
-          <div><label class="inp-label" style="font-size:10px">🥉 3rd %</label><input class="inp" type="number" id="cc-p3" value="10" min="0" max="100"></div>
-        </div>
-      </div>
-      <div style="background:var(--goldfaint);border:1px solid rgba(212,168,83,.15);border-radius:var(--r);padding:14px;margin-bottom:18px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Rules</div>
-        <ul class="rules-list">
-          <li><span class="rule-icon">📅</span>Weekly weigh-in every Monday</li>
-          <li><span class="rule-icon">📉</span>Highest % weight loss from start wins</li>
-          <li><span class="rule-icon">⚠️</span>Penalty for weight gain or missed weigh-in</li>
-          <li><span class="rule-icon">📸</span>Photo proof required each weigh-in</li>
-        </ul>
-      </div>
-      <button class="btn btn-gold btn-full" onclick="createContest()" style="margin-bottom:10px">Create Contest</button>
-      <button class="wa-btn" id="wa-share-btn" style="display:none" onclick="shareViaWhatsApp()">
-        <span>📱</span> Share Invite on WhatsApp
-      </button>
-    </div>
-  </div>
-</div>
+<!-- Hidden canvas for card rendering -->
+<canvas id="card-canvas" style="display:none"></canvas>
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-// FITBOUNTY — frontend
-//
-// FIX SUMMARY applied in this file:
-//   1+2. Admin user list now calls getUsers (reads real active status from Users sheet)
-//   3.   weekChangeKg displayed as "kg" not "%"
-//   4.   joinContest strips computed fields before saving pp back to sheet
-//   5.   Log Weight allowed any day; Monday = official, others = practice
-//   6.   ADMIN_USERS — UPDATE THIS ARRAY to match your actual admin usernames
-//   7.   Login stats loaded dynamically via getStats API
+// FITBOUNTY CHAT
 // ═══════════════════════════════════════════════════════════════
 
-const API = 'https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec';
-
-// FIX #6 — Update this array to match the usernames registered as admins in your Users sheet
+const GAS = 'https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec';
 const ADMIN_USERS = ['admin'];
+const AV_COLORS   = ['#c47c3a','#3a8ec4','#3ac47c','#8e3ac4','#c43a6a','#3ac4b4','#a45ca4','#5ca4a4'];
 
-const AVATAR_COLORS = ['#c47c3a','#3a8ec4','#3ac47c','#8e3ac4','#c43a6a','#3ac4b4'];
-
-// Session (sessionStorage — cleared on tab close, nothing in localStorage)
+// ── Session ──────────────────────────────────────────────────
 const S = {
   get user(){ return sessionStorage.getItem('fb_user') || null },
   set(u){ sessionStorage.setItem('fb_user', u) },
   clear(){ sessionStorage.removeItem('fb_user') }
 };
 
-function show(id){
-  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
-  document.getElementById(id)?.classList.add('on');
-}
-function toast(msg, type, dur){
-  type = type || 'ok'; dur = dur || 3200;
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show toast-' + (type === 'ok' ? 'ok' : 'err');
-  clearTimeout(t._t);
-  t._t = setTimeout(function(){ t.className = ''; }, dur);
-}
-function openModal(id){ document.getElementById(id)?.classList.add('on'); }
-function closeModal(id){ document.getElementById(id)?.classList.remove('on'); }
-function esc(s){ var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-function avatarColor(name){
-  var h = 0;
-  String(name || '').split('').forEach(function(c){ h = (h * 31 + c.charCodeAt(0)) % AVATAR_COLORS.length; });
-  return AVATAR_COLORS[h];
-}
-function initials(name){
-  return (name || '?').split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0,2);
-}
-function fmtDate(d){
-  if(!d) return '—';
-  return new Date(d).toLocaleDateString('en-IN', {day:'2-digit', month:'short'});
-}
-function isAdmin(u){ return ADMIN_USERS.map(function(a){ return a.toLowerCase(); }).indexOf(String(u||'').toLowerCase()) !== -1; }
-function api(payload){
-  return fetch(API, { method:'POST', body: JSON.stringify(payload) }).then(function(r){ return r.json(); });
+// ── State ────────────────────────────────────────────────────
+let _cachedLB      = null;   // leaderboard data
+let _cachedWeights = null;   // my weights
+let _pendingWeight = null;   // weight awaiting confirmation
+let _chatHistory   = [];     // puter.ai conversation history
+let _typing        = null;   // typing indicator element
+
+// ── Utility ──────────────────────────────────────────────────
+function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
+function fmtDate(d){ return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short'}); }
+function fmtTime(){ return new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}); }
+function avColor(name){ let h=0;String(name||'').split('').forEach(c=>{h=(h*31+c.charCodeAt(0))%AV_COLORS.length;});return AV_COLORS[h]; }
+function initials(name){ return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+async function gasAPI(payload){ const r=await fetch(GAS,{method:'POST',body:JSON.stringify(payload)});return r.json(); }
+
+// ── Canvas card renderer ──────────────────────────────────────
+const canvas = document.getElementById('card-canvas');
+const ctx    = canvas.getContext('2d');
+const DPR    = 2; // render at 2× for sharpness
+
+function setupCanvas(w, h){
+  canvas.width  = w * DPR;
+  canvas.height = h * DPR;
+  ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  // Background
+  ctx.fillStyle = '#09090f';
+  ctx.fillRect(0, 0, w, h);
+  // Top ambient glow
+  const g = ctx.createLinearGradient(0,0,w,0);
+  g.addColorStop(0,   'rgba(212,168,83,.07)');
+  g.addColorStop(.5,  'rgba(212,168,83,.04)');
+  g.addColorStop(1,   'rgba(62,207,142,.04)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, w, 3);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════════════════════════════
-(function init(){
-  loadLoginStats(); // FIX #7
-  if(S.user){ showApp(); }
-  else { show('s-login'); }
-  document.getElementById('li-pass').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
-  document.getElementById('li-user').addEventListener('keydown', function(e){ if(e.key === 'Enter') document.getElementById('li-pass').focus(); });
-})();
-
-// FIX #7 — Dynamic login stats
-async function loadLoginStats(){
-  try{
-    var d = await api({ action:'getStats' });
-    if(d.members   !== undefined) document.getElementById('lp-members').textContent  = d.members;
-    if(d.prize     !== undefined) document.getElementById('lp-prize').textContent    = d.prize !== '—' ? '₹'+d.prize : '—';
-    if(d.contests  !== undefined) document.getElementById('lp-contests').textContent = d.contests;
-  }catch(e){ /* keep defaults */ }
+function cardText(text, x, y, opts={}){
+  ctx.font = `${opts.w||'500'} ${opts.size||14}px ${opts.mono?'"Courier New",monospace':'"Arial",sans-serif'}`;
+  ctx.fillStyle = opts.color || '#e8e6f0';
+  ctx.textAlign = opts.align || 'left';
+  ctx.fillText(text, x, y);
 }
 
-// ═══════════════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════════════
-function toggleAuthTab(t){
-  document.getElementById('t-sign').classList.toggle('on', t === 'sign');
-  document.getElementById('t-join').classList.toggle('on', t === 'join');
-  document.getElementById('form-sign').style.display = t === 'sign' ? '' : 'none';
-  document.getElementById('form-join').style.display = t === 'join' ? '' : 'none';
-  setAuthMsg('','');
-}
-function setAuthMsg(type, msg){
-  var e = document.getElementById('auth-emsg');
-  var o = document.getElementById('auth-omsg');
-  e.style.display = type === 'err' ? '' : 'none'; e.textContent = type === 'err' ? msg : '';
-  o.style.display = type === 'ok'  ? '' : 'none'; o.textContent = type === 'ok'  ? msg : '';
-}
-
-async function doLogin(){
-  var u = document.getElementById('li-user').value.trim();
-  var p = document.getElementById('li-pass').value;
-  if(!u || !p){ setAuthMsg('err','Enter username and password'); return; }
-  var btn = document.getElementById('li-btn');
-  btn.innerHTML = '<div class="spin"></div>'; btn.disabled = true;
-  try{
-    var d = await api({ action:'authenticate', username:u, password:p });
-    if(d.success){ S.set(u.toLowerCase()); showApp(); }
-    else setAuthMsg('err', d.message || 'Invalid credentials');
-  }catch(e){ setAuthMsg('err','Connection error. Try again.'); }
-  btn.innerHTML = 'Sign In'; btn.disabled = false;
-}
-
-async function doRegister(){
-  var name  = document.getElementById('rg-name').value.trim();
-  var u     = document.getElementById('rg-user').value.trim().toLowerCase();
-  var phone = document.getElementById('rg-phone').value.trim();
-  var p     = document.getElementById('rg-pass').value;
-  if(!name || !u || !phone || !p){ setAuthMsg('err','Fill in all fields'); return; }
-  var btn = document.getElementById('rg-btn');
-  btn.innerHTML = '<div class="spin"></div>'; btn.disabled = true;
-  try{
-    var d = await api({ action:'registerUser', username:u, email:phone, password:p });
-    if(d.success){ S.set(u); showApp(); }
-    else setAuthMsg('err', d.message || 'Registration failed');
-  }catch(e){ setAuthMsg('err','Connection error. Try again.'); }
-  btn.innerHTML = 'Create Account'; btn.disabled = false;
-}
-
-function doLogout(){
-  S.clear();
-  show('s-login');
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
-  document.getElementById('view-contests').classList.add('on');
-  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
-  var first = document.querySelector('[data-view="view-contests"]');
-  if(first) first.classList.add('on');
-}
-
-// ═══════════════════════════════════════════════════════════════
-// APP SHELL
-// ═══════════════════════════════════════════════════════════════
-function showApp(){
-  show('s-app');
-  var u = S.user;
-  document.getElementById('tbar-user').textContent = u;
-  document.getElementById('sb-uname').textContent  = u;
-  if(isAdmin(u)) document.getElementById('admin-nav-btn').style.display = '';
-  loadContests();
-  initLogWeight();
-  if(isAdmin(u)) loadAdminData();
-}
-
-function nav(btn){
-  document.querySelectorAll('.ni').forEach(function(n){ n.classList.remove('on'); });
-  btn.classList.add('on');
-  var vid = btn.getAttribute('data-view');
-  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('on'); });
-  var vEl = document.getElementById(vid);
-  if(vEl) vEl.classList.add('on');
-  window.scrollTo(0,0);
-}
-
-// ═══════════════════════════════════════════════════════════════
-// CONTESTS
-// ═══════════════════════════════════════════════════════════════
-var _allContests    = [];
-var _currentContest = null;
-
-function normaliseRoom(r){
-  var pp = r.pp || r.participants || [];
-  return {
-    id:           r.id || r.roomId || '',
-    name:         r.name || r.title || 'Unnamed',
-    creator:      r.createdBy || r.creator || '',
-    entryFee:     r.fee || r.entryFee || 0,
-    prizePool:    r.prize || r.prizePool || 0,
-    startDate:    r.start || r.startDate || '',
-    endDate:      r.end || r.endDate || '',
-    visibility:   r.public ? 'public' : (r.visibility || 'private'),
-    // Only keep the name field from each pp entry — strip computed standings
-    participants: pp.map(function(p){ return typeof p === 'string' ? p : (p.n || p.name || ''); }).filter(Boolean),
-    penalty:      r.penalty || 0,
-    prizeSplit:   r.prizeSplit || { first:60, second:30, third:10 },
-    _raw: r
-  };
-}
-
-async function loadContests(){
-  ['pane-mine','pane-public'].forEach(function(id){
-    document.getElementById(id).innerHTML = '<div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>';
-  });
-  try{
-    var results = await Promise.all([
-      api({ action:'getRooms' }),
-      api({ action:'getPublicContests' })
-    ]);
-    var rooms = (Array.isArray(results[0]) ? results[0] : []).map(normaliseRoom);
-    var pubs  = (Array.isArray(results[1]) ? results[1] : []).map(normaliseRoom);
-    var seen  = {};
-    _allContests = rooms.concat(pubs).filter(function(c){
-      if(!c.id || seen[c.id]) return false;
-      seen[c.id] = true; return true;
-    });
-    renderContestLists();
-  }catch(e){
-    var msg = '<div class="empty-state"><span class="es-icon">⚠️</span><h4>Could not load contests</h4><p>Check connection and try again</p></div>';
-    document.getElementById('pane-mine').innerHTML   = msg;
-    document.getElementById('pane-public').innerHTML = msg;
+function cardHeader(w, title, sub){
+  ctx.fillStyle = '#d4a853';
+  ctx.font = '700 10px Arial';
+  ctx.textAlign = 'left';
+  ctx.fillText('⚡ FITBOUNTY', 22, 24);
+  ctx.fillStyle = 'rgba(232,230,240,.22)';
+  ctx.font = '400 10px Arial';
+  ctx.textAlign = 'right';
+  ctx.fillText(fmtDate(new Date()), w-22, 24);
+  ctx.fillStyle = '#e8e6f0';
+  ctx.font = '700 24px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(title, w/2, 58);
+  if(sub){
+    ctx.fillStyle = 'rgba(232,230,240,.35)';
+    ctx.font = '400 12px Arial';
+    ctx.fillText(sub, w/2, 76);
   }
+  // Divider
+  ctx.strokeStyle = 'rgba(255,255,255,.07)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(22, sub?88:72); ctx.lineTo(w-22, sub?88:72); ctx.stroke();
+  return sub ? 98 : 82;
 }
 
-function renderContestLists(){
-  var u    = (S.user || '').toLowerCase();
-  var mine = _allContests.filter(function(c){
-    return c.participants.map(function(p){ return p.toLowerCase(); }).indexOf(u) !== -1
-        || c.creator.toLowerCase() === u;
-  });
-  var pub  = _allContests.filter(function(c){
-    return c.visibility === 'public'
-        && c.participants.map(function(p){ return p.toLowerCase(); }).indexOf(u) === -1;
-  });
-  document.getElementById('pane-mine').innerHTML = mine.length
-    ? mine.map(function(c){ return contestCardHTML(c,'mine'); }).join('')
-    : '<div class="empty-state"><span class="es-icon">🏆</span><h4>No active contests</h4><p>Create one or join a public contest</p></div>';
-  document.getElementById('pane-public').innerHTML = pub.length
-    ? pub.map(function(c){ return contestCardHTML(c,'public'); }).join('')
-    : '<div class="empty-state"><span class="es-icon">🌐</span><h4>No public contests</h4><p>Create one and invite friends!</p></div>';
-}
+function renderLeaderboardCard(entries, contestName){
+  const W = 560, rowH = 52, headerH = 100;
+  const H = headerH + Math.min(entries.length,8)*rowH + 24;
+  setupCanvas(W, H);
+  let y = cardHeader(W, 'LEADERBOARD', contestName ? contestName.slice(0,36) : null);
 
-function contestCardHTML(c, type){
-  var daysLeft = c.endDate
-    ? Math.max(0, Math.ceil((new Date(c.endDate) - new Date()) / 86400000))
-    : null;
-  var prog = (c.startDate && c.endDate)
-    ? Math.min(100, Math.max(0, (new Date() - new Date(c.startDate)) / (new Date(c.endDate) - new Date(c.startDate)) * 100))
-    : 0;
-  var pCount   = c.participants.length;
-  var daysHTML = daysLeft === null ? '' : daysLeft > 0
-    ? '<span class="pill pill-green">' + daysLeft + 'd left</span>'
-    : '<span class="pill pill-red">Ended</span>';
-  return '<div class="contest-card" onclick="openContestDetail(\'' + esc(c.id) + '\')">'
-    + '<div class="cc-top">'
-    + '<div style="flex:1;min-width:0">'
-    + '<div class="cc-name">' + esc(c.name) + '</div>'
-    + '<div class="cc-meta">'
-    + (c.entryFee ? '<span class="pill pill-gold">₹' + c.entryFee + ' entry</span>' : '')
-    + daysHTML
-    + (c.visibility === 'public' ? '<span class="pill pill-blue">Public</span>' : '')
-    + '</div></div>'
-    + (type === 'public' ? '<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();joinContest(\'' + esc(c.id) + '\')">Join</button>' : '')
-    + '</div>'
-    + '<div class="cc-bar"><div class="cc-bar-fill" style="width:' + prog.toFixed(0) + '%"></div></div>'
-    + '<div class="cc-footer">'
-    + '<span class="cc-prize">' + (c.prizePool ? '₹' + c.prizePool.toLocaleString('en-IN') + ' pool' : 'No prize set') + '</span>'
-    + '<span class="cc-participants">👥 ' + pCount + ' participant' + (pCount !== 1 ? 's' : '') + '</span>'
-    + '</div></div>';
-}
+  entries.slice(0,8).forEach((e, i) => {
+    const midY = y + rowH/2;
 
-function switchContestTab(tab, btn){
-  document.querySelectorAll('.ctab-btn').forEach(function(b){ b.classList.remove('on'); });
-  btn.classList.add('on');
-  document.querySelectorAll('.ctab-pane').forEach(function(p){ p.classList.remove('on'); });
-  var pEl = document.getElementById('pane-' + tab);
-  if(pEl) pEl.classList.add('on');
-}
-
-async function openContestDetail(id){
-  var c = _allContests.filter(function(x){ return x.id === id; })[0];
-  if(!c) return;
-  _currentContest = c;
-  document.querySelectorAll('#view-contests .ctab-bar, #view-contests .ctab-pane').forEach(function(el){ el.style.display = 'none'; });
-  document.querySelector('#view-contests .sec-hdr').style.display = 'none';
-  var detail = document.getElementById('contest-detail');
-  detail.style.display = '';
-  detail.innerHTML = '<div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>';
-
-  try{
-    var results = await Promise.all([
-      api({ action:'getLeaderboard' }),
-      api({ action:'getAllWeights' })
-    ]);
-    var lbRes   = results[0];
-    var allWRes = results[1];
-    var members = c.participants.map(function(p){ return p.toLowerCase(); });
-
-    var lb = (lbRes.leaderboard || [])
-      .filter(function(e){ return members.indexOf(String(e.name).toLowerCase()) !== -1; })
-      .map(function(e){
-        return {
-          name:      e.name,
-          pct:       parseFloat(e.totalLossPct || e.total || 0),
-          weigh_ins: e.checkIns || 0,
-          // FIX #3 — use weekChangeKg (or weekChange for compat); stored as kg, not percent
-          weekChangeKg: (e.weekChangeKg !== undefined ? e.weekChangeKg : e.weekChange) !== null
-            ? parseFloat(e.weekChangeKg !== undefined ? e.weekChangeKg : e.weekChange)
-            : null
-        };
-      })
-      .sort(function(a,b){ return b.pct - a.pct; });
-
-    var rawRows    = Array.isArray(allWRes) ? allWRes : [];
-    var hasHdr     = rawRows.length > 0 && isNaN(parseFloat(rawRows[0][2]));
-    var weightRows = (hasHdr ? rawRows.slice(1) : rawRows)
-      .filter(function(r){ return members.indexOf(String(r[0]).toLowerCase()) !== -1; })
-      .map(function(r){ return { username:String(r[0]), date:r[1], weight:parseFloat(r[2]) }; })
-      .filter(function(r){ return r.weight > 0; });
-
-    renderContestDetail(c, lb, weightRows);
-  }catch(err){
-    detail.innerHTML = '<div class="empty-state"><span class="es-icon">⚠️</span><h4>Failed to load data</h4></div>';
-  }
-}
-
-function renderContestDetail(c, lb, weightRows){
-  var u      = S.user || '';
-  var uLower = u.toLowerCase();
-  var myEntry= lb.filter(function(x){ return x.name.toLowerCase() === uLower; })[0];
-  var myRank = lb.map(function(x){ return x.name.toLowerCase(); }).indexOf(uLower) + 1;
-  var daysLeft= c.endDate ? Math.max(0, Math.ceil((new Date(c.endDate)-new Date())/86400000)) : 0;
-  var myW = weightRows
-    .filter(function(r){ return r.username.toLowerCase() === uLower; })
-    .sort(function(a,b){ return new Date(a.date)-new Date(b.date); });
-  var daysHTML = daysLeft > 0
-    ? '<span class="pill pill-green">' + daysLeft + 'd left</span>'
-    : '<span class="pill pill-red">Ended</span>';
-  var detail = document.getElementById('contest-detail');
-  detail.innerHTML =
-    '<div class="detail-back" onclick="closeContestDetail()">← Back to Contests</div>'
-    + '<div style="padding:12px 16px 0">'
-    + '<div style="font-family:var(--fd);font-size:1.5rem;font-weight:800;line-height:1.2;margin-bottom:10px">' + esc(c.name) + '</div>'
-    + '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px">'
-    + (c.entryFee ? '<span class="pill pill-gold">₹' + c.entryFee + ' entry</span>' : '')
-    + daysHTML
-    + (c.visibility === 'public' ? '<span class="pill pill-blue">Public</span>' : '')
-    + '</div></div>'
-    + '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px">'
-    + '<div class="ds-box"><div class="ds-val">' + (myRank || '—') + '</div><div class="ds-key">Your Rank</div></div>'
-    + '<div class="ds-box"><div class="ds-val">' + (myEntry ? myEntry.pct.toFixed(1)+'%' : '—') + '</div><div class="ds-key">Total Loss</div></div>'
-    + '<div class="ds-box"><div class="ds-val">' + c.participants.length + '</div><div class="ds-key">Athletes</div></div>'
-    + '</div>'
-    + (myW.length > 1 ? '<div class="trend-wrap"><div class="trend-title">Your Weight Trend</div><canvas id="trend-chart" height="180" style="width:100%;max-height:200px"></canvas></div>' : '')
-    + '<div class="card"><div class="card-title">Leaderboard — Total Loss %</div>'
-    + renderLbRows(lb, u)
-    + '</div>'
-    + '<div id="participant-detail"></div>';
-
-  if(myW.length > 1){
-    setTimeout(function(){
-      var ctx = document.getElementById('trend-chart');
-      if(!ctx) return;
-      new Chart(ctx.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: myW.map(function(r){ return fmtDate(r.date); }),
-          datasets: [{
-            label: 'Weight (kg)',
-            data: myW.map(function(r){ return r.weight; }),
-            borderColor: '#d4a853',
-            backgroundColor: 'rgba(212,168,83,.08)',
-            borderWidth: 2, pointRadius: 4,
-            pointBackgroundColor: '#d4a853',
-            tension: 0.35, fill: true
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { ticks: { color:'rgba(232,230,240,.4)', font:{size:10} }, grid: { color:'rgba(255,255,255,.04)' } },
-            y: { ticks: { color:'rgba(232,230,240,.4)', font:{size:10} }, grid: { color:'rgba(255,255,255,.04)' } }
-          }
-        }
-      });
-    }, 80);
-  }
-}
-
-function renderLbRows(lb, currentUser){
-  if(!lb.length) return '<div class="empty-state" style="padding:20px 0"><span class="es-icon">⚖️</span><h4>No weigh-ins yet</h4></div>';
-  return lb.map(function(entry, i){
-    var col   = avatarColor(entry.name);
-    var isMe  = entry.name.toLowerCase() === (currentUser||'').toLowerCase();
-    // FIX #3 — weekChangeKg is in kg, show as "▼ 0.8 kg" not "▼ 0.8%"
-    var wk    = entry.weekChangeKg;
-    var wkStr, wkCls;
-    if(wk === null || wk === undefined){
-      wkStr = '—'; wkCls = '';
-    } else if(wk > 0){
-      wkStr = '▼ ' + wk.toFixed(2) + ' kg'; wkCls = 'up'; // lost weight this week = good
-    } else if(wk < 0){
-      wkStr = '▲ ' + Math.abs(wk).toFixed(2) + ' kg'; wkCls = 'dn'; // gained = bad
-    } else {
-      wkStr = '0 kg'; wkCls = '';
+    // Highlight #1 row
+    if(i === 0){
+      ctx.fillStyle = 'rgba(212,168,83,.05)';
+      ctx.fillRect(0, y, W, rowH);
     }
-    return '<div class="lb-row" onclick="openParticipantDetail(\'' + esc(entry.name) + '\')">'
-      + '<div class="lb-rank ' + (i===0?'r1':'') + '">' + (i===0?'👑':i+1) + '</div>'
-      + '<div class="lb-av" style="background:' + col + '">' + initials(entry.name) + '</div>'
-      + '<div class="lb-info">'
-      + '<div class="lb-name">' + esc(entry.name) + (isMe ? ' <span style="font-size:10px;color:var(--gold);margin-left:4px">YOU</span>' : '') + '</div>'
-      + '<div class="lb-sub">' + entry.weigh_ins + ' weigh-in' + (entry.weigh_ins!==1?'s':'') + '</div>'
-      + '</div>'
-      + '<div class="lb-right">'
-      + '<div class="lb-pct ' + (entry.pct>0?'pos':'') + '">' + (entry.pct>0?'−':'') + Math.abs(entry.pct).toFixed(1) + '%</div>'
-      + '<div class="lb-week ' + wkCls + '">' + wkStr + '</div>'
-      + '</div></div>';
-  }).join('');
+
+    // Rank badge
+    const icons = ['🥇','🥈','🥉'];
+    if(i < 3){
+      ctx.font = '18px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(icons[i], 26, midY+6);
+    } else {
+      ctx.fillStyle = 'rgba(232,230,240,.28)';
+      ctx.font = '500 13px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('#'+(i+1), 26, midY+5);
+    }
+
+    // Avatar circle
+    ctx.fillStyle = avColor(e.name);
+    ctx.beginPath(); ctx.arc(60, midY, 15, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(initials(e.name), 60, midY+4);
+
+    // Name
+    ctx.fillStyle = i===0 ? '#d4a853' : '#e8e6f0';
+    ctx.font = `${i===0?'600':'500'} ${i===0?15:14}px Arial`;
+    ctx.textAlign = 'left';
+    const isMe = e.name.toLowerCase() === S.user?.toLowerCase();
+    ctx.fillText(e.name + (isMe?' (you)':''), 84, midY+5);
+
+    // Check-ins
+    ctx.fillStyle = 'rgba(232,230,240,.28)';
+    ctx.font = '400 11px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(`${e.checkIns||0} weigh-ins`, 84, midY+18);
+
+    // Percentage
+    const pct = parseFloat(e.totalLossPct || e.total || 0);
+    ctx.fillStyle = pct > 0 ? '#3ecf8e' : 'rgba(232,230,240,.35)';
+    ctx.font = `700 ${i===0?17:15}px "Courier New",monospace`;
+    ctx.textAlign = 'right';
+    ctx.fillText(pct > 0 ? '−'+pct.toFixed(1)+'%' : '0%', W-22, midY+6);
+
+    // Row divider
+    ctx.strokeStyle = 'rgba(255,255,255,.045)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(22, y+rowH); ctx.lineTo(W-22, y+rowH); ctx.stroke();
+    y += rowH;
+  });
+
+  return canvas.toDataURL('image/png');
 }
 
-async function openParticipantDetail(username){
-  var el = document.getElementById('participant-detail');
-  el.innerHTML = '<div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>';
-  el.scrollIntoView({ behavior:'smooth' });
+function renderProgressCard(weights, username){
+  const W = 560, H = 300;
+  setupCanvas(W, H);
+  let y = cardHeader(W, 'MY PROGRESS');
+
+  if(!weights.length){
+    ctx.fillStyle = 'rgba(232,230,240,.3)';
+    ctx.font = '400 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('No weigh-ins logged yet', W/2, H/2);
+    return canvas.toDataURL('image/png');
+  }
+
+  const first = weights[0].weight;
+  const last  = weights[weights.length-1].weight;
+  const lostKg = parseFloat((first - last).toFixed(2));
+  const lostPct = parseFloat(((first-last)/first*100).toFixed(1));
+
+  // Big stat
+  ctx.fillStyle = lostPct > 0 ? '#3ecf8e' : '#e05555';
+  ctx.font = '700 42px "Courier New",monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText((lostPct>0?'−':'+') + Math.abs(lostPct) + '%', W/2, y+42);
+  ctx.fillStyle = 'rgba(232,230,240,.35)';
+  ctx.font = '400 11px Arial';
+  ctx.fillText('TOTAL BODY LOSS', W/2, y+60);
+  y += 76;
+
+  // Sparkline
+  if(weights.length >= 2){
+    const vals = weights.map(w=>w.weight);
+    const minW = Math.min(...vals), maxW = Math.max(...vals), range = maxW - minW || 1;
+    const cLeft=28, cRight=W-28, cTop=y, cBot=y+80;
+    const cW=cRight-cLeft, cH=cBot-cTop;
+    const xOf = i => cLeft + (i/(vals.length-1))*cW;
+    const yOf = v => cBot - ((v-minW)/range)*cH;
+    const trending = vals[vals.length-1] <= vals[0];
+    const lc = trending ? '#3ecf8e' : '#e05555';
+
+    // Gradient fill
+    const grd = ctx.createLinearGradient(0, cTop, 0, cBot);
+    grd.addColorStop(0, trending?'rgba(62,207,142,.3)':'rgba(224,85,85,.3)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath();
+    ctx.moveTo(xOf(0), cBot);
+    vals.forEach((v,i) => ctx.lineTo(xOf(i), yOf(v)));
+    ctx.lineTo(xOf(vals.length-1), cBot);
+    ctx.closePath();
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.strokeStyle = lc;
+    ctx.lineWidth = 2;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    vals.forEach((v,i) => i===0 ? ctx.moveTo(xOf(i),yOf(v)) : ctx.lineTo(xOf(i),yOf(v)));
+    ctx.stroke();
+
+    // Dots
+    vals.forEach((v,i) => {
+      ctx.fillStyle = i===vals.length-1 ? lc : 'rgba(232,230,240,.15)';
+      ctx.beginPath(); ctx.arc(xOf(i), yOf(v), i===vals.length-1?5:3, 0, Math.PI*2); ctx.fill();
+    });
+
+    // Date labels
+    ctx.fillStyle = 'rgba(232,230,240,.22)';
+    ctx.font = '400 10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(fmtDate(weights[0].date), cLeft, cBot+14);
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtDate(weights[weights.length-1].date), cRight, cBot+14);
+    y = cBot + 24;
+  }
+
+  // Mini stats row
+  const stats = [
+    ['START', first.toFixed(1)+' kg'],
+    ['NOW',   last.toFixed(1)+' kg'],
+    ['LOST',  (lostKg>0?'−':'+') + Math.abs(lostKg)+' kg'],
+    ['WEIGH-INS', weights.length]
+  ];
+  const boxW = (W-44) / stats.length;
+  stats.forEach((st, i) => {
+    const bx = 22 + i*boxW;
+    ctx.fillStyle = 'rgba(255,255,255,.04)';
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(bx, y, boxW-8, 38, 6) : ctx.rect(bx, y, boxW-8, 38);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(232,230,240,.28)';
+    ctx.font = '600 9px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(st[0], bx+boxW/2-4, y+13);
+    ctx.fillStyle = i===2 && lostKg>0 ? '#3ecf8e' : '#e8e6f0';
+    ctx.font = '700 13px "Courier New",monospace';
+    ctx.fillText(st[1], bx+boxW/2-4, y+29);
+  });
+
+  return canvas.toDataURL('image/png');
+}
+
+function renderWeekCard(weights){
+  const W = 560;
+  const rows = [];
+  const sorted = [...weights].sort((a,b)=>new Date(a.date)-new Date(b.date));
+  sorted.forEach((w,i) => {
+    const prev  = i > 0 ? sorted[i-1].weight : null;
+    const dKg   = prev ? parseFloat((prev-w.weight).toFixed(2)) : null;
+    const dPct  = prev ? parseFloat(((prev-w.weight)/prev*100).toFixed(1)) : null;
+    rows.push({ date:w.date, weight:w.weight, dKg, dPct });
+  });
+
+  const ROW = 44, H = 100 + rows.length*ROW + 20;
+  setupCanvas(W, H);
+  let y = cardHeader(W, 'WEEK BY WEEK');
+
+  // Column headers
+  const cols = [{l:'DATE',x:28},{l:'WEIGHT',x:180},{l:'CHANGE (kg)',x:300},{l:'CHANGE (%)',x:430}];
+  cols.forEach(c => {
+    ctx.fillStyle = 'rgba(212,168,83,.6)';
+    ctx.font = '700 9px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText(c.l, c.x, y+12);
+  });
+  ctx.strokeStyle = 'rgba(255,255,255,.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(22,y+18); ctx.lineTo(W-22,y+18); ctx.stroke();
+  y += 22;
+
+  [...rows].reverse().forEach((r,i) => {
+    const ry = y + i*ROW;
+    const midY = ry + ROW/2;
+
+    if(i===0){
+      ctx.fillStyle = 'rgba(212,168,83,.04)';
+      ctx.fillRect(0, ry, W, ROW);
+    }
+
+    ctx.fillStyle = i===0?'#d4a853':'rgba(232,230,240,.75)';
+    ctx.font = `${i===0?'600':'400'} 13px Arial`;
+    ctx.textAlign = 'left';
+    ctx.fillText(fmtDate(r.date)+(i===0?' ★':''), 28, midY+5);
+
+    ctx.fillStyle = '#e8e6f0';
+    ctx.font = '500 13px "Courier New",monospace';
+    ctx.fillText(r.weight.toFixed(1)+' kg', 180, midY+5);
+
+    if(r.dKg !== null){
+      ctx.fillStyle = r.dKg > 0 ? '#3ecf8e' : r.dKg < 0 ? '#e05555' : 'rgba(232,230,240,.3)';
+      ctx.font = '600 13px "Courier New",monospace';
+      ctx.fillText(r.dKg>0?'−'+r.dKg:r.dKg<0?'+'+Math.abs(r.dKg):'0', 300, midY+5);
+      ctx.fillText(r.dPct>0?'−'+r.dPct+'%':r.dPct<0?'+'+Math.abs(r.dPct)+'%':'0%', 430, midY+5);
+    } else {
+      ctx.fillStyle = 'rgba(232,230,240,.22)';
+      ctx.font = '400 12px Arial';
+      ctx.fillText('—', 300, midY+5);
+      ctx.fillText('—', 430, midY+5);
+    }
+
+    ctx.strokeStyle = 'rgba(255,255,255,.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(22,ry+ROW); ctx.lineTo(W-22,ry+ROW); ctx.stroke();
+  });
+
+  return canvas.toDataURL('image/png');
+}
+
+// ── Message rendering ─────────────────────────────────────────
+function scrollDown(){ const m=document.getElementById('messages'); m.scrollTop=m.scrollHeight; }
+
+function addBotText(text, actions){
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  let html = `<div class="bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  html += `<div class="msg-time">${fmtTime()}</div>`;
+  if(actions && actions.length){
+    html += '<div class="msg-actions">' + actions.map(a=>
+      `<button class="mac${a.cls?' '+a.cls:''}" onclick="${a.fn}">${a.label}</button>`
+    ).join('') + '</div>';
+  }
+  div.innerHTML = html;
+  document.getElementById('messages').appendChild(div);
+  scrollDown();
+  return div;
+}
+
+function addUserText(text){
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="bubble">${esc(text).replace(/\n/g,'<br>')}</div><div class="msg-time">${fmtTime()}</div>`;
+  document.getElementById('messages').appendChild(div);
+  scrollDown();
+}
+
+function addCardMsg(dataUrl, caption){
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = `<div class="card-bubble"><img src="${dataUrl}" alt="card"></div>
+    ${caption?`<div class="card-caption">${caption}</div>`:''}
+    <div class="msg-time">${fmtTime()}</div>`;
+  document.getElementById('messages').appendChild(div);
+  scrollDown();
+}
+
+function addUserImage(dataUrl, caption){
+  const div = document.createElement('div');
+  div.className = 'msg user';
+  div.innerHTML = `<div class="img-bubble"><img src="${dataUrl}"></div>
+    ${caption?`<div class="bubble" style="margin-top:4px">${esc(caption)}</div>`:''}
+    <div class="msg-time">${fmtTime()}</div>`;
+  document.getElementById('messages').appendChild(div);
+  scrollDown();
+}
+
+function showTyping(){
+  if(_typing) return;
+  const div = document.createElement('div');
+  div.className = 'msg bot';
+  div.innerHTML = '<div class="typing-bubble"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div>';
+  _typing = div;
+  document.getElementById('messages').appendChild(div);
+  scrollDown();
+}
+
+function hideTyping(){ if(_typing){ _typing.remove(); _typing=null; } }
+
+// ── Data fetchers ────────────────────────────────────────────
+async function getLeaderboard(){
+  if(_cachedLB) return _cachedLB;
+  const d = await gasAPI({ action:'getLeaderboard' });
+  _cachedLB = d.leaderboard || [];
+  return _cachedLB;
+}
+
+async function getMyWeights(){
+  if(_cachedWeights) return _cachedWeights;
+  const raw  = await gasAPI({ action:'getUserWeights', username: S.user });
+  const rows = Array.isArray(raw) ? raw : [];
+  const hasHdr = rows.length>0 && isNaN(parseFloat(rows[0][2]));
+  _cachedWeights = (hasHdr?rows.slice(1):rows)
+    .map(r=>({ date:r[1], weight:parseFloat(r[2]) }))
+    .filter(r=>r.weight>0)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  return _cachedWeights;
+}
+
+async function logWeight(w){
+  const d = await gasAPI({ action:'addWeight', username:S.user, weight:w, geo:'' });
+  if(d.success){
+    _cachedWeights = null; // invalidate cache
+    _cachedLB      = null;
+  }
+  return d.success;
+}
+
+function refreshData(){ _cachedLB=null; _cachedWeights=null; addBotText('Data refreshed ✓ — ask me anything!'); }
+
+// ── AI Coach ─────────────────────────────────────────────────
+function buildContext(lb, myWeights){
+  const me    = lb ? lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase()) : null;
+  const rank  = lb ? lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1 : 0;
+  const first = myWeights.length ? myWeights[0].weight : null;
+  const last  = myWeights.length ? myWeights[myWeights.length-1].weight : null;
+  return `User: ${S.user}
+Rank: ${rank||'?'} of ${lb?lb.length:'?'}
+Total loss: ${me?me.totalLossPct:0}%
+Start weight: ${first||'?'} kg, Current: ${last||'?'} kg
+Weigh-ins: ${myWeights.length}
+Today: ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()]}
+Contest: Weekly Monday weigh-ins, highest % weight loss wins.`;
+}
+
+async function aiCoach(userMsg, lb, myWeights){
+  const context = buildContext(lb, myWeights);
+  const sysPrompt = `You are FitBounty Coach — a sharp, motivating fitness AI for a weight-loss challenge app.
+CONTESTANT STATS:
+${context}
+
+Rules:
+- Be concise (2-4 sentences max), warm, and data-aware
+- Use real stats in your response — don't be generic
+- If Monday, mention weigh-in; if not, mention practice logging is fine
+- Celebrate wins, be honest about losses, always motivating
+- Use 1-2 emojis max per message
+- If asked to log weight: say you'll need a number or photo to proceed`;
+
+  _chatHistory.push({ role:'user', content:userMsg });
+  const messages = [
+    { role:'user', content: sysPrompt + '\n\n---\nUSER: ' + userMsg }
+  ];
+
   try{
-    var raw    = await api({ action:'getUserWeights', username: username });
-    var rows   = Array.isArray(raw) ? raw : [];
-    var hasHdr = rows.length > 0 && isNaN(parseFloat(rows[0][2]));
-    var ws = (hasHdr ? rows.slice(1) : rows)
-      .map(function(r){ return { date:r[1], weight:parseFloat(r[2]) }; })
-      .filter(function(r){ return r.weight > 0; })
-      .sort(function(a,b){ return new Date(a.date)-new Date(b.date); });
-    renderParticipantDetail(username, ws);
-  }catch(e){ el.innerHTML = ''; }
-}
-
-function renderParticipantDetail(username, weights){
-  var el = document.getElementById('participant-detail');
-  if(!weights.length){ el.innerHTML = ''; return; }
-  var rowsHTML = weights.map(function(w, i){
-    var prev  = i > 0 ? weights[i-1].weight : null;
-    var delta = prev ? ((prev - w.weight) / prev * 100) : null;
-    var cls   = delta === null ? 'delta-nil' : delta > 0 ? 'delta-pos' : 'delta-neg';
-    var str   = delta === null ? '—' : (delta > 0 ? '−'+delta.toFixed(1)+'%' : '+'+Math.abs(delta).toFixed(1)+'%');
-    return '<tr><td>' + fmtDate(w.date) + '</td>'
-      + '<td style="font-family:var(--fm)">' + w.weight + ' kg</td>'
-      + '<td class="' + cls + '" style="font-family:var(--fm);font-weight:600">' + str + '</td></tr>';
-  }).join('');
-  el.innerHTML = '<div class="card"><div class="card-title">Week-on-Week — ' + esc(username) + '</div>'
-    + '<div style="overflow-x:auto"><table class="week-table" style="min-width:260px">'
-    + '<thead><tr><th>Date</th><th>Weight</th><th>Δ vs prev</th></tr></thead>'
-    + '<tbody>' + rowsHTML + '</tbody></table></div></div>';
-}
-
-function closeContestDetail(){
-  document.getElementById('contest-detail').style.display = 'none';
-  document.querySelectorAll('#view-contests .ctab-bar, #view-contests .ctab-pane').forEach(function(el){ el.style.display = ''; });
-  document.querySelector('#view-contests .sec-hdr').style.display = '';
-  _currentContest = null;
-}
-
-// FIX #4 — Strip computed standings fields from pp before saving back to sheet
-function cleanPpEntry(p){
-  if(typeof p === 'string') return p;
-  return { n: p.n || p.name || '', joinedAt: p.joinedAt || new Date().toISOString() };
-}
-
-async function joinContest(id){
-  var c = _allContests.filter(function(x){ return x.id === id; })[0];
-  if(!c){ toast('Contest not found','err'); return; }
-  var u   = S.user;
-  var raw = c._raw || {};
-  // FIX #4 — strip computed fields before mutating pp
-  var pp  = (raw.pp || []).map(cleanPpEntry);
-  var alreadyIn = pp.some(function(p){ return (p.n || p) === u; });
-  if(alreadyIn){ toast('Already a member'); return; }
-  pp.push({ n: u, joinedAt: new Date().toISOString() });
-  var updatedRaw = Object.assign({}, raw, { pp: pp });
-  try{
-    var action  = c.visibility === 'public' ? 'createPublicContest' : 'createRoom';
-    var payload = c.visibility === 'public'
-      ? { action:action, contest: updatedRaw }
-      : { action:action, room:    updatedRaw };
-    var d = await api(payload);
-    if(d.success || d.id){ toast('Joined contest! ✓'); loadContests(); }
-    else toast(d.error || d.message || 'Could not join','err');
-  }catch(e){ toast('Connection error','err'); }
-}
-
-var _lastCreatedContest = null;
-
-function openCreateContest(){
-  var today = new Date();
-  var end   = new Date(today); end.setDate(end.getDate()+84);
-  document.getElementById('cc-start').value = today.toISOString().split('T')[0];
-  document.getElementById('cc-end').value   = end.toISOString().split('T')[0];
-  document.getElementById('wa-share-btn').style.display = 'none';
-  openModal('modal-create');
-}
-
-async function createContest(){
-  var name    = document.getElementById('cc-name').value.trim();
-  var fee     = parseFloat(document.getElementById('cc-fee').value) || 0;
-  var start   = document.getElementById('cc-start').value;
-  var end     = document.getElementById('cc-end').value;
-  var penalty = parseFloat(document.getElementById('cc-penalty').value) || 0;
-  var vis     = document.getElementById('cc-visibility').value;
-  var p1 = parseInt(document.getElementById('cc-p1').value) || 60;
-  var p2 = parseInt(document.getElementById('cc-p2').value) || 30;
-  var p3 = parseInt(document.getElementById('cc-p3').value) || 10;
-  if(!name || !start || !end){ toast('Fill in all required fields','err'); return; }
-  if(p1+p2+p3 !== 100){ toast('Prize split must total exactly 100%','err'); return; }
-  var id  = 'c_' + Date.now();
-  var obj = {
-    id, name, fee, start, end, penalty,
-    visibility: vis, public: vis === 'public',
-    prizeSplit: { first:p1, second:p2, third:p3 },
-    createdBy: S.user, createdAt: new Date().toISOString(),
-    // FIX #4 — only store clean pp entries (no computed standings)
-    pp: [{ n: S.user, joinedAt: new Date().toISOString() }]
-  };
-  try{
-    var payload = vis === 'public'
-      ? { action:'createPublicContest', contest: Object.assign({},obj) }
-      : { action:'createRoom',          room:    Object.assign({},obj) };
-    var d = await api(payload);
-    if(d.success || d.id){
-      _lastCreatedContest = Object.assign({}, obj, { entryFee: fee });
-      toast('Contest created! ✓');
-      document.getElementById('wa-share-btn').style.display = '';
-      loadContests();
-    } else { toast(d.error || d.message || 'Failed to create','err'); }
-  }catch(e){ toast('Connection error','err'); }
-}
-
-function shareViaWhatsApp(){
-  if(!_lastCreatedContest) return;
-  var c   = _lastCreatedContest;
-  var url = window.location.href.split('?')[0];
-  var msg = encodeURIComponent(
-    '🏆 *Join my FitBounty Contest!*\n\n'
-    + '*' + c.name + '*\n'
-    + 'Entry Fee: ₹' + (c.fee || c.entryFee || 0) + '\n'
-    + 'Duration: ' + (c.start || '—') + ' → ' + (c.end || '—') + '\n\n'
-    + '📉 Highest % weight loss wins the prize pool!\n'
-    + '📅 Weekly Monday weigh-ins required\n'
-    + '📸 Photo proof at each weigh-in\n'
-    + '⚠️ ₹' + (c.penalty||0) + ' penalty for missed check-in\n\n'
-    + '👉 Register & join at:\n' + url + '\n\n'
-    + 'Contest ID: ' + c.id
-  );
-  window.open('https://wa.me/?text=' + msg, '_blank');
-}
-
-// ═══════════════════════════════════════════════════════════════
-// LOG WEIGHT
-// FIX #5 — Weight logging allowed any day of the week.
-//           Monday = official weigh-in (counted in leaderboard).
-//           Other days = practice log (still saved, shown in history).
-// ═══════════════════════════════════════════════════════════════
-var _geoData  = null;
-var _photoB64 = null;
-
-function initLogWeight(){
-  checkLogSchedule();
-  captureGeo();
-  loadMyHistory();
-}
-
-function checkLogSchedule(){
-  var day    = new Date().getDay();
-  var status = document.getElementById('log-status');
-  var btn    = document.getElementById('log-btn');
-  // FIX #5 — button always enabled; status communicates official vs practice
-  btn.disabled = false;
-  if(day === 1){
-    status.className   = 'log-status ok';
-    status.textContent = "✓ It's Monday — this is your official weigh-in. Photo proof recommended.";
-    btn.textContent    = 'Submit Official Weigh-in';
-  } else {
-    var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-    status.className   = 'log-status info';
-    status.textContent = 'Practice log (' + days[day] + '). Saved to your history, but only Monday weigh-ins count for the leaderboard.';
-    btn.textContent    = 'Log Practice Weight';
+    const resp = await puter.ai.chat(messages, { model:'gpt-4o-mini' });
+    const reply = typeof resp==='string' ? resp : (resp?.message?.content || resp?.toString() || 'Keep pushing! 💪');
+    _chatHistory.push({ role:'assistant', content: reply });
+    return reply;
+  }catch(e){
+    return `Great question! Based on your progress (${buildContext(lb,myWeights).split('\n')[2]}), you're making solid moves. Keep going! 💪`;
   }
 }
 
-async function captureGeo(){
-  if(!navigator.geolocation) return;
-  var banner  = document.getElementById('geo-banner');
-  var geoText = document.getElementById('geo-text');
-  banner.style.display = 'flex';
-  geoText.textContent  = 'Getting your location…';
+// ── Vision: read scale from image ────────────────────────────
+async function readScaleFromImage(dataUrl){
   try{
-    var pos = await new Promise(function(res, rej){
-      navigator.geolocation.getCurrentPosition(res, rej, { timeout:8000, enableHighAccuracy:true });
-    });
-    var lat = pos.coords.latitude;
-    var lng = pos.coords.longitude;
-    var now     = new Date();
-    var dateStr = now.toLocaleDateString('en-IN',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
-    var timeStr = now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    _geoData = { lat:lat, lng:lng, date:dateStr, time:timeStr, ts:now.toISOString() };
-    geoText.textContent = '📍 ' + lat.toFixed(5) + ', ' + lng.toFixed(5) + '  ·  ' + dateStr + '  ' + timeStr;
-  }catch(e){ banner.style.display = 'none'; }
+    const resp = await puter.ai.chat([{
+      role:'user',
+      content:[
+        { type:'image_url', image_url:{ url:dataUrl } },
+        { type:'text', text:`Look at this image of a weighing scale. Extract the weight number being displayed.
+Reply with ONLY the number in kg (e.g. "82.5" or "83"). 
+If you cannot clearly see a weight reading, reply with exactly the word "unclear".
+No units, no explanation, just the number or "unclear".` }
+      ]
+    }], { model:'gpt-4o-mini' });
+
+    const raw = typeof resp==='string' ? resp : (resp?.message?.content || '');
+    const cleaned = raw.trim().replace(/[^0-9.]/g,'');
+    const num = parseFloat(cleaned);
+    return isNaN(num) || num < 20 || num > 300 ? null : num;
+  }catch(e){ return null; }
 }
 
-function onPhotoSelect(e){
-  var file = e.target.files[0];
+// ── Intent parsing ───────────────────────────────────────────
+function parseIntent(text){
+  const t = text.toLowerCase().trim();
+  if(/\b(leaderboard|standings|ranking|who'?s (winning|leading)|top|1st|first place)\b/.test(t)) return 'leaderboard';
+  if(/\b(my progress|how (am i|am i doing)|my stats|progress|journey|my results)\b/.test(t)) return 'progress';
+  if(/\b(this week|weekly|week on week|week by week|week.?table|breakdown|wk)\b/.test(t)) return 'week';
+  if(/\b(contest|challenge|prize|pool|rules|entry)\b/.test(t)) return 'contest';
+  if(/\b(log|record|submit|weigh.?in|weight is|i weigh)\b/.test(t) || /\b\d{2,3}(\.\d)?\s*(kg)?\b/.test(t)) return 'log';
+  if(/\b(coach|advice|tip|help|recommend|motivate|how to)\b/.test(t)) return 'coach';
+  return 'ai'; // fallback to AI
+}
+
+function extractWeight(text){
+  const m = text.match(/\b(\d{2,3}(?:\.\d{1,2})?)\s*(?:kg|kgs|kilos?)?\b/i);
+  return m ? parseFloat(m[1]) : null;
+}
+
+// ── Chip and quick actions ─────────────────────────────────────
+async function chipAction(type){
+  const labels = {
+    leaderboard:'🏆 Leaderboard', progress:'📊 My Progress',
+    week:'📅 This Week', log:'⚖️ Log Weight',
+    contest:'🎯 Contest Info', coach:'💬 Ask Coach'
+  };
+  addUserText(labels[type] || type);
+  await handleIntent(type, '');
+}
+
+async function handleIntent(intent, rawText){
+  showTyping();
+  await new Promise(r=>setTimeout(r,300));
+
+  if(intent === 'leaderboard'){
+    try{
+      const lb = await getLeaderboard();
+      if(!lb.length){ hideTyping(); addBotText('No leaderboard data yet — everyone needs to log their first weigh-in!'); return; }
+      const img = renderLeaderboardCard(lb, 'FitBounty Challenge 2026');
+      hideTyping();
+      addBotText(`Here's the current standings — ${lb.length} athletes competing 🏆`);
+      setTimeout(()=>addCardMsg(img, 'Screenshot to share on WhatsApp!'), 200);
+    }catch(e){ hideTyping(); addBotText('Could not load leaderboard. Check your connection.'); }
+
+  } else if(intent === 'progress'){
+    try{
+      const weights = await getMyWeights();
+      if(!weights.length){ hideTyping(); addBotText("You haven't logged any weigh-ins yet. Tap ⚖️ Log Weight to get started!"); return; }
+      const img = renderProgressCard(weights, S.user);
+      const pct  = weights.length>=2 ? ((weights[0].weight-weights[weights.length-1].weight)/weights[0].weight*100).toFixed(1) : 0;
+      hideTyping();
+      addBotText(`You've lost ${pct}% so far — here's your full journey 📈`);
+      setTimeout(()=>addCardMsg(img, 'Your weight trend'), 200);
+    }catch(e){ hideTyping(); addBotText('Could not load your data. Try again.'); }
+
+  } else if(intent === 'week'){
+    try{
+      const weights = await getMyWeights();
+      if(weights.length < 2){ hideTyping(); addBotText("You need at least 2 weigh-ins to see week-on-week changes. Log more!"); return; }
+      const img = renderWeekCard(weights);
+      hideTyping();
+      addBotText(`Here's your week-by-week breakdown, ${S.user} 📅`);
+      setTimeout(()=>addCardMsg(img, 'Green = weight loss · Red = gain'), 200);
+    }catch(e){ hideTyping(); addBotText('Could not load your history.'); }
+
+  } else if(intent === 'log'){
+    const w = extractWeight(rawText);
+    if(w){
+      hideTyping();
+      _pendingWeight = w;
+      const isMonday = new Date().getDay()===1;
+      addBotText(
+        `Got it — ${w} kg ⚖️\n\n${isMonday ? 'Today is Monday — this will be your **official weigh-in**!' : 'This will be logged as a practice entry (only Monday entries count for the leaderboard).'}\n\nShall I log this?`,
+        [{ label:'✓ Yes, log it', fn:'confirmLog()', cls:'confirm' },
+         { label:'✗ Cancel', fn:'cancelLog()', cls:'cancel' }]
+      );
+    } else {
+      hideTyping();
+      addBotText("Sure! What's your weight? Type a number (e.g. 82.5) or upload a photo of your scale 📷");
+    }
+
+  } else if(intent === 'contest'){
+    try{
+      const lb = await getLeaderboard();
+      const me = lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase());
+      const rank = lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1;
+      hideTyping();
+      addBotText(`📋 **FitBounty Challenge 2026**\n\n• ${lb.length} participants\n• Weekly Monday weigh-ins\n• Highest % weight loss wins\n• ₹500 penalty for missed weigh-in\n\n${me ? `Your rank: #${rank} · Loss: ${me.totalLossPct}%` : "You're not in the contest yet!"}`);
+    }catch(e){ hideTyping(); addBotText('Could not load contest info.'); }
+
+  } else if(intent === 'coach' || intent === 'ai'){
+    const prompt = rawText || 'Give me motivation and advice for my weight loss journey.';
+    try{
+      const [lb, weights] = await Promise.all([getLeaderboard().catch(()=>[]), getMyWeights().catch(()=>[])]);
+      const reply = await aiCoach(prompt, lb, weights);
+      hideTyping();
+      addBotText(reply);
+    }catch(e){ hideTyping(); addBotText("I'm here to help — keep pushing and log those weigh-ins every Monday! 💪"); }
+  }
+}
+
+// ── Weight confirmation ───────────────────────────────────────
+async function confirmLog(){
+  if(!_pendingWeight) return;
+  const w = _pendingWeight; _pendingWeight=null;
+  // Disable confirm buttons
+  document.querySelectorAll('.mac').forEach(b=>b.disabled=true);
+  showTyping();
+  const ok = await logWeight(w);
+  hideTyping();
+  if(ok){
+    addBotText(`✅ ${w} kg logged successfully!\n\nKeep it up — see you next Monday for your official weigh-in 💪`);
+  } else {
+    addBotText('Something went wrong logging your weight. Try again.');
+  }
+}
+
+function cancelLog(){
+  _pendingWeight = null;
+  document.querySelectorAll('.mac').forEach(b=>b.disabled=true);
+  addBotText('Cancelled. No weight was logged.');
+}
+
+// ── Image upload handler ──────────────────────────────────────
+async function handleImageUpload(e){
+  const file = e.target.files[0];
   if(!file) return;
-  var reader = new FileReader();
-  reader.onload = function(ev){
-    _photoB64 = ev.target.result;
-    document.getElementById('preview-img').src             = _photoB64;
-    document.getElementById('photo-preview').style.display = '';
-    document.getElementById('photo-zone').style.display    = 'none';
+  e.target.value = '';
+
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const dataUrl = ev.target.result;
+    addUserImage(dataUrl, 'Scale photo');
+    showTyping();
+    await new Promise(r=>setTimeout(r,500));
+
+    const weight = await readScaleFromImage(dataUrl);
+    hideTyping();
+
+    if(weight){
+      _pendingWeight = weight;
+      const isMonday = new Date().getDay()===1;
+      addBotText(
+        `I can see **${weight} kg** on your scale ⚖️\n\n${isMonday ? 'Official weigh-in day — this counts for the leaderboard!' : 'Practice log — only Monday entries count officially.'}\n\nShall I log ${weight} kg?`,
+        [{ label:'✓ Log '+weight+' kg', fn:'confirmLog()', cls:'confirm' },
+         { label:'✗ Cancel', fn:'cancelLog()', cls:'cancel' }]
+      );
+    } else {
+      addBotText("I couldn't read the weight from this photo clearly 🤔\n\nTry a well-lit close-up of the display, or type your weight manually.");
+    }
   };
   reader.readAsDataURL(file);
 }
 
-function removePhoto(){
-  _photoB64 = null;
-  document.getElementById('photo-preview').style.display = 'none';
-  document.getElementById('photo-zone').style.display    = '';
-  document.getElementById('photo-input').value           = '';
-  document.getElementById('preview-img').src             = '';
+// ── Text input handler ────────────────────────────────────────
+async function sendText(){
+  const input = document.getElementById('txt-input');
+  const text  = input.value.trim();
+  if(!text) return;
+  input.value = ''; autoGrow(input);
+  addUserText(text);
+  const intent = parseIntent(text);
+  await handleIntent(intent, text);
 }
 
-async function submitWeight(){
-  var w = parseFloat(document.getElementById('weight-input').value);
-  if(!w || w < 30 || w > 300){ toast('Enter a valid weight (30–300 kg)','err'); return; }
-  var btn = document.getElementById('log-btn');
-  btn.disabled = true; btn.textContent = 'Submitting…';
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+// ── AUTH ─────────────────────────────────────────────────────
+function authTab(t){
+  document.getElementById('t-sign').classList.toggle('on', t==='sign');
+  document.getElementById('t-join').classList.toggle('on', t==='join');
+  document.getElementById('form-sign').style.display = t==='sign'?'':'none';
+  document.getElementById('form-join').style.display = t==='join'?'':'none';
+  document.getElementById('auth-err').style.display = 'none';
+}
+
+function showErr(msg){ const e=document.getElementById('auth-err'); e.textContent=msg; e.style.display=''; }
+
+async function doLogin(){
+  const u=document.getElementById('li-u').value.trim();
+  const p=document.getElementById('li-p').value;
+  if(!u||!p){ showErr('Enter username and password'); return; }
+  const btn=document.getElementById('li-btn');
+  btn.innerHTML='<div class="spin"></div>'; btn.disabled=true;
   try{
-    var d = await api({
-      action:    'addWeight',
-      username:  S.user,
-      weight:    w,
-      geo:       _geoData ? (_geoData.lat + ',' + _geoData.lng + ' | ' + _geoData.date + ' ' + _geoData.time) : '',
-      timestamp: new Date().toISOString()
-    });
-    if(d.success){
-      toast('Weigh-in logged ✓');
-      document.getElementById('weight-input').value = '';
-      removePhoto();
-      loadMyHistory();
-    } else { toast(d.message || 'Failed to log weight','err'); }
-  }catch(e){ toast('Connection error','err'); }
-  checkLogSchedule(); // restores button text
+    const d = await gasAPI({ action:'authenticate', username:u, password:p });
+    if(d.success){ S.set(u.toLowerCase()); startChat(); }
+    else showErr(d.message||'Invalid credentials');
+  }catch(e){ showErr('Connection error. Try again.'); }
+  btn.innerHTML='Sign In'; btn.disabled=false;
 }
 
-async function loadMyHistory(){
-  var el = document.getElementById('my-history');
+async function doRegister(){
+  const n=document.getElementById('rg-n').value.trim();
+  const u=document.getElementById('rg-u').value.trim().toLowerCase();
+  const ph=document.getElementById('rg-ph').value.trim();
+  const p=document.getElementById('rg-p').value;
+  if(!n||!u||!ph||!p){ showErr('Fill in all fields'); return; }
+  const btn=document.getElementById('rg-btn');
+  btn.innerHTML='<div class="spin"></div>'; btn.disabled=true;
   try{
-    var raw    = await api({ action:'getUserWeights', username: S.user });
-    var rows   = Array.isArray(raw) ? raw : [];
-    var hasHdr = rows.length > 0 && isNaN(parseFloat(rows[0][2]));
-    var ws = (hasHdr ? rows.slice(1) : rows)
-      .map(function(r){ return { date:r[1], weight:parseFloat(r[2]) }; })
-      .filter(function(r){ return r.weight > 0; })
-      .sort(function(a,b){ return new Date(b.date)-new Date(a.date); })
-      .slice(0,10);
-    if(!ws.length){
-      el.innerHTML = '<div class="empty-state" style="padding:20px 0"><span class="es-icon">⚖️</span><h4>No weigh-ins yet</h4></div>';
-      return;
-    }
-    var rowsHTML = ws.map(function(w, i){
-      var next  = ws[i+1];
-      var delta = next ? ((next.weight - w.weight) / next.weight * 100) : null;
-      var cls   = delta === null ? 'delta-nil' : delta < 0 ? 'delta-pos' : 'delta-neg';
-      var str   = delta === null ? '—' : (delta < 0 ? '−'+Math.abs(delta).toFixed(1)+'%' : '+'+delta.toFixed(1)+'%');
-      return '<tr><td>' + fmtDate(w.date) + '</td>'
-        + '<td style="font-family:var(--fm)">' + w.weight + ' kg</td>'
-        + '<td class="' + cls + '" style="font-family:var(--fm);font-weight:600">' + str + '</td></tr>';
-    }).join('');
-    el.innerHTML = '<table class="week-table"><thead><tr><th>Date</th><th>Weight</th><th>Δ vs prev</th></tr></thead><tbody>' + rowsHTML + '</tbody></table>';
-  }catch(e){
-    el.innerHTML = '<div class="empty-state" style="padding:20px 0"><span class="es-icon">⚠️</span><h4>Could not load history</h4></div>';
-  }
+    const d = await gasAPI({ action:'registerUser', username:u, email:ph, password:p });
+    if(d.success){ S.set(u); startChat(); }
+    else showErr(d.message||'Registration failed');
+  }catch(e){ showErr('Connection error. Try again.'); }
+  btn.innerHTML='Create Account'; btn.disabled=false;
 }
 
-// ═══════════════════════════════════════════════════════════════
-// ADMIN
-// FIX #1+2 — loadAdminData now calls getUsers to get real active status
-// ═══════════════════════════════════════════════════════════════
-async function loadAdminData(){
-  ['admin-users','admin-contests'].forEach(function(id){
-    document.getElementById(id).innerHTML = '<div class="loader-wrap"><div class="loader"></div><span>Loading…</span></div>';
-  });
-  try{
-    var results = await Promise.all([
-      api({ action:'getUsers' }),          // FIX #1+2 — real users with active flag
-      api({ action:'getRooms' }),
-      api({ action:'getPublicContests' })
-    ]);
-    var usersRes  = results[0];
-    var roomsRes  = results[1];
-    var pubRes    = results[2];
+document.getElementById('li-p').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('li-u').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('li-p').focus(); });
 
-    // FIX #1+2 — usersRes is now [{username, email, active}, ...] from getUsers
-    var users = Array.isArray(usersRes) ? usersRes : [];
-
-    var seen = {};
-    var allContests = (Array.isArray(roomsRes)?roomsRes:[]).concat(Array.isArray(pubRes)?pubRes:[])
-      .map(normaliseRoom)
-      .filter(function(c){ if(!c.id||seen[c.id]) return false; seen[c.id]=true; return true; });
-
-    renderAdminUsers(users);
-    renderAdminContests(allContests);
-  }catch(e){
-    ['admin-users','admin-contests'].forEach(function(id){
-      document.getElementById(id).innerHTML = '<div class="empty-state" style="padding:16px 0"><h4>Failed to load</h4></div>';
-    });
-  }
+function doLogout(){
+  if(!confirm('Logout?')) return;
+  S.clear();
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('messages').innerHTML='';
+  _cachedLB=null; _cachedWeights=null; _chatHistory=[];
+  document.getElementById('s-login').classList.add('on');
 }
 
-function renderAdminUsers(users){
-  var el = document.getElementById('admin-users');
-  if(!users.length){ el.innerHTML = '<div class="empty-state" style="padding:16px 0"><h4>No users found</h4></div>'; return; }
-  el.innerHTML = users.map(function(u){
-    // FIX #1+2 — u.active comes from the Users sheet col E via getUsers
-    var active = u.active !== false;
-    return '<div class="admin-row">'
-      + '<div class="ar-av" style="background:' + avatarColor(u.username) + '">' + initials(u.username) + '</div>'
-      + '<div class="ar-info"><div class="ar-name">' + esc(u.username) + '</div>'
-      + '<div class="ar-meta">' + (active ? 'Active' : '<span style="color:var(--red)">Deactivated</span>') + (u.email ? ' · ' + esc(u.email) : '') + '</div></div>'
-      + '<div class="ar-actions">'
-      + '<button class="btn btn-sm ' + (active ? 'btn-danger' : 'btn-ghost') + '" onclick="adminToggleUser(\'' + esc(u.username) + '\',' + active + ')">'
-      + (active ? 'Deactivate' : 'Activate') + '</button>'
-      + '</div></div>';
-  }).join('');
+// ── App start ─────────────────────────────────────────────────
+async function startChat(){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('s-chat').classList.add('on');
+  document.getElementById('messages').innerHTML = '';
+
+  // Greeting
+  const day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
+  const isMonday = new Date().getDay()===1;
+  showTyping();
+  await new Promise(r=>setTimeout(r,700));
+  hideTyping();
+
+  addBotText(`Hey ${S.user}! 👋 I'm your FitBounty Coach.\n\n${isMonday ? '🗓️ It\'s weigh-in day! Log your weight and let\'s see where you stand.' : `Happy ${day}! How can I help today?`}`);
+
+  setTimeout(()=>{
+    // Load leaderboard in background and show a quick stat
+    getLeaderboard().then(lb=>{
+      const me   = lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase());
+      const rank = lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1;
+      if(me && rank){
+        setTimeout(()=>{
+          addBotText(`You're currently **#${rank}** out of ${lb.length} athletes with a **${me.totalLossPct}% loss** 🔥\n\nWhat would you like to do?`);
+        }, 600);
+      }
+    }).catch(()=>{});
+  }, 400);
 }
 
-function renderAdminContests(contests){
-  var el = document.getElementById('admin-contests');
-  if(!contests.length){ el.innerHTML = '<div class="empty-state" style="padding:16px 0"><h4>No contests found</h4></div>'; return; }
-  el.innerHTML = contests.map(function(c){
-    return '<div class="admin-row">'
-      + '<div class="ar-info"><div class="ar-name">' + esc(c.name) + '</div>'
-      + '<div class="ar-meta">by ' + esc(c.creator) + ' · ' + c.participants.length + ' participant' + (c.participants.length!==1?'s':'') + ' · ' + c.visibility + '</div></div>'
-      + '<div class="ar-actions">'
-      + '<button class="btn btn-sm btn-danger" onclick="adminDeleteContest(\'' + esc(c.id) + '\',\'' + esc(c.visibility) + '\',\'' + esc(c.name) + '\')">Delete</button>'
-      + '</div></div>';
-  }).join('');
-}
-
-async function adminToggleUser(username, active){
-  if(!confirm((active?'Deactivate':'Activate') + ' user "' + username + '"?')) return;
-  try{
-    var d = await api({ action:'adminToggleUser', adminUser:S.user, targetUser:username, setActive:!active });
-    if(d.success){ toast('User ' + (active?'deactivated':'activated')); loadAdminData(); }
-    else toast(d.error || d.message || 'Action failed','err');
-  }catch(e){ toast('Connection error','err'); }
-}
-
-async function adminDeleteContest(id, visibility, name){
-  if(!confirm('Delete contest "' + name + '"?\n\nThis cannot be undone.')) return;
-  try{
-    var action = visibility === 'public' ? 'deletePublicContest' : 'deleteRoom';
-    var d = await api({ action:action, id:id });
-    if(d.success){ toast('Contest deleted'); loadContests(); loadAdminData(); }
-    else toast(d.error || d.message || 'Failed to delete','err');
-  }catch(e){ toast('Connection error','err'); }
-}
+// ── Boot ──────────────────────────────────────────────────────
+(function init(){
+  if(S.user) startChat();
+})();
 </script>
 </body>
 </html>
