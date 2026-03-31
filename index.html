@@ -1044,7 +1044,7 @@ async function doLogin(){
   btn.innerHTML='<div class="spin"></div>'; btn.disabled=true;
   try{
     const d = await gasAPI({ action:'authenticate', username:u, password:p });
-    if(d.success){ S.set(u.toLowerCase()); startChat(); }
+    if(d.success){ S.set(u.toLowerCase()); await startChat(); promptNotifications(); if(Notification.permission==='granted'){ registerServiceWorker().then(()=>startNudgeScheduler()); } }
     else showErr(d.message||'Invalid credentials');
   }catch(e){ showErr('Connection error. Try again.'); }
   btn.innerHTML='Sign In'; btn.disabled=false;
@@ -1060,7 +1060,7 @@ async function doRegister(){
   btn.innerHTML='<div class="spin"></div>'; btn.disabled=true;
   try{
     const d = await gasAPI({ action:'registerUser', username:u, email:ph, password:p });
-    if(d.success){ S.set(u); startChat(); }
+    if(d.success){ S.set(u); await startChat(); promptNotifications(); if(Notification.permission==='granted'){ registerServiceWorker().then(()=>startNudgeScheduler()); } }
     else showErr(d.message||'Registration failed');
   }catch(e){ showErr('Connection error. Try again.'); }
   btn.innerHTML='Create Account'; btn.disabled=false;
@@ -1072,6 +1072,7 @@ document.getElementById('li-u').addEventListener('keydown', e=>{ if(e.key==='Ent
 function doLogout(){
   if(!confirm('Logout?')) return;
   S.clear();
+  if(_nudgeCheckInterval){ clearInterval(_nudgeCheckInterval); _nudgeCheckInterval=null; }
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('messages').innerHTML='';
   _cachedLB=null; _cachedWeights=null; _cachedOtherW={}; _chatHistory=[];
@@ -1120,9 +1121,306 @@ async function startChat(){
   }, 400);
 }
 
+// ═══════════════════════════════════════════════════════════════
+// NUDGE & NOTIFICATION SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+// ── Nudge copy ────────────────────────────────────────────────
+const NUDGES = {
+  friday: {
+    onTrack: {
+      title: '💪 Keep it up, {name}!',
+      body:  "You're on track for Monday's weigh-in. Stay consistent this weekend!"
+    },
+    offTrack: {
+      title: '⚠️ Weekend ahead, {name}',
+      body:  "Your trend needs a little help. Small diet tweaks now can save your Monday weigh-in!"
+    }
+  },
+  saturday: {
+    onTrack: {
+      title: '✅ Looking good, {name}!',
+      body:  "Two days to Monday weigh-in. Keep your weekend meals clean!"
+    },
+    offTrack: {
+      title: '🥗 Time to course-correct, {name}',
+      body:  "Monday is close. Buddy has some diet tips to help you avoid that ₹500 penalty!"
+    }
+  },
+  sunday: {
+    onTrack: {
+      title: '🎯 Almost there, {name}!',
+      body:  "Tomorrow is weigh-in day! You're looking good — just stay light tonight."
+    },
+    offTrack: {
+      title: '🚨 Tomorrow is weigh-in day, {name}!',
+      body:  "You might be off track. Open Buddy for a quick rescue plan before Monday!"
+    }
+  },
+  monday_morning: {
+    title: '⚖️ Weigh-in day is here, {name}!',
+    body:  "Log your weight now before the deadline. Open FitBounty!"
+  },
+  monday_reminder: {
+    title: '⏰ Have you logged yet, {name}?',
+    body:  "Don't forget your Monday weigh-in — ₹500 penalty for missing it!"
+  }
+};
+
+// Diet tips database
+const DIET_TIPS = {
+  offTrack: [
+    "🥒 Cut sodium today — bloating can add 1-2 kg of water weight by Monday",
+    "💧 Drink 3L+ water today. It flushes retention and reduces scale weight",
+    "🥗 Stick to salads + lean protein (chicken/dal) for meals until Monday",
+    "🚫 Skip rice, bread, and sweets for the next 48 hours",
+    "🚶 A 30-min brisk walk today can help burn 200-300 calories",
+    "🫖 Try black coffee or green tea in the morning — mild diuretics that help",
+    "🍌 Avoid bananas and potatoes — high glycemic, cause water retention",
+    "🥣 Eat your last meal by 7 PM today and tomorrow. Light dinner only."
+  ],
+  onTrack: [
+    "✅ Stay away from heavy carbs tonight — just to be safe",
+    "💧 Keep hydrating — aim for 2.5L today",
+    "🥗 Light dinner tonight, like a salad or soup, to feel your best tomorrow",
+    "😴 Sleep 7-8 hours — poor sleep spikes cortisol which retains weight"
+  ]
+};
+
+// ── Permission request ─────────────────────────────────────────
+async function requestNotificationPermission(){
+  if(!('Notification' in window)) return false;
+  if(Notification.permission === 'granted') return true;
+  if(Notification.permission === 'denied') return false;
+  const result = await Notification.requestPermission();
+  return result === 'granted';
+}
+
+// ── Fire a notification ────────────────────────────────────────
+function fireNotification(title, body, tag){
+  if(Notification.permission !== 'granted') return;
+  const n = new Notification(title, {
+    body,
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2309090f"/><text x="32" y="44" font-size="32" text-anchor="middle">⚡</text></svg>',
+    badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23d4a853"/><text x="32" y="44" font-size="32" text-anchor="middle">⚡</text></svg>',
+    tag: tag || 'fitbounty-nudge',
+    renotify: true,
+    requireInteraction: true
+  });
+  n.onclick = () => { window.focus(); n.close(); };
+}
+
+// ── Register Service Worker for background notifications ───────
+async function registerServiceWorker(){
+  if(!('serviceWorker' in navigator)) return;
+  const swCode = `
+self.addEventListener('message', e => {
+  if(e.data && e.data.type === 'SCHEDULE_NUDGE'){
+    const { delayMs, title, body, tag } = e.data;
+    setTimeout(() => {
+      self.registration.showNotification(title, {
+        body,
+        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%2309090f"/><text x="32" y="44" font-size="32" text-anchor="middle">⚡</text></svg>',
+        tag: tag || 'fitbounty-nudge',
+        renotify: true,
+        requireInteraction: true,
+        data: { url: self.location.origin }
+      });
+    }, delayMs);
+  }
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(clients.openWindow(e.notification.data && e.notification.data.url ? e.notification.data.url : '/'));
+});
+`;
+  try{
+    const blob = new Blob([swCode], { type: 'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    const reg = await navigator.serviceWorker.register(swUrl, { scope: '/' });
+    return reg;
+  }catch(e){ return null; }
+}
+
+// ── Determine if user is on track ─────────────────────────────
+function isOnTrack(weights){
+  if(!weights || weights.length < 2) return null; // unknown
+  const recent = weights.slice(-3); // last 3 entries
+  const first  = recent[0].weight;
+  const last   = recent[recent.length-1].weight;
+  return last <= first; // losing or maintaining = on track
+}
+
+function getTrendKg(weights){
+  if(!weights || weights.length < 2) return 0;
+  return parseFloat((weights[weights.length-1].weight - weights[0].weight).toFixed(2));
+}
+
+// ── Schedule nudges via SW ────────────────────────────────────
+async function scheduleSwNudge(delayMs, title, body, tag){
+  try{
+    const reg = await navigator.serviceWorker.ready;
+    if(reg && reg.active){
+      reg.active.postMessage({ type:'SCHEDULE_NUDGE', delayMs, title, body, tag });
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+// ── Build in-chat nudge message ───────────────────────────────
+async function buildNudgeMessage(weights, day){
+  const onTrack = isOnTrack(weights);
+  const trendKg = getTrendKg(weights);
+  const last    = weights.length ? weights[weights.length-1] : null;
+  const lastWt  = last ? last.weight : null;
+
+  let msg = '';
+  const tips = onTrack === false
+    ? DIET_TIPS.offTrack
+    : DIET_TIPS.onTrack;
+
+  // Pick 3 random tips
+  const picked = [...tips].sort(()=>Math.random()-.5).slice(0,3);
+
+  if(day === 6){ // Sunday
+    if(onTrack === false){
+      msg = `🚨 **Tomorrow is weigh-in day** and your recent trend shows a gain of **+${Math.abs(trendKg)} kg**.\n\nHere's a rescue plan to avoid the ₹500 penalty:\n\n${picked.map(t=>'• '+t).join('\n')}\n\nLog your weight tomorrow morning first thing — you've got this! 💪`;
+    } else if(onTrack === true){
+      msg = `🎯 **Tomorrow is weigh-in day!** Your trend is looking good${lastWt ? ` (currently around ${lastWt} kg)` : ''}.\n\nA few tips to stay sharp:\n\n${picked.map(t=>'• '+t).join('\n')}`;
+    } else {
+      msg = `⚖️ **Tomorrow is Monday weigh-in day!** Make sure you're ready to log first thing in the morning.\n\n${picked.map(t=>'• '+t).join('\n')}`;
+    }
+  } else if(day === 5){ // Saturday
+    if(onTrack === false){
+      msg = `⚠️ **Weekend check-in!** Your recent trend suggests you may be slightly off pace. Two days to course-correct.\n\n${picked.map(t=>'• '+t).join('\n')}\n\nSmall changes today and tomorrow can make a big difference on the scale Monday!`;
+    } else {
+      msg = `✅ **Weekend check-in!** You're on track${lastWt ? ` — last logged: ${lastWt} kg` : ''}. Keep your weekend meals clean.\n\n${picked.map(t=>'• '+t).join('\n')}`;
+    }
+  } else if(day === 5){ // Friday
+    msg = `💡 **Weekend ahead!** Weekends are where most people lose their streak.\n\n${picked.map(t=>'• '+t).join('\n')}`;
+  }
+
+  return msg;
+}
+
+// ── In-app nudge scheduler (runs while app is open) ───────────
+let _nudgeCheckInterval = null;
+
+function startNudgeScheduler(){
+  if(_nudgeCheckInterval) return;
+  checkAndNudge(); // run immediately on open
+  _nudgeCheckInterval = setInterval(checkAndNudge, 60 * 60 * 1000); // re-check hourly
+}
+
+async function checkAndNudge(){
+  if(!S.user) return;
+  const now  = new Date();
+  const day  = now.getDay();   // 0=Sun, 1=Mon, ... 5=Fri, 6=Sat
+  const hour = now.getHours();
+
+  // Only nudge during relevant days & times
+  const shouldNudge =
+    (day === 5 && hour >= 18)  || // Friday evening
+    (day === 6 && hour >= 9)   || // Saturday morning+
+    (day === 0 && hour >= 8)   || // Sunday morning+
+    (day === 1 && hour >= 6 && hour <= 11); // Monday morning
+
+  if(!shouldNudge) return;
+
+  // Check if we already nudged today
+  const nudgeKey = `fb_nudged_${now.toDateString()}`;
+  if(localStorage.getItem(nudgeKey)) return;
+
+  try{
+    const weights = await getMyWeights();
+    const onTrack = isOnTrack(weights);
+    const name    = S.user;
+
+    let title = '', body = '';
+
+    if(day === 1){ // Monday
+      if(hour <= 9){
+        title = NUDGES.monday_morning.title.replace('{name}', name);
+        body  = NUDGES.monday_morning.body;
+      } else {
+        title = NUDGES.monday_reminder.title.replace('{name}', name);
+        body  = NUDGES.monday_reminder.body;
+      }
+    } else {
+      const dayKey = day === 5 ? 'friday' : day === 6 ? 'saturday' : 'sunday';
+      const variant = (onTrack === false) ? 'offTrack' : 'onTrack';
+      const nudge   = NUDGES[dayKey][variant];
+      title = nudge.title.replace('{name}', name);
+      body  = nudge.body;
+    }
+
+    // Fire OS notification
+    fireNotification(title, body, 'fb-nudge-'+day);
+
+    // Also inject nudge into the chat conversation
+    if(document.getElementById('s-chat').classList.contains('on')){
+      const chatMsg = await buildNudgeMessage(weights, day);
+      if(chatMsg){
+        setTimeout(()=>{
+          addBotText(`📣 **Buddy Nudge**\n\n${chatMsg}`, [
+            { label:'📊 See My Progress', fn:"chipAction('progress')", cls:'' },
+            { label:'⚖️ Log Weight', fn:"chipAction('log')", cls:'confirm' }
+          ]);
+        }, 1000);
+      }
+    }
+
+    localStorage.setItem(nudgeKey, '1');
+  }catch(e){}
+}
+
+// ── Ask user to enable notifications (polite prompt) ──────────
+async function promptNotifications(){
+  if(!('Notification' in window)) return;
+  if(Notification.permission === 'granted'){
+    await registerServiceWorker();
+    startNudgeScheduler();
+    return;
+  }
+  if(Notification.permission === 'denied') return;
+
+  // Show in-chat permission ask instead of browser popup immediately
+  const permKey = 'fb_notif_asked';
+  if(localStorage.getItem(permKey)) return;
+  localStorage.setItem(permKey, '1');
+
+  setTimeout(()=>{
+    addBotText(
+      `🔔 **Want weigh-in reminders?**\n\nBuddy can nudge you before Monday to check if you're on track — and suggest diet tips if you need a little help avoiding the penalty.\n\nTap below to enable!`,
+      [{ label:'🔔 Yes, remind me!', fn:'enableNotifications()', cls:'confirm' },
+       { label:'Maybe later', fn:'', cls:'cancel' }]
+    );
+  }, 2000);
+}
+
+async function enableNotifications(){
+  document.querySelectorAll('.mac').forEach(b=>b.disabled=true);
+  const granted = await requestNotificationPermission();
+  if(granted){
+    await registerServiceWorker();
+    startNudgeScheduler();
+    addBotText(`✅ **Notifications enabled!**\n\nI'll nudge you on Fridays, Saturdays, and Sundays before weigh-in day — and give you diet tips if you need to course-correct. 💪`);
+  } else {
+    addBotText(`No worries! You can always check in manually. I'll still give you tips when you open the app before Monday. 👍`);
+  }
+}
+
 // ── Boot ──────────────────────────────────────────────────────
 (function init(){
-  if(S.user) startChat();
+  if(S.user){
+    startChat().then(()=>{
+      promptNotifications();
+      if(Notification.permission === 'granted'){
+        registerServiceWorker().then(()=> startNudgeScheduler());
+      }
+    });
+  }
 })();
 </script>
 </body>
