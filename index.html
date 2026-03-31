@@ -106,6 +106,21 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
 .card-bubble img{width:100%;display:block}
 .card-caption{font-size:11px;color:var(--text3);margin-top:4px;margin-left:4px}
 
+/* Social share icons */
+.share-row{display:flex;align-items:center;gap:10px;margin-top:8px;margin-left:2px}
+.share-label{font-size:11px;color:var(--text3);font-weight:500}
+.share-icon{
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:transform .18s,opacity .18s;text-decoration:none;border:none;
+  flex-shrink:0;
+}
+.share-icon:active{transform:scale(.85)}
+.share-icon:hover{opacity:.85}
+.share-icon.wa{background:#25D366}
+.share-icon.fb{background:#1877F2}
+.share-icon.ig{background:linear-gradient(135deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)}
+.share-icon svg{width:16px;height:16px;fill:#fff}
+
 /* User image bubble */
 .img-bubble{border-radius:14px;overflow:hidden;border:1px solid var(--brd);margin-top:2px;max-width:220px}
 .img-bubble img{width:100%;display:block}
@@ -161,6 +176,9 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
 #cam-btn{background:var(--surf);border:1px solid var(--brd);color:var(--text2)}
 #send-btn{background:var(--gold);color:#09090f}
 #send-btn:disabled{background:var(--surf2);color:var(--text3)}
+
+/* Bold text in bubble */
+.bubble b, .bubble strong{font-weight:700}
 </style>
 </head>
 <body>
@@ -171,7 +189,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
     <div class="llogo">
       <div class="lmark"><span style="font-size:28px">⚡</span></div>
       <div class="lbrand">FitBounty</div>
-      <div class="ltag">Your AI Coach</div>
+      <div class="ltag">Meet Buddy, your assistant</div>
     </div>
     <div class="ftgl">
       <button class="ftb on" id="t-sign" onclick="authTab('sign')">Sign In</button>
@@ -197,10 +215,10 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
 <div id="s-chat" class="scr">
   <div id="chat-header">
     <div class="ch-left">
-      <div class="ch-av">⚡</div>
+      <div class="ch-av">🤖</div>
       <div>
-        <div class="ch-name">FitBounty Coach</div>
-        <div class="ch-status" id="coach-status">● Online</div>
+        <div class="ch-name">Buddy</div>
+        <div class="ch-status" id="coach-status">● FitBounty Assistant</div>
       </div>
     </div>
     <div class="ch-actions">
@@ -214,10 +232,10 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
   <div id="chip-bar">
     <button class="chip" onclick="chipAction('leaderboard')">🏆 Leaderboard</button>
     <button class="chip" onclick="chipAction('progress')">📊 My Progress</button>
-    <button class="chip" onclick="chipAction('week')">📅 This Week</button>
+    <button class="chip" onclick="chipAction('week')">📅 My Week Stats</button>
     <button class="chip" onclick="chipAction('log')">⚖️ Log Weight</button>
     <button class="chip" onclick="chipAction('contest')">🎯 Contest Info</button>
-    <button class="chip" onclick="chipAction('coach')">💬 Ask Coach</button>
+    <button class="chip" onclick="chipAction('buddy')">💬 Ask Buddy</button>
   </div>
 
   <div id="input-bar">
@@ -225,7 +243,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
       <button class="ibt" id="cam-btn" onclick="document.getElementById('cam-input').click()" title="Upload scale photo">📷</button>
     </label>
     <input type="file" id="cam-input" accept="image/*" capture="environment" style="display:none" onchange="handleImageUpload(event)">
-    <textarea id="txt-input" placeholder="Message or type a weight…" rows="1" oninput="autoGrow(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendText()}"></textarea>
+    <textarea id="txt-input" placeholder="Ask Buddy anything…" rows="1" oninput="autoGrow(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendText()}"></textarea>
     <button class="ibt" id="send-btn" onclick="sendText()">➤</button>
   </div>
 </div>
@@ -235,7 +253,7 @@ body{font-family:var(--fb);background:var(--bg);color:var(--text);font-size:15px
 
 <script>
 // ═══════════════════════════════════════════════════════════════
-// FITBOUNTY CHAT
+// FITBOUNTY CHAT — BUDDY
 // ═══════════════════════════════════════════════════════════════
 
 const GAS = 'https://script.google.com/macros/s/AKfycbzwWrCRjHYeJA0-5SHxAamG-H96m5ItJzOXtNhgu0sy43xIlkCPLTeayK6bKT1-S9-Raw/exec';
@@ -250,11 +268,12 @@ const S = {
 };
 
 // ── State ────────────────────────────────────────────────────
-let _cachedLB      = null;   // leaderboard data
-let _cachedWeights = null;   // my weights
-let _pendingWeight = null;   // weight awaiting confirmation
-let _chatHistory   = [];     // puter.ai conversation history
-let _typing        = null;   // typing indicator element
+let _cachedLB         = null;
+let _cachedWeights    = null;
+let _cachedOtherW     = {};   // cache for other users' weights keyed by username
+let _pendingWeight    = null;
+let _chatHistory      = [];
+let _typing           = null;
 
 // ── Utility ──────────────────────────────────────────────────
 function esc(s){ const d=document.createElement('div');d.textContent=s||'';return d.innerHTML; }
@@ -267,29 +286,20 @@ async function gasAPI(payload){ const r=await fetch(GAS,{method:'POST',body:JSON
 // ── Canvas card renderer ──────────────────────────────────────
 const canvas = document.getElementById('card-canvas');
 const ctx    = canvas.getContext('2d');
-const DPR    = 2; // render at 2× for sharpness
+const DPR    = 2;
 
 function setupCanvas(w, h){
   canvas.width  = w * DPR;
   canvas.height = h * DPR;
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-  // Background
   ctx.fillStyle = '#09090f';
   ctx.fillRect(0, 0, w, h);
-  // Top ambient glow
   const g = ctx.createLinearGradient(0,0,w,0);
   g.addColorStop(0,   'rgba(212,168,83,.07)');
   g.addColorStop(.5,  'rgba(212,168,83,.04)');
   g.addColorStop(1,   'rgba(62,207,142,.04)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, 3);
-}
-
-function cardText(text, x, y, opts={}){
-  ctx.font = `${opts.w||'500'} ${opts.size||14}px ${opts.mono?'"Courier New",monospace':'"Arial",sans-serif'}`;
-  ctx.fillStyle = opts.color || '#e8e6f0';
-  ctx.textAlign = opts.align || 'left';
-  ctx.fillText(text, x, y);
 }
 
 function cardHeader(w, title, sub){
@@ -310,7 +320,6 @@ function cardHeader(w, title, sub){
     ctx.font = '400 12px Arial';
     ctx.fillText(sub, w/2, 76);
   }
-  // Divider
   ctx.strokeStyle = 'rgba(255,255,255,.07)';
   ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(22, sub?88:72); ctx.lineTo(w-22, sub?88:72); ctx.stroke();
@@ -325,14 +334,10 @@ function renderLeaderboardCard(entries, contestName){
 
   entries.slice(0,8).forEach((e, i) => {
     const midY = y + rowH/2;
-
-    // Highlight #1 row
     if(i === 0){
       ctx.fillStyle = 'rgba(212,168,83,.05)';
       ctx.fillRect(0, y, W, rowH);
     }
-
-    // Rank badge
     const icons = ['🥇','🥈','🥉'];
     if(i < 3){
       ctx.font = '18px serif';
@@ -344,49 +349,37 @@ function renderLeaderboardCard(entries, contestName){
       ctx.textAlign = 'center';
       ctx.fillText('#'+(i+1), 26, midY+5);
     }
-
-    // Avatar circle
     ctx.fillStyle = avColor(e.name);
     ctx.beginPath(); ctx.arc(60, midY, 15, 0, Math.PI*2); ctx.fill();
     ctx.fillStyle = '#fff';
     ctx.font = '700 12px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(initials(e.name), 60, midY+4);
-
-    // Name
     ctx.fillStyle = i===0 ? '#d4a853' : '#e8e6f0';
     ctx.font = `${i===0?'600':'500'} ${i===0?15:14}px Arial`;
     ctx.textAlign = 'left';
     const isMe = e.name.toLowerCase() === S.user?.toLowerCase();
     ctx.fillText(e.name + (isMe?' (you)':''), 84, midY+5);
-
-    // Check-ins
     ctx.fillStyle = 'rgba(232,230,240,.28)';
     ctx.font = '400 11px Arial';
-    ctx.textAlign = 'left';
     ctx.fillText(`${e.checkIns||0} weigh-ins`, 84, midY+18);
-
-    // Percentage
     const pct = parseFloat(e.totalLossPct || e.total || 0);
     ctx.fillStyle = pct > 0 ? '#3ecf8e' : 'rgba(232,230,240,.35)';
     ctx.font = `700 ${i===0?17:15}px "Courier New",monospace`;
     ctx.textAlign = 'right';
     ctx.fillText(pct > 0 ? '−'+pct.toFixed(1)+'%' : '0%', W-22, midY+6);
-
-    // Row divider
     ctx.strokeStyle = 'rgba(255,255,255,.045)';
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(22, y+rowH); ctx.lineTo(W-22, y+rowH); ctx.stroke();
     y += rowH;
   });
-
   return canvas.toDataURL('image/png');
 }
 
 function renderProgressCard(weights, username){
   const W = 560, H = 300;
   setupCanvas(W, H);
-  let y = cardHeader(W, 'MY PROGRESS');
+  let y = cardHeader(W, username.toUpperCase() + "'S PROGRESS");
 
   if(!weights.length){
     ctx.fillStyle = 'rgba(232,230,240,.3)';
@@ -401,7 +394,6 @@ function renderProgressCard(weights, username){
   const lostKg = parseFloat((first - last).toFixed(2));
   const lostPct = parseFloat(((first-last)/first*100).toFixed(1));
 
-  // Big stat
   ctx.fillStyle = lostPct > 0 ? '#3ecf8e' : '#e05555';
   ctx.font = '700 42px "Courier New",monospace';
   ctx.textAlign = 'center';
@@ -411,7 +403,6 @@ function renderProgressCard(weights, username){
   ctx.fillText('TOTAL BODY LOSS', W/2, y+60);
   y += 76;
 
-  // Sparkline
   if(weights.length >= 2){
     const vals = weights.map(w=>w.weight);
     const minW = Math.min(...vals), maxW = Math.max(...vals), range = maxW - minW || 1;
@@ -422,7 +413,6 @@ function renderProgressCard(weights, username){
     const trending = vals[vals.length-1] <= vals[0];
     const lc = trending ? '#3ecf8e' : '#e05555';
 
-    // Gradient fill
     const grd = ctx.createLinearGradient(0, cTop, 0, cBot);
     grd.addColorStop(0, trending?'rgba(62,207,142,.3)':'rgba(224,85,85,.3)');
     grd.addColorStop(1, 'rgba(0,0,0,0)');
@@ -434,7 +424,6 @@ function renderProgressCard(weights, username){
     ctx.fillStyle = grd;
     ctx.fill();
 
-    // Line
     ctx.beginPath();
     ctx.strokeStyle = lc;
     ctx.lineWidth = 2;
@@ -443,13 +432,11 @@ function renderProgressCard(weights, username){
     vals.forEach((v,i) => i===0 ? ctx.moveTo(xOf(i),yOf(v)) : ctx.lineTo(xOf(i),yOf(v)));
     ctx.stroke();
 
-    // Dots
     vals.forEach((v,i) => {
       ctx.fillStyle = i===vals.length-1 ? lc : 'rgba(232,230,240,.15)';
       ctx.beginPath(); ctx.arc(xOf(i), yOf(v), i===vals.length-1?5:3, 0, Math.PI*2); ctx.fill();
     });
 
-    // Date labels
     ctx.fillStyle = 'rgba(232,230,240,.22)';
     ctx.font = '400 10px Arial';
     ctx.textAlign = 'left';
@@ -459,7 +446,6 @@ function renderProgressCard(weights, username){
     y = cBot + 24;
   }
 
-  // Mini stats row
   const stats = [
     ['START', first.toFixed(1)+' kg'],
     ['NOW',   last.toFixed(1)+' kg'],
@@ -485,7 +471,7 @@ function renderProgressCard(weights, username){
   return canvas.toDataURL('image/png');
 }
 
-function renderWeekCard(weights){
+function renderWeekCard(weights, username){
   const W = 560;
   const rows = [];
   const sorted = [...weights].sort((a,b)=>new Date(a.date)-new Date(b.date));
@@ -498,9 +484,8 @@ function renderWeekCard(weights){
 
   const ROW = 44, H = 100 + rows.length*ROW + 20;
   setupCanvas(W, H);
-  let y = cardHeader(W, 'WEEK BY WEEK');
+  let y = cardHeader(W, (username||'').toUpperCase() + ' · WEEK BY WEEK');
 
-  // Column headers
   const cols = [{l:'DATE',x:28},{l:'WEIGHT',x:180},{l:'CHANGE (kg)',x:300},{l:'CHANGE (%)',x:430}];
   cols.forEach(c => {
     ctx.fillStyle = 'rgba(212,168,83,.6)';
@@ -554,10 +539,16 @@ function renderWeekCard(weights){
 // ── Message rendering ─────────────────────────────────────────
 function scrollDown(){ const m=document.getElementById('messages'); m.scrollTop=m.scrollHeight; }
 
+function parseBold(text){
+  // Convert **text** to <strong>text</strong>
+  return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+}
+
 function addBotText(text, actions){
   const div = document.createElement('div');
   div.className = 'msg bot';
-  let html = `<div class="bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  const formatted = parseBold(text).replace(/\n/g,'<br>');
+  let html = `<div class="bubble">${formatted}</div>`;
   html += `<div class="msg-time">${fmtTime()}</div>`;
   if(actions && actions.length){
     html += '<div class="msg-actions">' + actions.map(a=>
@@ -578,14 +569,44 @@ function addUserText(text){
   scrollDown();
 }
 
-function addCardMsg(dataUrl, caption){
+// Social share icons SVGs
+const SVG_WA = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>`;
+const SVG_FB = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`;
+const SVG_IG = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`;
+
+function addCardMsg(dataUrl, caption, username){
   const div = document.createElement('div');
   div.className = 'msg bot';
-  div.innerHTML = `<div class="card-bubble"><img src="${dataUrl}" alt="card"></div>
+
+  // Build share text
+  const shareText = encodeURIComponent(`Check out ${username ? username+"'s" : 'my'} FitBounty progress! 💪🔥`);
+  const shareUrl  = encodeURIComponent('https://fitbounty.app');
+
+  const waUrl = `https://wa.me/?text=${shareText}%20${shareUrl}`;
+  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
+  const igUrl = `https://www.instagram.com/`;  // IG doesn't support direct URL share, opens app
+
+  div.innerHTML = `
+    <div class="card-bubble" onclick="downloadCard(this)"><img src="${dataUrl}" alt="card"></div>
     ${caption?`<div class="card-caption">${caption}</div>`:''}
+    <div class="share-row">
+      <span class="share-label">Share:</span>
+      <a class="share-icon wa" href="${waUrl}" target="_blank" rel="noopener" title="Share on WhatsApp">${SVG_WA}</a>
+      <a class="share-icon fb" href="${fbUrl}" target="_blank" rel="noopener" title="Share on Facebook">${SVG_FB}</a>
+      <a class="share-icon ig" href="${igUrl}" target="_blank" rel="noopener" title="Open Instagram">${SVG_IG}</a>
+    </div>
     <div class="msg-time">${fmtTime()}</div>`;
   document.getElementById('messages').appendChild(div);
   scrollDown();
+}
+
+function downloadCard(el){
+  const img = el.querySelector('img');
+  if(!img) return;
+  const a = document.createElement('a');
+  a.href = img.src;
+  a.download = 'fitbounty-card.png';
+  a.click();
 }
 
 function addUserImage(dataUrl, caption){
@@ -620,28 +641,57 @@ async function getLeaderboard(){
 
 async function getMyWeights(){
   if(_cachedWeights) return _cachedWeights;
-  const raw  = await gasAPI({ action:'getUserWeights', username: S.user });
+  return await getWeightsForUser(S.user, true);
+}
+
+async function getWeightsForUser(username, saveToMyCache){
+  const uKey = username.toLowerCase();
+  if(_cachedOtherW[uKey]) return _cachedOtherW[uKey];
+  const raw  = await gasAPI({ action:'getUserWeights', username });
   const rows = Array.isArray(raw) ? raw : [];
   const hasHdr = rows.length>0 && isNaN(parseFloat(rows[0][2]));
-  _cachedWeights = (hasHdr?rows.slice(1):rows)
+  const parsed = (hasHdr?rows.slice(1):rows)
     .map(r=>({ date:r[1], weight:parseFloat(r[2]) }))
     .filter(r=>r.weight>0)
     .sort((a,b)=>new Date(a.date)-new Date(b.date));
-  return _cachedWeights;
+  _cachedOtherW[uKey] = parsed;
+  if(saveToMyCache) _cachedWeights = parsed;
+  return parsed;
 }
 
 async function logWeight(w){
   const d = await gasAPI({ action:'addWeight', username:S.user, weight:w, geo:'' });
   if(d.success){
-    _cachedWeights = null; // invalidate cache
-    _cachedLB      = null;
+    _cachedWeights = null;
+    delete _cachedOtherW[S.user.toLowerCase()];
+    _cachedLB = null;
   }
   return d.success;
 }
 
-function refreshData(){ _cachedLB=null; _cachedWeights=null; addBotText('Data refreshed ✓ — ask me anything!'); }
+function refreshData(){
+  _cachedLB=null;
+  _cachedWeights=null;
+  _cachedOtherW={};
+  addBotText("Data refreshed ✓ — ask me anything!");
+}
 
-// ── AI Coach ─────────────────────────────────────────────────
+// ── Extract a mentioned username from leaderboard ─────────────
+function extractMentionedUser(text, lb){
+  const t = text.toLowerCase();
+  if(!lb) return null;
+  for(const entry of lb){
+    const name = entry.name.toLowerCase();
+    const parts = name.split(/\s+/);
+    if(t.includes(name)) return entry.name;
+    for(const p of parts){
+      if(p.length >= 3 && t.includes(p)) return entry.name;
+    }
+  }
+  return null;
+}
+
+// ── AI Buddy ─────────────────────────────────────────────────
 function buildContext(lb, myWeights){
   const me    = lb ? lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase()) : null;
   const rank  = lb ? lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1 : 0;
@@ -656,9 +706,9 @@ Today: ${['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
 Contest: Weekly Monday weigh-ins, highest % weight loss wins.`;
 }
 
-async function aiCoach(userMsg, lb, myWeights){
+async function aiBuddy(userMsg, lb, myWeights){
   const context = buildContext(lb, myWeights);
-  const sysPrompt = `You are FitBounty Coach — a sharp, motivating fitness AI for a weight-loss challenge app.
+  const sysPrompt = `You are Buddy — a friendly, sharp FitBounty assistant for a weight-loss challenge app. You are NOT a coach, but a helpful assistant who knows the data.
 CONTESTANT STATS:
 ${context}
 
@@ -666,9 +716,10 @@ Rules:
 - Be concise (2-4 sentences max), warm, and data-aware
 - Use real stats in your response — don't be generic
 - If Monday, mention weigh-in; if not, mention practice logging is fine
-- Celebrate wins, be honest about losses, always motivating
+- You can show leaderboard, progress charts, week-by-week stats for any user
 - Use 1-2 emojis max per message
-- If asked to log weight: say you'll need a number or photo to proceed`;
+- If asked to log weight: say you'll need a number or photo to proceed
+- Address yourself as "Buddy", not "Coach"`;
 
   _chatHistory.push({ role:'user', content:userMsg });
   const messages = [
@@ -681,7 +732,7 @@ Rules:
     _chatHistory.push({ role:'assistant', content: reply });
     return reply;
   }catch(e){
-    return `Great question! Based on your progress (${buildContext(lb,myWeights).split('\n')[2]}), you're making solid moves. Keep going! 💪`;
+    return `Based on your progress, you're making solid moves. Keep going! 💪`;
   }
 }
 
@@ -710,12 +761,18 @@ No units, no explanation, just the number or "unclear".` }
 function parseIntent(text){
   const t = text.toLowerCase().trim();
   if(/\b(leaderboard|standings|ranking|who'?s (winning|leading)|top|1st|first place)\b/.test(t)) return 'leaderboard';
-  if(/\b(my progress|how (am i|am i doing)|my stats|progress|journey|my results)\b/.test(t)) return 'progress';
-  if(/\b(this week|weekly|week on week|week by week|week.?table|breakdown|wk)\b/.test(t)) return 'week';
+  // Other user progress/week queries — check BEFORE my own
+  if(/\b(progress|stats|trend|how.*doing|week.?(on.?week|by.?week)|week.?table|week.?stats|breakdown|history)\b/.test(t)){
+    // if "my" or self-reference → own stats
+    if(/\b(my|mine|i am|i'm)\b/.test(t)) return /\b(week.?(on.?week|by.?week)|week.?stats|breakdown)\b/.test(t) ? 'week' : 'progress';
+    return 'other_user'; // could be another user — will resolve in handleIntent
+  }
+  if(/\b(my progress|how (am i|am i doing)|my stats|my journey|my results)\b/.test(t)) return 'progress';
+  if(/\b(this week|my week|weekly|week on week|week by week|week.?table|breakdown|wk)\b/.test(t)) return 'week';
   if(/\b(contest|challenge|prize|pool|rules|entry)\b/.test(t)) return 'contest';
   if(/\b(log|record|submit|weigh.?in|weight is|i weigh)\b/.test(t) || /\b\d{2,3}(\.\d)?\s*(kg)?\b/.test(t)) return 'log';
-  if(/\b(coach|advice|tip|help|recommend|motivate|how to)\b/.test(t)) return 'coach';
-  return 'ai'; // fallback to AI
+  if(/\b(buddy|advice|tip|help|recommend|motivate|how to|ask)\b/.test(t)) return 'buddy';
+  return 'ai';
 }
 
 function extractWeight(text){
@@ -727,8 +784,8 @@ function extractWeight(text){
 async function chipAction(type){
   const labels = {
     leaderboard:'🏆 Leaderboard', progress:'📊 My Progress',
-    week:'📅 This Week', log:'⚖️ Log Weight',
-    contest:'🎯 Contest Info', coach:'💬 Ask Coach'
+    week:'📅 My Week Stats', log:'⚖️ Log Weight',
+    contest:'🎯 Contest Info', buddy:'💬 Ask Buddy'
   };
   addUserText(labels[type] || type);
   await handleIntent(type, '');
@@ -738,14 +795,48 @@ async function handleIntent(intent, rawText){
   showTyping();
   await new Promise(r=>setTimeout(r,300));
 
+  // ── Resolve "other_user" intent ──────────────────────────────
+  if(intent === 'other_user'){
+    try{
+      const lb = await getLeaderboard();
+      const mentioned = extractMentionedUser(rawText, lb);
+      if(!mentioned){
+        // falls back to own progress
+        intent = /\b(week.?(on.?week|by.?week)|week.?stats|breakdown)\b/.test(rawText.toLowerCase()) ? 'week' : 'progress';
+      } else if(mentioned.toLowerCase() === S.user.toLowerCase()){
+        intent = /\b(week.?(on.?week|by.?week)|week.?stats|breakdown)\b/.test(rawText.toLowerCase()) ? 'week' : 'progress';
+      } else {
+        // Show other user's data
+        const isWeek = /\b(week.?(on.?week|by.?week)|week.?stats|breakdown|trend)\b/.test(rawText.toLowerCase());
+        const weights = await getWeightsForUser(mentioned, false);
+        hideTyping();
+        if(!weights.length){
+          addBotText(`Hmm, ${mentioned} hasn't logged any weigh-ins yet!`);
+          return;
+        }
+        if(isWeek){
+          const img = renderWeekCard(weights, mentioned);
+          addBotText(`Here's **${mentioned}'s** week-by-week breakdown 📅`);
+          setTimeout(()=>addCardMsg(img, `${mentioned}'s weight trend`, mentioned), 200);
+        } else {
+          const img = renderProgressCard(weights, mentioned);
+          const pct = weights.length>=2 ? ((weights[0].weight-weights[weights.length-1].weight)/weights[0].weight*100).toFixed(1) : 0;
+          addBotText(`**${mentioned}** has lost **${pct}%** so far — here's their progress 📈`);
+          setTimeout(()=>addCardMsg(img, `${mentioned}'s progress card`, mentioned), 200);
+        }
+        return;
+      }
+    }catch(e){ hideTyping(); addBotText("Couldn't look up that user. Try again?"); return; }
+  }
+
   if(intent === 'leaderboard'){
     try{
       const lb = await getLeaderboard();
       if(!lb.length){ hideTyping(); addBotText('No leaderboard data yet — everyone needs to log their first weigh-in!'); return; }
       const img = renderLeaderboardCard(lb, 'FitBounty Challenge 2026');
       hideTyping();
-      addBotText(`Here's the current standings — ${lb.length} athletes competing 🏆`);
-      setTimeout(()=>addCardMsg(img, 'Screenshot to share on WhatsApp!'), 200);
+      addBotText(`Here's the current standings — **${lb.length} athletes** competing 🏆`);
+      setTimeout(()=>addCardMsg(img, 'Current leaderboard', null), 200);
     }catch(e){ hideTyping(); addBotText('Could not load leaderboard. Check your connection.'); }
 
   } else if(intent === 'progress'){
@@ -755,18 +846,18 @@ async function handleIntent(intent, rawText){
       const img = renderProgressCard(weights, S.user);
       const pct  = weights.length>=2 ? ((weights[0].weight-weights[weights.length-1].weight)/weights[0].weight*100).toFixed(1) : 0;
       hideTyping();
-      addBotText(`You've lost ${pct}% so far — here's your full journey 📈`);
-      setTimeout(()=>addCardMsg(img, 'Your weight trend'), 200);
+      addBotText(`You've lost **${pct}%** so far — here's your full journey 📈`);
+      setTimeout(()=>addCardMsg(img, 'Your weight trend', S.user), 200);
     }catch(e){ hideTyping(); addBotText('Could not load your data. Try again.'); }
 
   } else if(intent === 'week'){
     try{
       const weights = await getMyWeights();
       if(weights.length < 2){ hideTyping(); addBotText("You need at least 2 weigh-ins to see week-on-week changes. Log more!"); return; }
-      const img = renderWeekCard(weights);
+      const img = renderWeekCard(weights, S.user);
       hideTyping();
-      addBotText(`Here's your week-by-week breakdown, ${S.user} 📅`);
-      setTimeout(()=>addCardMsg(img, 'Green = weight loss · Red = gain'), 200);
+      addBotText(`Here's your week-by-week breakdown, **${S.user}** 📅`);
+      setTimeout(()=>addCardMsg(img, 'Green = weight loss · Red = gain', S.user), 200);
     }catch(e){ hideTyping(); addBotText('Could not load your history.'); }
 
   } else if(intent === 'log'){
@@ -776,7 +867,7 @@ async function handleIntent(intent, rawText){
       _pendingWeight = w;
       const isMonday = new Date().getDay()===1;
       addBotText(
-        `Got it — ${w} kg ⚖️\n\n${isMonday ? 'Today is Monday — this will be your **official weigh-in**!' : 'This will be logged as a practice entry (only Monday entries count for the leaderboard).'}\n\nShall I log this?`,
+        `Got it — **${w} kg** ⚖️\n\n${isMonday ? 'Today is Monday — this will be your **official weigh-in**!' : 'This will be logged as a practice entry (only Monday entries count for the leaderboard).'}\n\nShall I log this?`,
         [{ label:'✓ Yes, log it', fn:'confirmLog()', cls:'confirm' },
          { label:'✗ Cancel', fn:'cancelLog()', cls:'cancel' }]
       );
@@ -791,14 +882,14 @@ async function handleIntent(intent, rawText){
       const me = lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase());
       const rank = lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1;
       hideTyping();
-      addBotText(`📋 **FitBounty Challenge 2026**\n\n• ${lb.length} participants\n• Weekly Monday weigh-ins\n• Highest % weight loss wins\n• ₹500 penalty for missed weigh-in\n\n${me ? `Your rank: #${rank} · Loss: ${me.totalLossPct}%` : "You're not in the contest yet!"}`);
+      addBotText(`📋 **FitBounty Challenge 2026**\n\n• ${lb.length} participants\n• Weekly Monday weigh-ins\n• Highest % weight loss wins\n• ₹500 penalty for missed weigh-in\n\n${me ? `Your rank: **#${rank}** · Loss: **${me.totalLossPct}%**` : "You're not in the contest yet!"}`);
     }catch(e){ hideTyping(); addBotText('Could not load contest info.'); }
 
-  } else if(intent === 'coach' || intent === 'ai'){
-    const prompt = rawText || 'Give me motivation and advice for my weight loss journey.';
+  } else if(intent === 'buddy' || intent === 'ai'){
+    const prompt = rawText || 'Give me a quick update on my fitness journey.';
     try{
       const [lb, weights] = await Promise.all([getLeaderboard().catch(()=>[]), getMyWeights().catch(()=>[])]);
-      const reply = await aiCoach(prompt, lb, weights);
+      const reply = await aiBuddy(prompt, lb, weights);
       hideTyping();
       addBotText(reply);
     }catch(e){ hideTyping(); addBotText("I'm here to help — keep pushing and log those weigh-ins every Monday! 💪"); }
@@ -809,13 +900,12 @@ async function handleIntent(intent, rawText){
 async function confirmLog(){
   if(!_pendingWeight) return;
   const w = _pendingWeight; _pendingWeight=null;
-  // Disable confirm buttons
   document.querySelectorAll('.mac').forEach(b=>b.disabled=true);
   showTyping();
   const ok = await logWeight(w);
   hideTyping();
   if(ok){
-    addBotText(`✅ ${w} kg logged successfully!\n\nKeep it up — see you next Monday for your official weigh-in 💪`);
+    addBotText(`✅ **${w} kg** logged successfully!\n\nKeep it up — see you next Monday for your official weigh-in 💪`);
   } else {
     addBotText('Something went wrong logging your weight. Try again.');
   }
@@ -865,7 +955,22 @@ async function sendText(){
   if(!text) return;
   input.value = ''; autoGrow(input);
   addUserText(text);
-  const intent = parseIntent(text);
+
+  // Smart routing: check if user is asking about another user's progress/week
+  let intent = parseIntent(text);
+
+  // If it's a generic 'other_user' flow or an 'ai' fallback but mentions a name, try to detect
+  if(intent === 'ai'){
+    // Check if leaderboard names appear in the message for user-specific queries
+    try{
+      const lb = _cachedLB || await getLeaderboard().catch(()=>[]);
+      const mentioned = extractMentionedUser(text, lb);
+      if(mentioned && mentioned.toLowerCase() !== S.user.toLowerCase()){
+        intent = 'other_user';
+      }
+    }catch(e){}
+  }
+
   await handleIntent(intent, text);
 }
 
@@ -923,7 +1028,7 @@ function doLogout(){
   S.clear();
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('messages').innerHTML='';
-  _cachedLB=null; _cachedWeights=null; _chatHistory=[];
+  _cachedLB=null; _cachedWeights=null; _cachedOtherW={}; _chatHistory=[];
   document.getElementById('s-login').classList.add('on');
 }
 
@@ -933,23 +1038,21 @@ async function startChat(){
   document.getElementById('s-chat').classList.add('on');
   document.getElementById('messages').innerHTML = '';
 
-  // Greeting
   const day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][new Date().getDay()];
   const isMonday = new Date().getDay()===1;
   showTyping();
   await new Promise(r=>setTimeout(r,700));
   hideTyping();
 
-  addBotText(`Hey ${S.user}! 👋 I'm your FitBounty Coach.\n\n${isMonday ? '🗓️ It\'s weigh-in day! Log your weight and let\'s see where you stand.' : `Happy ${day}! How can I help today?`}`);
+  addBotText(`Hey ${S.user}! 👋 I'm **Buddy**, your FitBounty assistant.\n\n${isMonday ? '🗓️ It\'s weigh-in day! Log your weight and let\'s see where you stand.' : `Happy ${day}! Ask me about the leaderboard, your progress, or anyone else's stats.`}`);
 
   setTimeout(()=>{
-    // Load leaderboard in background and show a quick stat
     getLeaderboard().then(lb=>{
       const me   = lb.find(e=>e.name.toLowerCase()===S.user.toLowerCase());
       const rank = lb.findIndex(e=>e.name.toLowerCase()===S.user.toLowerCase())+1;
       if(me && rank){
         setTimeout(()=>{
-          addBotText(`You're currently **#${rank}** out of ${lb.length} athletes with a **${me.totalLossPct}% loss** 🔥\n\nWhat would you like to do?`);
+          addBotText(`You're currently **#${rank}** out of ${lb.length} athletes with a **${me.totalLossPct}% loss** 🔥\n\nWhat would you like to know?`);
         }, 600);
       }
     }).catch(()=>{});
